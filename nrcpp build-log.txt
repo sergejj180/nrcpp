@@ -1,0 +1,43 @@
+fsdfsds@DESKTOP-UQ1REN9 MINGW64 /d/repos/nrcpp
+# cmake -G "MSYS Makefiles" -D"CMAKE_SYSTEM_PREFIX_PATH:PATH=/mingw64/x86_64-w64-mingw32"
+CMake Warning:
+  No source or binary directory provided.  Both will be assumed to be the
+  same as the current working directory, but note that this warning will
+  become a fatal error in future CMake releases.
+
+
+-- The C compiler identification is GNU 12.2.0
+-- The CXX compiler identification is GNU 12.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: D:/msys64/mingw64/bin/cc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: D:/msys64/mingw64/bin/c++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (2.7s)
+CMake Warning at nrcpp/CMakeLists.txt:30 (target_link_libraries):
+  Target "nrcpp" requests linking to directory "D:/repos/nrcpp/nrc".  Targets
+  may link only to libraries.  CMake is dropping the item.
+
+
+-- Generating done (0.0s)
+-- Build files have been written to: D:/repos/nrcpp
+
+fsdfsds@DESKTOP-UQ1REN9 MINGW64 /d/repos/nrcpp
+# make
+[  4%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.obj
+In file included from D:/repos/nrcpp/nrcpp/Application.h:7,
+                 from D:/repos/nrcpp/nrcpp/Application.cpp:11:
+D:/repos/nrcpp/nrc/nrc.h:170:9: error: 'virtual' outside class declaration
+  170 |         virtual CharString TypeToSObject<T>::Name() {
+      |         ^~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:76: nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.obj] Error 1
+make[1]: *** [CMakeFiles/Makefile2:116: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
+
+fsdfsds@DESKTOP-UQ1REN9 MINGW64 /d/repos/nrcpp
+# cmake -G "MSYS Makefiles" -D"CMAKE_SYSTEM_PREFIX_PATH:PATH=/mingw64/x86_64-w64-mingw32"
