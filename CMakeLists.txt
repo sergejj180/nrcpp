@@ -9,3 +9,5 @@ project ("nrcpp")
 add_subdirectory ("nrcpp")
 
 add_subdirectory ("nrc")
+
+add_subdirectory ("kpp")
