@@ -1,4 +1,4 @@
-// лексический анализатор для компилятора C++ - cpplex.cpp
+// Р»РµРєСЃРёС‡РµСЃРєРёР№ Р°РЅР°Р»РёР·Р°С‚РѕСЂ РґР»СЏ РєРѕРјРїРёР»СЏС‚РѕСЂР° C++ - cpplex.cpp
 
 #include <cstdio>
 #include <cstdlib>
@@ -11,15 +11,15 @@ using namespace std;
 #include "cpplex.h"
 
 
-// структура которая обеспечивает поиск кода лексемы
-// по ее имени 
+// СЃС‚СЂСѓРєС‚СѓСЂР° РєРѕС‚РѕСЂР°СЏ РѕР±РµСЃРїРµС‡РёРІР°РµС‚ РїРѕРёСЃРє РєРѕРґР° Р»РµРєСЃРµРјС‹
+// РїРѕ РµРµ РёРјРµРЅРё 
 struct keywords
 {
-	// имя ключевого слова
+	// РёРјСЏ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР°
 	const char *name;
 
 
-	// код ключевого слова
+	// РєРѕРґ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР°
 	int code;
 
 }	kpp_words[] = {
@@ -73,17 +73,17 @@ struct keywords
 };
 
 
-// счетчик строк
+// СЃС‡РµС‚С‡РёРє СЃС‚СЂРѕРє
 int linecount;
 
 
-// буфер с содержимым лексемы
+// Р±СѓС„РµСЂ СЃ СЃРѕРґРµСЂР¶РёРјС‹Рј Р»РµРєСЃРµРјС‹
 string lexbuf;
 
 
 
-// функция возвращает код ключевого слова или -1
-// в случае если такого ключевого слова нет
+// С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРґ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РёР»Рё -1
+// РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё С‚Р°РєРѕРіРѕ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РЅРµС‚
 int LookupKeywordCode( const char *keyname, keywords *kmas, int szmas )
 {
 	for( int i = 0; i< szmas / sizeof(keywords); i++ )
@@ -93,15 +93,15 @@ int LookupKeywordCode( const char *keyname, keywords *kmas, int szmas )
 }
 
 
-// ищет ключевые слова kpp
+// РёС‰РµС‚ РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° kpp
 int LookupKppKeywords( const char *keyname )
 {
 	return LookupKeywordCode( keyname, kpp_words, sizeof( kpp_words ) );
 }
 
 
-// игнорировать только пробелы,
-// если putspaces = true - выводить пробелы в lexbuf
+// РёРіРЅРѕСЂРёСЂРѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ РїСЂРѕР±РµР»С‹,
+// РµСЃР»Рё putspaces = true - РІС‹РІРѕРґРёС‚СЊ РїСЂРѕР±РµР»С‹ РІ lexbuf
 int IgnoreSpaces( BaseRead &ob, bool putspaces )
 {
 	register int c;
@@ -120,7 +120,7 @@ int IgnoreSpaces( BaseRead &ob, bool putspaces )
 }
 
 
-// игнорирует пробелы и новые строки
+// РёРіРЅРѕСЂРёСЂСѓРµС‚ РїСЂРѕР±РµР»С‹ Рё РЅРѕРІС‹Рµ СЃС‚СЂРѕРєРё
 int IgnoreNewlinesAndSpaces( BaseRead &ob )
 {
 	register int c;
@@ -135,12 +135,12 @@ int IgnoreNewlinesAndSpaces( BaseRead &ob )
 		else
 			break;
 
-	ob << c; // возвращаем один символ в поток
+	ob << c; // РІРѕР·РІСЂР°С‰Р°РµРј РѕРґРёРЅ СЃРёРјРІРѕР» РІ РїРѕС‚РѕРє
 	return c;
 }
 
 
-// выделить лексему 'идентификатор'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ'
 inline int LexemName( BaseRead &ob )
 {
 	register int c;
@@ -156,7 +156,7 @@ inline int LexemName( BaseRead &ob )
 }
 
 
-// выделить лексему 'оператор'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'РѕРїРµСЂР°С‚РѕСЂ'
 inline int LexemOperator( BaseRead &ob )
 {
 	register int c;
@@ -293,7 +293,7 @@ inline int LexemOperator( BaseRead &ob )
 			else 
 			{
 				ob << c;
-				Error( "пропущена '.' в операторе '...'");
+				Error( "РїСЂРѕРїСѓС‰РµРЅР° '.' РІ РѕРїРµСЂР°С‚РѕСЂРµ '...'");
 				lexbuf = "...";
 				return ELLIPSES;
 			}
@@ -310,7 +310,7 @@ inline int LexemOperator( BaseRead &ob )
 }
 
 
-// выделить лексему 'строковый литерал'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'СЃС‚СЂРѕРєРѕРІС‹Р№ Р»РёС‚РµСЂР°Р»'
 inline int LexemString( BaseRead &ob )
 {
 	register int c;
@@ -343,7 +343,7 @@ inline int LexemString( BaseRead &ob )
 		{
 			ob << c;
 
-			Error( "не хватает `\"' в конце строки" );
+			Error( "РЅРµ С…РІР°С‚Р°РµС‚ `\"' РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё" );
 			lexbuf += '\"';
 			return STRING;
 		}		
@@ -355,15 +355,15 @@ inline int LexemString( BaseRead &ob )
 }
 
 
-// функция возвращает ненулевое значение если символ восьмеричный
+// С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РЅРµРЅСѓР»РµРІРѕРµ Р·РЅР°С‡РµРЅРёРµ РµСЃР»Рё СЃРёРјРІРѕР» РІРѕСЃСЊРјРµСЂРёС‡РЅС‹Р№
 int isdigit8( int c )
 {
 	return c >= '0' && c <= '7';
 }
 
 
-// считывает число из входного потока, пока
-// функция isfunc возвращает true 
+// СЃС‡РёС‚С‹РІР°РµС‚ С‡РёСЃР»Рѕ РёР· РІС…РѕРґРЅРѕРіРѕ РїРѕС‚РѕРєР°, РїРѕРєР°
+// С„СѓРЅРєС†РёСЏ isfunc РІРѕР·РІСЂР°С‰Р°РµС‚ true 
 void ReadDigit( BaseRead &ob, int (*isfunc)(int) )
 {
 	register int c;
@@ -378,31 +378,31 @@ void ReadDigit( BaseRead &ob, int (*isfunc)(int) )
 }
 
 
-// считать суффикс у числа, вернуть true если суффикс suf
-// будет задан
+// СЃС‡РёС‚Р°С‚СЊ СЃСѓС„С„РёРєСЃ Сѓ С‡РёСЃР»Р°, РІРµСЂРЅСѓС‚СЊ true РµСЃР»Рё СЃСѓС„С„РёРєСЃ suf
+// Р±СѓРґРµС‚ Р·Р°РґР°РЅ
 static inline bool ReadDigitSuffix( BaseRead &ob, char suf )
 {
 	bool sl, ss;
 
-	sl = ss = false;	// два суффикса могут быть установлены
+	sl = ss = false;	// РґРІР° СЃСѓС„С„РёРєСЃР° РјРѕРіСѓС‚ Р±С‹С‚СЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹
 
-	// первый суффикс 'l', второй suf
+	// РїРµСЂРІС‹Р№ СЃСѓС„С„РёРєСЃ 'l', РІС‚РѕСЂРѕР№ suf
 	for( register int c;; )
 	{
 		ob >> c;
 		if( toupper(c) == 'L' )
 		{
 			if( sl ) 
-				Warning("суффикс 'L' у числа уже задан");
+				Warning("СЃСѓС„С„РёРєСЃ 'L' Сѓ С‡РёСЃР»Р° СѓР¶Рµ Р·Р°РґР°РЅ");
 			else
 				sl = true, lexbuf += c;
 		}
 
-		// или 'U' или 'F'
+		// РёР»Рё 'U' РёР»Рё 'F'
 		else if( toupper(c) == toupper(suf) )
 		{
 			if( ss )
-				Warning("суффикс '%c' у числа уже задан", suf);
+				Warning("СЃСѓС„С„РёРєСЃ '%c' Сѓ С‡РёСЃР»Р° СѓР¶Рµ Р·Р°РґР°РЅ", suf);
 			else 			
 				ss = true, lexbuf += c;				
 		}
@@ -418,7 +418,7 @@ static inline bool ReadDigitSuffix( BaseRead &ob, char suf )
 }
 
 
-// выделить лексему 'число'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'С‡РёСЃР»Рѕ'
 inline int LexemDigit( BaseRead &ob )
 {
 	register int c;
@@ -437,14 +437,14 @@ inline int LexemDigit( BaseRead &ob )
 			
 			ob >> p; ob << p;
 
-			if( !isdigit(p) )	// просто оператор точка
+			if( !isdigit(p) )	// РїСЂРѕСЃС‚Рѕ РѕРїРµСЂР°С‚РѕСЂ С‚РѕС‡РєР°
 			{ ob << c;	return -1; }
 
 			else
 				state = 2;
 		}
 
-		// десятичное число 1-9
+		// РґРµСЃСЏС‚РёС‡РЅРѕРµ С‡РёСЃР»Рѕ 1-9
 		else 
 		{
 			lexbuf += c;
@@ -476,7 +476,7 @@ inline int LexemDigit( BaseRead &ob )
 			ReadDigit( ob, isxdigit );
 
 			if( toupper( *(lexbuf.end() - 1) ) == 'X' )
-				Error("отсутствует 16-ричная последовательность после '%c'",c);
+				Error("РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ 16-СЂРёС‡РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РїРѕСЃР»Рµ '%c'",c);
 			return ReadDigitSuffix(ob, 'U') ? UINTEGER16 : INTEGER16;
 		}
 
@@ -496,7 +496,7 @@ inline int LexemDigit( BaseRead &ob )
 		break;
 
 	case 2:
-		// сюда переход только после точки
+		// СЃСЋРґР° РїРµСЂРµС…РѕРґ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ С‚РѕС‡РєРё
 		lexbuf += c;
 		ob >> c;
 	
@@ -519,14 +519,14 @@ inline int LexemDigit( BaseRead &ob )
 			}
 		}
 
-		// иначе было считано число и осталась просто точка
+		// РёРЅР°С‡Рµ Р±С‹Р»Рѕ СЃС‡РёС‚Р°РЅРѕ С‡РёСЃР»Рѕ Рё РѕСЃС‚Р°Р»Р°СЃСЊ РїСЂРѕСЃС‚Рѕ С‚РѕС‡РєР°
 		else
 			goto read_suffix;
 
 		break;
 
 	case 3:
-		// сюда переход после E
+		// СЃСЋРґР° РїРµСЂРµС…РѕРґ РїРѕСЃР»Рµ E
 		lexbuf += c;
 		ob >> c;
 
@@ -536,7 +536,7 @@ inline int LexemDigit( BaseRead &ob )
 		if( !isdigit(c) )
 		{
 			ob << c;
-			Error( "пропущено значение экспоненты" );
+			Error( "РїСЂРѕРїСѓС‰РµРЅРѕ Р·РЅР°С‡РµРЅРёРµ СЌРєСЃРїРѕРЅРµРЅС‚С‹" );
 			return LDOUBLE;
 		}
 
@@ -551,21 +551,21 @@ inline int LexemDigit( BaseRead &ob )
 
 
 
-// выделить лексему символьная константа
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ СЃРёРјРІРѕР»СЊРЅР°СЏ РєРѕРЅСЃС‚Р°РЅС‚Р°
 inline int LexemCharacter( BaseRead &ob )
 {
 	register int c;
 	
-	// символ ' уже считан, считываем до другого '
-	// либо до новой строки, количество символов не имеет
-	// значения, корректность значения символа проверяется после
+	// СЃРёРјРІРѕР» ' СѓР¶Рµ СЃС‡РёС‚Р°РЅ, СЃС‡РёС‚С‹РІР°РµРј РґРѕ РґСЂСѓРіРѕРіРѕ '
+	// Р»РёР±Рѕ РґРѕ РЅРѕРІРѕР№ СЃС‚СЂРѕРєРё, РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРёРјРІРѕР»РѕРІ РЅРµ РёРјРµРµС‚
+	// Р·РЅР°С‡РµРЅРёСЏ, РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ Р·РЅР°С‡РµРЅРёСЏ СЃРёРјРІРѕР»Р° РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РїРѕСЃР»Рµ
 	
 	ob >> c;
-	if( c == '\'' )	// пустой символ
+	if( c == '\'' )	// РїСѓСЃС‚РѕР№ СЃРёРјРІРѕР»
 	{
 		lexbuf += '\\',
-		lexbuf += '0', lexbuf += '\'';	// автоматически добавляем \0
-		Error( "пустой символ" );
+		lexbuf += '0', lexbuf += '\'';	// Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РґРѕР±Р°РІР»СЏРµРј \0
+		Error( "РїСѓСЃС‚РѕР№ СЃРёРјРІРѕР»" );
 		return CHARACTER;
 	}
 
@@ -604,7 +604,7 @@ inline int LexemCharacter( BaseRead &ob )
 		{
 			ob << c;
 
-			Error( "не хватает `\'' в конце строки" );
+			Error( "РЅРµ С…РІР°С‚Р°РµС‚ `\'' РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё" );
 			lexbuf += '\'';
 			return CHARACTER;
 		}		
@@ -616,8 +616,8 @@ inline int LexemCharacter( BaseRead &ob )
 }
 
 
-// функция выделяет следующую лексему из
-// потока in
+// С„СѓРЅРєС†РёСЏ РІС‹РґРµР»СЏРµС‚ СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ РёР·
+// РїРѕС‚РѕРєР° in
 int Lex( BaseRead &ob )
 {
 	register int c;
@@ -627,10 +627,10 @@ int Lex( BaseRead &ob )
 
 	if( IS_NAME_START(c) ) 
 	{
-		ob >> c;  // считываем этот символ еще раз
+		ob >> c;  // СЃС‡РёС‚С‹РІР°РµРј СЌС‚РѕС‚ СЃРёРјРІРѕР» РµС‰Рµ СЂР°Р·
 		lexbuf += c;
 		
-		// возможно признак обозначения wide-string
+		// РІРѕР·РјРѕР¶РЅРѕ РїСЂРёР·РЅР°Рє РѕР±РѕР·РЅР°С‡РµРЅРёСЏ wide-string
 		if( c == 'L' )	
 		{
 			int p; 
@@ -655,14 +655,14 @@ int Lex( BaseRead &ob )
 		}
 
 		LexemName(ob);
-		return NAME;	// ключевые слова определяются потом
+		return NAME;	// РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° РѕРїСЂРµРґРµР»СЏСЋС‚СЃСЏ РїРѕС‚РѕРј
 	}
 
 	else if( isdigit(c) || c == '.' )
 	{
 		int r;
 		if( (r = LexemDigit(ob)) == -1 )
-			return LexemOperator(ob);	// иначе считываем точку (.*)
+			return LexemOperator(ob);	// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј С‚РѕС‡РєСѓ (.*)
 		else
 			return r;
 	}

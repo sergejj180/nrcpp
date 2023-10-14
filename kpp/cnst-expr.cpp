@@ -1,4 +1,4 @@
-// вычисляет константные выражения - cnst-expr.cpp
+// РІС‹С‡РёСЃР»СЏРµС‚ РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Рµ РІС‹СЂР°Р¶РµРЅРёСЏ - cnst-expr.cpp
 
 
 #include <list>
@@ -14,15 +14,15 @@ using namespace std;
 #include "limits.h"
 #include "macro.h"
 
-// текущий токен
+// С‚РµРєСѓС‰РёР№ С‚РѕРєРµРЅ
 static int token;
 
 
-// указатель на текущий буффер 
+// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‚РµРєСѓС‰РёР№ Р±СѓС„С„РµСЂ 
 static BufferRead *pBuf;
 
 
-// класс контролирует переполнение стека в парсере
+// РєР»Р°СЃСЃ РєРѕРЅС‚СЂРѕР»РёСЂСѓРµС‚ РїРµСЂРµРїРѕР»РЅРµРЅРёРµ СЃС‚РµРєР° РІ РїР°СЂСЃРµСЂРµ
 class ParserStack
 {
 public:
@@ -31,7 +31,7 @@ public:
 	ParserStack( ) { 
 		curdeep++; 
 		if( curdeep == MAX_PARSER_DEEP )
-			Fatal( "стек переполнен: слишком сложное выражение" );
+			Fatal( "СЃС‚РµРє РїРµСЂРµРїРѕР»РЅРµРЅ: СЃР»РёС€РєРѕРј СЃР»РѕР¶РЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ" );
 	}
 
 	~ParserStack( ) { curdeep--; }
@@ -57,23 +57,23 @@ static void EvalExpr14( int &result );
 
 
 
-// лексический анализатор, присваивает token значение лексемы
+// Р»РµРєСЃРёС‡РµСЃРєРёР№ Р°РЅР°Р»РёР·Р°С‚РѕСЂ, РїСЂРёСЃРІР°РёРІР°РµС‚ token Р·РЅР°С‡РµРЅРёРµ Р»РµРєСЃРµРјС‹
 static inline int TokLex()
 {
 	return token = Lex(*pBuf);
 }
 
 
-// функция преобразует символ в целое
-// -1 - если преобразование не удается
+// С„СѓРЅРєС†РёСЏ РїСЂРµРѕР±СЂР°Р·СѓРµС‚ СЃРёРјРІРѕР» РІ С†РµР»РѕРµ
+// -1 - РµСЃР»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµ СѓРґР°РµС‚СЃСЏ
 static inline int ConvertCharToInt( char *s, bool wide )
 {
 	register char *p;
 	extern int isdigit8( int );
 	int r;
-	char *end;	// конец константы, должен указывать на '\''
+	char *end;	// РєРѕРЅРµС† РєРѕРЅСЃС‚Р°РЅС‚С‹, РґРѕР»Р¶РµРЅ СѓРєР°Р·С‹РІР°С‚СЊ РЅР° '\''
 
-	p = wide ? s+2 : s + 1;	// после '\''
+	p = wide ? s+2 : s + 1;	// РїРѕСЃР»Рµ '\''
 	end = p + 1;
 	r = *p;
 
@@ -82,7 +82,7 @@ static inline int ConvertCharToInt( char *s, bool wide )
 		end = p+2;
 		if( *(p+1) == 'x' && *(p+2) == '\'')
 		{
-			Error("отсутствует 16-ричная последовательность после '\\x'");
+			Error("РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ 16-СЂРёС‡РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РїРѕСЃР»Рµ '\\x'");
 			return 'x';
 		}
 
@@ -94,14 +94,14 @@ static inline int ConvertCharToInt( char *s, bool wide )
 
 			r = strtol( start, &stop, base );
 
-			// произошло переполнение
+			// РїСЂРѕРёР·РѕС€Р»Рѕ РїРµСЂРµРїРѕР»РЅРµРЅРёРµ
 			if( (errno == ERANGE) || 
 				(wide ? r > MAX_WCHAR_T_VALUE : r > MAX_CHAR_VALUE) )
 				return -1;
 
 			if( *stop != '\'' )
 			{
-				Error( "'%x': неизвестный символ в %d-ричной последовательности", 
+				Error( "'%x': РЅРµРёР·РІРµСЃС‚РЅС‹Р№ СЃРёРјРІРѕР» РІ %d-СЂРёС‡РЅРѕР№ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё", 
 					*stop, base );
 				return *(p+1);
 			}
@@ -124,7 +124,7 @@ static inline int ConvertCharToInt( char *s, bool wide )
 		case '\'': r = '\''; break;
 		case '\"': r = '\"'; break;
 		default:
-			Error( "'\\%c': некорректная символная последовательность", *(p+1));
+			Error( "'\\%c': РЅРµРєРѕСЂСЂРµРєС‚РЅР°СЏ СЃРёРјРІРѕР»РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ", *(p+1));
 			return *(p+1);
 		}
 	}
@@ -136,7 +136,7 @@ static inline int ConvertCharToInt( char *s, bool wide )
 	{
 		if( wide )
 		{
-			Warning( "символы кроме первого игнорируются в константе 'wchar_t'" ); 
+			Warning( "СЃРёРјРІРѕР»С‹ РєСЂРѕРјРµ РїРµСЂРІРѕРіРѕ РёРіРЅРѕСЂРёСЂСѓСЋС‚СЃСЏ РІ РєРѕРЅСЃС‚Р°РЅС‚Рµ 'wchar_t'" ); 
 			return r;
 		}
 
@@ -146,8 +146,8 @@ static inline int ConvertCharToInt( char *s, bool wide )
 }
 
 
-// строка с 16-, 10-, 8-ричные числом преобразуется в целое
-// возвр. -1 если преобразование не удалось (переполнение)
+// СЃС‚СЂРѕРєР° СЃ 16-, 10-, 8-СЂРёС‡РЅС‹Рµ С‡РёСЃР»РѕРј РїСЂРµРѕР±СЂР°Р·СѓРµС‚СЃСЏ РІ С†РµР»РѕРµ
+// РІРѕР·РІСЂ. -1 РµСЃР»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµ СѓРґР°Р»РѕСЃСЊ (РїРµСЂРµРїРѕР»РЅРµРЅРёРµ)
 static inline int ConvertInteger( char *s, int base )
 {
 	int r = strtol( s, NULL, base );
@@ -155,7 +155,7 @@ static inline int ConvertInteger( char *s, int base )
 }
 
 
-// возвращает значение константы: hex, oct, char, wchar_t, int
+// РІРѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ РєРѕРЅСЃС‚Р°РЅС‚С‹: hex, oct, char, wchar_t, int
 int CnstValue( char *s, int code )
 {
 	int r;
@@ -184,7 +184,7 @@ int CnstValue( char *s, int code )
 
 	if( r == -1 )
 	{
-		Error("значение константы слишком велико для типа '%s'", tname);
+		Error("Р·РЅР°С‡РµРЅРёРµ РєРѕРЅСЃС‚Р°РЅС‚С‹ СЃР»РёС€РєРѕРј РІРµР»РёРєРѕ РґР»СЏ С‚РёРїР° '%s'", tname);
 		errno = 0; 
 	}
 
@@ -192,7 +192,7 @@ int CnstValue( char *s, int code )
 }
 
 
-// возвращает результат константного выражения в строке s
+// РІРѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ РєРѕРЅСЃС‚Р°РЅС‚РЅРѕРіРѕ РІС‹СЂР°Р¶РµРЅРёСЏ РІ СЃС‚СЂРѕРєРµ s
 int CnstExpr( string &s )
 {
 	pBuf = new BufferRead(s);
@@ -212,12 +212,12 @@ int CnstExpr( string &s )
 }
 
 
-// оператор '?:'
+// РѕРїРµСЂР°С‚РѕСЂ '?:'
 static void EvalExpr2( int &result )
 {
 	int temp1, temp2;
 
-	// при создании объекта контролируется переполнение стека
+	// РїСЂРё СЃРѕР·РґР°РЅРёРё РѕР±СЉРµРєС‚Р° РєРѕРЅС‚СЂРѕР»РёСЂСѓРµС‚СЃСЏ РїРµСЂРµРїРѕР»РЅРµРЅРёРµ СЃС‚РµРєР°
 	ParserStack control;	
 
 	EvalExpr3( result );
@@ -228,7 +228,7 @@ static void EvalExpr2( int &result )
 
 		if( token != ':' )
 		{	
-			throw "синтаксическая ошибка: пропущено ':'"; 
+			throw "СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°: РїСЂРѕРїСѓС‰РµРЅРѕ ':'"; 
 		}
 
 		TokLex();
@@ -238,7 +238,7 @@ static void EvalExpr2( int &result )
 }
 
 
-// оператор ||
+// РѕРїРµСЂР°С‚РѕСЂ ||
 static void EvalExpr3( int &result )
 {
 	int temp;
@@ -255,7 +255,7 @@ static void EvalExpr3( int &result )
 }
 
 
-// оператор &&
+// РѕРїРµСЂР°С‚РѕСЂ &&
 static void EvalExpr4( int &result )
 {
 	int temp;
@@ -272,7 +272,7 @@ static void EvalExpr4( int &result )
 }
 
 
-// оператор |
+// РѕРїРµСЂР°С‚РѕСЂ |
 static void EvalExpr5( int &result )
 {
 	int temp;
@@ -289,7 +289,7 @@ static void EvalExpr5( int &result )
 }
 
 
-// оператор '^'
+// РѕРїРµСЂР°С‚РѕСЂ '^'
 static void EvalExpr6( int &result )
 {
 	int temp;
@@ -306,7 +306,7 @@ static void EvalExpr6( int &result )
 }
 
 
-// оператор '&'
+// РѕРїРµСЂР°С‚РѕСЂ '&'
 static void EvalExpr7( int &result )
 {
 	int temp;
@@ -323,7 +323,7 @@ static void EvalExpr7( int &result )
 }
 
 
-// операторы ==, !=
+// РѕРїРµСЂР°С‚РѕСЂС‹ ==, !=
 static void EvalExpr8( int &result )
 {
 	int temp, op;
@@ -343,7 +343,7 @@ static void EvalExpr8( int &result )
 }
 
 
-// операторы <=, <, >, >=
+// РѕРїРµСЂР°С‚РѕСЂС‹ <=, <, >, >=
 static void EvalExpr9( int &result )
 {
 	int temp, op;
@@ -371,7 +371,7 @@ static void EvalExpr9( int &result )
 }
 
 
-// операторы <<, >>
+// РѕРїРµСЂР°С‚РѕСЂС‹ <<, >>
 static void EvalExpr10( int &result )
 {
 	int temp, op;
@@ -392,7 +392,7 @@ static void EvalExpr10( int &result )
 }
 
 
-// операторы +, -
+// РѕРїРµСЂР°С‚РѕСЂС‹ +, -
 static void EvalExpr11( int &result )
 {
 	int temp, op;
@@ -413,7 +413,7 @@ static void EvalExpr11( int &result )
 }
 
 
-// операторы *, /, %
+// РѕРїРµСЂР°С‚РѕСЂС‹ *, /, %
 static void EvalExpr12( int &result )
 {
 	int temp, op;
@@ -431,7 +431,7 @@ static void EvalExpr12( int &result )
 		else 
 		{
 			if( temp == 0 )			
-				throw "деление на 0";			
+				throw "РґРµР»РµРЅРёРµ РЅР° 0";			
 
 			if( op == '/' )
 				result = result / temp;
@@ -443,7 +443,7 @@ static void EvalExpr12( int &result )
 }
 
 
-// унарные операторы !, ~, +, -
+// СѓРЅР°СЂРЅС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹ !, ~, +, -
 static void EvalExpr13( int &result )
 {
 	int op;
@@ -470,8 +470,8 @@ static void EvalExpr13( int &result )
 }
 
 
-// функция преобразует токен в целое число
-// или выполняет выражение в скобках
+// С„СѓРЅРєС†РёСЏ РїСЂРµРѕР±СЂР°Р·СѓРµС‚ С‚РѕРєРµРЅ РІ С†РµР»РѕРµ С‡РёСЃР»Рѕ
+// РёР»Рё РІС‹РїРѕР»РЅСЏРµС‚ РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…
 static void EvalExpr14( int &result )
 {
 	if( token == '(' )
@@ -479,7 +479,7 @@ static void EvalExpr14( int &result )
 		TokLex();
 		EvalExpr2(result);
 		if( token != ')' )		
-			throw ("синтаксическая ошибка: пропущена ')'");				
+			throw ("СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°: РїСЂРѕРїСѓС‰РµРЅР° ')'");				
 
 		TokLex();
 	}
@@ -491,5 +491,5 @@ static void EvalExpr14( int &result )
 	}
 
 	else
-		throw ("синтаксическая ошибка");		
+		throw ("СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°");		
 }

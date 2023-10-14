@@ -1,57 +1,57 @@
-// строители тела функции, проверяют и строят - BodyMaker.h
-
-
-// утилиты для постройки тела функции
+// СЃС‚СЂРѕРёС‚РµР»Рё С‚РµР»Р° С„СѓРЅРєС†РёРё, РїСЂРѕРІРµСЂСЏСЋС‚ Рё СЃС‚СЂРѕСЏС‚ - BodyMaker.h
+#ifndef BODY_MAKER_H
+#define BODY_MAKER_H
+// СѓС‚РёР»РёС‚С‹ РґР»СЏ РїРѕСЃС‚СЂРѕР№РєРё С‚РµР»Р° С„СѓРЅРєС†РёРё
 namespace BodyMakerUtils
 {
-	// создает инициализатор объекта из списка выражений и конструктор.
-	// Создает инициализатор конструктором
+	// СЃРѕР·РґР°РµС‚ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РѕР±СЉРµРєС‚Р° РёР· СЃРїРёСЃРєР° РІС‹СЂР°Р¶РµРЅРёР№ Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ.
+	// РЎРѕР·РґР°РµС‚ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј
 	PObjectInitializator MakeObjectInitializator( 
 		const PExpressionList &initList, const DeclarationMaker &dm );
 
-	// создает инициализатор из списка инициализации
+	// СЃРѕР·РґР°РµС‚ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РёР· СЃРїРёСЃРєР° РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 	PObjectInitializator MakeObjectInitializator( const PListInitComponent &il );
 
-	// построить инструкцию условия для конструкций if, for, switch, while
-	// на основе пакетов с декларацией и инициализатором
+	// РїРѕСЃС‚СЂРѕРёС‚СЊ РёРЅСЃС‚СЂСѓРєС†РёСЋ СѓСЃР»РѕРІРёСЏ РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёР№ if, for, switch, while
+	// РЅР° РѕСЃРЅРѕРІРµ РїР°РєРµС‚РѕРІ СЃ РґРµРєР»Р°СЂР°С†РёРµР№ Рё РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРј
 	PInstruction MakeCondition( const NodePackage &decl, 
 				const POperand &iator, const Position &errPos );
 
-	// проверяет, чтобы условная конструкция преобразовывалась в склярный или целый тип
-	// Инструкцией может быть декларация, либо выражение. В случае декларации,
-	// создаем временный основной операнд на основе декларатора и его проверяем.
-	// Флаг toInt, указывает, что преобразование должно производится в целый тип,
-	// в противном случае в склярный
+	// РїСЂРѕРІРµСЂСЏРµС‚, С‡С‚РѕР±С‹ СѓСЃР»РѕРІРЅР°СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёСЏ РїСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°Р»Р°СЃСЊ РІ СЃРєР»СЏСЂРЅС‹Р№ РёР»Рё С†РµР»С‹Р№ С‚РёРї
+	// РРЅСЃС‚СЂСѓРєС†РёРµР№ РјРѕР¶РµС‚ Р±С‹С‚СЊ РґРµРєР»Р°СЂР°С†РёСЏ, Р»РёР±Рѕ РІС‹СЂР°Р¶РµРЅРёРµ. Р’ СЃР»СѓС‡Р°Рµ РґРµРєР»Р°СЂР°С†РёРё,
+	// СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅС‹Р№ РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ РЅР° РѕСЃРЅРѕРІРµ РґРµРєР»Р°СЂР°С‚РѕСЂР° Рё РµРіРѕ РїСЂРѕРІРµСЂСЏРµРј.
+	// Р¤Р»Р°Рі toInt, СѓРєР°Р·С‹РІР°РµС‚, С‡С‚Рѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РґРѕР»Р¶РЅРѕ РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РІ С†РµР»С‹Р№ С‚РёРї,
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РІ СЃРєР»СЏСЂРЅС‹Р№
 	void ValidCondition( const PInstruction &cond, PCSTR cnam, bool toInt = false );
 
-	// проверяет условие только для выражения
+	// РїСЂРѕРІРµСЂСЏРµС‚ СѓСЃР»РѕРІРёРµ С‚РѕР»СЊРєРѕ РґР»СЏ РІС‹СЂР°Р¶РµРЅРёСЏ
 	void ValidCondition( const POperand &exp, PCSTR cnam, const Position &ep );
 
-	// создать область видимости для новой конструкции ориентируяясь 
-	// на предыдущую, если создана возвращает true
+	// СЃРѕР·РґР°С‚СЊ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ РЅРѕРІРѕР№ РєРѕРЅСЃС‚СЂСѓРєС†РёРё РѕСЂРёРµРЅС‚РёСЂСѓСЏСЏСЃСЊ 
+	// РЅР° РїСЂРµРґС‹РґСѓС‰СѓСЋ, РµСЃР»Рё СЃРѕР·РґР°РЅР° РІРѕР·РІСЂР°С‰Р°РµС‚ true
 	bool MakeLocalSymbolTable( const Construction &cur );
 
-	// шаблонная функция создания компонента, который требует только позицию
+	// С€Р°Р±Р»РѕРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РєРѕРјРїРѕРЅРµРЅС‚Р°, РєРѕС‚РѕСЂС‹Р№ С‚СЂРµР±СѓРµС‚ С‚РѕР»СЊРєРѕ РїРѕР·РёС†РёСЋ
 	template <class Component>
 	inline Component *SimpleComponentMaker( const Position &ep ) {
 		return new Component(ep);
 	}
 
-	// шаблонная функция создания компонента, который требует 
-	// родительскую конструкцию и позицию
+	// С€Р°Р±Р»РѕРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РєРѕРјРїРѕРЅРµРЅС‚Р°, РєРѕС‚РѕСЂС‹Р№ С‚СЂРµР±СѓРµС‚ 
+	// СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ Рё РїРѕР·РёС†РёСЋ
 	template <class Cons>
 	inline Cons *SimpleConstructionMaker( Construction &parent, const Position &ep ) {
 		return new Cons(&parent, ep);
 	}
 
-	// создание конструкций: if, switch, while
+	// СЃРѕР·РґР°РЅРёРµ РєРѕРЅСЃС‚СЂСѓРєС†РёР№: if, switch, while
 	template <class Cons>
 	inline Cons *ConditionConstructionMaker( const PInstruction &cond, 
-		Construction &parent, const Position &ep ) {	
+		Construction &parent, const Position &ep ) {
 		return new Cons(cond, &parent, ep);
 	}
 
-	// создать for-конструкцию, с проверкой выражения если есть
+	// СЃРѕР·РґР°С‚СЊ for-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, СЃ РїСЂРѕРІРµСЂРєРѕР№ РІС‹СЂР°Р¶РµРЅРёСЏ РµСЃР»Рё РµСЃС‚СЊ
 	inline ForConstruction *ForConstructionMaker( const ForInitSection &fic, 
 		const PInstruction &cond, const POperand &iter, Construction &ppc, const Position &ep ) {
 		if( !cond.IsNull() )
@@ -59,170 +59,172 @@ namespace BodyMakerUtils
 		return new ForConstruction(fic, cond, iter, &ppc, ep);;
 	}
 
-	// строитель выражения
+	// СЃС‚СЂРѕРёС‚РµР»СЊ РІС‹СЂР°Р¶РµРЅРёСЏ
 	inline ExpressionInstruction *ExpressionInstructionMaker( 
 		const POperand &exp, const Position &ep ) {
 
 		return new ExpressionInstruction(exp, ep);
 	}
 
-	// строитель декларации
+	// СЃС‚СЂРѕРёС‚РµР»СЊ РґРµРєР»Р°СЂР°С†РёРё
 	inline DeclarationInstruction *DeclarationInstructionMaker( const TypyziedEntity &dator, 
 		const PObjectInitializator &iator, const Position &ep ) {
-		// декларатор должен быть объектом или функцией
+		// РґРµРєР»Р°СЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РѕР±СЉРµРєС‚РѕРј РёР»Рё С„СѓРЅРєС†РёРµР№
 		INTERNAL_IF( &dator == NULL ||
 			!(dator.IsObject() || dator.IsFunction()) ); 
 
 		return new DeclarationInstruction(dator, iator, ep);
 	}
 
-	// формируем декларацию класса
+	// С„РѕСЂРјРёСЂСѓРµРј РґРµРєР»Р°СЂР°С†РёСЋ РєР»Р°СЃСЃР°
 	inline ClassDeclarationInstruction *ClassInstructionMaker( 
 		const ClassType &cls, const Position &ep ) {
 		return new ClassDeclarationInstruction(cls, ep);
 	}
 
-	// строитель инструкции декларации класса
+	// СЃС‚СЂРѕРёС‚РµР»СЊ РёРЅСЃС‚СЂСѓРєС†РёРё РґРµРєР»Р°СЂР°С†РёРё РєР»Р°СЃСЃР°
 	inline ClassDeclarationInstruction *ClassDeclarationInstructionMaker( 
 		const ClassType &cls, const Position &ep ) {
 		return new ClassDeclarationInstruction(cls, ep);			
 	}
 
-	// строитель обычной метки
+	// СЃС‚СЂРѕРёС‚РµР»СЊ РѕР±С‹С‡РЅРѕР№ РјРµС‚РєРё
 	SimpleLabelBodyComponent *SimpleLabelMaker( 
 		const Label &lab, const BodyComponent &nc, FunctionBody &fnBody, const Position &ep );
 		
-	// строитель case, с проверкой
+	// СЃС‚СЂРѕРёС‚РµР»СЊ case, СЃ РїСЂРѕРІРµСЂРєРѕР№
 	CaseLabelBodyComponent *CaseLabelMaker( const POperand &exp, 
 		const BodyComponent &childBc, const Construction &cur, const Position &ep );
 
-	// строитель default, с проверкой
+	// СЃС‚СЂРѕРёС‚РµР»СЊ default, СЃ РїСЂРѕРІРµСЂРєРѕР№
 	DefaultLabelBodyComponent *DefaultLabelMaker( 
 		const BodyComponent &childBc, const Construction &cur, const Position &ep );
 
-	// строитель asm
+	// СЃС‚СЂРѕРёС‚РµР»СЊ asm
 	inline AsmAdditionalOperation *AsmOperationMaker( 
 							const CharString &lit, const Position &ep ) {
 		return new AsmAdditionalOperation(lit.c_str(), ep);
 	}
 
-	// строитель else, с проверкой
+	// СЃС‚СЂРѕРёС‚РµР»СЊ else, СЃ РїСЂРѕРІРµСЂРєРѕР№
 	ElseConstruction *ElseContructionMaker( const Construction &cur, const Position &ep );
 
-	// строитель break-операции с семантической проверкой 
+	// СЃС‚СЂРѕРёС‚РµР»СЊ break-РѕРїРµСЂР°С†РёРё СЃ СЃРµРјР°РЅС‚РёС‡РµСЃРєРѕР№ РїСЂРѕРІРµСЂРєРѕР№ 
 	BreakAdditionalOperation *BreakOperationMaker( Construction &ppc, const Position &ep );
 
-	// строитель continue-операции
+	// СЃС‚СЂРѕРёС‚РµР»СЊ continue-РѕРїРµСЂР°С†РёРё
 	ContinueAdditionalOperation *ContinueOperationMaker( Construction &ppc, const Position &ep );
 	
-	// строитель return-операции. Конструктор не может возвращать значения, также
-	// как деструктор
+	// СЃС‚СЂРѕРёС‚РµР»СЊ return-РѕРїРµСЂР°С†РёРё. РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РІРѕР·РІСЂР°С‰Р°С‚СЊ Р·РЅР°С‡РµРЅРёСЏ, С‚Р°РєР¶Рµ
+	// РєР°Рє РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 	ReturnAdditionalOperation *ReturnOperationMaker( 
 		const POperand &rval, const Function &fn, const Position &ep );
 
-	// строитель goto-операции
+	// СЃС‚СЂРѕРёС‚РµР»СЊ goto-РѕРїРµСЂР°С†РёРё
 	GotoAdditionalOperation *GotoOperationMaker( 
 		const CharString &labName, FunctionBody &fnBody, const Position &ep );
 
-	// строитель списка инструкций. Может быть блок деклараций, либо выражение
+	// СЃС‚СЂРѕРёС‚РµР»СЊ СЃРїРёСЃРєР° РёРЅСЃС‚СЂСѓРєС†РёР№. РњРѕР¶РµС‚ Р±С‹С‚СЊ Р±Р»РѕРє РґРµРєР»Р°СЂР°С†РёР№, Р»РёР±Рѕ РІС‹СЂР°Р¶РµРЅРёРµ
 	Instruction *InstructionListMaker( const InstructionList &insList, const Position &ep );
 }
 
 
-// контроллер конструкций. Следит за сменой текущей конструкции, удалением
-// областей видимости и контролем за порядком строительства тела функции
+// РєРѕРЅС‚СЂРѕР»Р»РµСЂ РєРѕРЅСЃС‚СЂСѓРєС†РёР№. РЎР»РµРґРёС‚ Р·Р° СЃРјРµРЅРѕР№ С‚РµРєСѓС‰РµР№ РєРѕРЅСЃС‚СЂСѓРєС†РёРё, СѓРґР°Р»РµРЅРёРµРј
+// РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё Рё РєРѕРЅС‚СЂРѕР»РµРј Р·Р° РїРѕСЂСЏРґРєРѕРј СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІР° С‚РµР»Р° С„СѓРЅРєС†РёРё
 class ConstructionController
 {
-	// текущая конструкция в теле обрабатываемой функции
+	// С‚РµРєСѓС‰Р°СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёСЏ РІ С‚РµР»Рµ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРјРѕР№ С„СѓРЅРєС†РёРё
 	const Construction *pCurrentConstruction;
 
 public:
-	// задать текущую конструкцию
+	// Р·Р°РґР°С‚СЊ С‚РµРєСѓС‰СѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 	ConstructionController( const Construction &pCur )
 		: pCurrentConstruction(&pCur) {
 	}
 
-	// задать текущую конструкцию извне. Требуется при создании мнимой
-	// составной области видимости для меток
+	// Р·Р°РґР°С‚СЊ С‚РµРєСѓС‰СѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ РёР·РІРЅРµ. РўСЂРµР±СѓРµС‚СЃСЏ РїСЂРё СЃРѕР·РґР°РЅРёРё РјРЅРёРјРѕР№
+	// СЃРѕСЃС‚Р°РІРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ РјРµС‚РѕРє
 	void SetCurrentConstruction( const Construction *pCur ) {
 		INTERNAL_IF( pCur == NULL );
 		pCurrentConstruction = pCur;
 	}
 
-	// получить текущую конструкцию
+	// РїРѕР»СѓС‡РёС‚СЊ С‚РµРєСѓС‰СѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 	Construction &GetCurrentConstruction() const {
 		return const_cast<Construction &>(*pCurrentConstruction); 
 	}
 };
 
 
-// строитель catch-конструкции с проверкой
+// СЃС‚СЂРѕРёС‚РµР»СЊ catch-РєРѕРЅСЃС‚СЂСѓРєС†РёРё СЃ РїСЂРѕРІРµСЂРєРѕР№
 class CatchConstructionMaker
 {
-	// перехватываемый объект
+	// РїРµСЂРµС…РІР°С‚С‹РІР°РµРјС‹Р№ РѕР±СЉРµРєС‚
 	const PTypyziedEntity &catchObj;
 
-	// родительская try-конструкция
+	// СЂРѕРґРёС‚РµР»СЊСЃРєР°СЏ try-РєРѕРЅСЃС‚СЂСѓРєС†РёСЏ
 	Construction &parent;
 
-	// позиция
+	// РїРѕР·РёС†РёСЏ
 	const Position &ep;
 
-	// проверяет, являются ли обработчики одинаковыми
+	// РїСЂРѕРІРµСЂСЏРµС‚, СЏРІР»СЏСЋС‚СЃСЏ Р»Рё РѕР±СЂР°Р±РѕС‚С‡РёРєРё РѕРґРёРЅР°РєРѕРІС‹РјРё
 	bool EqualCatchers( const CatchConstruction &cc1, const CatchConstruction &cc2 ) const;
 
 public:
-	// принимаем объект (может быть 0, в случае ...), 
-	// родительскую конструкцию (try) и позицию
+	// РїСЂРёРЅРёРјР°РµРј РѕР±СЉРµРєС‚ (РјРѕР¶РµС‚ Р±С‹С‚СЊ 0, РІ СЃР»СѓС‡Р°Рµ ...), 
+	// СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ (try) Рё РїРѕР·РёС†РёСЋ
 	CatchConstructionMaker( const PTypyziedEntity &catchObj, Construction &parent,
 		const Position &ep ) 
 		: catchObj(catchObj), parent(parent), ep(ep) {
 		INTERNAL_IF( parent.GetConstructionID() != Construction::CC_TRY );
 	}
 
-	// строить
+	// СЃС‚СЂРѕРёС‚СЊ
 	CatchConstruction *Make();
 };
 
 
-// проверки тела функции после постройки. Проверяет все метки, к которым
-// идет обращение через goto. Проверяет чтобы goto, case, default не перескакивали
-// через декларации
+// РїСЂРѕРІРµСЂРєРё С‚РµР»Р° С„СѓРЅРєС†РёРё РїРѕСЃР»Рµ РїРѕСЃС‚СЂРѕР№РєРё. РџСЂРѕРІРµСЂСЏРµС‚ РІСЃРµ РјРµС‚РєРё, Рє РєРѕС‚РѕСЂС‹Рј
+// РёРґРµС‚ РѕР±СЂР°С‰РµРЅРёРµ С‡РµСЂРµР· goto. РџСЂРѕРІРµСЂСЏРµС‚ С‡С‚РѕР±С‹ goto, case, default РЅРµ РїРµСЂРµСЃРєР°РєРёРІР°Р»Рё
+// С‡РµСЂРµР· РґРµРєР»Р°СЂР°С†РёРё
 class PostBuildingChecks
 {
-	// ссылка на тело функции
+	// СЃСЃС‹Р»РєР° РЅР° С‚РµР»Рѕ С„СѓРЅРєС†РёРё
 	const FunctionBody &body;
 
-	// класс предикат, используется при поиске метки в списке
+	// РєР»Р°СЃСЃ РїСЂРµРґРёРєР°С‚, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё РїРѕРёСЃРєРµ РјРµС‚РєРё РІ СЃРїРёСЃРєРµ
 	class LabelPr {
-		// имя искомой метки
+		// РёРјСЏ РёСЃРєРѕРјРѕР№ РјРµС‚РєРё
 		const string &lname;
 
 	public:
-		// задать имя
+		// Р·Р°РґР°С‚СЊ РёРјСЏ
 		LabelPr( const string &ln )
 			: lname(ln) {
 		}
 
-		// если имя совпало, вернуть true
+		// РµСЃР»Рё РёРјСЏ СЃРѕРІРїР°Р»Рѕ, РІРµСЂРЅСѓС‚СЊ true
 		bool operator()( const Label &lab ) {
 			return lname == lab.GetName().c_str();
 		}
 	};
 
-	// проверим, чтобы все метки, к которым идет обращение через
-	// goto, были объявлены
+	// РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РІСЃРµ РјРµС‚РєРё, Рє РєРѕС‚РѕСЂС‹Рј РёРґРµС‚ РѕР±СЂР°С‰РµРЅРёРµ С‡РµСЂРµР·
+	// goto, Р±С‹Р»Рё РѕР±СЉСЏРІР»РµРЅС‹
 	void CheckLabels( const FunctionBody::DefinedLabelList &dll, 
 		const FunctionBody::QueryLabelList &qll );
 
 public:
-	// задать тело
+	// Р·Р°РґР°С‚СЊ С‚РµР»Рѕ
 	PostBuildingChecks( const FunctionBody &body )
 		: body(body) {
 	}
 
-	// выполнить проверки
+	// РІС‹РїРѕР»РЅРёС‚СЊ РїСЂРѕРІРµСЂРєРё
 	void DoChecks() {
 		CheckLabels(body.GetDefinedLabelList(), body.GetQueryLabelList());
 	}
 };
+
+#endif

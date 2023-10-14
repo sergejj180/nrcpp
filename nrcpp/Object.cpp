@@ -1,5 +1,5 @@
-// реализация методов классов идентификатор, типизированная сущность и 
-// производных от него - TypyziedEntity.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ РєР»Р°СЃСЃРѕРІ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ, С‚РёРїРёР·РёСЂРѕРІР°РЅРЅР°СЏ СЃСѓС‰РЅРѕСЃС‚СЊ Рё 
+// РїСЂРѕРёР·РІРѕРґРЅС‹С… РѕС‚ РЅРµРіРѕ - TypyziedEntity.cpp
 
 #pragma warning(disable: 4786)
 
@@ -15,33 +15,33 @@
 #include "nrc.h"
 using namespace nrc;
 
-// утилиты транслятора
+// СѓС‚РёР»РёС‚С‹ С‚СЂР°РЅСЃР»СЏС‚РѕСЂР°
 namespace TranslatorUtils
 {
-	// генерирует имя области видимости без добавочных символов. Учитывает
-	// след. области видимости: глобальная, именованная, классовая, функциональная (локальная)
+	// РіРµРЅРµСЂРёСЂСѓРµС‚ РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Р±РµР· РґРѕР±Р°РІРѕС‡РЅС‹С… СЃРёРјРІРѕР»РѕРІ. РЈС‡РёС‚С‹РІР°РµС‚
+	// СЃР»РµРґ. РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё: РіР»РѕР±Р°Р»СЊРЅР°СЏ, РёРјРµРЅРѕРІР°РЅРЅР°СЏ, РєР»Р°СЃСЃРѕРІР°СЏ, С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ (Р»РѕРєР°Р»СЊРЅР°СЏ)
 	const string &GenerateScopeName( const SymbolTable &scope );
 
-	// сгенерировать имя для безимянного идентификатора
+	// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РёРјСЏ РґР»СЏ Р±РµР·РёРјСЏРЅРЅРѕРіРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
 	string GenerateUnnamed( );
 
-	// вернуть строковый эквивалент оператора
+	// РІРµСЂРЅСѓС‚СЊ СЃС‚СЂРѕРєРѕРІС‹Р№ СЌРєРІРёРІР°Р»РµРЅС‚ РѕРїРµСЂР°С‚РѕСЂР°
 	PCSTR GenerateOperatorName( int op );
 }
 
 
-// получить квалифицированное имя идентификатора
+// РїРѕР»СѓС‡РёС‚СЊ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРµ РёРјСЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
 nrc::CharString Identifier::GetQualifiedName() const
 {
 	string res;
 	INTERNAL_IF( pTable == NULL );
 	
-	// если локальная или глобальная, то имя не может быть квалифицированным
+	// РµСЃР»Рё Р»РѕРєР°Р»СЊРЅР°СЏ РёР»Рё РіР»РѕР±Р°Р»СЊРЅР°СЏ, С‚Рѕ РёРјСЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј
 	if( pTable->IsGlobalSymbolTable() || pTable->IsLocalSymbolTable()  || 
 		pTable->IsFunctionSymbolTable() )
 		return name;
 
-	// иначе если класс или именованная область видимости - вернуть рекурсивно
+	// РёРЅР°С‡Рµ РµСЃР»Рё РєР»Р°СЃСЃ РёР»Рё РёРјРµРЅРѕРІР°РЅРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё - РІРµСЂРЅСѓС‚СЊ СЂРµРєСѓСЂСЃРёРІРЅРѕ
 	else if( pTable->IsNamespaceSymbolTable() || pTable->IsClassSymbolTable() )
 	{
 		const Identifier *id = dynamic_cast<const Identifier *>(pTable);
@@ -50,25 +50,25 @@ nrc::CharString Identifier::GetQualifiedName() const
 	}
 
 	else
-		INTERNAL( "'Identifier::GetQualifiedName' идентификатор принадлежит к неизвестной ОВ" );
+		INTERNAL( "'Identifier::GetQualifiedName' РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёРЅР°РґР»РµР¶РёС‚ Рє РЅРµРёР·РІРµСЃС‚РЅРѕР№ РћР’" );
 	return "";
 }
 
 
-// получить строковое представление типа
+// РїРѕР»СѓС‡РёС‚СЊ СЃС‚СЂРѕРєРѕРІРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ С‚РёРїР°
 CharString TypyziedEntity::GetTypyziedEntityName( bool printName ) const
 {
 	string rval;
 
-	// печатаем квалификаторы
+	// РїРµС‡Р°С‚Р°РµРј РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹
 	if( constQualifier )
 		rval += "const ";
 
 	if( volatileQualifier )
 		rval += "volatile ";
 		
-	// если имеем конструктор, деструктор или оператор преобразования,
-	// не печатаем базовый тип	
+	// РµСЃР»Рё РёРјРµРµРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РґРµСЃС‚СЂСѓРєС‚РѕСЂ РёР»Рё РѕРїРµСЂР°С‚РѕСЂ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ,
+	// РЅРµ РїРµС‡Р°С‚Р°РµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 	BaseType::BT bt = baseType->GetBaseTypeCode();
 	if( IsFunction() && static_cast<const Function *>(this)->IsClassMember() )
 	{
@@ -76,7 +76,7 @@ CharString TypyziedEntity::GetTypyziedEntityName( bool printName ) const
 		if( meth.IsConstructor() || meth.IsDestructor() )
 			goto skip_base_type_print;
 
-		// если оператор приведения и нужно печатать имя, то достаточно напечатать имя и '()'
+		// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ Рё РЅСѓР¶РЅРѕ РїРµС‡Р°С‚Р°С‚СЊ РёРјСЏ, С‚Рѕ РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РЅР°РїРµС‡Р°С‚Р°С‚СЊ РёРјСЏ Рё '()'
 		if(meth.IsOverloadOperator() && 
 			((const ClassOverloadOperator &)meth).IsCastOperator() && printName )
 		{
@@ -91,17 +91,17 @@ CharString TypyziedEntity::GetTypyziedEntityName( bool printName ) const
 			if( rval[rval.length()-1] == ' ' )
 				rval.erase(rval.end()-1);
 			return rval.c_str();
-		}		
+		}
 	}
 
-	// если базовый тип встроенный, печатаем его
+	// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї РІСЃС‚СЂРѕРµРЅРЅС‹Р№, РїРµС‡Р°С‚Р°РµРј РµРіРѕ
 	if( bt == BaseType::BT_BOOL    || bt == BaseType::BT_CHAR   ||
 		bt == BaseType::BT_WCHAR_T || bt == BaseType::BT_INT    || 
 		bt == BaseType::BT_FLOAT   || bt == BaseType::BT_DOUBLE ||
 		bt == BaseType::BT_VOID )
 		rval += ImplicitTypeManager(*baseType).GetImplicitTypeName().c_str();
 
-	// иначе печатаем имя класса
+	// РёРЅР°С‡Рµ РїРµС‡Р°С‚Р°РµРј РёРјСЏ РєР»Р°СЃСЃР°
 	else
 	{
 		INTERNAL_IF( bt != BaseType::BT_CLASS	 &&
@@ -132,7 +132,7 @@ skip_base_type_print:
 		if( const Identifier *id = dynamic_cast<const Identifier *>(this) )
 			rval += id->GetQualifiedName().c_str();
 
-	// удаляем пробелы
+	// СѓРґР°Р»СЏРµРј РїСЂРѕР±РµР»С‹
 	if( rval[rval.length()-1] == ' ' )
 		rval.erase(rval.end()-1);
 	if( rval[0] == ' ' )
@@ -142,7 +142,7 @@ skip_base_type_print:
 }
 
 
-// печатать префиксные производные типы и сохранять их в буфер
+// РїРµС‡Р°С‚Р°С‚СЊ РїСЂРµС„РёРєСЃРЅС‹Рµ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ С‚РёРїС‹ Рё СЃРѕС…СЂР°РЅСЏС‚СЊ РёС… РІ Р±СѓС„РµСЂ
 void TypyziedEntity::PrintPointer( string &buf, int &ix, bool &namePrint ) const
 {
 	bool isPrint = false;
@@ -157,7 +157,7 @@ void TypyziedEntity::PrintPointer( string &buf, int &ix, bool &namePrint ) const
 		else if( dtc == DerivedType::DT_POINTER )
 		{
 			const Pointer &ptr = static_cast<const Pointer &>(dt);
-			string temp;			
+			string temp;
 			if( ptr.IsConst() ) 
 				temp = "const ";
 			
@@ -172,13 +172,13 @@ void TypyziedEntity::PrintPointer( string &buf, int &ix, bool &namePrint ) const
 			const PointerToMember &ptm = static_cast<const PointerToMember &>(dt);
 			string temp = buf;
 			buf = ptm.GetMemberClassType().GetQualifiedName().c_str() + 
-				string("::") + '*';			
+				string("::") + '*';
 
 			if( ptm.IsConst() ) 
 				buf += "const ";
 
 			if( ptm.IsVolatile() ) 
-				buf += "volatile ";			
+				buf += "volatile ";
 			buf += temp;
 		}
 
@@ -191,14 +191,14 @@ void TypyziedEntity::PrintPointer( string &buf, int &ix, bool &namePrint ) const
 				namePrint = true;
 			}
 
-			if( isPrint )			
-				buf = '(' + buf + ')';			
+			if( isPrint )
+				buf = '(' + buf + ')';
 
-			PrintPostfix( buf, ix );			
+			PrintPostfix( buf, ix );
 		}
 	}
 
-	// если имя, так и не было напечатано, печатаем
+	// РµСЃР»Рё РёРјСЏ, С‚Р°Рє Рё РЅРµ Р±С‹Р»Рѕ РЅР°РїРµС‡Р°С‚Р°РЅРѕ, РїРµС‡Р°С‚Р°РµРј
 	if( !namePrint )
 	{
 		if( const Identifier *id = dynamic_cast<const Identifier *>(this) )
@@ -208,7 +208,7 @@ void TypyziedEntity::PrintPointer( string &buf, int &ix, bool &namePrint ) const
 }
 
 
-// печатать постфиксные производные типы и сохранять в буфер
+// РїРµС‡Р°С‚Р°С‚СЊ РїРѕСЃС‚С„РёРєСЃРЅС‹Рµ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ С‚РёРїС‹ Рё СЃРѕС…СЂР°РЅСЏС‚СЊ РІ Р±СѓС„РµСЂ
 void TypyziedEntity::PrintPostfix( string &buf, int &ix ) const
 {
 	for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++)
@@ -226,9 +226,9 @@ void TypyziedEntity::PrintPostfix( string &buf, int &ix ) const
 					GetTypyziedEntityName(false).c_str();
 				if( i < fp.GetParametrList().GetFunctionParametrCount()-1 )
 						buf += ", ";
-			}						
-			
-			if( fp.IsHaveEllipse() )			
+			}
+
+			if( fp.IsHaveEllipse() )
 				buf += i == 0 ? "..." : ", ...";
 			buf += ')';
 
@@ -256,7 +256,7 @@ void TypyziedEntity::PrintPostfix( string &buf, int &ix ) const
 			}
 		}
 
-		else if( dtc == DerivedType::DT_ARRAY )		
+		else if( dtc == DerivedType::DT_ARRAY )
 		{
 			if( dt.GetDerivedTypeSize() > 0 )
 				buf = buf + '[' + CharString( dt.GetDerivedTypeSize() ).c_str() + ']';
@@ -264,7 +264,7 @@ void TypyziedEntity::PrintPostfix( string &buf, int &ix ) const
 				buf += "[]";
 		}
 
-		// иначе опять следует печатать указатели, только сначала
+		// РёРЅР°С‡Рµ РѕРїСЏС‚СЊ СЃР»РµРґСѓРµС‚ РїРµС‡Р°С‚Р°С‚СЊ СѓРєР°Р·Р°С‚РµР»Рё, С‚РѕР»СЊРєРѕ СЃРЅР°С‡Р°Р»Р°
 		else
 		{
 			INTERNAL_IF( dtc != DerivedType::DT_REFERENCE &&
@@ -272,14 +272,14 @@ void TypyziedEntity::PrintPostfix( string &buf, int &ix ) const
 						 dtc != DerivedType::DT_POINTER_TO_MEMBER );
 
 			bool nm = true;
-			PrintPointer(buf, ix, nm);						 
+			PrintPointer(buf, ix, nm);
 		}
 	}
 }
 
 
-// если целая константа, char, int с модификаторами. Подразумевается,
-// что char, wchar_t уже храняться в виде целого числа
+// РµСЃР»Рё С†РµР»Р°СЏ РєРѕРЅСЃС‚Р°РЅС‚Р°, char, int СЃ РјРѕРґРёС„РёРєР°С‚РѕСЂР°РјРё. РџРѕРґСЂР°Р·СѓРјРµРІР°РµС‚СЃСЏ,
+// С‡С‚Рѕ char, wchar_t СѓР¶Рµ С…СЂР°РЅСЏС‚СЊСЃСЏ РІ РІРёРґРµ С†РµР»РѕРіРѕ С‡РёСЃР»Р°
 bool Literal::IsIntegerLiteral() const 
 {
 	register BaseType::BT bt = GetBaseType().GetBaseTypeCode();
@@ -288,7 +288,7 @@ bool Literal::IsIntegerLiteral() const
 			bt == BaseType::BT_WCHAR_T) && GetDerivedTypeList().IsEmpty();
 }
 
-// если вещественная 
+// РµСЃР»Рё РІРµС‰РµСЃС‚РІРµРЅРЅР°СЏ 
 bool Literal::IsRealLiteral() const 
 {
 	register BaseType::BT bt = GetBaseType().GetBaseTypeCode();
@@ -297,7 +297,7 @@ bool Literal::IsRealLiteral() const
 }
 
 
-// если строковый литерал
+// РµСЃР»Рё СЃС‚СЂРѕРєРѕРІС‹Р№ Р»РёС‚РµСЂР°Р»
 bool Literal::IsStringLiteral() const 
 {
 	register BaseType::BT bt = GetBaseType().GetBaseTypeCode();
@@ -305,7 +305,7 @@ bool Literal::IsStringLiteral() const
 }
 
 
-// если wide-строка
+// РµСЃР»Рё wide-СЃС‚СЂРѕРєР°
 bool Literal::IsWideStringLiteral() const 
 {
 	register BaseType::BT bt = GetBaseType().GetBaseTypeCode();
@@ -313,8 +313,8 @@ bool Literal::IsWideStringLiteral() const
 }
 
 
-// конструктор задает те параметры константы перечисления, которые
-// ей необходимы
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р·Р°РґР°РµС‚ С‚Рµ РїР°СЂР°РјРµС‚СЂС‹ РєРѕРЅСЃС‚Р°РЅС‚С‹ РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ, РєРѕС‚РѕСЂС‹Рµ
+// РµР№ РЅРµРѕР±С…РѕРґРёРјС‹
 EnumConstant::EnumConstant( const nrc::CharString &name, SymbolTable *entry, 
 		int v, EnumType *pEnumType ) : Identifier(name, entry),
 	TypyziedEntity( pEnumType, true, false, DerivedTypeList() ), value(v) 
@@ -322,25 +322,25 @@ EnumConstant::EnumConstant( const nrc::CharString &name, SymbolTable *entry,
 }
 
 
-// получить перечислимый тип к которому принадлежит константа
+// РїРѕР»СѓС‡РёС‚СЊ РїРµСЂРµС‡РёСЃР»РёРјС‹Р№ С‚РёРї Рє РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ РєРѕРЅСЃС‚Р°РЅС‚Р°
 const EnumType &EnumConstant::GetEnumType() const 
 {
 	return static_cast<const EnumType &>(GetBaseType());
 }
 
 
-// конструктор задает параметры объекта и генерирует С-имя
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р·Р°РґР°РµС‚ РїР°СЂР°РјРµС‚СЂС‹ РѕР±СЉРµРєС‚Р° Рё РіРµРЅРµСЂРёСЂСѓРµС‚ РЎ-РёРјСЏ
 ::Object::Object( const nrc::CharString &name, SymbolTable *entry, BaseType *bt,
 		bool cq, bool vq, const DerivedTypeList &dtl, SS ss, bool ls  ) 
 	:  Identifier(name, entry), TypyziedEntity(bt, cq, vq, dtl), storageSpecifier(ss), 
 		pInitialValue(NULL), clinkSpec(ls) 
 {
-	// для типа и для заданного имени ничего не генерируем
+	// РґР»СЏ С‚РёРїР° Рё РґР»СЏ Р·Р°РґР°РЅРЅРѕРіРѕ РёРјРµРЅРё РЅРёС‡РµРіРѕ РЅРµ РіРµРЅРµСЂРёСЂСѓРµРј
 	if( !c_name.empty() || ss == SS_TYPEDEF || entry == NULL )
 		return;
 
-	// если задана С-связывание, либо объект локальный, оставляем имя без 
-	// изменений
+	// РµСЃР»Рё Р·Р°РґР°РЅР° РЎ-СЃРІСЏР·С‹РІР°РЅРёРµ, Р»РёР±Рѕ РѕР±СЉРµРєС‚ Р»РѕРєР°Р»СЊРЅС‹Р№, РѕСЃС‚Р°РІР»СЏРµРј РёРјСЏ Р±РµР· 
+	// РёР·РјРµРЅРµРЅРёР№
 	if( clinkSpec || entry->IsLocalSymbolTable() || entry->IsFunctionSymbolTable() ||
 		(entry->IsClassSymbolTable() && ss != SS_STATIC) )
 		c_name = name.c_str();
@@ -349,20 +349,20 @@ const EnumType &EnumConstant::GetEnumType() const
 }
 
 
-// конструктор задает необходимые параметры функции
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р·Р°РґР°РµС‚ РЅРµРѕР±С…РѕРґРёРјС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ С„СѓРЅРєС†РёРё
 Function::Function( const nrc::CharString &name, SymbolTable *entry, BaseType *bt,
 		bool cq, bool vq, const DerivedTypeList &dtl, bool inl, SS ss, CC cc ) 
 		: Identifier(name, entry), TypyziedEntity(bt, cq, vq, dtl), inlineSpecifier(inl),
 	storageSpecifier(ss), callingConvention(cc), isHaveBody(false) 
 { 
-	// генерируем имя для функции
+	// РіРµРЅРµСЂРёСЂСѓРµРј РёРјСЏ РґР»СЏ С„СѓРЅРєС†РёРё
 	if( !entry->IsClassSymbolTable() )
 		c_name = ( cc == CC_CDECL ) ? name.c_str() : 
 			"__" + TranslatorUtils::GenerateScopeName( *entry ) + name.c_str();
 }	
 
 
-// функция не возвращает значения
+// С„СѓРЅРєС†РёСЏ РЅРµ РІРѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёСЏ
 bool Function::IsProcedure() const 
 {
 	return GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID &&
@@ -370,7 +370,7 @@ bool Function::IsProcedure() const
 }
 
 
-// задаем параметры метода
+// Р·Р°РґР°РµРј РїР°СЂР°РјРµС‚СЂС‹ РјРµС‚РѕРґР°
 Method::Method( const nrc::CharString &name, SymbolTable *entry, BaseType *bt,
 		bool cq, bool vq, const DerivedTypeList &dtl, bool inl, 
 		SS ss, CC cc, AS as, bool am, bool vm, bool dm, DT dt ) 
@@ -386,7 +386,7 @@ Method::Method( const nrc::CharString &name, SymbolTable *entry, BaseType *bt,
 }
 
 
-// освобождаем память занятую информацией виртуального метода
+// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ Р·Р°РЅСЏС‚СѓСЋ РёРЅС„РѕСЂРјР°С†РёРµР№ РІРёСЂС‚СѓР°Р»СЊРЅРѕРіРѕ РјРµС‚РѕРґР°
 Method::~Method()
 {
 	if( vfData && &GetSymbolTableEntry() == &vfData->GetRootVfClass() )
@@ -394,16 +394,16 @@ Method::~Method()
 }
 
 
-// задать виртуальность методу, т.к. она может выясниться не сразу
-// после конструирования метода
+// Р·Р°РґР°С‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅРѕСЃС‚СЊ РјРµС‚РѕРґСѓ, С‚.Рє. РѕРЅР° РјРѕР¶РµС‚ РІС‹СЏСЃРЅРёС‚СЊСЃСЏ РЅРµ СЃСЂР°Р·Сѓ
+// РїРѕСЃР»Рµ РєРѕРЅСЃС‚СЂСѓРёСЂРѕРІР°РЅРёСЏ РјРµС‚РѕРґР°
 void Method::SetVirtual( const Method *rootMeth ) 
 {
-	INTERNAL_IF( vfData != NULL );	
+	INTERNAL_IF( vfData != NULL );
 
-	// если корневой метод задан, задаем его информацию
+	// РµСЃР»Рё РєРѕСЂРЅРµРІРѕР№ РјРµС‚РѕРґ Р·Р°РґР°РЅ, Р·Р°РґР°РµРј РµРіРѕ РёРЅС„РѕСЂРјР°С†РёСЋ
 	if( rootMeth )
 		vfData = &rootMeth->GetVFData();
-	// иначе создаем собственную, увеличиваем счетчик виртуальных методов класса
+	// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј СЃРѕР±СЃС‚РІРµРЅРЅСѓСЋ, СѓРІРµР»РёС‡РёРІР°РµРј СЃС‡РµС‚С‡РёРє РІРёСЂС‚СѓР°Р»СЊРЅС‹С… РјРµС‚РѕРґРѕРІ РєР»Р°СЃСЃР°
 	else
 	{
 		ClassType &cls = (ClassType &)GetSymbolTableEntry();
@@ -415,21 +415,21 @@ void Method::SetVirtual( const Method *rootMeth )
 }
 
 
-// задаем параметры конструктора
+// Р·Р°РґР°РµРј РїР°СЂР°РјРµС‚СЂС‹ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 OverloadOperator::OverloadOperator( 
 		const nrc::CharString &name, SymbolTable *entry, BaseType *bt,
 		bool cq, bool vq, const DerivedTypeList &dtl, bool inl, 
 		SS ss, CC cc, int opc, const nrc::CharString &opn ) :
 
 		Function(name, entry, bt, cq, vq, dtl, inl, ss, cc),
-		opCode( tolower(opc) ), opName(opn) 	
+		opCode( tolower(opc) ), opName(opn)
 {
 	c_name = "__" + TranslatorUtils::GenerateScopeName( *entry ) +
 		"operator" + TranslatorUtils::GenerateOperatorName(opc);
 }
 
 
-// конструктор задает все параметры вверх по иерархии
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р·Р°РґР°РµС‚ РІСЃРµ РїР°СЂР°РјРµС‚СЂС‹ РІРІРµСЂС… РїРѕ РёРµСЂР°СЂС…РёРё
 ClassOverloadOperator::ClassOverloadOperator(
 	const nrc::CharString &name, SymbolTable *entry, BaseType *bt,
 	bool cq, bool vq, const DerivedTypeList &dtl, bool inl, 
@@ -446,7 +446,7 @@ ClassOverloadOperator::ClassOverloadOperator(
 }
 
 
-// задаем параметры конструктора
+// Р·Р°РґР°РµРј РїР°СЂР°РјРµС‚СЂС‹ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 ConstructorMethod::ConstructorMethod( 
 		const nrc::CharString &name, SymbolTable *entry, BaseType *bt,
 		bool cq, bool vq, const DerivedTypeList &dtl, bool inl, 
@@ -457,12 +457,12 @@ ConstructorMethod::ConstructorMethod(
 {
 	INTERNAL_IF( dtl.GetDerivedTypeCount() != 2 || 
 		dtl.GetDerivedType(1)->GetDerivedTypeCode() != DerivedType::DT_REFERENCE );
-	// задаем генерируемое имя конструктора
+	// Р·Р°РґР°РµРј РіРµРЅРµСЂРёСЂСѓРµРјРѕРµ РёРјСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 	c_name = "__" + TranslatorUtils::GenerateScopeName( *entry ) + "constructor";
 }
 
 
-// конструктор принимает все параметры
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїСЂРёРЅРёРјР°РµС‚ РІСЃРµ РїР°СЂР°РјРµС‚СЂС‹
 ClassCastOverloadOperator::ClassCastOverloadOperator( 	
 		const nrc::CharString &name, SymbolTable *entry, BaseType *bt,
 		bool cq, bool vq, const DerivedTypeList &dtl, bool inl, 
@@ -472,14 +472,14 @@ ClassCastOverloadOperator::ClassCastOverloadOperator(
 	: ClassOverloadOperator(name, entry, bt, cq, vq, dtl, inl, ss, cc, as, am, vm, opc, opn, dt),
 		castType(ctp) 
 {
-	// к имени прибавляется порядковый номер при вставке, для разрешения конфликта имен
+	// Рє РёРјРµРЅРё РїСЂРёР±Р°РІР»СЏРµС‚СЃСЏ РїРѕСЂСЏРґРєРѕРІС‹Р№ РЅРѕРјРµСЂ РїСЂРё РІСЃС‚Р°РІРєРµ, РґР»СЏ СЂР°Р·СЂРµС€РµРЅРёСЏ РєРѕРЅС„Р»РёРєС‚Р° РёРјРµРЅ
 	c_name = "__" + TranslatorUtils::GenerateScopeName( *entry ) + "cast_operator";
 }
 
 
-// присоединить производный список типов с cv-квалификацией первого
-// производного типа, только если он '*', 'ptr-to-member', '()', 
-// при этом этот производный тип полностью копируется
+// РїСЂРёСЃРѕРµРґРёРЅРёС‚СЊ РїСЂРѕРёР·РІРѕРґРЅС‹Р№ СЃРїРёСЃРѕРє С‚РёРїРѕРІ СЃ cv-РєРІР°Р»РёС„РёРєР°С†РёРµР№ РїРµСЂРІРѕРіРѕ
+// РїСЂРѕРёР·РІРѕРґРЅРѕРіРѕ С‚РёРїР°, С‚РѕР»СЊРєРѕ РµСЃР»Рё РѕРЅ '*', 'ptr-to-member', '()', 
+// РїСЂРё СЌС‚РѕРј СЌС‚РѕС‚ РїСЂРѕРёР·РІРѕРґРЅС‹Р№ С‚РёРї РїРѕР»РЅРѕСЃС‚СЊСЋ РєРѕРїРёСЂСѓРµС‚СЃСЏ
 bool DerivedTypeList::AddDerivedTypeListCV( const DerivedTypeList &dtl, bool c, bool v )
 {
 	bool was_qual = false;
@@ -487,19 +487,19 @@ bool DerivedTypeList::AddDerivedTypeListCV( const DerivedTypeList &dtl, bool c, 
 
 	for( ;p != dtl.derivedTypeList.end(); p++ )
 	{
-		// только если массив, продолжаем 
-		if( (*p)->GetDerivedTypeCode() == DerivedType::DT_ARRAY )			
+		// С‚РѕР»СЊРєРѕ РµСЃР»Рё РјР°СЃСЃРёРІ, РїСЂРѕРґРѕР»Р¶Р°РµРј 
+		if( (*p)->GetDerivedTypeCode() == DerivedType::DT_ARRAY )
 		{
 			AddDerivedType( *p );
 			continue;
 		}
 
-		// если ссылка, копируем и выходим, т.к. константной ссылка быть
-		// не может
+		// РµСЃР»Рё СЃСЃС‹Р»РєР°, РєРѕРїРёСЂСѓРµРј Рё РІС‹С…РѕРґРёРј, С‚.Рє. РєРѕРЅСЃС‚Р°РЅС‚РЅРѕР№ СЃСЃС‹Р»РєР° Р±С‹С‚СЊ
+		// РЅРµ РјРѕР¶РµС‚
 		else if( (*p)->GetDerivedTypeCode() == DerivedType::DT_REFERENCE )		
-			AddDerivedType( *p );					
+			AddDerivedType( *p );
 
-		// если имеем дело с указателем
+		// РµСЃР»Рё РёРјРµРµРј РґРµР»Рѕ СЃ СѓРєР°Р·Р°С‚РµР»РµРј
 		else if( (*p)->GetDerivedTypeCode() == DerivedType::DT_POINTER )
 		{
 			bool pc = c || ((Pointer &)(**p)).IsConst(),
@@ -507,7 +507,7 @@ bool DerivedTypeList::AddDerivedTypeListCV( const DerivedTypeList &dtl, bool c, 
 			AddDerivedType( PDerivedType(new Pointer(pc, pv)) );
 		}
 
-		// если имеем дело с указателем на член
+		// РµСЃР»Рё РёРјРµРµРј РґРµР»Рѕ СЃ СѓРєР°Р·Р°С‚РµР»РµРј РЅР° С‡Р»РµРЅ
 		else if( (*p)->GetDerivedTypeCode() == DerivedType::DT_POINTER_TO_MEMBER )
 		{
 			bool pc = c || ((PointerToMember &)(**p)).IsConst(),
@@ -516,7 +516,7 @@ bool DerivedTypeList::AddDerivedTypeListCV( const DerivedTypeList &dtl, bool c, 
 			AddDerivedType( PDerivedType(new PointerToMember(&cls, pc, pv)) );
 		}
 
-		// если имеем дело с функцией
+		// РµСЃР»Рё РёРјРµРµРј РґРµР»Рѕ СЃ С„СѓРЅРєС†РёРµР№
 		else if( (*p)->GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE )
 		{
 			FunctionPrototype &fp = ((FunctionPrototype &)**p);
@@ -529,10 +529,10 @@ bool DerivedTypeList::AddDerivedTypeListCV( const DerivedTypeList &dtl, bool c, 
 		}
 
 		else
-			INTERNAL( "'AddDerivedTypeListCV' получила неизвестный код");
+			INTERNAL( "'AddDerivedTypeListCV' РїРѕР»СѓС‡РёР»Р° РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ");
 				
 		was_qual = true;
-		break;		
+		break;
 	}
 
 	if( was_qual )

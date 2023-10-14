@@ -6,13 +6,14 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-set (CMAKE_CXX_STANDARD 14)
+#project(kpp)
 
-# Включение горячей перезагрузки для компиляторов MSVC, если поддерживается.
-project ("kpp")
+#set (CMAKE_CXX_STANDARD 14)
+
+#set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin/kpp)
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (kpp	"cpplex.cpp" "cpplex.h"
+add_executable (kpp "cpplex.cpp" "cpplex.h"
 			"error.cpp"  "error.h" 
 			"kpp.cpp"    "kpp.h"
 			"macro.cpp"  "macro.h"

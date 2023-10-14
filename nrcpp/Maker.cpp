@@ -1,4 +1,4 @@
-// реализация интерфейса КЛАССОВ-СТРОИТЕЛЕЙ - Maker.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃР° РљР›РђРЎРЎРћР’-РЎРўР РћРРўР•Р›Р•Р™ - Maker.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -22,8 +22,8 @@ using namespace nrc;
 using namespace MakerUtils;
 
 
-// функция создающая указатель на член по пакету,
-// является дружественной для класса NodePackage 
+// С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°СЋС‰Р°СЏ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ РїРѕ РїР°РєРµС‚Сѓ,
+// СЏРІР»СЏРµС‚СЃСЏ РґСЂСѓР¶РµСЃС‚РІРµРЅРЅРѕР№ РґР»СЏ РєР»Р°СЃСЃР° NodePackage 
 inline static PointerToMember *MakePointerToMember( NodePackage &ptm )
 {
 	INTERNAL_IF( ptm.GetPackageID() != PC_POINTER_TO_MEMBER );
@@ -32,14 +32,14 @@ inline static PointerToMember *MakePointerToMember( NodePackage &ptm )
 	int lpid = ptm.GetLastChildPackage()->GetPackageID();
 	bool cq = false, vq = false;
 
-	// если укзатель на член содержит cv-квалификаторы
+	// РµСЃР»Рё СѓРєР·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ СЃРѕРґРµСЂР¶РёС‚ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹
 	if( lpid == KWCONST || lpid == KWVOLATILE )
 	{
 		(lpid == KWCONST ? cq : vq) = true;
 		delete ptm.childPackageList.back();
 		ptm.childPackageList.pop_back();
 
-		// может быть еще один квалификатор
+		// РјРѕР¶РµС‚ Р±С‹С‚СЊ РµС‰Рµ РѕРґРёРЅ РєРІР°Р»РёС„РёРєР°С‚РѕСЂ
 		lpid = ptm.GetLastChildPackage()->GetPackageID();
 		if( lpid == KWCONST || lpid == KWVOLATILE )
 			(lpid == KWCONST ? cq : vq) = true,
@@ -49,55 +49,55 @@ inline static PointerToMember *MakePointerToMember( NodePackage &ptm )
 
 	INTERNAL_IF( ptm.GetLastChildPackage()->GetPackageID() != '*' );
 
-	// отсоединяем последний две лексемы для получения класса
+	// РѕС‚СЃРѕРµРґРёРЅСЏРµРј РїРѕСЃР»РµРґРЅРёР№ РґРІРµ Р»РµРєСЃРµРјС‹ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєР»Р°СЃСЃР°
 	delete ptm.childPackageList.back();
 	ptm.childPackageList.pop_back();
 	delete ptm.childPackageList.back();
 	ptm.childPackageList.pop_back();
 
-	// получим позицию имени
+	// РїРѕР»СѓС‡РёРј РїРѕР·РёС†РёСЋ РёРјРµРЅРё
 	Position epos = ParserUtils::GetPackagePosition(&ptm);
-		
-	// задаем код квалифицированного имени
+
+	// Р·Р°РґР°РµРј РєРѕРґ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРіРѕ РёРјРµРЅРё
 	ptm.SetPackageID(PC_QUALIFIED_NAME);
 	QualifiedNameManager qnm(&ptm);
 	AmbiguityChecker achk(qnm.GetRoleList(), epos, true);
-	
+
 	const ClassType *cls = NULL;
-		
-	cls = achk.IsClassType(true);			
-	if( cls == NULL )		// если имя не является классом, возможно это имя typedef	
+
+	cls = achk.IsClassType(true);
+	if( cls == NULL ) // РµСЃР»Рё РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј, РІРѕР·РјРѕР¶РЅРѕ СЌС‚Рѕ РёРјСЏ typedef 
 		if( const ::Object *id = achk.IsTypedef() )
 			cls = CheckerUtils::TypedefIsClass(*id);
 
-	// создаем указатель на член, если класс найден
+	// СЃРѕР·РґР°РµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ, РµСЃР»Рё РєР»Р°СЃСЃ РЅР°Р№РґРµРЅ
 	if( cls != NULL )
 	{
-		// проверяем класс на доступность и возвращаем создаваемый указатель на член
-		CheckerUtils::CheckAccess(qnm, *cls, epos);		
+		// РїСЂРѕРІРµСЂСЏРµРј РєР»Р°СЃСЃ РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ Рё РІРѕР·РІСЂР°С‰Р°РµРј СЃРѕР·РґР°РІР°РµРјС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ
+		CheckerUtils::CheckAccess(qnm, *cls, epos); 
 		return new PointerToMember(cls, cq, vq);
 	}
-			
-	// иначе класс не найден
+
+	// РёРЅР°С‡Рµ РєР»Р°СЃСЃ РЅРµ РЅР°Р№РґРµРЅ
 	else
 	{
 		theApp.Error( ParserUtils::GetPackagePosition(&ptm),
-			"'%s' - не является классом", ParserUtils::PrintPackageTree(&ptm).c_str());
+			"'%s' - РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј", ParserUtils::PrintPackageTree(&ptm).c_str());
 		return NULL;
 	}
 }
 
 
-// функция сбора информации из пакета во временную структуру,
-// используется при сборе информации при декларации объектов и функций
+// С„СѓРЅРєС†РёСЏ СЃР±РѕСЂР° РёРЅС„РѕСЂРјР°С†РёРё РёР· РїР°РєРµС‚Р° РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ,
+// РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё СЃР±РѕСЂРµ РёРЅС„РѕСЂРјР°С†РёРё РїСЂРё РґРµРєР»Р°СЂР°С†РёРё РѕР±СЉРµРєС‚РѕРІ Рё С„СѓРЅРєС†РёР№
 bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList, 
 			TempObjectContainer *tempObjectContainer, bool canDefineImplicity )
-{		
+{
 	bool errorFlag = false;
-	// cначала обрабатываем спецификаторы типа
+	// cРЅР°С‡Р°Р»Р° РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С‚РёРїР°
 	for( int i = 0; i < typeSpecList->GetChildPackageCount(); i++ )
 	{
-		// синоним типа, или перечисление, или класс, или шаблонный класс
+		// СЃРёРЅРѕРЅРёРј С‚РёРїР°, РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёРµ, РёР»Рё РєР»Р°СЃСЃ, РёР»Рё С€Р°Р±Р»РѕРЅРЅС‹Р№ РєР»Р°СЃСЃ
 		if( typeSpecList->GetChildPackage(i)->IsNodePackage() )
 		{
 			INTERNAL_IF( 
@@ -120,23 +120,23 @@ bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList,
 					new TempObjectContainer::CompoundType(*et), chkId = et;
 
 			else
-				INTERNAL("'AnanlyzeTypeSpecifierPkg' принимает узловой "
-						 "пакет с неизвестным кодом");		
-			
-			// проверим тип на доступность
+				INTERNAL("'AnanlyzeTypeSpecifierPkg' РїСЂРёРЅРёРјР°РµС‚ СѓР·Р»РѕРІРѕР№ "
+						 "РїР°РєРµС‚ СЃ РЅРµРёР·РІРµСЃС‚РЅС‹Рј РєРѕРґРѕРј");
+
+			// РїСЂРѕРІРµСЂРёРј С‚РёРї РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
 			CheckerUtils::CheckAccess(qnm, *chkId, tempObjectContainer->errPos);
 			continue;
 		}
 
-		// иначе имеем лексему
-		const Lexem &lxm = ((LexemPackage *)typeSpecList->GetChildPackage(i))->GetLexem();		
+		// РёРЅР°С‡Рµ РёРјРµРµРј Р»РµРєСЃРµРјСѓ
+		const Lexem &lxm = ((LexemPackage *)typeSpecList->GetChildPackage(i))->GetLexem();
 		TypeSpecifierManager ts(lxm);
 		bool error = false;
 
-		// встроенный базовый тип
+		// РІСЃС‚СЂРѕРµРЅРЅС‹Р№ Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 		if( ts.IsBaseType() )
 		{
-			// если базовый тип уже задан
+			// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї СѓР¶Рµ Р·Р°РґР°РЅ
 			if( tempObjectContainer->baseType != NULL )
 			{
 				BaseType::BT &bt = ((TempObjectContainer::ImplicitType *)tempObjectContainer->
@@ -148,55 +148,55 @@ bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList,
 				else
 					error = true;
 			}
-				
+
 			else
 				tempObjectContainer->baseType = 
 					new TempObjectContainer::ImplicitType( ts.CodeToBaseType() );
 		}
 
-		// если спецификатор класса
+		// РµСЃР»Рё СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РєР»Р°СЃСЃР°
 		else if( ts.IsClassSpec() )
 		{
 			if( tempObjectContainer->baseType != NULL )
 				error = true;
 
-			// если класс безимянный, это считается ошибкой 
+			// РµСЃР»Рё РєР»Р°СЃСЃ Р±РµР·РёРјСЏРЅРЅС‹Р№, СЌС‚Рѕ СЃС‡РёС‚Р°РµС‚СЃСЏ РѕС€РёР±РєРѕР№ 
 			else if( i+1 == typeSpecList->GetChildPackageCount() ||
 					 typeSpecList->GetChildPackage(i+1)->GetPackageID() != PC_QUALIFIED_NAME )
-				theApp.Error(lxm.GetPos(), "пропущено имя после '%s'", lxm.GetBuf().c_str());
+				theApp.Error(lxm.GetPos(), "РїСЂРѕРїСѓС‰РµРЅРѕ РёРјСЏ РїРѕСЃР»Рµ '%s'", lxm.GetBuf().c_str());
 
-			// определяем класс, только если это не запрещено
+			// РѕРїСЂРµРґРµР»СЏРµРј РєР»Р°СЃСЃ, С‚РѕР»СЊРєРѕ РµСЃР»Рё СЌС‚Рѕ РЅРµ Р·Р°РїСЂРµС‰РµРЅРѕ
 			else
 			{
-				i++;	// игнорируем имя
+				i++; // РёРіРЅРѕСЂРёСЂСѓРµРј РёРјСЏ
 				NodePackage *tsl = const_cast<NodePackage *>(typeSpecList);
 				BaseType *bt = NULL;
 
-				// создаем динамически (или находим существующий) класс, если это
-				// не запрещено
+				// СЃРѕР·РґР°РµРј РґРёРЅР°РјРёС‡РµСЃРєРё (РёР»Рё РЅР°С…РѕРґРёРј СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёР№) РєР»Р°СЃСЃ, РµСЃР»Рё СЌС‚Рѕ
+				// РЅРµ Р·Р°РїСЂРµС‰РµРЅРѕ
 				if( canDefineImplicity )
 					bt = lxm == KWENUM 
 					? (BaseType *)EnumTypeMaker(tsl, tempObjectContainer->curAccessSpec).Make() 
 					: (BaseType *)ClassTypeMaker(tsl, tempObjectContainer->curAccessSpec).Make();
 
-				// иначе только находим
+				// РёРЅР°С‡Рµ С‚РѕР»СЊРєРѕ РЅР°С…РѕРґРёРј
 				else
 				{
-					// ищем
+					// РёС‰РµРј
 					QualifiedNameManager qnm((NodePackage *)tsl->GetChildPackage(i));
 					AmbiguityChecker achk(qnm.GetRoleList());
 
-					// проверяем, если тип не найден задаем как void и выводим ошибку
+					// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё С‚РёРї РЅРµ РЅР°Р№РґРµРЅ Р·Р°РґР°РµРј РєР°Рє void Рё РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
 					if( (bt = (lxm == KWENUM ? (BaseType*)achk.IsEnumType(true) :
 							(BaseType*)achk.IsClassType(true)) ) == NULL )
 					{
 						theApp.Error(tempObjectContainer->errPos,
-							"'%s %s' - тип не объявлен; динамическое объявление также невозможно",
+							"'%s %s' - С‚РёРї РЅРµ РѕР±СЉСЏРІР»РµРЅ; РґРёРЅР°РјРёС‡РµСЃРєРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ С‚Р°РєР¶Рµ РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 							lxm.GetBuf().c_str(), 
 							ParserUtils::PrintPackageTree((NodePackage *)
 								typeSpecList->GetChildPackage(i)).c_str());
 
-						// задаем тип как void
+						// Р·Р°РґР°РµРј С‚РёРї РєР°Рє void
 						tempObjectContainer->baseType = 
 							new TempObjectContainer::ImplicitType( BaseType::BT_VOID );
 						continue;
@@ -205,8 +205,8 @@ bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList,
 
 				if( bt != NULL )
 					tempObjectContainer->baseType = 
-							new TempObjectContainer::CompoundType(*bt);					
-				
+							new TempObjectContainer::CompoundType(*bt);
+
 			}
 		}
 		
@@ -252,20 +252,19 @@ bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList,
 			}
 
 			else
-				error = true;			
+				error = true;
 		}
-		
 
 		else if( ts.IsStorageSpecifier() )
 		{
-			// -1, если код не задан
+			// -1, РµСЃР»Рё РєРѕРґ РЅРµ Р·Р°РґР°РЅ
 			if( tempObjectContainer->ssCode != -1  )
 				error = true;
 			else
 			{
 				tempObjectContainer->ssCode = lxm;
-				// проверим, если следующая лексема строка и
-				// текущая extern, значит задаем спецификацию
+				// РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° СЃС‚СЂРѕРєР° Рё
+				// С‚РµРєСѓС‰Р°СЏ extern, Р·РЅР°С‡РёС‚ Р·Р°РґР°РµРј СЃРїРµС†РёС„РёРєР°С†РёСЋ
 				if( lxm == KWEXTERN && 
 					i != typeSpecList->GetChildPackageCount()-1 &&
 					typeSpecList->GetChildPackage(i+1)->GetPackageID() == STRING )
@@ -278,14 +277,14 @@ bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList,
 						tempObjectContainer->clinkSpec = false;
 					else
 						theApp.Error(tempObjectContainer->errPos,
-							"%s - неизвестная спецификация связывания",
+							"%s - РЅРµРёР·РІРµСЃС‚РЅР°СЏ СЃРїРµС†РёС„РёРєР°С†РёСЏ СЃРІСЏР·С‹РІР°РЅРёСЏ",
 							linkSpec.c_str());
 					i++;
 				} 
 			}
 		}
 
-		// спецификатор функции
+		// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё
 		else if( ts.IsFunctionSpecifier() )
 		{
 			if( tempObjectContainer->fnSpecCode != -1 )
@@ -294,7 +293,7 @@ bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList,
 				tempObjectContainer->fnSpecCode = lxm;
 		}
 
-		// спецификатор дружбы
+		// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹
 		else if( ts.IsFriend() )
 		{
 			if( tempObjectContainer->friendSpec )
@@ -307,20 +306,20 @@ bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList,
 		else
 		{
 			if( ts.IsUncknown() )
-				theApp.Error(lxm.GetPos(), "использование '%s' некорректно при объявлении объекта",
+				theApp.Error(lxm.GetPos(), "РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ '%s' РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ РїСЂРё РѕР±СЉСЏРІР»РµРЅРёРё РѕР±СЉРµРєС‚Р°",
 					lxm.GetBuf().c_str());
 			else
 				theApp.Error(lxm.GetPos(), 
-					"использование '%s %s' некорректно при объявлении объекта",
+					"РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ '%s %s' РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ РїСЂРё РѕР±СЉСЏРІР»РµРЅРёРё РѕР±СЉРµРєС‚Р°",
 						ts.GetGroupNameRU().c_str(), lxm.GetBuf().c_str());
 		}
 
-		// перехват ошибки
+		// РїРµСЂРµС…РІР°С‚ РѕС€РёР±РєРё
 		if( error )
 		{
-			theApp.Error(lxm.GetPos(), "использование '%s' некорректно, '%s' уже задан",
+			theApp.Error(lxm.GetPos(), "РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ '%s' РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ, '%s' СѓР¶Рµ Р·Р°РґР°РЅ",
 					lxm.GetBuf().c_str(), ts.GetGroupNameRU().c_str());
-			errorFlag = true;		// обозначаем, что объявление составлено некорректно
+			errorFlag = true; // РѕР±РѕР·РЅР°С‡Р°РµРј, С‡С‚Рѕ РѕР±СЉСЏРІР»РµРЅРёРµ СЃРѕСЃС‚Р°РІР»РµРЅРѕ РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ
 		}
 	}
 
@@ -328,15 +327,15 @@ bool MakerUtils::AnalyzeTypeSpecifierPkg( const NodePackage *typeSpecList,
 }
 
 
-// метод сбора информации из пакета с декларатором
-// во временную структуру tempObjectContainer
+// РјРµС‚РѕРґ СЃР±РѕСЂР° РёРЅС„РѕСЂРјР°С†РёРё РёР· РїР°РєРµС‚Р° СЃ РґРµРєР»Р°СЂР°С‚РѕСЂРѕРј
+// РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ tempObjectContainer
 void MakerUtils::AnalyzeDeclaratorPkg( const NodePackage *declarator, 
 					TempObjectContainer *tempObjectContainer )
-{	
+{
 	for( int i = 0; i<declarator->GetChildPackageCount(); i++ )
-	{		
-		// имя пропускаем, т.к. в конструкторе TempObjectContainer
-		// оно уже определялось
+	{
+		// РёРјСЏ РїСЂРѕРїСѓСЃРєР°РµРј, С‚.Рє. РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ TempObjectContainer
+		// РѕРЅРѕ СѓР¶Рµ РѕРїСЂРµРґРµР»СЏР»РѕСЃСЊ
 		if( declarator->GetChildPackage(i)->GetPackageID() == PC_QUALIFIED_NAME )
 			continue;
 
@@ -344,9 +343,9 @@ void MakerUtils::AnalyzeDeclaratorPkg( const NodePackage *declarator,
 		{
 			bool c = false, v = false;
 
-			// если не последний, проверим cv-квалификаторы
+			// РµСЃР»Рё РЅРµ РїРѕСЃР»РµРґРЅРёР№, РїСЂРѕРІРµСЂРёРј cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹
 		check_cv:
-			if( i != declarator->GetChildPackageCount()-1 )			
+			if( i != declarator->GetChildPackageCount()-1 )
 				if( declarator->GetChildPackage(i+1)->GetPackageID() == KWCONST )
 				{
 					c = true, i++;
@@ -357,9 +356,9 @@ void MakerUtils::AnalyzeDeclaratorPkg( const NodePackage *declarator,
 				{
 					v = true, i++;
 					goto check_cv;
-				}				
-			
-			// создаем и добавляем указатель
+				}
+
+			// СЃРѕР·РґР°РµРј Рё РґРѕР±Р°РІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ
 			tempObjectContainer->dtl.AddDerivedType( new Pointer(c,v) );
 		}
 
@@ -378,22 +377,21 @@ void MakerUtils::AnalyzeDeclaratorPkg( const NodePackage *declarator,
 		{
 			if( PointerToMember *ptm = MakePointerToMember( 
 					*(NodePackage *)declarator->GetChildPackage(i)) )
-				tempObjectContainer->dtl.AddDerivedType( ptm );	
+				tempObjectContainer->dtl.AddDerivedType( ptm );
 			
 		}
 
 		else if( declarator->GetChildPackage(i)->GetPackageID() == PC_ARRAY )
 		{
-			const NodePackage &ar = *static_cast<const NodePackage *>(
-												declarator->GetChildPackage(i));
+			const NodePackage &ar = *static_cast<const NodePackage *>(declarator->GetChildPackage(i));
 
 			INTERNAL_IF( ar.GetChildPackageCount() < 2 || ar.GetChildPackageCount() > 3 );
 
-			// два дочерних пакета - '[' и ']'
-			if( ar.GetChildPackageCount() == 2 )			
+			// РґРІР° РґРѕС‡РµСЂРЅРёС… РїР°РєРµС‚Р° - '[' Рё ']'
+			if( ar.GetChildPackageCount() == 2 )
 				tempObjectContainer->dtl.AddDerivedType( new Array );
-			
-			// иначе анализируем выражение
+
+			// РёРЅР°С‡Рµ Р°РЅР°Р»РёР·РёСЂСѓРµРј РІС‹СЂР°Р¶РµРЅРёРµ
 			else
 			{
 				INTERNAL_IF( ar.GetChildPackage(0)->GetPackageID() != '[' ||
@@ -402,42 +400,42 @@ void MakerUtils::AnalyzeDeclaratorPkg( const NodePackage *declarator,
 				const POperand &exp = static_cast<const ExpressionPackage *>(
 					ar.GetChildPackage(1))->GetExpression();
 
-				// выражение должно быть целое и константное
+				// РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С†РµР»РѕРµ Рё РєРѕРЅСЃС‚Р°РЅС‚РЅРѕРµ
 				double arSize;
 				if( ExpressionMakerUtils::IsInterpretable(exp, arSize) &&
 					exp->GetType().GetBaseType().GetBaseTypeCode() != BaseType::BT_FLOAT &&
 					exp->GetType().GetBaseType().GetBaseTypeCode() != BaseType::BT_DOUBLE )
 					tempObjectContainer->dtl.AddDerivedType( new Array(arSize) );
 
-				// иначе создаем без размера
+				// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј Р±РµР· СЂР°Р·РјРµСЂР°
 				else
 					tempObjectContainer->dtl.AddDerivedType( new Array );
 			}
-		}		
+		}
 
 		else
-			INTERNAL( "'AnalyzeDeclaratorPkg' получил некорректный входной пакет");
+			INTERNAL( "'AnalyzeDeclaratorPkg' РїРѕР»СѓС‡РёР» РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІС…РѕРґРЅРѕР№ РїР°РєРµС‚");
 	}
 }
 
 
-// уточнить базовый тип временного объекта: 1. определить есть ли базовый тип,
-// и если нет то добавить тип по умолчанию, 2. если базовый тип задан как
-// синоним типа typedef, преобразовать 
+// СѓС‚РѕС‡РЅРёС‚СЊ Р±Р°Р·РѕРІС‹Р№ С‚РёРї РІСЂРµРјРµРЅРЅРѕРіРѕ РѕР±СЉРµРєС‚Р°: 1. РѕРїСЂРµРґРµР»РёС‚СЊ РµСЃС‚СЊ Р»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї,
+// Рё РµСЃР»Рё РЅРµС‚ С‚Рѕ РґРѕР±Р°РІРёС‚СЊ С‚РёРї РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, 2. РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї Р·Р°РґР°РЅ РєР°Рє
+// СЃРёРЅРѕРЅРёРј С‚РёРїР° typedef, РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ 
 void MakerUtils::SpecifyBaseType( TempObjectContainer *tempObjectContainer )
 {
-	// базовый тип не задан, создать встроенный базовый тип по умолчанию
+	// Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅРµ Р·Р°РґР°РЅ, СЃРѕР·РґР°С‚СЊ РІСЃС‚СЂРѕРµРЅРЅС‹Р№ Р±Р°Р·РѕРІС‹Р№ С‚РёРї РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	if( tempObjectContainer->baseType == NULL )
 	{
 		theApp.Warning(tempObjectContainer->errPos, 
-			"'%s' - пропущен базовый тип",
+			"'%s' - РїСЂРѕРїСѓС‰РµРЅ Р±Р°Р·РѕРІС‹Р№ С‚РёРї",
 			tempObjectContainer->name.c_str() );
 
 		tempObjectContainer->finalType = (BaseType *)
 			&ImplicitTypeManager(BaseType::BT_INT).GetImplicitType();
 	}
 
-	// если базовый тип создан, но не задан, задаем его как int
+	// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї СЃРѕР·РґР°РЅ, РЅРѕ РЅРµ Р·Р°РґР°РЅ, Р·Р°РґР°РµРј РµРіРѕ РєР°Рє int
 	else if( tempObjectContainer->baseType->IsImplicit() )
 	{ 
 		TempObjectContainer::ImplicitType *it = (TempObjectContainer::ImplicitType *)
@@ -445,23 +443,23 @@ void MakerUtils::SpecifyBaseType( TempObjectContainer *tempObjectContainer )
 
 		if( it->baseTypeCode == BaseType::BT_NONE )
 			it->baseTypeCode = BaseType::BT_INT;
-		
-		// следует проверка модификаторов
-		// проверяем модификатор знака 
+
+		// СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРєР° РјРѕРґРёС„РёРєР°С‚РѕСЂРѕРІ
+		// РїСЂРѕРІРµСЂСЏРµРј РјРѕРґРёС„РёРєР°С‚РѕСЂ Р·РЅР°РєР° 
 		if( it->signMod != BaseType::MN_NONE && it->baseTypeCode != BaseType::BT_CHAR &&
 			it->baseTypeCode != BaseType::BT_INT )
 		{
 			theApp.Error(tempObjectContainer->errPos, 
-				"'модификатор знака %s' может использоваться только с типом 'char', либо 'int'",
+				"'РјРѕРґРёС„РёРєР°С‚РѕСЂ Р·РЅР°РєР° %s' РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ СЃ С‚РёРїРѕРј 'char', Р»РёР±Рѕ 'int'",
 				it->signMod == BaseType::MN_SIGNED ? "signed" : "unsigned");
 			it->signMod = BaseType::MN_NONE ;
 		}
 
-		// проверяем модификатор размера
+		// РїСЂРѕРІРµСЂСЏРµРј РјРѕРґРёС„РёРєР°С‚РѕСЂ СЂР°Р·РјРµСЂР°
 		if( it->sizeMod == BaseType::MZ_SHORT && it->baseTypeCode != BaseType::BT_INT )
 		{
 			theApp.Error( tempObjectContainer->errPos,
-				"'модификатор размера short' может использоваться только с типом 'int'"),
+				"'РјРѕРґРёС„РёРєР°С‚РѕСЂ СЂР°Р·РјРµСЂР° short' РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ СЃ С‚РёРїРѕРј 'int'"),
 			it->sizeMod =  BaseType::MZ_NONE;
 		}
 
@@ -470,8 +468,8 @@ void MakerUtils::SpecifyBaseType( TempObjectContainer *tempObjectContainer )
 			it->baseTypeCode !=  BaseType::BT_DOUBLE )
 		{
 			theApp.Error(tempObjectContainer->errPos, 
-				"'модификатор размера long' может использоваться только "
-				"с типом 'int', либо 'double'");
+				"'РјРѕРґРёС„РёРєР°С‚РѕСЂ СЂР°Р·РјРµСЂР° long' РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ "
+				"СЃ С‚РёРїРѕРј 'int', Р»РёР±Рѕ 'double'");
 			it->sizeMod =  BaseType::MZ_NONE;
 		}
 
@@ -481,7 +479,7 @@ void MakerUtils::SpecifyBaseType( TempObjectContainer *tempObjectContainer )
 		tempObjectContainer->finalType = tmp;
 	}
 
-	// если базовый тип задан как typedef, значит требуется его развертка
+	// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї Р·Р°РґР°РЅ РєР°Рє typedef, Р·РЅР°С‡РёС‚ С‚СЂРµР±СѓРµС‚СЃСЏ РµРіРѕ СЂР°Р·РІРµСЂС‚РєР°
 	else if( tempObjectContainer->baseType->IsSynonym() )
 	{
 		const ::Object &tname = ((TempObjectContainer::SynonymType *)
@@ -489,25 +487,25 @@ void MakerUtils::SpecifyBaseType( TempObjectContainer *tempObjectContainer )
 
 		INTERNAL_IF( tname.GetStorageSpecifier() != ::Object::SS_TYPEDEF );
 		
-		// развертываем синоним типа и добавляем его к уже имеющемуся по след. алгоритму:
-		// 1. Присоединяем список производных типов из obj, в конец результирующегося типа
-		// 2. В первый производный тип obj, такой как '*', 'X::*', '()' добавляем
-		// cv-квалификаторы, если они у нас есть. Например:  T* = U, тогда const U=T *const
-		// Соотв. при добавлении квалификатор удаляется из декларации		
-		// 3. cv-квалификаторы и базовый тип сохраняем в результ. типе
+		// СЂР°Р·РІРµСЂС‚С‹РІР°РµРј СЃРёРЅРѕРЅРёРј С‚РёРїР° Рё РґРѕР±Р°РІР»СЏРµРј РµРіРѕ Рє СѓР¶Рµ РёРјРµСЋС‰РµРјСѓСЃСЏ РїРѕ СЃР»РµРґ. Р°Р»РіРѕСЂРёС‚РјСѓ:
+		// 1. РџСЂРёСЃРѕРµРґРёРЅСЏРµРј СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ РёР· obj, РІ РєРѕРЅРµС† СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РµРіРѕСЃСЏ С‚РёРїР°
+		// 2. Р’ РїРµСЂРІС‹Р№ РїСЂРѕРёР·РІРѕРґРЅС‹Р№ С‚РёРї obj, С‚Р°РєРѕР№ РєР°Рє '*', 'X::*', '()' РґРѕР±Р°РІР»СЏРµРј
+		// cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹, РµСЃР»Рё РѕРЅРё Сѓ РЅР°СЃ РµСЃС‚СЊ. РќР°РїСЂРёРјРµСЂ:  T* = U, С‚РѕРіРґР° const U=T *const
+		// РЎРѕРѕС‚РІ. РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё РєРІР°Р»РёС„РёРєР°С‚РѕСЂ СѓРґР°Р»СЏРµС‚СЃСЏ РёР· РґРµРєР»Р°СЂР°С†РёРё
+		// 3. cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹ Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї СЃРѕС…СЂР°РЅСЏРµРј РІ СЂРµР·СѓР»СЊС‚. С‚РёРїРµ
 		
-		// если имеются производные типы в синониме
+		// РµСЃР»Рё РёРјРµСЋС‚СЃСЏ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ С‚РёРїС‹ РІ СЃРёРЅРѕРЅРёРјРµ
 		if( tname.GetDerivedTypeList().GetDerivedTypeCount() > 0 )
 		{
 			bool was_qual = false;
 			was_qual = tempObjectContainer->dtl.AddDerivedTypeListCV(tname.GetDerivedTypeList(),
 				tempObjectContainer->constQual, tempObjectContainer->volatileQual);
-		
+
 			if( was_qual )
 				tempObjectContainer->constQual = tempObjectContainer->volatileQual = false;
 		}
 
-		// перемещаем базовый тип в контейнер, прежде удалив синоним
+		// РїРµСЂРµРјРµС‰Р°РµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї РІ РєРѕРЅС‚РµР№РЅРµСЂ, РїСЂРµР¶РґРµ СѓРґР°Р»РёРІ СЃРёРЅРѕРЅРёРј
 		delete tempObjectContainer->baseType;
 		bool c = tempObjectContainer->constQual || tname.IsConst(),
 			 v = tempObjectContainer->volatileQual || tname.IsVolatile();
@@ -524,28 +522,28 @@ void MakerUtils::SpecifyBaseType( TempObjectContainer *tempObjectContainer )
 	}
 
 	else
-		INTERNAL( "неизвестная разновидность базового типа");
+		INTERNAL( "РЅРµРёР·РІРµСЃС‚РЅР°СЏ СЂР°Р·РЅРѕРІРёРґРЅРѕСЃС‚СЊ Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР°");
 
-	// в последнюю очередь проверяем, если задан спецификатор свзяывания, но
-	// extern не задан, задаем, предварительно проверив
+	// РІ РїРѕСЃР»РµРґРЅСЋСЋ РѕС‡РµСЂРµРґСЊ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё Р·Р°РґР°РЅ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ СЃРІР·СЏС‹РІР°РЅРёСЏ, РЅРѕ
+	// extern РЅРµ Р·Р°РґР°РЅ, Р·Р°РґР°РµРј, РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ РїСЂРѕРІРµСЂРёРІ
 	if( tempObjectContainer->clinkSpec )
 	{
 		if( tempObjectContainer->ssCode != -1 &&
 			tempObjectContainer->ssCode != KWEXTERN )
 			theApp.Error(tempObjectContainer->errPos,
-				"использование '%s' некорректно, спецификатор хранения уже задан",
+				"РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ '%s' РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ, СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ СѓР¶Рµ Р·Р°РґР°РЅ",
 				GetKeywordName(tempObjectContainer->ssCode) );
 	}
 }
 
 
-// проверить и создать характеристику базового класса, если
-// базовый класс не найден, либо он не доступен, возвращается 0
+// РїСЂРѕРІРµСЂРёС‚СЊ Рё СЃРѕР·РґР°С‚СЊ С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєСѓ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°, РµСЃР»Рё
+// Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РЅРµ РЅР°Р№РґРµРЅ, Р»РёР±Рѕ РѕРЅ РЅРµ РґРѕСЃС‚СѓРїРµРЅ, РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ 0
 PBaseClassCharacteristic MakerUtils::MakeBaseClass( const NodePackage *bc, bool defaultIsPrivate)
 {
-	// пакет должен иметь заголовок PC_BASE_CLASS и содержать от 1
-	// до 3 дочерних пакетов. Первые два - спецификатор доступа и virtual.
-	// Последний всегда имя класса.
+	// РїР°РєРµС‚ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ Р·Р°РіРѕР»РѕРІРѕРє PC_BASE_CLASS Рё СЃРѕРґРµСЂР¶Р°С‚СЊ РѕС‚ 1
+	// РґРѕ 3 РґРѕС‡РµСЂРЅРёС… РїР°РєРµС‚РѕРІ. РџРµСЂРІС‹Рµ РґРІР° - СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° Рё virtual.
+	// РџРѕСЃР»РµРґРЅРёР№ РІСЃРµРіРґР° РёРјСЏ РєР»Р°СЃСЃР°.
 	INTERNAL_IF( bc->GetPackageID() != PC_BASE_CLASS || bc->GetChildPackageCount() < 1 ||
 		bc->GetChildPackageCount() > 3 );
 
@@ -555,7 +553,7 @@ PBaseClassCharacteristic MakerUtils::MakeBaseClass( const NodePackage *bc, bool 
 	ClassMember::AS as = defaultIsPrivate ? ClassMember::AS_PRIVATE : ClassMember::AS_PUBLIC;
 	bool vd = false;
 
-	// если имеется спецификатор доступа или virtual
+	// РµСЃР»Рё РёРјРµРµС‚СЃСЏ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° РёР»Рё virtual
 	if( bc->GetChildPackageCount() > 1 )
 	{
 	for( int i = 0; i < bc->GetChildPackageCount()-1; i++ )
@@ -574,72 +572,71 @@ PBaseClassCharacteristic MakerUtils::MakeBaseClass( const NodePackage *bc, bool 
 			as = ClassMember::AS_PRIVATE;
 		
 		else
-			INTERNAL( "'MakerUtils::MakeBaseClass' получил некорректный пакет" );
+			INTERNAL( "'MakerUtils::MakeBaseClass' РїРѕР»СѓС‡РёР» РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РїР°РєРµС‚" );
 	}
 	}
 
 	QualifiedNameManager qnm(cnam);
 	AmbiguityChecker achk(qnm.GetRoleList(), ParserUtils::GetPackagePosition(cnam), true);
 	const ClassType *cls = NULL;
-		
-	cls = achk.IsClassType(true);			
-	if( cls == NULL )		// если имя не является классом, возможно это имя typedef	
+
+	cls = achk.IsClassType(true);
+	if( cls == NULL ) // РµСЃР»Рё РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј, РІРѕР·РјРѕР¶РЅРѕ СЌС‚Рѕ РёРјСЏ typedef 
 		if( const ::Object *id = achk.IsTypedef() )
 			cls = CheckerUtils::TypedefIsClass(*id);
 
 	if( cls != NULL )
 	{
-		// проверяем, можно ли класс использовать как базовый и
-		// если можно - возвращаем
+		// РїСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РєР»Р°СЃСЃ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РєР°Рє Р±Р°Р·РѕРІС‹Р№ Рё
+		// РµСЃР»Рё РјРѕР¶РЅРѕ - РІРѕР·РІСЂР°С‰Р°РµРј
 		Position epos = ParserUtils::GetPackagePosition(cnam);
 		if( CheckerUtils::BaseClassChecker(*cls, qnm.GetQualifierList(), epos,
 				ParserUtils::PrintPackageTree(cnam).c_str()) )
 		{
-			// проверяем на доступность и возвращаем характеристику базового класса
+			// РїСЂРѕРІРµСЂСЏРµРј РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ Рё РІРѕР·РІСЂР°С‰Р°РµРј С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєСѓ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°
 			CheckerUtils::CheckAccess(qnm, *cls, epos);
 			return new BaseClassCharacteristic(vd, as, *cls);
 		}
 
-		// иначе класс не может быть базовым классом и мы возвращаем 0
+		// РёРЅР°С‡Рµ РєР»Р°СЃСЃ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р±Р°Р·РѕРІС‹Рј РєР»Р°СЃСЃРѕРј Рё РјС‹ РІРѕР·РІСЂР°С‰Р°РµРј 0
 		else
 			return NULL;
 	}
 
-	// иначе класс не найден
+	// РёРЅР°С‡Рµ РєР»Р°СЃСЃ РЅРµ РЅР°Р№РґРµРЅ
 	else
 	{
 		theApp.Error( ParserUtils::GetPackagePosition(cnam),
-			"'%s' - базовый класс не найден", ParserUtils::PrintPackageTree(cnam).c_str());
+			"'%s' - Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РЅРµ РЅР°Р№РґРµРЅ", ParserUtils::PrintPackageTree(cnam).c_str());
 		return NULL;
 	}
 }
 
 
-// анализировать пакет с перегруженным оператором и поместить
-//  его во временную структуру
-void MakerUtils::AnalyzeOverloadOperatorPkg( const NodePackage &op, 
-											TempOverloadOperatorContainer &tooc )
+// Р°РЅР°Р»РёР·РёСЂРѕРІР°С‚СЊ РїР°РєРµС‚ СЃ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Рј РѕРїРµСЂР°С‚РѕСЂРѕРј Рё РїРѕРјРµСЃС‚РёС‚СЊ
+//  РµРіРѕ РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ
+void MakerUtils::AnalyzeOverloadOperatorPkg( const NodePackage &op, TempOverloadOperatorContainer &tooc )
 {
 	INTERNAL_IF( op.GetPackageID() != PC_OVERLOAD_OPERATOR );
 
-	// формат пакета: KWOPERATOR opLxm1 [opLxm2]
+	// С„РѕСЂРјР°С‚ РїР°РєРµС‚Р°: KWOPERATOR opLxm1 [opLxm2]
 	INTERNAL_IF( op.GetChildPackageCount() < 2 );
 	INTERNAL_IF( op.GetChildPackage(0)->GetPackageID() != KWOPERATOR );
 	INTERNAL_IF( !op.GetChildPackage(1)->IsLexemPackage() );
 
-	// если оператор состоит из одной лексемы
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ СЃРѕСЃС‚РѕРёС‚ РёР· РѕРґРЅРѕР№ Р»РµРєСЃРµРјС‹
 	if( op.GetChildPackageCount() == 2 )
-	{			
-		// записываем результат в пакет		
+	{
+		// Р·Р°РїРёСЃС‹РІР°РµРј СЂРµР·СѓР»СЊС‚Р°С‚ РІ РїР°РєРµС‚
 		Lexem lxm = static_cast<const LexemPackage *>(op.GetChildPackage(1))->GetLexem();
 		tooc.opCode = lxm.GetCode();
 		tooc.opString = lxm.GetBuf();
 		tooc.opFullName = (string("operator ") + lxm.GetBuf().c_str()).c_str();
 	}
 
-	// иначе если оператор состоит из двух лексем (только '[]' и '()')
+	// РёРЅР°С‡Рµ РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ СЃРѕСЃС‚РѕРёС‚ РёР· РґРІСѓС… Р»РµРєСЃРµРј (С‚РѕР»СЊРєРѕ '[]' Рё '()')
 	else if( op.GetChildPackageCount() == 3 )
-	{		
+	{
 		Lexem lxm = static_cast<const LexemPackage *>(op.GetChildPackage(1))->GetLexem();
 		INTERNAL_IF( lxm != '(' && lxm != '[' );
 
@@ -648,11 +645,11 @@ void MakerUtils::AnalyzeOverloadOperatorPkg( const NodePackage &op,
 		tooc.opFullName = (string("operator ") + tooc.opString.c_str()).c_str();
 	}
 
-	// иначе если оператор из 3 лексем (только 'new[]' и 'delete[]')
+	// РёРЅР°С‡Рµ РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РёР· 3 Р»РµРєСЃРµРј (С‚РѕР»СЊРєРѕ 'new[]' Рё 'delete[]')
 	else if( op.GetChildPackageCount() == 4 )
 	{
 		Lexem kwlxm = static_cast<const LexemPackage *>(op.GetChildPackage(1))->GetLexem();
-		
+
 
 		INTERNAL_IF( kwlxm  != KWNEW && kwlxm != KWDELETE );
 		INTERNAL_IF( op.GetChildPackage(2)->GetPackageID() != '[' ||
@@ -662,22 +659,21 @@ void MakerUtils::AnalyzeOverloadOperatorPkg( const NodePackage &op,
 		tooc.opString = kwlxm == KWNEW ? "new[]" : "delete[]";
 		tooc.opFullName = (string("operator ") + tooc.opString.c_str()).c_str();
 
-	}	
+	}
 
-	// иначе внутренняя ошибка
+	// РёРЅР°С‡Рµ РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР°
 	else
-		INTERNAL( "'MakerUtils::AnalyzeOverloadOperatorPkg' принимает некорректный пакет");
+		INTERNAL( "'MakerUtils::AnalyzeOverloadOperatorPkg' РїСЂРёРЅРёРјР°РµС‚ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РїР°РєРµС‚");
 }
 
 
-// анализировать пакет с оператором приведения и поместить
-// его во временную структуру
-void MakerUtils::AnalyzeCastOperatorPkg( const NodePackage &op, 
-							TempCastOperatorContainer &tcoc  )
+// Р°РЅР°Р»РёР·РёСЂРѕРІР°С‚СЊ РїР°РєРµС‚ СЃ РѕРїРµСЂР°С‚РѕСЂРѕРј РїСЂРёРІРµРґРµРЅРёСЏ Рё РїРѕРјРµСЃС‚РёС‚СЊ
+// РµРіРѕ РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ
+void MakerUtils::AnalyzeCastOperatorPkg( const NodePackage &op, TempCastOperatorContainer &tcoc  )
 {
 	INTERNAL_IF( op.GetPackageID() != PC_CAST_OPERATOR );
 
-	// формат пакета: KWOPERATOR PC_CAST_TYPE
+	// С„РѕСЂРјР°С‚ РїР°РєРµС‚Р°: KWOPERATOR PC_CAST_TYPE
 	INTERNAL_IF( op.GetChildPackageCount() != 2 );
 	INTERNAL_IF( op.GetChildPackage(0)->GetPackageID() != KWOPERATOR || 
 				 op.GetChildPackage(1)->GetPackageID() != PC_CAST_TYPE );
@@ -685,26 +681,26 @@ void MakerUtils::AnalyzeCastOperatorPkg( const NodePackage &op,
 	const NodePackage &ct = *static_cast<const NodePackage *>(op.GetChildPackage(1));
 	INTERNAL_IF( ct.IsNoChildPackages() );
 
-	// создаем временную структуру для типа приведения
+	// СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ РґР»СЏ С‚РёРїР° РїСЂРёРІРµРґРµРЅРёСЏ
 	TempObjectContainer toc( ParserUtils::GetPackagePosition(&ct), 
-		CharString("<оператор приведения>") );
+		CharString("<РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ>") );
 
-	// начинаем анализ спецификаторов типа
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	AnalyzeTypeSpecifierPkg( ((NodePackage *)ct.GetChildPackage(0)), &toc );
 
-	// далее, анализируем декларатор
+	// РґР°Р»РµРµ, Р°РЅР°Р»РёР·РёСЂСѓРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 	AnalyzeDeclaratorPkg( ((NodePackage *)ct.GetChildPackage(1)), &toc );
 	
-	// уточняем базовый тип
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 	SpecifyBaseType( &toc );
 
-	// проверяем, чтобы не использовались не нужные спецификаторы
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РЅРµ РёСЃРїРѕР»СЊР·РѕРІР°Р»РёСЃСЊ РЅРµ РЅСѓР¶РЅС‹Рµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹
 	if( toc.ssCode != -1 || toc.fnSpecCode != -1 || toc.friendSpec )
-		theApp.Error(toc.errPos, "'%s' некорректен в контексте объявления оператора приведения",
-			toc.friendSpec ? "friend" :	
+		theApp.Error(toc.errPos, "'%s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РІ РєРѕРЅС‚РµРєСЃС‚Рµ РѕР±СЉСЏРІР»РµРЅРёСЏ РѕРїРµСЂР°С‚РѕСЂР° РїСЂРёРІРµРґРµРЅРёСЏ",
+			toc.friendSpec ? "friend" :
 				GetKeywordName(toc.ssCode < 0 ? toc.fnSpecCode : toc.ssCode));
 
-	// после всех операций, тип готов. Заполняем временную структуру
+	// РїРѕСЃР»Рµ РІСЃРµС… РѕРїРµСЂР°С†РёР№, С‚РёРї РіРѕС‚РѕРІ. Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ
 	tcoc.opCode = OC_CAST;
 	tcoc.castType = new TypyziedEntity(toc.finalType, toc.constQual, toc.volatileQual, toc.dtl); 
 	tcoc.opString = tcoc.castType->GetTypyziedEntityName();
@@ -712,78 +708,78 @@ void MakerUtils::AnalyzeCastOperatorPkg( const NodePackage &op,
 }
 
 
-// создает новую область видимости, если она не создана, вставляет
-// ее в стек областей видимости, и делаем необходимые проверки.
-// В параметре передается пакет с именем, который может быть NULL,
-// если создается безимянная ОВ
+// СЃРѕР·РґР°РµС‚ РЅРѕРІСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, РµСЃР»Рё РѕРЅР° РЅРµ СЃРѕР·РґР°РЅР°, РІСЃС‚Р°РІР»СЏРµС‚
+// РµРµ РІ СЃС‚РµРє РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё, Рё РґРµР»Р°РµРј РЅРµРѕР±С…РѕРґРёРјС‹Рµ РїСЂРѕРІРµСЂРєРё.
+// Р’ РїР°СЂР°РјРµС‚СЂРµ РїРµСЂРµРґР°РµС‚СЃСЏ РїР°РєРµС‚ СЃ РёРјРµРЅРµРј, РєРѕС‚РѕСЂС‹Р№ РјРѕР¶РµС‚ Р±С‹С‚СЊ NULL,
+// РµСЃР»Рё СЃРѕР·РґР°РµС‚СЃСЏ Р±РµР·РёРјСЏРЅРЅР°СЏ РћР’
 bool MakerUtils::MakeNamepsaceDeclRegion( const NodePackage *nn )
 {	
-	// если нет имени, работаем с безымянной областью видимости
+	// РµСЃР»Рё РЅРµС‚ РёРјРµРЅРё, СЂР°Р±РѕС‚Р°РµРј СЃ Р±РµР·С‹РјСЏРЅРЅРѕР№ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё
 	if( nn == NULL )
-	{			
+	{
 		CharString tun = theApp.GetTranslationUnit().GetShortFileName();
 		if( unsigned p = tun.find(".") )
 			tun.erase(p, tun.size());
-		CharString tmpName = ( ("__" + CharString(tun) + "_namespace").c_str() );		
+		CharString tmpName = ( ("__" + CharString(tun) + "_namespace").c_str() );
 
-		// сначала пытаемся найти эту область видимости, возможно она уже
-		// существует
+		// СЃРЅР°С‡Р°Р»Р° РїС‹С‚Р°РµРјСЃСЏ РЅР°Р№С‚Рё СЌС‚Сѓ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, РІРѕР·РјРѕР¶РЅРѕ РѕРЅР° СѓР¶Рµ
+		// СЃСѓС‰РµСЃС‚РІСѓРµС‚
 		NameManager nm(tmpName, &GetCurrentSymbolTable(), false);
 		INTERNAL_IF( nm.GetRoleCount() > 1 );
 
-		// область видимости найдена
+		// РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅР°Р№РґРµРЅР°
 		if( nm.GetRoleCount() == 1 )
 		{
 			INTERNAL_IF( nm.GetRoleList().front().second != R_NAMESPACE );
-				// делаем ее текущей
+				// РґРµР»Р°РµРј РµРµ С‚РµРєСѓС‰РµР№
 			GetScopeSystem().MakeNewSymbolTable((NameSpace*)nm.GetRoleList().front().first);
 			return true;
 		}
 
-		// далее создаем
+		// РґР°Р»РµРµ СЃРѕР·РґР°РµРј
 		NameSpace *ns = new NameSpace(tmpName, &GetCurrentSymbolTable(), true);
 
-		// вставляем
+		// РІСЃС‚Р°РІР»СЏРµРј
 		INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol(ns) );
 
-		// делаем дружеской по отношению к текущей, чтобы она имела 
-		// доступ к именам из безимянной
+		// РґРµР»Р°РµРј РґСЂСѓР¶РµСЃРєРѕР№ РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ Рє С‚РµРєСѓС‰РµР№, С‡С‚РѕР±С‹ РѕРЅР° РёРјРµР»Р° 
+		// РґРѕСЃС‚СѓРї Рє РёРјРµРЅР°Рј РёР· Р±РµР·РёРјСЏРЅРЅРѕР№
 		GeneralSymbolTable *gst = dynamic_cast<GeneralSymbolTable *>(&GetCurrentSymbolTable());
 		INTERNAL_IF( gst == NULL );
 		gst->AddUsingNamespace(ns);
 
-		// сохраняем в стеке, делая ее текущей
+		// СЃРѕС…СЂР°РЅСЏРµРј РІ СЃС‚РµРєРµ, РґРµР»Р°СЏ РµРµ С‚РµРєСѓС‰РµР№
 		GetScopeSystem().MakeNewSymbolTable(ns);
-		return true;		// выходим
+		return true; // РІС‹С…РѕРґРёРј
 	}
 
 	INTERNAL_IF( nn->GetPackageID() != PC_QUALIFIED_NAME );
 
-	// в противном случае, создаем именованную область видимости
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, СЃРѕР·РґР°РµРј РёРјРµРЅРѕРІР°РЅРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 	Position ep = ParserUtils::GetPackagePosition(nn);
 	CharString nam = ParserUtils::PrintPackageTree(nn);
 	QualifiedNameManager qnm(nn, &GetCurrentSymbolTable());
 
-	// если имеется несолько имен
+	// РµСЃР»Рё РёРјРµРµС‚СЃСЏ РЅРµСЃРѕР»СЊРєРѕ РёРјРµРЅ
 	if( qnm.GetRoleCount() > 1 )
 	{
-		theApp.Error(ep, "'%s' - имя области видимости должно быть уникальным",
+		theApp.Error(ep, "'%s' - РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СѓРЅРёРєР°Р»СЊРЅС‹Рј",
 			nam.c_str());
 		return false;
 	}
 
-	// если имеется одна роль, она должна быть обязательно именем области видимости
+	// РµСЃР»Рё РёРјРµРµС‚СЃСЏ РѕРґРЅР° СЂРѕР»СЊ, РѕРЅР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РёРјРµРЅРµРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	else if( qnm.GetRoleCount() == 1 )
 	{
 		RolePair r = qnm.GetRoleList().front();
 		if( r.second != R_NAMESPACE )
 		{
-			theApp.Error(ep, "'%s' - идентификатор не является именованной областью видимости",
+			theApp.Error(ep, "'%s' - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РёРјРµРЅРѕРІР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё",
 				nam.c_str());
 			return false;
 		}
 
-		// иначе, имя является областью видимости и нам следует сохранить его в стеке
+		// РёРЅР°С‡Рµ, РёРјСЏ СЏРІР»СЏРµС‚СЃСЏ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё Рё РЅР°Рј СЃР»РµРґСѓРµС‚ СЃРѕС…СЂР°РЅРёС‚СЊ РµРіРѕ РІ СЃС‚РµРєРµ
 		else
 		{
 			NameSpace *ns = dynamic_cast<NameSpace *>(r.first);
@@ -792,42 +788,42 @@ bool MakerUtils::MakeNamepsaceDeclRegion( const NodePackage *nn )
 		}	
 	}
 
-	// в противном случае, у имени нет ролей. Нам следует проверить, 
-	// если имя является составным, то это ошибка, иначе создаем область видимости
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, Сѓ РёРјРµРЅРё РЅРµС‚ СЂРѕР»РµР№. РќР°Рј СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ, 
+	// РµСЃР»Рё РёРјСЏ СЏРІР»СЏРµС‚СЃСЏ СЃРѕСЃС‚Р°РІРЅС‹Рј, С‚Рѕ СЌС‚Рѕ РѕС€РёР±РєР°, РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 	else
 	{
 		if( nn->GetChildPackageCount() > 1 )
 		{
-			theApp.Error(ep, "'%s' - идентификатор не является именованной областью видимости",
+			theApp.Error(ep, "'%s' - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РёРјРµРЅРѕРІР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё",
 				nam.c_str());
 			return false;
 		}
 
-		// в противном случае, создаем область видимости
+		// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, СЃРѕР·РґР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 		INTERNAL_IF( nn->GetChildPackage(0)->GetPackageID() != NAME );
 		NameSpace *ns = new NameSpace(nam, &GetCurrentSymbolTable(), false);
 
-		// вставляем
+		// РІСЃС‚Р°РІР»СЏРµРј
 		INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol(ns) );
 
-		// сохраняем в стеке, делая ее текущей
+		// СЃРѕС…СЂР°РЅСЏРµРј РІ СЃС‚РµРєРµ, РґРµР»Р°СЏ РµРµ С‚РµРєСѓС‰РµР№
 		GetScopeSystem().MakeNewSymbolTable(ns);
 		return true;
 	}
 }
 
 
-// проверить, создать и вставить в таблицу синоном области видимости
-// в параметрах принимаются имя синонима и имя области видимости для
-// которов синоним создается
+// РїСЂРѕРІРµСЂРёС‚СЊ, СЃРѕР·РґР°С‚СЊ Рё РІСЃС‚Р°РІРёС‚СЊ РІ С‚Р°Р±Р»РёС†Сѓ СЃРёРЅРѕРЅРѕРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
+// РІ РїР°СЂР°РјРµС‚СЂР°С… РїСЂРёРЅРёРјР°СЋС‚СЃСЏ РёРјСЏ СЃРёРЅРѕРЅРёРјР° Рё РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ
+// РєРѕС‚РѕСЂРѕРІ СЃРёРЅРѕРЅРёРј СЃРѕР·РґР°РµС‚СЃСЏ
 void MakerUtils::MakeNamespaceAlias( const NodePackage *al, const NodePackage *ns )
 {
-	// 1. al - должно быть неквалифицированным именем
-	// 2. ns и al должны иметь код PC_QUALIFIED_NAME
-	// 3. ns - должно быть именованной областью видимости
-	// 4. al - должно быть уникальным именем в своей области видимости.
-	//	  если оно уже создано, проверить чтобы оно было областью видимости 
-	//	  и указатели равнялись области видимости ns
+	// 1. al - РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРµРєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј РёРјРµРЅРµРј
+	// 2. ns Рё al РґРѕР»Р¶РЅС‹ РёРјРµС‚СЊ РєРѕРґ PC_QUALIFIED_NAME
+	// 3. ns - РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РёРјРµРЅРѕРІР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё
+	// 4. al - РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СѓРЅРёРєР°Р»СЊРЅС‹Рј РёРјРµРЅРµРј РІ СЃРІРѕРµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё.
+	//	  РµСЃР»Рё РѕРЅРѕ СѓР¶Рµ СЃРѕР·РґР°РЅРѕ, РїСЂРѕРІРµСЂРёС‚СЊ С‡С‚РѕР±С‹ РѕРЅРѕ Р±С‹Р»Рѕ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё 
+	//	  Рё СѓРєР°Р·Р°С‚РµР»Рё СЂР°РІРЅСЏР»РёСЃСЊ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё ns
 	INTERNAL_IF( al == NULL || ns == NULL || al->GetPackageID() != PC_QUALIFIED_NAME ||
 		ns->GetPackageID() != PC_QUALIFIED_NAME );
 
@@ -840,7 +836,7 @@ void MakerUtils::MakeNamespaceAlias( const NodePackage *al, const NodePackage *n
 	QualifiedNameManager qnm(ns);
 	AmbiguityChecker achk(qnm.GetRoleList(), alPos, true);
 
-	// если это именованая область видимости, то продолжаем проверку
+	// РµСЃР»Рё СЌС‚Рѕ РёРјРµРЅРѕРІР°РЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, С‚Рѕ РїСЂРѕРґРѕР»Р¶Р°РµРј РїСЂРѕРІРµСЂРєСѓ
 	if( const NameSpace *tns = achk.IsNameSpace() )
 	{
 		CharString name = ParserUtils::PrintPackageTree(al);
@@ -849,40 +845,40 @@ void MakerUtils::MakeNamespaceAlias( const NodePackage *al, const NodePackage *n
 			(nm.GetRoleCount() == 1 && nm.GetRoleList().front().second != R_NAMESPACE) )
 		{
 			theApp.Error(alPos, 
-				"'%s' - идентификатор не является именованной областью видимости",
+				"'%s' - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РёРјРµРЅРѕРІР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё",
 				name.c_str());
 			return;
 		}
 
-		// иначе если имя еще не создано, создаем и вставляем в таблицу
+		// РёРЅР°С‡Рµ РµСЃР»Рё РёРјСЏ РµС‰Рµ РЅРµ СЃРѕР·РґР°РЅРѕ, СЃРѕР·РґР°РµРј Рё РІСЃС‚Р°РІР»СЏРµРј РІ С‚Р°Р±Р»РёС†Сѓ
 		if( nm.GetRoleCount() == 0 )
 		{
 			NameSpaceAlias *nsa = new NameSpaceAlias(name, &GetCurrentSymbolTable(), *tns);
 			INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol(nsa) );
 		}
 
-		// иначе имя уже является областью видимости, проверим, чтобы оно
-		// соотв. предыдущ. объявлению
+		// РёРЅР°С‡Рµ РёРјСЏ СѓР¶Рµ СЏРІР»СЏРµС‚СЃСЏ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё, РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РѕРЅРѕ
+		// СЃРѕРѕС‚РІ. РїСЂРµРґС‹РґСѓС‰. РѕР±СЉСЏРІР»РµРЅРёСЋ
 		else
 		{
 			if( static_cast<NameSpace *>(nm.GetRoleList().front().first) != tns )
 				theApp.Error(alPos, 
-				"'%s' - декларация синонима области видимости не совпадает с предыдущей", 
+				"'%s' - РґРµРєР»Р°СЂР°С†РёСЏ СЃРёРЅРѕРЅРёРјР° РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ РїСЂРµРґС‹РґСѓС‰РµР№", 
 					name.c_str());
 		}
 	}
 
-	// иначе выводим ошибку и выходим
+	// РёРЅР°С‡Рµ РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ Рё РІС‹С…РѕРґРёРј
 	else
 	{
-		theApp.Error(alPos, "'%s' - область видимости не найдена", 
+		theApp.Error(alPos, "'%s' - РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РЅР°Р№РґРµРЅР°", 
 			ParserUtils::PrintPackageTree(ns).c_str());
 		return;
 	}
 }
 
 
-// создать и проверить декларацию дружеской области видимости
+// СЃРѕР·РґР°С‚СЊ Рё РїСЂРѕРІРµСЂРёС‚СЊ РґРµРєР»Р°СЂР°С†РёСЋ РґСЂСѓР¶РµСЃРєРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 void MakerUtils::MakeUsingNamespace( const NodePackage *ns )
 {
 	INTERNAL_IF( ns == NULL || ns->GetPackageID() != PC_QUALIFIED_NAME ||
@@ -898,32 +894,32 @@ void MakerUtils::MakeUsingNamespace( const NodePackage *ns )
 		(qnm.GetRoleCount() == 1 && qnm.GetRoleList().front().second != R_NAMESPACE) )
 		{
 			theApp.Error(pos, 
-				"'%s' - идентификатор не является именованной областью видимости",
+				"'%s' - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РёРјРµРЅРѕРІР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё",
 				name.c_str());
 			return;
 		}
 
-	// иначе если имени вообще нет
+	// РёРЅР°С‡Рµ РµСЃР»Рё РёРјРµРЅРё РІРѕРѕР±С‰Рµ РЅРµС‚
 	if( qnm.GetRoleCount() == 0 )
 	{
 		theApp.Error(pos, 
-				"'%s' - область видимости не найдена",
+				"'%s' - РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РЅР°Р№РґРµРЅР°",
 				name.c_str());
-		return;		
+		return;
 	}
 
-	//в этом месте имеем единственную область видимости
+	//РІ СЌС‚РѕРј РјРµСЃС‚Рµ РёРјРµРµРј РµРґРёРЅСЃС‚РІРµРЅРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 	NameSpace *tns = dynamic_cast< NameSpace *>(qnm.GetRoleList().front().first);
 	INTERNAL_IF( tns == NULL );
 
-	// если текущая область видимости функциональная, добавляем в нее,	
+	// РµСЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ, РґРѕР±Р°РІР»СЏРµРј РІ РЅРµРµ,
 	if( GetCurrentSymbolTable().IsFunctionSymbolTable() )
 	{
 		FunctionSymbolTable &fst = static_cast<FunctionSymbolTable &>(GetCurrentSymbolTable());
 		fst.AddUsingNamespace(tns);
 	}
 
-	// иначе в генеральную
+	// РёРЅР°С‡Рµ РІ РіРµРЅРµСЂР°Р»СЊРЅСѓСЋ
 	else
 	{
 		GeneralSymbolTable *gst = dynamic_cast<GeneralSymbolTable *>(&GetCurrentSymbolTable());
@@ -933,7 +929,7 @@ void MakerUtils::MakeUsingNamespace( const NodePackage *ns )
 }
 
 
-// создать дружественный класс
+// СЃРѕР·РґР°С‚СЊ РґСЂСѓР¶РµСЃС‚РІРµРЅРЅС‹Р№ РєР»Р°СЃСЃ
 void MakerUtils::MakeFriendClass( const NodePackage *tsl )
 {
 	INTERNAL_IF( tsl == NULL || tsl->GetChildPackageCount() != 3 );
@@ -947,14 +943,13 @@ void MakerUtils::MakeFriendClass( const NodePackage *tsl )
 	if( !frnd )
 		return;
 
-	// если такого друга еще нет, вставляем его в список друзей текущего класса
+	// РµСЃР»Рё С‚Р°РєРѕРіРѕ РґСЂСѓРіР° РµС‰Рµ РЅРµС‚, РІСЃС‚Р°РІР»СЏРµРј РµРіРѕ РІ СЃРїРёСЃРѕРє РґСЂСѓР·РµР№ С‚РµРєСѓС‰РµРіРѕ РєР»Р°СЃСЃР°
 	if( curCls.GetFriendList().FindClassFriend(frnd) < 0 )
-		const_cast<ClassFriendList &>(
-			curCls.GetFriendList()).AddClassFriend(ClassFriend(frnd));
+		const_cast<ClassFriendList &>(curCls.GetFriendList()).AddClassFriend(ClassFriend(frnd));
 }
 
 
-// создать using-декларацию член
+// СЃРѕР·РґР°С‚СЊ using-РґРµРєР»Р°СЂР°С†РёСЋ С‡Р»РµРЅ
 void MakerUtils::MakeUsingMember( const NodePackage *npkg, ClassMember::AS as )
 {
 	INTERNAL_IF( npkg == NULL || npkg->GetPackageID() != PC_QUALIFIED_NAME ||
@@ -966,36 +961,36 @@ void MakerUtils::MakeUsingMember( const NodePackage *npkg, ClassMember::AS as )
 	CharString name = ParserUtils::PrintPackageTree(npkg);
 	ClassType &cls = static_cast<ClassType &>(GetCurrentSymbolTable());
 
-	// не квалифицированное имя
+	// РЅРµ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРµ РёРјСЏ
 	if( npkg->GetChildPackageCount() == 1 )
 	{
 		theApp.Error(ep, 
-			"в using-декларации должны использоваться только квалифицированные имена");
+			"РІ using-РґРµРєР»Р°СЂР°С†РёРё РґРѕР»Р¶РЅС‹ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рµ РёРјРµРЅР°");
 		return;
 	}
 
-	// если у класса нет базовых классов, то проверять ничего не нужно
+	// РµСЃР»Рё Сѓ РєР»Р°СЃСЃР° РЅРµС‚ Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ, С‚Рѕ РїСЂРѕРІРµСЂСЏС‚СЊ РЅРёС‡РµРіРѕ РЅРµ РЅСѓР¶РЅРѕ
 	if( !cls.IsDerived() )
 	{
 		theApp.Error(ep, 
-			"using-декларация может быть только в производном классе");
+			"using-РґРµРєР»Р°СЂР°С†РёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ РІ РїСЂРѕРёР·РІРѕРґРЅРѕРј РєР»Р°СЃСЃРµ");
 		return;
 	}
 
-	// ищем имя заданное квалифицированным именем 
+	// РёС‰РµРј РёРјСЏ Р·Р°РґР°РЅРЅРѕРµ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј РёРјРµРЅРµРј 
 	QualifiedNameManager qnm(npkg);
 	
-	// если имен нет, выйти
+	// РµСЃР»Рё РёРјРµРЅ РЅРµС‚, РІС‹Р№С‚Рё
 	if( qnm.GetRoleCount() == 0 )
 		return;
 
 
-	// получим список ролей данного имени в текущей области видимости,
-	// для проверки переопределения
+	// РїРѕР»СѓС‡РёРј СЃРїРёСЃРѕРє СЂРѕР»РµР№ РґР°РЅРЅРѕРіРѕ РёРјРµРЅРё РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё,
+	// РґР»СЏ РїСЂРѕРІРµСЂРєРё РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёСЏ
 	NameManager cnm(qnm.GetRoleList().front().first->GetName(), &GetCurrentSymbolTable(), false);
 
-	// далее следует проверить, чтобы каждое имя было членом базового
-	// класса данного класса и было членом класса вообще	
+	// РґР°Р»РµРµ СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ, С‡С‚РѕР±С‹ РєР°Р¶РґРѕРµ РёРјСЏ Р±С‹Р»Рѕ С‡Р»РµРЅРѕРј Р±Р°Р·РѕРІРѕРіРѕ
+	// РєР»Р°СЃСЃР° РґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР° Рё Р±С‹Р»Рѕ С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР° РІРѕРѕР±С‰Рµ
 	for( RoleList::const_iterator p = qnm.GetRoleList().begin(); 
 		p != qnm.GetRoleList().end(); p++)
 	{
@@ -1005,15 +1000,15 @@ void MakerUtils::MakeUsingMember( const NodePackage *npkg, ClassMember::AS as )
 			cls.GetBaseClassList().HasBaseClass(
 				static_cast<const ClassType *>(&id->GetSymbolTableEntry())) < 0 )
 		{
-			theApp.Error(ep, "'%s' - не является членом базового класса", name.c_str());
+			theApp.Error(ep, "'%s' - РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°", name.c_str());
 			continue;
 		}
 
-		// проверяем член на доступность
+		// РїСЂРѕРІРµСЂСЏРµРј С‡Р»РµРЅ РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
 		CheckerUtils::CheckAccess(qnm, *id, ep);
 
-		// если идентификатор сам является using-идентификатором, преобразуем
-		// его в обычный вид
+		// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЃР°Рј СЏРІР»СЏРµС‚СЃСЏ using-РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј, РїСЂРµРѕР±СЂР°Р·СѓРµРј
+		// РµРіРѕ РІ РѕР±С‹С‡РЅС‹Р№ РІРёРґ
 		if( UsingIdentifier *ui = dynamic_cast<UsingIdentifier *>(id) )
 			id = const_cast<Identifier *>(&ui->GetUsingIdentifier());
 
@@ -1021,32 +1016,32 @@ void MakerUtils::MakeUsingMember( const NodePackage *npkg, ClassMember::AS as )
 		if( idr == R_CONSTRUCTOR )
 		{
 			theApp.Error(ep, 
-				"'%s' - конструктор не может объявляться в using-декларации", name.c_str());
+				"'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ РІ using-РґРµРєР»Р°СЂР°С†РёРё", name.c_str());
 			break;
 		}
-	
-		// проверяем, переопределяет ли идентификатор какой-либо член
-		// уже объявленный в классе
+
+		// РїСЂРѕРІРµСЂСЏРµРј, РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ Р»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР°РєРѕР№-Р»РёР±Рѕ С‡Р»РµРЅ
+		// СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ РІ РєР»Р°СЃСЃРµ
 		if( TypyziedEntity *te = dynamic_cast<TypyziedEntity *>(id) )
 		{
-			RedeclaredChecker rchk(*te, cnm.GetRoleList(), ep, idr);				
+			RedeclaredChecker rchk(*te, cnm.GetRoleList(), ep, idr);
 
-			if( !rchk.IsRedeclared() )			
+			if( !rchk.IsRedeclared() )
 				GetCurrentSymbolTable().InsertSymbol( new UsingIdentifier(id->GetName(),
 					&GetCurrentSymbolTable(), id, as) );
 		}
 
-		// иначе это может быть класс или перечисление 
+		// РёРЅР°С‡Рµ СЌС‚Рѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ РєР»Р°СЃСЃ РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёРµ 
 		else
 		{
 			if( cnm.GetRoleCount() != 0 )
-				theApp.Error(ep, "'%s' - переопределен", id->GetName().c_str());
+				theApp.Error(ep, "'%s' - РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ", id->GetName().c_str());
 		}
 	}
 }
 
 
-// создать using-декларацию не член
+// СЃРѕР·РґР°С‚СЊ using-РґРµРєР»Р°СЂР°С†РёСЋ РЅРµ С‡Р»РµРЅ
 void MakerUtils::MakeUsingNotMember( const NodePackage *npkg )
 {
 	INTERNAL_IF( npkg == NULL || npkg->GetPackageID() != PC_QUALIFIED_NAME ||
@@ -1056,23 +1051,23 @@ void MakerUtils::MakeUsingNotMember( const NodePackage *npkg )
 	Position ep = ParserUtils::GetPackagePosition(npkg);
 	CharString name = ParserUtils::PrintPackageTree(npkg);
 
-	// не квалифицированное имя
+	// РЅРµ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРµ РёРјСЏ
 	if( npkg->GetChildPackageCount() == 1 )
 	{
 		theApp.Error(ep, 
-			"в using-декларации должны использоваться только квалифицированные имена");
+			"РІ using-РґРµРєР»Р°СЂР°С†РёРё РґРѕР»Р¶РЅС‹ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рµ РёРјРµРЅР°");
 		return;
 	}
 
-		// ищем имя заданное квалифицированным именем 
+		// РёС‰РµРј РёРјСЏ Р·Р°РґР°РЅРЅРѕРµ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј РёРјРµРЅРµРј 
 	QualifiedNameManager qnm(npkg);
-	
-	// если имен нет, выйти
+
+	// РµСЃР»Рё РёРјРµРЅ РЅРµС‚, РІС‹Р№С‚Рё
 	if( qnm.GetRoleCount() == 0 )
 		return;
 
-	// далее следует проверить, чтобы каждое имя было членом базового
-	// класса данного класса и было членом класса вообще	
+	// РґР°Р»РµРµ СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ, С‡С‚РѕР±С‹ РєР°Р¶РґРѕРµ РёРјСЏ Р±С‹Р»Рѕ С‡Р»РµРЅРѕРј Р±Р°Р·РѕРІРѕРіРѕ
+	// РєР»Р°СЃСЃР° РґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР° Рё Р±С‹Р»Рѕ С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР° РІРѕРѕР±С‰Рµ
 	NameManager cnm( qnm.GetRoleList().front().first->GetName(), &GetCurrentSymbolTable(),false);
 	for( RoleList::const_iterator p = qnm.GetRoleList().begin(); 
 		p != qnm.GetRoleList().end(); p++)
@@ -1081,13 +1076,13 @@ void MakerUtils::MakeUsingNotMember( const NodePackage *npkg )
 		ClassMember *cm = dynamic_cast<ClassMember *>(id);
 		if( !cm || cm->GetAccessSpecifier() != ClassMember::NOT_CLASS_MEMBER )
 		{
-			theApp.Error(ep, "'%s' - не является членом глобальной области видимости", 
+			theApp.Error(ep, "'%s' - РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё", 
 				name.c_str());
 			continue;
 		}
 
-		// если идентификатор сам является using-идентификатором, преобразуем
-		// его в обычный вид
+		// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЃР°Рј СЏРІР»СЏРµС‚СЃСЏ using-РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј, РїСЂРµРѕР±СЂР°Р·СѓРµРј
+		// РµРіРѕ РІ РѕР±С‹С‡РЅС‹Р№ РІРёРґ
 		if( UsingIdentifier *ui = dynamic_cast<UsingIdentifier *>(id) )
 			id = const_cast<Identifier *>(&ui->GetUsingIdentifier());
 
@@ -1095,37 +1090,37 @@ void MakerUtils::MakeUsingNotMember( const NodePackage *npkg )
 		if( idr == R_CONSTRUCTOR )
 		{
 			theApp.Error(ep, 
-				"'%s' - конструктор не может объявляться в using-декларации", name.c_str());
+				"'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ РІ using-РґРµРєР»Р°СЂР°С†РёРё", name.c_str());
 			break;
 		}
-	
-		// проверяем, переопределяет ли идентификатор какой-либо член
-		// уже объявленный в классе
+
+		// РїСЂРѕРІРµСЂСЏРµРј, РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ Р»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР°РєРѕР№-Р»РёР±Рѕ С‡Р»РµРЅ
+		// СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ РІ РєР»Р°СЃСЃРµ
 		if( TypyziedEntity *te = dynamic_cast<TypyziedEntity *>(id) )
 		{
-			RedeclaredChecker rchk(*te, cnm.GetRoleList(), ep, idr);				
+			RedeclaredChecker rchk(*te, cnm.GetRoleList(), ep, idr);
 
 			if( !rchk.IsRedeclared() )
 				GetCurrentSymbolTable().InsertSymbol( new UsingIdentifier(id->GetName(),
 					&GetCurrentSymbolTable(), id, ClassMember::NOT_CLASS_MEMBER) );
 		}
 
-		// иначе это может быть класс или перечисление 
+		// РёРЅР°С‡Рµ СЌС‚Рѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ РєР»Р°СЃСЃ РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёРµ 
 		else
 		{
 			if( cnm.GetRoleCount() != 0 )
-				theApp.Error(ep, "'%s' - переопределен", id->GetName().c_str());
+				theApp.Error(ep, "'%s' - РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ", id->GetName().c_str());
 		}
-	}	
+	}
 }
 
-// создать константу перечисления и вставить ее в текущую область видимости
+// СЃРѕР·РґР°С‚СЊ РєРѕРЅСЃС‚Р°РЅС‚Сѓ РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ Рё РІСЃС‚Р°РІРёС‚СЊ РµРµ РІ С‚РµРєСѓС‰СѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 EnumConstant *MakerUtils::MakeEnumConstant(
 		const CharString &name, ClassMember::AS curAccessSpec,
 		int lastVal, const Position &errPos, EnumType *enumType )
 {
 
-	// проверяем переопределение
+	// РїСЂРѕРІРµСЂСЏРµРј РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	NameManager nm(name, &GetCurrentSymbolTable(), false);
 	if( nm.GetRoleCount() > 0 )
 	{
@@ -1133,41 +1128,41 @@ EnumConstant *MakerUtils::MakeEnumConstant(
 		if( nm.GetRoleCount() == 1 )
 		{
 			Role r = nm.GetRoleList().front().second;
-			type = r == R_CLASS_TYPE || r == R_ENUM_TYPE			||
-				   r == R_UNION_CLASS_TYPE || r == R_TEMPLATE_CLASS	||
+			type = r == R_CLASS_TYPE || r == R_ENUM_TYPE  ||
+				   r == R_UNION_CLASS_TYPE || r == R_TEMPLATE_CLASS ||
 				   r == R_TEMPLATE_CLASS_SPECIALIZATION;
 		}
 
 		if( !type )
 		{
-			theApp.Error(errPos, "'%s' - переопределен", name.c_str());
+			theApp.Error(errPos, "'%s' - РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ", name.c_str());
 			return NULL;
 		}
 	}
 
-	// проверяем, также чтобы не имел имя класса
+	// РїСЂРѕРІРµСЂСЏРµРј, С‚Р°РєР¶Рµ С‡С‚РѕР±С‹ РЅРµ РёРјРµР» РёРјСЏ РєР»Р°СЃСЃР°
 	if( GetCurrentSymbolTable().IsClassSymbolTable() &&
 		static_cast<const ClassType &>(GetCurrentSymbolTable()).GetName() == name )
 	{
 		theApp.Error(errPos,
-			"'%s' - не может иметь имя класса в котором объявляется", name.c_str());
+			"'%s' - РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РёРјСЏ РєР»Р°СЃСЃР° РІ РєРѕС‚РѕСЂРѕРј РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ", name.c_str());
 		return NULL;
 	}
 
-	// теперь создаем. Если спецификатор доступа задан, создаем классовую
-	// константу, иначе обычную
+	// С‚РµРїРµСЂСЊ СЃРѕР·РґР°РµРј. Р•СЃР»Рё СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° Р·Р°РґР°РЅ, СЃРѕР·РґР°РµРј РєР»Р°СЃСЃРѕРІСѓСЋ
+	// РєРѕРЅСЃС‚Р°РЅС‚Сѓ, РёРЅР°С‡Рµ РѕР±С‹С‡РЅСѓСЋ
 	EnumConstant *ec = curAccessSpec == ClassMember::NOT_CLASS_MEMBER ?
 		new EnumConstant( name, &GetCurrentSymbolTable(), lastVal, enumType) :
 	    new ClassEnumConstant( name, &GetCurrentSymbolTable(), lastVal, enumType, curAccessSpec);
 
-	// вставляем константу в таблицу
+	// РІСЃС‚Р°РІР»СЏРµРј РєРѕРЅСЃС‚Р°РЅС‚Сѓ РІ С‚Р°Р±Р»РёС†Сѓ
 	GetCurrentSymbolTable().InsertSymbol( ec );
 	return ec;
 }
 
 
-// конструктор принимает пакет, для нахождения в нем имени и 
-// инициализации nameManager
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїСЂРёРЅРёРјР°РµС‚ РїР°РєРµС‚, РґР»СЏ РЅР°С…РѕР¶РґРµРЅРёСЏ РІ РЅРµРј РёРјРµРЅРё Рё 
+// РёРЅРёС†РёР°Р»РёР·Р°С†РёРё nameManager
 TempObjectContainer::TempObjectContainer( const NodePackage *qualName, ClassMember::AS cas ) 
 {
 	INTERNAL_IF( qualName == NULL || qualName->GetPackageID() != PC_QUALIFIED_NAME );
@@ -1184,12 +1179,12 @@ TempObjectContainer::TempObjectContainer( const NodePackage *qualName, ClassMemb
 	fnSpecCode = -1;
 	friendSpec = false;
 	curAccessSpec = cas;
-	clinkSpec = theApp.GetTranslationUnit().GetParser().GetLinkSpecification() == Parser::LS_C;		
+	clinkSpec = theApp.GetTranslationUnit().GetParser().GetLinkSpecification() == Parser::LS_C;
 }
 
 
-// конструктор для объектов, которые не могут содержать составные
-// имена, либо могут не иметь имени вовсе
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґР»СЏ РѕР±СЉРµРєС‚РѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅРµ РјРѕРіСѓС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ СЃРѕСЃС‚Р°РІРЅС‹Рµ
+// РёРјРµРЅР°, Р»РёР±Рѕ РјРѕРіСѓС‚ РЅРµ РёРјРµС‚СЊ РёРјРµРЅРё РІРѕРІСЃРµ
 TempObjectContainer::TempObjectContainer( const Position &ep, 
 			const CharString &n, ClassMember::AS cas )
 {
@@ -1202,11 +1197,11 @@ TempObjectContainer::TempObjectContainer( const Position &ep,
 	fnSpecCode = -1;
 	friendSpec = false;
 	curAccessSpec = cas;
-	clinkSpec = theApp.GetTranslationUnit().GetParser().GetLinkSpecification() == Parser::LS_C;		
+	clinkSpec = theApp.GetTranslationUnit().GetParser().GetLinkSpecification() == Parser::LS_C;
 }
 
 
-// очищает список производных типов, удаляем занятую память
+// РѕС‡РёС‰Р°РµС‚ СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ, СѓРґР°Р»СЏРµРј Р·Р°РЅСЏС‚СѓСЋ РїР°РјСЏС‚СЊ
 TempObjectContainer::~TempObjectContainer() 
 {
 	dtl.ClearDerivedTypeList();
@@ -1214,75 +1209,75 @@ TempObjectContainer::~TempObjectContainer()
 }
 
 
-// в конструкторе задаем временную структуру,которая будет
-// использоваться при построении объекта
+// РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ Р·Р°РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ,РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚
+// РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РїСЂРё РїРѕСЃС‚СЂРѕРµРЅРёРё РѕР±СЉРµРєС‚Р°
 GlobalObjectMaker::GlobalObjectMaker( const PTempObjectContainer &toc, bool ld ) 
 	: tempObjectContainer(toc), localDeclaration(ld), ictor(NULL)
 {	
 	targetObject = NULL;
 	redeclared = false;
 }
-					
 
-// проверить корректность входного пакета, собрать информацию во временную структуру,
-// создать объект-контейнер, произвести строгую проверку объекта-контейнра,
-// вставить контейнер в таблицу и возвратить его как результат работы
+
+// РїСЂРѕРІРµСЂРёС‚СЊ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РІС…РѕРґРЅРѕРіРѕ РїР°РєРµС‚Р°, СЃРѕР±СЂР°С‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ,
+// СЃРѕР·РґР°С‚СЊ РѕР±СЉРµРєС‚-РєРѕРЅС‚РµР№РЅРµСЂ, РїСЂРѕРёР·РІРµСЃС‚Рё СЃС‚СЂРѕРіСѓСЋ РїСЂРѕРІРµСЂРєСѓ РѕР±СЉРµРєС‚Р°-РєРѕРЅС‚РµР№РЅСЂР°,
+// РІСЃС‚Р°РІРёС‚СЊ РєРѕРЅС‚РµР№РЅРµСЂ РІ С‚Р°Р±Р»РёС†Сѓ Рё РІРѕР·РІСЂР°С‚РёС‚СЊ РµРіРѕ РєР°Рє СЂРµР·СѓР»СЊС‚Р°С‚ СЂР°Р±РѕС‚С‹
 bool GlobalObjectMaker::Make( )
 {
-	// проверяем корректность сформированного объекта
+	// РїСЂРѕРІРµСЂСЏРµРј РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅРѕРіРѕ РѕР±СЉРµРєС‚Р°
 	GlobalDeclarationChecker goc(*tempObjectContainer, localDeclaration);
 
 	
-	// проверка является ли имя уникальным в своей области видимости
+	// РїСЂРѕРІРµСЂРєР° СЏРІР»СЏРµС‚СЃСЏ Р»Рё РёРјСЏ СѓРЅРёРєР°Р»СЊРЅС‹Рј РІ СЃРІРѕРµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	NameManager nm(tempObjectContainer->name, &GetCurrentSymbolTable(), false);
 
-	// создаем объект для проверки
+	// СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ РґР»СЏ РїСЂРѕРІРµСЂРєРё
 	register TempObjectContainer *toc = &*tempObjectContainer;
 	targetObject = new ::Object(toc->name, &GetCurrentSymbolTable(), toc->finalType,
 		toc->constQual, toc->volatileQual, toc->dtl, toc->ssCode < 0 ? ::Object::SS_NONE : 
-			TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierObj(), toc->clinkSpec );	
+			TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierObj(), toc->clinkSpec );
 
-	// проверяем на переопределение
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetObject, nm.GetRoleList(), toc->errPos, R_OBJECT);
 
-	// объект переопределен
+	// РѕР±СЉРµРєС‚ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ
 	if( rchk.IsRedeclared() )
-	{		
+	{
 		delete targetObject;
 		redeclared = true;
 		targetObject = const_cast<::Object *>(
 			dynamic_cast<const ::Object *>(rchk.GetPrevDeclaration()) );
 	}
 
-	// если объект уникален в своей области видимости, создаем и
-	// вставляем объект в таблицу
+	// РµСЃР»Рё РѕР±СЉРµРєС‚ СѓРЅРёРєР°Р»РµРЅ РІ СЃРІРѕРµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, СЃРѕР·РґР°РµРј Рё
+	// РІСЃС‚Р°РІР»СЏРµРј РѕР±СЉРµРєС‚ РІ С‚Р°Р±Р»РёС†Сѓ
 	else
 		INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol(targetObject) );
 	return redeclared;
 }
 
 
-// в конструкторе задаем временную структуру,которая будет
-// использоваться при построении функции
+// РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ Р·Р°РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ,РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚
+// РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РїСЂРё РїРѕСЃС‚СЂРѕРµРЅРёРё С„СѓРЅРєС†РёРё
 GlobalFunctionMaker::GlobalFunctionMaker( const PTempObjectContainer &toc )
 	: tempObjectContainer(toc)
-{	
+{
 	targetFn = NULL;
 	errorFlag = false;
 }
 
 
-// создает функцию из временной структуры
+// СЃРѕР·РґР°РµС‚ С„СѓРЅРєС†РёСЋ РёР· РІСЂРµРјРµРЅРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹
 bool GlobalFunctionMaker::Make()
 {
-	// проверяем корректность сформированной функции
+	// РїСЂРѕРІРµСЂСЏРµРј РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅРѕР№ С„СѓРЅРєС†РёРё
 	GlobalDeclarationChecker goc(*tempObjectContainer);
 
-		
-	// проверка является ли имя уникальным в своей области видимости
+
+	// РїСЂРѕРІРµСЂРєР° СЏРІР»СЏРµС‚СЃСЏ Р»Рё РёРјСЏ СѓРЅРёРєР°Р»СЊРЅС‹Рј РІ СЃРІРѕРµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	NameManager nm(tempObjectContainer->name, &GetCurrentSymbolTable(), false);
 
-	// создаем объект для проверки
+	// СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ РґР»СЏ РїСЂРѕРІРµСЂРєРё
 	register TempObjectContainer *toc = &*tempObjectContainer;
 	targetFn = new Function(toc->name, &GetCurrentSymbolTable(), toc->finalType,
 			toc->constQual, toc->volatileQual, toc->dtl, toc->fnSpecCode == KWINLINE,
@@ -1290,12 +1285,12 @@ bool GlobalFunctionMaker::Make()
 			TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierFn(), 
 			toc->clinkSpec ? Function::CC_CDECL : Function::CC_NON);
 
-		// проверяем на переопределение
+		// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetFn, nm.GetRoleList(), toc->errPos, R_FUNCTION);
 
-	// объект переопределен
+	// РѕР±СЉРµРєС‚ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ
 	if( rchk.IsRedeclared() )
-	{		
+	{
 		Function *prevFn = const_cast<Function *>(
 			dynamic_cast<const Function *>(rchk.GetPrevDeclaration()) );
 		if( prevFn )
@@ -1306,8 +1301,8 @@ bool GlobalFunctionMaker::Make()
 		targetFn = prevFn;
 	}
 
-	// если объект уникален в своей области видимости, создаем и
-	// вставляем объект в таблицу
+	// РµСЃР»Рё РѕР±СЉРµРєС‚ СѓРЅРёРєР°Р»РµРЅ РІ СЃРІРѕРµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, СЃРѕР·РґР°РµРј Рё
+	// РІСЃС‚Р°РІР»СЏРµРј РѕР±СЉРµРєС‚ РІ С‚Р°Р±Р»РёС†Сѓ
 	else
 	{
 		CheckerUtils::DefaultArgumentCheck( targetFn->GetFunctionPrototype(), NULL, toc->errPos);
@@ -1318,9 +1313,9 @@ bool GlobalFunctionMaker::Make()
 }
 
 
-// в конструкторе задаем временную структуру,которая будет
-// использоваться при построении оператора
-GlobalOperatorMaker::GlobalOperatorMaker( const PTempObjectContainer &toc,
+// РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ Р·Р°РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ,РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚
+// РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РїСЂРё РїРѕСЃС‚СЂРѕРµРЅРёРё РѕРїРµСЂР°С‚РѕСЂР°
+GlobalOperatorMaker::GlobalOperatorMaker( const PTempObjectContainer &toc, 
 										 const TempOverloadOperatorContainer &tc )
 	: tempObjectContainer(toc), tooc(tc), targetOP(NULL)
 {
@@ -1328,31 +1323,31 @@ GlobalOperatorMaker::GlobalOperatorMaker( const PTempObjectContainer &toc,
 }
 
 
-// создать перегруженный оператор
+// СЃРѕР·РґР°С‚СЊ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ
 bool GlobalOperatorMaker::Make()
 {
 	GlobalOperatorChecker goc(*tempObjectContainer, tooc);
 
-	// проверяем переопределение
+	// РїСЂРѕРІРµСЂСЏРµРј РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	register TempObjectContainer *toc = &*tempObjectContainer;
 	NameManager nm(toc->name, &GetCurrentSymbolTable(), true);
 
-	// создаем объекь для проверки на переопределяемость
+	// СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ РґР»СЏ РїСЂРѕРІРµСЂРєРё РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµРјРѕСЃС‚СЊ
 	targetOP = new OverloadOperator(toc->name, &GetCurrentSymbolTable(),
 		toc->finalType,	toc->constQual, toc->volatileQual, 
 		toc->dtl, toc->fnSpecCode == KWINLINE,
 		toc->ssCode < 0 ? Function::SS_NONE : 
 		TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierFn(),
 			Function::CC_NON, tooc.opCode, tooc.opString );
-						
-	// проверяем на переопределение
+
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetOP, nm.GetRoleList(), toc->errPos, R_OVERLOAD_OPERATOR );
 
-	// если переопределен
-	if( rchk.IsRedeclared() )	
+	// РµСЃР»Рё РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ
+	if( rchk.IsRedeclared() )
 		delete targetOP, targetOP = 0 ;
 
-	// иначе вставляем его в таблицу
+	// РёРЅР°С‡Рµ РІСЃС‚Р°РІР»СЏРµРј РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 	else
 		INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol(targetOP) );
 
@@ -1360,7 +1355,7 @@ bool GlobalOperatorMaker::Make()
 }
 
 
-// конструктор принимает пакет и флаг имен
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїСЂРёРЅРёРјР°РµС‚ РїР°РєРµС‚ Рё С„Р»Р°Рі РёРјРµРЅ
 FunctionPrototypeMaker::FunctionPrototypeMaker( const NodePackage &pp, bool nn ) 
 	: protoPkg(pp), noNames(nn) 
 {
@@ -1371,37 +1366,37 @@ FunctionPrototypeMaker::FunctionPrototypeMaker( const NodePackage &pp, bool nn )
 }
 
 
-// создать параметр и добавить его в список из пакета
+// СЃРѕР·РґР°С‚СЊ РїР°СЂР°РјРµС‚СЂ Рё РґРѕР±Р°РІРёС‚СЊ РµРіРѕ РІ СЃРїРёСЃРѕРє РёР· РїР°РєРµС‚Р°
 void FunctionPrototypeMaker::MakeParametr( const NodePackage &pp, int pnum )
 {
-	INTERNAL_IF( pp.GetPackageID() != PC_PARAMETR					   || 
+	INTERNAL_IF( pp.GetPackageID() != PC_PARAMETR   || 
 		pp.GetChildPackageCount() < 1 || pp.GetChildPackageCount() > 3 || 
-		pp.IsErrorChildPackages()	  || 
+		pp.IsErrorChildPackages()  || 
 		pp.GetChildPackage(0)->GetPackageID() != PC_TYPE_SPECIFIER_LIST );
 
-	// параметр, как и все декларации состоит из трех частей:
-	// список спецификаторов типа, декларатор и значение по умолчанию,
-	// причем 2 последние могут отсутствовать. Это следует учитывать 
-	// при формировании параметра
+	// РїР°СЂР°РјРµС‚СЂ, РєР°Рє Рё РІСЃРµ РґРµРєР»Р°СЂР°С†РёРё СЃРѕСЃС‚РѕРёС‚ РёР· С‚СЂРµС… С‡Р°СЃС‚РµР№:
+	// СЃРїРёСЃРѕРє СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°, РґРµРєР»Р°СЂР°С‚РѕСЂ Рё Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+	// РїСЂРёС‡РµРј 2 РїРѕСЃР»РµРґРЅРёРµ РјРѕРіСѓС‚ РѕС‚СЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ. Р­С‚Рѕ СЃР»РµРґСѓРµС‚ СѓС‡РёС‚С‹РІР°С‚СЊ 
+	// РїСЂРё С„РѕСЂРјРёСЂРѕРІР°РЅРёРё РїР°СЂР°РјРµС‚СЂР°
 
-	Position ep;			// позиция для вывода ошибок
+	Position ep; // РїРѕР·РёС†РёСЏ РґР»СЏ РІС‹РІРѕРґР° РѕС€РёР±РѕРє
 	CharString pname;
 
 	const Package *pk = ((NodePackage *)pp.GetChildPackage(0))->GetChildPackage(0);
-	if( pk->IsNodePackage() )	
+	if( pk->IsNodePackage() )
 		pk = ((NodePackage *)pk)->GetChildPackage(0);
 
-	INTERNAL_IF( !pk->IsLexemPackage() );			
+	INTERNAL_IF( !pk->IsLexemPackage() );
 	ep = ((LexemPackage *)pk)->GetLexem().GetPos();
 
 	if( pp.GetChildPackageCount() == 1 ||
 		pp.GetChildPackage(1)->GetPackageID() != PC_DECLARATOR )
-		pname = ("<параметр " + CharString(pnum) + ">").c_str();
+		pname = ("<РїР°СЂР°РјРµС‚СЂ " + CharString(pnum) + ">").c_str();
 	else
 	{
 		int ix = ((NodePackage *)pp.GetChildPackage(1))->FindPackage(PC_QUALIFIED_NAME);
 		if( ix < 0 )
-			pname = ("<параметр " + CharString(pnum) + ">").c_str();
+			pname = ("<РїР°СЂР°РјРµС‚СЂ " + CharString(pnum) + ">").c_str();
 		else
 		{
 			NodePackage *pn = (NodePackage *)
@@ -1415,44 +1410,44 @@ void FunctionPrototypeMaker::MakeParametr( const NodePackage &pp, int pnum )
 		}
 	}
 
-	// наконец создаем временную структуру
+	// РЅР°РєРѕРЅРµС† СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ
 	TempObjectContainer toc( ep, pname );
 
-	// начинаем анализ спецификаторов типа
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	AnalyzeTypeSpecifierPkg( ((NodePackage *)pp.GetChildPackage(0)), &toc );
 
-	// далее, если есть декларатор, анализируем и его
+	// РґР°Р»РµРµ, РµСЃР»Рё РµСЃС‚СЊ РґРµРєР»Р°СЂР°С‚РѕСЂ, Р°РЅР°Р»РёР·РёСЂСѓРµРј Рё РµРіРѕ
 	if( pp.GetChildPackageCount() > 1 && 
 		pp.GetChildPackage(1)->GetPackageID() == PC_DECLARATOR )
 		AnalyzeDeclaratorPkg( ((NodePackage *)pp.GetChildPackage(1)), &toc );
 	
-	// уточняем базовый тип
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 	SpecifyBaseType( &toc );
 
-	// проверяем, если пакета 3, то третий должен быть выражением 
-	// (значение по умолчанию)
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РїР°РєРµС‚Р° 3, С‚Рѕ С‚СЂРµС‚РёР№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµРј 
+	// (Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ)
 	POperand defaultArg = ( pp.GetChildPackageCount() == 3 && 
 		pp.GetChildPackage(2)->IsExpressionPackage()) ? const_cast<POperand&>(
 		static_cast<const ExpressionPackage*>(pp.GetChildPackage(2))->GetExpression()) : NULL;
 
-	// проверяем параметр на корректность
+	// РїСЂРѕРІРµСЂСЏРµРј РїР°СЂР°РјРµС‚СЂ РЅР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ
 	ParametrChecker pchk( toc, parametrList );
 
-	// создадим для параметра уникальную область видимости
+	// СЃРѕР·РґР°РґРёРј РґР»СЏ РїР°СЂР°РјРµС‚СЂР° СѓРЅРёРєР°Р»СЊРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 	static LocalSymbolTable *uniqueSt = new LocalSymbolTable(GetCurrentSymbolTable());
 	
-	// создаем параметр и добавляем его в список
+	// СЃРѕР·РґР°РµРј РїР°СЂР°РјРµС‚СЂ Рё РґРѕР±Р°РІР»СЏРµРј РµРіРѕ РІ СЃРїРёСЃРѕРє
 	Parametr *param = new Parametr(
 		toc.finalType, toc.constQual, toc.volatileQual, toc.dtl, toc.name,
 		uniqueSt, NULL, toc.ssCode == KWREGISTER );
 
-	// задаем значение по умолчанию, только после проверки этого значения
+	// Р·Р°РґР°РµРј Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ РїСЂРѕРІРµСЂРєРё СЌС‚РѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ
 	if( !defaultArg.IsNull() )
 	{
 		const POperand &rda = DefaultArgumentChecker(*param, defaultArg, ep).Check();
 
-		// задаем значение по умолчанию, в случае если имеем error operand,
-		// следует быть очень осторожным, чтобы не удалить его
+		// Р·Р°РґР°РµРј Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РёРјРµРµРј error operand,
+		// СЃР»РµРґСѓРµС‚ Р±С‹С‚СЊ РѕС‡РµРЅСЊ РѕСЃС‚РѕСЂРѕР¶РЅС‹Рј, С‡С‚РѕР±С‹ РЅРµ СѓРґР°Р»РёС‚СЊ РµРіРѕ
 		param->SetDefaultValue( rda->IsErrorOperand() ? &const_cast<Operand&>(*rda) : 
 			const_cast<POperand&>(rda).Release() );
 	}
@@ -1461,89 +1456,89 @@ void FunctionPrototypeMaker::MakeParametr( const NodePackage &pp, int pnum )
 }
 
 
-// создать тип throw-спецификации
+// СЃРѕР·РґР°С‚СЊ С‚РёРї throw-СЃРїРµС†РёС„РёРєР°С†РёРё
 void FunctionPrototypeMaker::MakeThrowType( const NodePackage &tt )
 {
 	INTERNAL_IF( tt.GetPackageID() != PC_THROW_TYPE || 
-		tt.GetChildPackageCount() != 2				||
+		tt.GetChildPackageCount() != 2  ||
 		tt.GetChildPackage(0)->GetPackageID() != PC_TYPE_SPECIFIER_LIST ||
 		tt.GetChildPackage(1)->GetPackageID() != PC_DECLARATOR );
 
 	Position ep = ParserUtils::GetPackagePosition(&tt);
-	CharString tname = "<тип throw-спецификации>";
+	CharString tname = "<С‚РёРї throw-СЃРїРµС†РёС„РёРєР°С†РёРё>";
 
 
-	// наконец создаем временную структуру
+	// РЅР°РєРѕРЅРµС† СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ
 	TempObjectContainer toc( ep, tname );
 
-	// начинаем анализ спецификаторов типа
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	AnalyzeTypeSpecifierPkg( ((NodePackage *)tt.GetChildPackage(0)), &toc );
 
-	// далее, анализируем декларатор
+	// РґР°Р»РµРµ, Р°РЅР°Р»РёР·РёСЂСѓРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 	AnalyzeDeclaratorPkg( ((NodePackage *)tt.GetChildPackage(1)), &toc );
-	
-	// уточняем базовый тип
+
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 	SpecifyBaseType( &toc );
 
 
-	// теперь проверяем тип
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј С‚РёРї
 	ThrowTypeChecker ttc(toc);
 
-	// добавляем тип в список
+	// РґРѕР±Р°РІР»СЏРµРј С‚РёРї РІ СЃРїРёСЃРѕРє
 	throwTypeList.AddThrowType( PTypyziedEntity(
 		new TypyziedEntity(toc.finalType, toc.constQual,toc.volatileQual, toc.dtl)) );
 }
 
 
-// создать полную throw-спецификацию
+// СЃРѕР·РґР°С‚СЊ РїРѕР»РЅСѓСЋ throw-СЃРїРµС†РёС„РёРєР°С†РёСЋ
 void FunctionPrototypeMaker::MakeThrowSpecification( const NodePackage &ts )
 {
-	// может быть пустой список. В любом случае список должен содержать 
+	// РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№ СЃРїРёСЃРѕРє. Р’ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ СЃРїРёСЃРѕРє РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ 
 	// ( )
 	INTERNAL_IF( ts.GetPackageID() != PC_THROW_TYPE_LIST ||
 		ts.GetChildPackageCount() < 2 || ts.GetChildPackage(0)->GetPackageID() != '(' );
 
-	// проверяем, если второй пакет - это ')', значит у функции пустой список
-	// спецификаций
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РІС‚РѕСЂРѕР№ РїР°РєРµС‚ - СЌС‚Рѕ ')', Р·РЅР°С‡РёС‚ Сѓ С„СѓРЅРєС†РёРё РїСѓСЃС‚РѕР№ СЃРїРёСЃРѕРє
+	// СЃРїРµС†РёС„РёРєР°С†РёР№
 	if( ts.GetChildPackageCount() == 2 && ts.GetChildPackage(1)->GetPackageID() == ')' )
 	{
 		canThrow = false;
 		return;
 	}
 
-	// иначе обрабатываем список throw-типов
+	// РёРЅР°С‡Рµ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј СЃРїРёСЃРѕРє throw-С‚РёРїРѕРІ
 	for( int i = 1; ; i++ )
 	{
-		// если имеем последний пакет
+		// РµСЃР»Рё РёРјРµРµРј РїРѕСЃР»РµРґРЅРёР№ РїР°РєРµС‚
 		if( i+1 == ts.GetChildPackageCount() )
 		{
 			INTERNAL_IF( ts.GetChildPackage(i)->GetPackageID() != ')' );
 			break;
 		}
 
-		// иначе должен быть создан throw-тип
+		// РёРЅР°С‡Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЃРѕР·РґР°РЅ throw-С‚РёРї
 		INTERNAL_IF( ts.GetChildPackage(i)->GetPackageID() != PC_THROW_TYPE );
 		MakeThrowType( *static_cast<const NodePackage *>(ts.GetChildPackage(i)) );
 	}
 }
 
 
-// метод создающий прототип функции из пакета и возвращающий его
-// в качестве результата работы объекта
+// РјРµС‚РѕРґ СЃРѕР·РґР°СЋС‰РёР№ РїСЂРѕС‚РѕС‚РёРї С„СѓРЅРєС†РёРё РёР· РїР°РєРµС‚Р° Рё РІРѕР·РІСЂР°С‰Р°СЋС‰РёР№ РµРіРѕ
+// РІ РєР°С‡РµСЃС‚РІРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° СЂР°Р±РѕС‚С‹ РѕР±СЉРµРєС‚Р°
 FunctionPrototype *FunctionPrototypeMaker::Make()
 {
-	// дочерних пакета должно быть как минимум два - '(' ')'
+	// РґРѕС‡РµСЂРЅРёС… РїР°РєРµС‚Р° РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РєР°Рє РјРёРЅРёРјСѓРј РґРІР° - '(' ')'
 	INTERNAL_IF( protoPkg.GetChildPackageCount() < 2 || 
 		protoPkg.GetChildPackage(0)->GetPackageID() != '(' ); 
 
-	// далее проверяем, необходимо ли нам заполнять список параметров,
-	// заполнять не нужно если: нет параметров между лексемами '(' и ')',
-	// между '(' и ')', только лексема ELLIPSES, между '(' и ')' один
-	// параметр, который содержит только список спецификаторов типа,
-	// который содержит только void 
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј, РЅРµРѕР±С…РѕРґРёРјРѕ Р»Рё РЅР°Рј Р·Р°РїРѕР»РЅСЏС‚СЊ СЃРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ,
+	// Р·Р°РїРѕР»РЅСЏС‚СЊ РЅРµ РЅСѓР¶РЅРѕ РµСЃР»Рё: РЅРµС‚ РїР°СЂР°РјРµС‚СЂРѕРІ РјРµР¶РґСѓ Р»РµРєСЃРµРјР°РјРё '(' Рё ')',
+	// РјРµР¶РґСѓ '(' Рё ')', С‚РѕР»СЊРєРѕ Р»РµРєСЃРµРјР° ELLIPSES, РјРµР¶РґСѓ '(' Рё ')' РѕРґРёРЅ
+	// РїР°СЂР°РјРµС‚СЂ, РєРѕС‚РѕСЂС‹Р№ СЃРѕРґРµСЂР¶РёС‚ С‚РѕР»СЊРєРѕ СЃРїРёСЃРѕРє СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°,
+	// РєРѕС‚РѕСЂС‹Р№ СЃРѕРґРµСЂР¶РёС‚ С‚РѕР»СЊРєРѕ void 
 
 	int i = 1;
-	if( protoPkg.GetChildPackage(1)->GetPackageID() == ')'	)
+	if( protoPkg.GetChildPackage(1)->GetPackageID() == ')' )
 		goto skip_make_parametrs;
 
 	else if( protoPkg.GetChildPackage(1)->GetPackageID() == ELLIPSES )
@@ -1553,19 +1548,19 @@ FunctionPrototype *FunctionPrototypeMaker::Make()
 		goto skip_make_parametrs;
 	}
 
-	// имеем 1 параметр, если это просто void, значит это эквиваленто
-	// списку пустых параметров
+	// РёРјРµРµРј 1 РїР°СЂР°РјРµС‚СЂ, РµСЃР»Рё СЌС‚Рѕ РїСЂРѕСЃС‚Рѕ void, Р·РЅР°С‡РёС‚ СЌС‚Рѕ СЌРєРІРёРІР°Р»РµРЅС‚Рѕ
+	// СЃРїРёСЃРєСѓ РїСѓСЃС‚С‹С… РїР°СЂР°РјРµС‚СЂРѕРІ
 	else if( protoPkg.GetChildPackage(1)->GetPackageID() == PC_PARAMETR &&
-		 	 protoPkg.GetChildPackage(2)->GetPackageID() == ')' )		
+		 	 protoPkg.GetChildPackage(2)->GetPackageID() == ')' )
 	{
-		NodePackage *np = ((NodePackage *)protoPkg.GetChildPackage(1));	// получить параметр
+		NodePackage *np = ((NodePackage *)protoPkg.GetChildPackage(1)); // РїРѕР»СѓС‡РёС‚СЊ РїР°СЂР°РјРµС‚СЂ
 	
 		INTERNAL_IF( np->GetChildPackage(0)->GetPackageID() != PC_TYPE_SPECIFIER_LIST );
 		NodePackage *tsl = (NodePackage *)np->GetChildPackage(0),
-				*decl = np->IsNoChildPackages() ? 0 : (NodePackage *)np->GetChildPackage(1);			
+				*decl = np->IsNoChildPackages() ? 0 : (NodePackage *)np->GetChildPackage(1);
 
-		// в списке спецификаторов типа должен быть только void,
-		// а декларатор должен быть пустой
+		// РІ СЃРїРёСЃРєРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР° РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ void,
+		// Р° РґРµРєР»Р°СЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№
 		if( tsl->GetChildPackageCount() == 1 && 
 			tsl->GetChildPackage(0)->GetPackageID() == KWVOID &&
 			(decl == NULL || decl->IsNoChildPackages()) )
@@ -1575,8 +1570,8 @@ FunctionPrototype *FunctionPrototypeMaker::Make()
 			}
 	}
 
-	// в противном случае обрабатываем все параметры и размещаем их
-	// в списке	
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РІСЃРµ РїР°СЂР°РјРµС‚СЂС‹ Рё СЂР°Р·РјРµС‰Р°РµРј РёС…
+	// РІ СЃРїРёСЃРєРµ 
 	for( i = 1; ; i++ )
 	{
 		const Package *p = protoPkg.GetChildPackage(i);
@@ -1595,14 +1590,14 @@ FunctionPrototype *FunctionPrototypeMaker::Make()
 			INTERNAL_IF( p->GetPackageID() != PC_PARAMETR );
 			MakeParametr( *(NodePackage *)p , i);
 		}
-	}		
-	
+	}
+
 skip_make_parametrs:
 
-	// i, должен равнятся пакету с ')'
+	// i, РґРѕР»Р¶РµРЅ СЂР°РІРЅСЏС‚СЃСЏ РїР°РєРµС‚Сѓ СЃ ')'
 	INTERNAL_IF( protoPkg.GetChildPackage(i)->GetPackageID() != ')' );
-		
-	// осталось обработать cv-квалификаторы и throw-спецификацию
+
+	// РѕСЃС‚Р°Р»РѕСЃСЊ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹ Рё throw-СЃРїРµС†РёС„РёРєР°С†РёСЋ
 	i++;
 	for( ; i<protoPkg.GetChildPackageCount(); i++ )
 	{
@@ -1612,7 +1607,7 @@ skip_make_parametrs:
 		else if( protoPkg.GetChildPackage(i)->GetPackageID() == KWVOLATILE )
 			volatileQual = true;
 
-		// обрабатываем throw-спецификацию, она должна быть последней в пакете
+		// РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј throw-СЃРїРµС†РёС„РёРєР°С†РёСЋ, РѕРЅР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РїРѕСЃР»РµРґРЅРµР№ РІ РїР°РєРµС‚Рµ
 		else if( protoPkg.GetChildPackage(i)->GetPackageID() == PC_THROW_TYPE_LIST )
 		{
 			INTERNAL_IF( protoPkg.GetChildPackageCount() != i + 1 );
@@ -1626,7 +1621,7 @@ skip_make_parametrs:
 }
 
 
-// построить catch-декларацию, вернуть объект
+// РїРѕСЃС‚СЂРѕРёС‚СЊ catch-РґРµРєР»Р°СЂР°С†РёСЋ, РІРµСЂРЅСѓС‚СЊ РѕР±СЉРµРєС‚
 ::Object *CatchDeclarationMaker::Make()
 {
 	INTERNAL_IF( typeSpec.GetPackageID() != PC_TYPE_SPECIFIER_LIST ||
@@ -1635,66 +1630,66 @@ skip_make_parametrs:
 	static int noNameCnt = 1;
 	int ix = declPkg.FindPackage(PC_QUALIFIED_NAME);
 	CharString name;
-	if( ix < 0 )	
-		name = (string("<catch-декларация") + CharString(noNameCnt++).c_str() + ">").c_str();
+	if( ix < 0 )
+		name = (string("<catch-РґРµРєР»Р°СЂР°С†РёСЏ") + CharString(noNameCnt++).c_str() + ">").c_str();
 	else
 		name = ParserUtils::PrintPackageTree((NodePackage*)declPkg.GetChildPackage(ix) );
-		
+
 	TempObjectContainer toc( errPos, name );
-			
-	// начинаем анализ спецификаторов типа
+
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	MakerUtils::AnalyzeTypeSpecifierPkg( &typeSpec, &toc );
 
-	// далее анализируем декларатор
+	// РґР°Р»РµРµ Р°РЅР°Р»РёР·РёСЂСѓРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 	MakerUtils::AnalyzeDeclaratorPkg( &declPkg, &toc );
 	
-	// уточняем базовый тип
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 	MakerUtils::SpecifyBaseType( &toc );
 
-	// теперь проверяем тип
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј С‚РёРї
 	CatchDeclarationChecker cdc(toc);
 
-	// возвращаем объект
+	// РІРѕР·РІСЂР°С‰Р°РµРј РѕР±СЉРµРєС‚
 	::Object *targetObject = new ::Object(toc.name, &GetCurrentSymbolTable(), toc.finalType,
 		toc.constQual, toc.volatileQual, toc.dtl, toc.ssCode < 0 ? ::Object::SS_NONE : 
 		TypeSpecifierManager(toc.ssCode).CodeToStorageSpecifierObj(), toc.clinkSpec );
 
-	// вставляем объект в таблицу только если у него есть имя
+	// РІСЃС‚Р°РІР»СЏРµРј РѕР±СЉРµРєС‚ РІ С‚Р°Р±Р»РёС†Сѓ С‚РѕР»СЊРєРѕ РµСЃР»Рё Сѓ РЅРµРіРѕ РµСЃС‚СЊ РёРјСЏ
 	if( ix >= 0 )
 		GetCurrentSymbolTable().InsertSymbol(targetObject);
 	return targetObject; 
 }
 
 
-//  к-тор принимает пакет и проверяет его правильность
+//  Рє-С‚РѕСЂ РїСЂРёРЅРёРјР°РµС‚ РїР°РєРµС‚ Рё РїСЂРѕРІРµСЂСЏРµС‚ РµРіРѕ РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ
 ClassTypeMaker::ClassTypeMaker( 
 	NodePackage *np, ClassMember::AS a, SymbolTable &d, bool def )
 	: typePkg(np), as(a), resultCls(NULL), destST(d), defination(def)
-{ 		
+{
 	INTERNAL_IF( np == NULL || np->GetPackageID() != PC_TYPE_SPECIFIER_LIST ||
-				 np->IsNoChildPackages() );		
+				 np->IsNoChildPackages() );
 }
 
 
-// создать класс, если он еще не создан, а также проверить 
-// возможность его создания
+// СЃРѕР·РґР°С‚СЊ РєР»Р°СЃСЃ, РµСЃР»Рё РѕРЅ РµС‰Рµ РЅРµ СЃРѕР·РґР°РЅ, Р° С‚Р°РєР¶Рµ РїСЂРѕРІРµСЂРёС‚СЊ 
+// РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РµРіРѕ СЃРѕР·РґР°РЅРёСЏ
 ClassType *ClassTypeMaker::Make()
 {
 	const Package *pkg = typePkg->GetChildPackage(typePkg->GetChildPackageCount()-1);
 
-	// имеем безимянный класс, создаем его, вставляем в таблицу и выходим
+	// РёРјРµРµРј Р±РµР·РёРјСЏРЅРЅС‹Р№ РєР»Р°СЃСЃ, СЃРѕР·РґР°РµРј РµРіРѕ, РІСЃС‚Р°РІР»СЏРµРј РІ С‚Р°Р±Р»РёС†Сѓ Рё РІС‹С…РѕРґРёРј
 	if( pkg->GetPackageID() == KWCLASS || pkg->GetPackageID() == KWSTRUCT ||
 		pkg->GetPackageID() == KWUNION )
 	{
 		MakeUnnamedClass();
-		return resultCls;	
+		return resultCls;
 	}
 
-	// в противном случае, класс именной и требуются проверки
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, РєР»Р°СЃСЃ РёРјРµРЅРЅРѕР№ Рё С‚СЂРµР±СѓСЋС‚СЃСЏ РїСЂРѕРІРµСЂРєРё
 	INTERNAL_IF( pkg->GetPackageID() != PC_QUALIFIED_NAME );
 	NodePackage *namePkg = (NodePackage *)pkg;
 
-	// получаем ключ
+	// РїРѕР»СѓС‡Р°РµРј РєР»СЋС‡
 	INTERNAL_IF( typePkg->GetChildPackageCount() < 2 );
 	pkg = typePkg->GetChildPackage(typePkg->GetChildPackageCount()-2);
 	INTERNAL_IF( pkg->GetPackageID() != KWCLASS && pkg->GetPackageID() != KWSTRUCT &&
@@ -1702,20 +1697,20 @@ ClassType *ClassTypeMaker::Make()
 	const Lexem &key = ((LexemPackage *)pkg)->GetLexem();
 	int code = key.GetCode();
 
-	// если имя не является квалифицированным, значит вероятно его необходимо
-	// создать
+	// РµСЃР»Рё РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј, Р·РЅР°С‡РёС‚ РІРµСЂРѕСЏС‚РЅРѕ РµРіРѕ РЅРµРѕР±С…РѕРґРёРјРѕ
+	// СЃРѕР·РґР°С‚СЊ
 	if( namePkg->GetChildPackageCount() == 1 )
 	{	
-		// ищем исключительно в текущей области видимости
+		// РёС‰РµРј РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅРѕ РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 		const Lexem &name = ((LexemPackage *)namePkg->GetChildPackage(0))->GetLexem();
 
-		// во первых, объявляемый класс не должен иметь имя внешнего класса,
-		// если данный класс объявляется внутри другого класса
+		// РІРѕ РїРµСЂРІС‹С…, РѕР±СЉСЏРІР»СЏРµРјС‹Р№ РєР»Р°СЃСЃ РЅРµ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ РёРјСЏ РІРЅРµС€РЅРµРіРѕ РєР»Р°СЃСЃР°,
+		// РµСЃР»Рё РґР°РЅРЅС‹Р№ РєР»Р°СЃСЃ РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ РІРЅСѓС‚СЂРё РґСЂСѓРіРѕРіРѕ РєР»Р°СЃСЃР°
 		if( GetCurrentSymbolTable().IsClassSymbolTable() &&
 			dynamic_cast<Identifier &>(GetCurrentSymbolTable()).GetName() == name.GetBuf() )
 		{
 			theApp.Error(name.GetPos(), 
-					"'%s' - класс не может иметь имя класса в котором объявляется",
+					"'%s' - РєР»Р°СЃСЃ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РёРјСЏ РєР»Р°СЃСЃР° РІ РєРѕС‚РѕСЂРѕРј РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ",
 					name.GetBuf().c_str() );
 			return NULL;
 		}
@@ -1723,48 +1718,48 @@ ClassType *ClassTypeMaker::Make()
 		NameManager nm( name.GetBuf(), &destST, false );
 		AmbiguityChecker achk(nm.GetRoleList(), name.GetPos(), true);
 
-		// если тип найден, ключи должны совпадать
+		// РµСЃР»Рё С‚РёРї РЅР°Р№РґРµРЅ, РєР»СЋС‡Рё РґРѕР»Р¶РЅС‹ СЃРѕРІРїР°РґР°С‚СЊ
 		if( const Identifier *tnam = achk.IsTypeName(true) )
 		{
 			resultCls = dynamic_cast<ClassType *>(const_cast<Identifier *>(tnam));
 
-			// если не класс
-			if( !resultCls )		
-				theApp.Error(name.GetPos(), "'%s' - тип уже объявлен", name.GetBuf().c_str());
+			// РµСЃР»Рё РЅРµ РєР»Р°СЃСЃ
+			if( !resultCls )
+				theApp.Error(name.GetPos(), "'%s' - С‚РёРї СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅ", name.GetBuf().c_str());
 
-			// если коды не совпадают
+			// РµСЃР»Рё РєРѕРґС‹ РЅРµ СЃРѕРІРїР°РґР°СЋС‚
 			else if( resultCls->GetBaseTypeCode() != 
 							TypeSpecifierManager(code).CodeToClassSpec() )
 			{
-				theApp.Error(key.GetPos(), "'%s %s' - класс уже объявлен с другим ключом",
+				theApp.Error(key.GetPos(), "'%s %s' - РєР»Р°СЃСЃ СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅ СЃ РґСЂСѓРіРёРј РєР»СЋС‡РѕРј",
 					GetKeywordName(code), name.GetBuf().c_str() );
 				return NULL;
 			}
 
-			// если спецификаторы доступа не совпадают
+			// РµСЃР»Рё СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ РґРѕСЃС‚СѓРїР° РЅРµ СЃРѕРІРїР°РґР°СЋС‚
 			else if( GetCurrentSymbolTable().IsClassSymbolTable() &&
 					 resultCls->GetAccessSpecifier() != as )
 			{
 				theApp.Error(key.GetPos(), 
-					"'%s' - класс не может изменить спецификатор доступа",
-					name.GetBuf().c_str() );			
+					"'%s' - РєР»Р°СЃСЃ РЅРµ РјРѕР¶РµС‚ РёР·РјРµРЅРёС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР°",
+					name.GetBuf().c_str() );
 			}
 
-			// проверку доступа не осуществляем, т.к. это либо класс, который
-			// является членом данного класса, либо класс, который объявляется
+			// РїСЂРѕРІРµСЂРєСѓ РґРѕСЃС‚СѓРїР° РЅРµ РѕСЃСѓС‰РµСЃС‚РІР»СЏРµРј, С‚.Рє. СЌС‚Рѕ Р»РёР±Рѕ РєР»Р°СЃСЃ, РєРѕС‚РѕСЂС‹Р№
+			// СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј РґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР°, Р»РёР±Рѕ РєР»Р°СЃСЃ, РєРѕС‚РѕСЂС‹Р№ РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ
 
-			// в противном случае класс переопределеяется и мы возвращаем уже существующий
+			// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РєР»Р°СЃСЃ РїРµСЂРµРѕРїСЂРµРґРµР»РµСЏРµС‚СЃСЏ Рё РјС‹ РІРѕР·РІСЂР°С‰Р°РµРј СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёР№
 			return resultCls;
 		}
 
-		// иначе тип не найден, но может быть ОВ или шаблон класса, имена
-		// которых нельзя перекрывать
+		// РёРЅР°С‡Рµ С‚РёРї РЅРµ РЅР°Р№РґРµРЅ, РЅРѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ РћР’ РёР»Рё С€Р°Р±Р»РѕРЅ РєР»Р°СЃСЃР°, РёРјРµРЅР°
+		// РєРѕС‚РѕСЂС‹С… РЅРµР»СЊР·СЏ РїРµСЂРµРєСЂС‹РІР°С‚СЊ
 		else
 		{
 			if( achk.IsTemplateClass() != NULL )
 			{
 				theApp.Error(name.GetPos(), 
-					"'%s' - объявлен как 'шаблонный класс'",
+					"'%s' - РѕР±СЉСЏРІР»РµРЅ РєР°Рє 'С€Р°Р±Р»РѕРЅРЅС‹Р№ РєР»Р°СЃСЃ'",
 					name.GetBuf().c_str());
 				return NULL;
 			}
@@ -1772,19 +1767,19 @@ ClassType *ClassTypeMaker::Make()
 			if( achk.IsNameSpace() != NULL )
 			{
 				theApp.Error(name.GetPos(), 
-					"'%s' - объявлен как 'именованная область видимости'",
+					"'%s' - РѕР±СЉСЏРІР»РµРЅ РєР°Рє 'РёРјРµРЅРѕРІР°РЅРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё'",
 					name.GetBuf().c_str());
 				return NULL;
 			}
 
-			// иначе создаем класс 			
-			MakeUncompleteClass(); 			
-			return resultCls;			
+			// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РєР»Р°СЃСЃ
+			MakeUncompleteClass();
+			return resultCls;
 		}
 	}
 
-	// иначе имя является квалифицированным и потребуется только
-	// проверка существования класса с заданным кодом
+	// РёРЅР°С‡Рµ РёРјСЏ СЏРІР»СЏРµС‚СЃСЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј Рё РїРѕС‚СЂРµР±СѓРµС‚СЃСЏ С‚РѕР»СЊРєРѕ
+	// РїСЂРѕРІРµСЂРєР° СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ РєР»Р°СЃСЃР° СЃ Р·Р°РґР°РЅРЅС‹Рј РєРѕРґРѕРј
 	else
 	{
 		QualifiedNameManager qnm(namePkg);
@@ -1794,15 +1789,15 @@ ClassType *ClassTypeMaker::Make()
 
 		if( (resultCls = const_cast<ClassType *>(achk.IsClassType(true)) ) != NULL )
 		{
-			// если коды не совпадают
+			// РµСЃР»Рё РєРѕРґС‹ РЅРµ СЃРѕРІРїР°РґР°СЋС‚
 			if( resultCls->GetBaseTypeCode() != TypeSpecifierManager(code).CodeToClassSpec() )
 			{
-				theApp.Error(key.GetPos(), "'%s %s' - класс уже объявлен с другим ключом",
+				theApp.Error(key.GetPos(), "'%s %s' - РєР»Р°СЃСЃ СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅ СЃ РґСЂСѓРіРёРј РєР»СЋС‡РѕРј",
 					GetKeywordName(code), cnam.c_str() );
 				return NULL;
 			}
 
-			// иначе, сохраняем список квалификаторов, проверяем и возвращаем класс
+			// РёРЅР°С‡Рµ, СЃРѕС…СЂР°РЅСЏРµРј СЃРїРёСЃРѕРє РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ, РїСЂРѕРІРµСЂСЏРµРј Рё РІРѕР·РІСЂР°С‰Р°РµРј РєР»Р°СЃСЃ
 			stList = qnm.GetQualifierList();
 
 			if( !defination )
@@ -1810,22 +1805,22 @@ ClassType *ClassTypeMaker::Make()
 			return resultCls;
 		}
 
-		// иначе класс не объявлен в области видимости
+		// РёРЅР°С‡Рµ РєР»Р°СЃСЃ РЅРµ РѕР±СЉСЏРІР»РµРЅ РІ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 		else
-			theApp.Error(key.GetPos(), "'%s %s' - класс не объявлен",
-					GetKeywordName(code), cnam.c_str() );				
+			theApp.Error(key.GetPos(), "'%s %s' - РєР»Р°СЃСЃ РЅРµ РѕР±СЉСЏРІР»РµРЅ",
+					GetKeywordName(code), cnam.c_str() );
 	}
 
-	return NULL;	
+	return NULL;
 }
 
 
-// создать класс по ключу и по имени
+// СЃРѕР·РґР°С‚СЊ РєР»Р°СЃСЃ РїРѕ РєР»СЋС‡Сѓ Рё РїРѕ РёРјРµРЅРё
 void ClassTypeMaker::MakeUncompleteClass()
-{	
-	// получить лексему имени, подразумевается что это последний пакет в списке
-	// с кодом PC_QUALIFIED_NAME и одним дочерним пакетом NAME. Правильность
-	// этого утверждения проверяется в методе Make
+{
+	// РїРѕР»СѓС‡РёС‚СЊ Р»РµРєСЃРµРјСѓ РёРјРµРЅРё, РїРѕРґСЂР°Р·СѓРјРµРІР°РµС‚СЃСЏ С‡С‚Рѕ СЌС‚Рѕ РїРѕСЃР»РµРґРЅРёР№ РїР°РєРµС‚ РІ СЃРїРёСЃРєРµ
+	// СЃ РєРѕРґРѕРј PC_QUALIFIED_NAME Рё РѕРґРЅРёРј РґРѕС‡РµСЂРЅРёРј РїР°РєРµС‚РѕРј NAME. РџСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ
+	// СЌС‚РѕРіРѕ СѓС‚РІРµСЂР¶РґРµРЅРёСЏ РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РІ РјРµС‚РѕРґРµ Make
 	const CharString &name = ((LexemPackage *)((NodePackage *)typePkg->GetChildPackage(
 		typePkg->GetChildPackageCount()-1))->GetChildPackage(0))->GetLexem().GetBuf();
 
@@ -1834,25 +1829,25 @@ void ClassTypeMaker::MakeUncompleteClass()
 
 	SymbolTable *cst = &destST;
 
-	// вставляем класс
+	// РІСЃС‚Р°РІР»СЏРµРј РєР»Р°СЃСЃ
 	resultCls = code == KWUNION
 			? new UnionClassType(name, cst, as, false, ::Object::SS_NONE)
 			: new ClassType(name, cst, 
 				(code == KWCLASS ? BaseType::BT_CLASS : BaseType::BT_STRUCT), as);
-	INTERNAL_IF( !cst->InsertSymbol(resultCls) );	
+	INTERNAL_IF( !cst->InsertSymbol(resultCls) );
 }
 
 
-// создать безимянный класс
+// СЃРѕР·РґР°С‚СЊ Р±РµР·РёРјСЏРЅРЅС‹Р№ РєР»Р°СЃСЃ
 void ClassTypeMaker::MakeUnnamedClass()
-{	
+{
 	static int clsCounter = 0;
 	SymbolTable *cst = &destST;
 	const Lexem &lxm = ((LexemPackage *)typePkg->GetChildPackage(
 		typePkg->GetChildPackageCount()-1))->GetLexem();
 	int key = lxm.GetCode();
 
-	CharString knam = (string("<класс ") + 
+	CharString knam = (string("<РєР»Р°СЃСЃ ") + 
 		CharString(clsCounter).c_str() + ">").c_str();
 
 	clsCounter++;
@@ -1861,45 +1856,44 @@ void ClassTypeMaker::MakeUnnamedClass()
 			? new UnionClassType(knam, cst, as, false, ::Object::SS_NONE)
 			: new ClassType(knam, cst, 
 				(key == KWCLASS ? BaseType::BT_CLASS : BaseType::BT_STRUCT), as);
-	INTERNAL_IF( !cst->InsertSymbol(resultCls) );	
+	INTERNAL_IF( !cst->InsertSymbol(resultCls) );
 	
 
-	// добавляем к списку пакетов сгенерированное имя
-	NodePackage *np = new NodePackage(PC_QUALIFIED_NAME);	
+	// РґРѕР±Р°РІР»СЏРµРј Рє СЃРїРёСЃРєСѓ РїР°РєРµС‚РѕРІ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅРѕРµ РёРјСЏ
+	NodePackage *np = new NodePackage(PC_QUALIFIED_NAME);
 	np->AddChildPackage( new LexemPackage( Lexem( knam, key, lxm.GetPos()) ) );
 	typePkg->AddChildPackage(np);
 }
 
 
-//  к-тор принимает пакет и проверяет его правильность
+// Рє-С‚РѕСЂ РїСЂРёРЅРёРјР°РµС‚ РїР°РєРµС‚ Рё РїСЂРѕРІРµСЂСЏРµС‚ РµРіРѕ РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ
 EnumTypeMaker::EnumTypeMaker( NodePackage *np, ClassMember::AS a, bool def )
 	: typePkg(np), as(a), resultEnum(NULL), defination(def)
-{ 		
+{
 	INTERNAL_IF( np == NULL || np->GetPackageID() != PC_TYPE_SPECIFIER_LIST ||
-				 np->IsNoChildPackages() );		
+				 np->IsNoChildPackages() );
 }
 
 
-// создать класс, если он еще не создан, а также проверить 
-// возможность его создания
+// СЃРѕР·РґР°С‚СЊ РєР»Р°СЃСЃ, РµСЃР»Рё РѕРЅ РµС‰Рµ РЅРµ СЃРѕР·РґР°РЅ, Р° С‚Р°РєР¶Рµ РїСЂРѕРІРµСЂРёС‚СЊ 
+// РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РµРіРѕ СЃРѕР·РґР°РЅРёСЏ
 EnumType *EnumTypeMaker::Make()
 {
 	const Package *pkg = typePkg->GetChildPackage(typePkg->GetChildPackageCount()-1);
 
-	// имеем безимянное перечисление, создаем его, вставляем в таблицу и выходим
+	// РёРјРµРµРј Р±РµР·РёРјСЏРЅРЅРѕРµ РїРµСЂРµС‡РёСЃР»РµРЅРёРµ, СЃРѕР·РґР°РµРј РµРіРѕ, РІСЃС‚Р°РІР»СЏРµРј РІ С‚Р°Р±Р»РёС†Сѓ Рё РІС‹С…РѕРґРёРј
 	if( pkg->GetPackageID() == KWENUM )
 	{
 		static int ecnt = 0;
-		CharString nam = string(
-				string("<перечисление ") + CharString(ecnt).c_str() + ">").c_str();
+		CharString nam = string(string("<РїРµСЂРµС‡РёСЃР»РµРЅРёРµ ") + CharString(ecnt).c_str() + ">").c_str();
 
 		ecnt++;
 
 		resultEnum = new EnumType(nam, &GetCurrentSymbolTable(), as);
-		INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol(resultEnum) );		
+		INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol(resultEnum) );
 
-		// добавляем к списку пакетов сгенерированное имя
-		NodePackage *np = new NodePackage(PC_QUALIFIED_NAME);	
+		// РґРѕР±Р°РІР»СЏРµРј Рє СЃРїРёСЃРєСѓ РїР°РєРµС‚РѕРІ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅРѕРµ РёРјСЏ
+		NodePackage *np = new NodePackage(PC_QUALIFIED_NAME);
 		const Position &pos = static_cast<const LexemPackage*>(pkg)->GetLexem().GetPos();
 		np->AddChildPackage( new LexemPackage( Lexem( nam, NAME,  pos) ) );
 		typePkg->AddChildPackage(np);
@@ -1907,31 +1901,31 @@ EnumType *EnumTypeMaker::Make()
 		return resultEnum;
 	}
 
-	// в противном случае, класс именной и требуются проверки
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, РєР»Р°СЃСЃ РёРјРµРЅРЅРѕР№ Рё С‚СЂРµР±СѓСЋС‚СЃСЏ РїСЂРѕРІРµСЂРєРё
 	INTERNAL_IF( pkg->GetPackageID() != PC_QUALIFIED_NAME );
 	NodePackage *namePkg = (NodePackage *)pkg;
 
-	// проверяем правильность ключа
+	// РїСЂРѕРІРµСЂСЏРµРј РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ РєР»СЋС‡Р°
 	INTERNAL_IF( typePkg->GetChildPackageCount() < 2 );	
 	INTERNAL_IF( typePkg->GetChildPackage(typePkg->GetChildPackageCount()-2)
 						->GetPackageID() != KWENUM );
 
 	pkg = typePkg->GetChildPackage(typePkg->GetChildPackageCount()-2);
-	const Lexem &key = ((LexemPackage *)pkg)->GetLexem();	
+	const Lexem &key = ((LexemPackage *)pkg)->GetLexem();
 
-	// если имя не является квалифицированным, значит вероятно его необходимо
-	// создать
+	// РµСЃР»Рё РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј, Р·РЅР°С‡РёС‚ РІРµСЂРѕСЏС‚РЅРѕ РµРіРѕ РЅРµРѕР±С…РѕРґРёРјРѕ
+	// СЃРѕР·РґР°С‚СЊ
 	if( namePkg->GetChildPackageCount() == 1 )
-	{	
-		// ищем исключительно в текущей области видимости
+	{
+		// РёС‰РµРј РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅРѕ РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 		const Lexem &name = ((LexemPackage *)namePkg->GetChildPackage(0))->GetLexem();
 
-		// перечисление не может имя класса в котором объявляется		
+		// РїРµСЂРµС‡РёСЃР»РµРЅРёРµ РЅРµ РјРѕР¶РµС‚ РёРјСЏ РєР»Р°СЃСЃР° РІ РєРѕС‚РѕСЂРѕРј РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ
 		if( GetCurrentSymbolTable().IsClassSymbolTable() &&
 			dynamic_cast<Identifier &>(GetCurrentSymbolTable()).GetName() == name.GetBuf() )
 		{
 			theApp.Error(name.GetPos(), 
-					"'%s' - перечисление не может иметь имя класса в котором объявляется",
+					"'%s' - РїРµСЂРµС‡РёСЃР»РµРЅРёРµ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РёРјСЏ РєР»Р°СЃСЃР° РІ РєРѕС‚РѕСЂРѕРј РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ",
 					name.GetBuf().c_str() );
 			return NULL;
 		}
@@ -1941,36 +1935,36 @@ EnumType *EnumTypeMaker::Make()
 
 		if( (resultEnum = (EnumType *)achk.IsEnumType(true)) != NULL )
 		{
-			// если спецификаторы доступа не совпадают
+			// РµСЃР»Рё СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ РґРѕСЃС‚СѓРїР° РЅРµ СЃРѕРІРїР°РґР°СЋС‚
 			if( resultEnum->GetAccessSpecifier() != as )
 			{
 				theApp.Error(name.GetPos(), 
-					"'%s' - перечисление не может изменить спецификатор доступа",
+					"'%s' - РїРµСЂРµС‡РёСЃР»РµРЅРёРµ РЅРµ РјРѕР¶РµС‚ РёР·РјРµРЅРёС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР°",
 					name.GetBuf().c_str() );
-			
+
 			}
 
 			return resultEnum ;
 		}
-		
+
 		else if( achk.IsTypeName(true) || achk.IsTemplateClass() || achk.IsNameSpace() )
 		{
 			theApp.Error( ParserUtils::GetPackagePosition(namePkg), 
-				"'%s' - имя уже используется как тип, шаблонный класс или область видимости",
+				"'%s' - РёРјСЏ СѓР¶Рµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєР°Рє С‚РёРї, С€Р°Р±Р»РѕРЅРЅС‹Р№ РєР»Р°СЃСЃ РёР»Рё РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё",
 				name.GetBuf().c_str());
-			return NULL;			
+			return NULL;
 		}
-		
-		// иначе создаем перечисление и вставляем его в таблицу
+
+		// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РїРµСЂРµС‡РёСЃР»РµРЅРёРµ Рё РІСЃС‚Р°РІР»СЏРµРј РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 		else
 		{
 			resultEnum = new EnumType(name.GetBuf(), &GetCurrentSymbolTable(), as);
 			INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol(resultEnum) );
-			return 	resultEnum ;		
-		}			
+			return resultEnum ;
+		}
 	}
 
-	// иначе имя квалифицированное и требуется только проверка его существования
+	// РёРЅР°С‡Рµ РёРјСЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРµ Рё С‚СЂРµР±СѓРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РїСЂРѕРІРµСЂРєР° РµРіРѕ СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ
 	else
 	{
 		QualifiedNameManager qnm(namePkg);
@@ -1979,23 +1973,23 @@ EnumType *EnumTypeMaker::Make()
 		AmbiguityChecker achk(qnm.GetRoleList(), epos, true);
 
 		if( (resultEnum = const_cast<EnumType *>(achk.IsEnumType(true)) ) != NULL )
-		{			
-			// иначе, сохраняем список квалификаторов, проверяем на доступность
-			// и возвращаем перечисление
+		{
+			// РёРЅР°С‡Рµ, СЃРѕС…СЂР°РЅСЏРµРј СЃРїРёСЃРѕРє РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ, РїСЂРѕРІРµСЂСЏРµРј РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
+			// Рё РІРѕР·РІСЂР°С‰Р°РµРј РїРµСЂРµС‡РёСЃР»РµРЅРёРµ
 			stList = qnm.GetQualifierList();
-			
+
 			if( !defination )
 				CheckerUtils::CheckAccess(qnm, *resultEnum, epos);
 			return resultEnum;
 		}
 
-		// иначе класс не объявлен в области видимости
+		// РёРЅР°С‡Рµ РєР»Р°СЃСЃ РЅРµ РѕР±СЉСЏРІР»РµРЅ РІ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 		else
-			theApp.Error(key.GetPos(), "'enum %s' - перечисление не объявлено",
-							cnam.c_str() );				
+			theApp.Error(key.GetPos(), "'enum %s' - РїРµСЂРµС‡РёСЃР»РµРЅРёРµ РЅРµ РѕР±СЉСЏРІР»РµРЅРѕ",
+							cnam.c_str() );
 	}
 
 	return resultEnum;
 }
 
-	
+

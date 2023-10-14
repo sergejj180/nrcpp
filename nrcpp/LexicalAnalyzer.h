@@ -1,8 +1,6 @@
-// заголовчный файл для лексического анализатора C++ - LexicalAnalyzer.h
-
-
-#ifndef _LEXICAL_ANALYZER_H_INCLUDE
-#define _LEXICAL_ANALYZER_H_INCLUDE
+// Р·Р°РіРѕР»РѕРІС‡РЅС‹Р№ С„Р°Р№Р» РґР»СЏ Р»РµРєСЃРёС‡РµСЃРєРѕРіРѕ Р°РЅР°Р»РёР·Р°С‚РѕСЂР° C++ - LexicalAnalyzer.h
+#ifndef LEXICAL_ANALYZER_H
+#define LEXICAL_ANALYZER_H
 
 #include <string>
 #include <cstring>
@@ -10,39 +8,39 @@
 #include <nrc.h>
 using namespace nrc;
 
-// макросы проверки символов, используются при синтаксическом и лексическом анализе
+// РјР°РєСЂРѕСЃС‹ РїСЂРѕРІРµСЂРєРё СЃРёРјРІРѕР»РѕРІ, РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ РїСЂРё СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕРј Рё Р»РµРєСЃРёС‡РµСЃРєРѕРј Р°РЅР°Р»РёР·Рµ
 #define IS_NAME_START(c)  (isalpha( (c) ) || (c) == '_')
-#define IS_NAME( c )	  ( IS_NAME_START( c ) || isdigit(c) )
-#define IS_INT_LITERAL( c )   ((c) == INTEGER10 || (c) == UINTEGER10 ||	\
-			  			       (c) == INTEGER16 || (c) == UINTEGER16 ||	\
-						       (c) == INTEGER8  || (c) == UINTEGER8  ||	\
+#define IS_NAME( c )  ( IS_NAME_START( c ) || isdigit(c) )
+#define IS_INT_LITERAL( c )   ((c) == INTEGER10 || (c) == UINTEGER10 || \
+						       (c) == INTEGER16 || (c) == UINTEGER16 || \
+						       (c) == INTEGER8  || (c) == UINTEGER8  || \
 						       (c) == CHARACTER || (c) == WCHARACTER )
 
-#define IS_LITERAL( c )		  (IS_INT_LITERAL(c) ||						\
-							   (c) == STRING || (c) == WSTRING ||		\
-							   (c) == LFLOAT || (c) == LDOUBLE ||		\
-							   (c) == KWTRUE || (c) == KWFALSE )	
+#define IS_LITERAL( c )   (IS_INT_LITERAL(c) || \
+							   (c) == STRING || (c) == WSTRING || \
+							   (c) == LFLOAT || (c) == LDOUBLE || \
+							   (c) == KWTRUE || (c) == KWFALSE ) 
 
 
-// если лексема является простым спецификатором типа, который можно использовать
-// в качестве типа для явного вызова конструктора или деструктора
-#define IS_SIMPLE_TYPE_SPEC( c )	( (c) == KWINT     || (c) == KWCHAR || (c) == KWBOOL || \
+// РµСЃР»Рё Р»РµРєСЃРµРјР° СЏРІР»СЏРµС‚СЃСЏ РїСЂРѕСЃС‚С‹Рј СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРј С‚РёРїР°, РєРѕС‚РѕСЂС‹Р№ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ
+// РІ РєР°С‡РµСЃС‚РІРµ С‚РёРїР° РґР»СЏ СЏРІРЅРѕРіРѕ РІС‹Р·РѕРІР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РёР»Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂР°
+#define IS_SIMPLE_TYPE_SPEC( c )  ( (c) == KWINT     || (c) == KWCHAR || (c) == KWBOOL || \
 									  (c) == KWWCHAR_T || (c) == KWSHORT|| (c) == KWLONG || \
-									  (c) == KWSIGNED  || (c) == KWUNSIGNED ||				\
+									  (c) == KWSIGNED  || (c) == KWUNSIGNED || \
 									  (c) == KWFLOAT   || (c) == KWDOUBLE || (c) == KWVOID )
 
 
-// коды лексем С++ 
+// РєРѕРґС‹ Р»РµРєСЃРµРј РЎ++ 
 enum CPP_TOKENS {
 
-	// любое имя, кроме ключевых слов
+	// Р»СЋР±РѕРµ РёРјСЏ, РєСЂРѕРјРµ РєР»СЋС‡РµРІС‹С… СЃР»РѕРІ
 	NAME = 257,
 
-	// константы
+	// РєРѕРЅСЃС‚Р°РЅС‚С‹
 	STRING, WSTRING, CHARACTER, WCHARACTER, INTEGER10, INTEGER16, INTEGER8,
 	UINTEGER10, UINTEGER16, UINTEGER8, LFLOAT, LDOUBLE,
 
-	// операторы
+	// РѕРїРµСЂР°С‚РѕСЂС‹
 	ARROW, INCREMENT, DECREMENT, DOT_POINT, ARROW_POINT,
 	LEFT_SHIFT, RIGHT_SHIFT, LESS_EQU, GREATER_EQU, EQUAL, 
 	NOT_EQUAL, LOGIC_AND, LOGIC_OR, MUL_ASSIGN, DIV_ASSIGN,
@@ -50,15 +48,15 @@ enum CPP_TOKENS {
 	LEFT_SHIFT_ASSIGN, RIGHT_SHIFT_ASSIGN, AND_ASSIGN, XOR_ASSIGN,
 	OR_ASSIGN, COLON_COLON, DOUBLE_SHARP, ELLIPSES,
 
-	// ключевые слова
-	KWASM,	KWAUTO,	KWBOOL,	KWBREAK, 
-	KWCASE,	KWCATCH , KWCHAR, KWCLASS,				// KWCATCH = 300
+	// РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР°
+	KWASM, KWAUTO, KWBOOL, KWBREAK, 
+	KWCASE, KWCATCH , KWCHAR, KWCLASS, // KWCATCH = 300
 	KWCONST, KWCONST_CAST, KWCONTINUE, KWDEFAULT,
-	KWDELETE, KWDO,	KWDOUBLE, KWDYNAMIC_CAST,
-	KWELSE,	KWENUM,	KWEXPLICIT, KWEXPORT,
+	KWDELETE, KWDO, KWDOUBLE, KWDYNAMIC_CAST,
+	KWELSE, KWENUM, KWEXPLICIT, KWEXPORT,
 	KWEXTERN, KWFALSE, KWFLOAT, KWFOR,
-	KWFRIEND, KWGOTO, KWIF,	KWINLINE, 
-	KWINT,	KWLONG,	KWMUTABLE, KWNAMESPACE,
+	KWFRIEND, KWGOTO, KWIF, KWINLINE, 
+	KWINT, KWLONG, KWMUTABLE, KWNAMESPACE,
 	KWNEW, KWOPERATOR, KWPRIVATE, KWPROTECTED,
 	KWPUBLIC, KWREGISTER, KWREINTERPRET_CAST, KWRETURN,
 	KWSHORT, KWSIGNED, KWSIZEOF, KWSTATIC,
@@ -70,41 +68,41 @@ enum CPP_TOKENS {
 };
 
 
-// коды лексем препроцессора
+// РєРѕРґС‹ Р»РµРєСЃРµРј РїСЂРµРїСЂРѕС†РµСЃСЃРѕСЂР°
 enum KPP_TOKENS {
-	KPP_DEFINE = 257, KPP_ERROR,  KPP_UNDEF,  
-	KPP_ELIF,   KPP_IF,     KPP_INCLUDE,
-	KPP_ELSE,   KPP_IFDEF,  KPP_LINE,   
-	KPP_ENDIF,  KPP_IFNDEF, KPP_PRAGMA
+	KPP_DEFINE = 257, KPP_ERROR, KPP_UNDEF,
+	KPP_ELIF, KPP_IF, KPP_INCLUDE,
+	KPP_ELSE, KPP_IFDEF, KPP_LINE, 
+	KPP_ENDIF, KPP_IFNDEF, KPP_PRAGMA
 };
 
 
-// базовый класс считывания 
+// Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ 
 class BaseRead
 {
 public:
 	BaseRead() { }
 	virtual ~BaseRead() { }
  
-	// считывание из потока в символ
+	// СЃС‡РёС‚С‹РІР°РЅРёРµ РёР· РїРѕС‚РѕРєР° РІ СЃРёРјРІРѕР»
 	virtual int operator>>( register int &c ) = 0;
 
-	// возврат символа в поток
+	// РІРѕР·РІСЂР°С‚ СЃРёРјРІРѕР»Р° РІ РїРѕС‚РѕРє
 	virtual void operator<<( register int &c ) = 0;
 };
 
 
-// класс считывания из буфера
+// РєР»Р°СЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ РёР· Р±СѓС„РµСЂР°
 class BufferRead : public BaseRead
 {
 	string buf;
 
-	// текущий указатель на место в строке
-	int i;	
+	// С‚РµРєСѓС‰РёР№ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РјРµСЃС‚Рѕ РІ СЃС‚СЂРѕРєРµ
+	int i; 
 public:
 	BufferRead( string b ) : buf(b) { i = 0; }
 
-	// считывание из буфера в символ
+	// СЃС‡РёС‚С‹РІР°РЅРёРµ РёР· Р±СѓС„РµСЂР° РІ СЃРёРјРІРѕР»
 	int operator>>( register int &c ) {
 		if( i == buf.length() ) 
 			return (c = EOF);
@@ -113,12 +111,12 @@ public:
 		return c;
 	}
 
-	// возврат символа в поток
+	// РІРѕР·РІСЂР°С‚ СЃРёРјРІРѕР»Р° РІ РїРѕС‚РѕРє
 	void operator<<( register int &c ) { if(c != EOF) i--; }
 };
 
 
-// класс считывания из файла
+// РєР»Р°СЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ РёР· С„Р°Р№Р»Р°
 class FileRead : public BaseRead
 {
 	FILE *in;
@@ -127,191 +125,191 @@ public:
 	FileRead( FILE *i ) : in(i) { }
 	~FileRead( ) { fclose(in); }
 
-	// считывание из буфера в символ
+	// СЃС‡РёС‚С‹РІР°РЅРёРµ РёР· Р±СѓС„РµСЂР° РІ СЃРёРјРІРѕР»
 	int operator>>( register int &c ) {
 		c = fgetc(in);
 		return c;
 	}
 
-	// возврат символа в поток
+	// РІРѕР·РІСЂР°С‚ СЃРёРјРІРѕР»Р° РІ РїРѕС‚РѕРє
 	void operator<<( register int &c ) { ungetc(c, in); }
 };
 
 
-// класс считывания из файла для С++ анализатора
+// РєР»Р°СЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ РёР· С„Р°Р№Р»Р° РґР»СЏ РЎ++ Р°РЅР°Р»РёР·Р°С‚РѕСЂР°
 class CppFileRead : public BaseRead 
 {
-	// указатель на входной поток
+	// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РІС…РѕРґРЅРѕР№ РїРѕС‚РѕРє
 	FILE *in;
 
 
-	// ссылка на объект лексического анализатора - позиция
+	// СЃСЃС‹Р»РєР° РЅР° РѕР±СЉРµРєС‚ Р»РµРєСЃРёС‡РµСЃРєРѕРіРѕ Р°РЅР°Р»РёР·Р°С‚РѕСЂР° - РїРѕР·РёС†РёСЏ
 	Position &pos;
 
 public:
 	CppFileRead( FILE *i, Position &p ) : in(i), pos(p) { }
 	~CppFileRead( ) {   }
 
-	// считывание из буфера в символ
+	// СЃС‡РёС‚С‹РІР°РЅРёРµ РёР· Р±СѓС„РµСЂР° РІ СЃРёРјРІРѕР»
 	int operator>>( register int &c ) {
 		c = fgetc(in);
 		pos.col++;
 		return c;
 	}
 
-	// возврат символа в поток
+	// РІРѕР·РІСЂР°С‚ СЃРёРјРІРѕР»Р° РІ РїРѕС‚РѕРє
 	void operator<<( register int &c ) { pos.col--; ungetc(c, in); }
 
 
-	// метод вызывается при появлении новой строки в файле
+	// РјРµС‚РѕРґ РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РїРѕСЏРІР»РµРЅРёРё РЅРѕРІРѕР№ СЃС‚СЂРѕРєРё РІ С„Р°Р№Р»Рµ
 	void NewLine() { pos.line++, pos.col = 1; }
 
-	// получить позицию
+	// РїРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ
 	Position GetPosition() const { return pos; }
 
 };
 
 
-// структура описывает лексему, каждая считанная из файла лексема
-// преобразуется к такому виду
+// СЃС‚СЂСѓРєС‚СѓСЂР° РѕРїРёСЃС‹РІР°РµС‚ Р»РµРєСЃРµРјСѓ, РєР°Р¶РґР°СЏ СЃС‡РёС‚Р°РЅРЅР°СЏ РёР· С„Р°Р№Р»Р° Р»РµРєСЃРµРјР°
+// РїСЂРµРѕР±СЂР°Р·СѓРµС‚СЃСЏ Рє С‚Р°РєРѕРјСѓ РІРёРґСѓ
 class Lexem
 {
-	// буфер
-	CharString	buf;
+	// Р±СѓС„РµСЂ
+	CharString buf;
 
-	// код лексемы
+	// РєРѕРґ Р»РµРєСЃРµРјС‹
 	int code;
 
-	// позиция в файле
+	// РїРѕР·РёС†РёСЏ РІ С„Р°Р№Р»Рµ
 	Position pos;
 
 public:
 
-	// конструктор по умолчанию
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	Lexem() {
 		code = 0;
 	}
 
 
-	// конструктор с заданием параметров
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ Р·Р°РґР°РЅРёРµРј РїР°СЂР°РјРµС‚СЂРѕРІ
 	Lexem( const CharString &b, int c, const Position &p ) : buf(b), code(c), pos(p) {
 	}
 
-	// получить буфер
+	// РїРѕР»СѓС‡РёС‚СЊ Р±СѓС„РµСЂ
 	const CharString &GetBuf() const {
 		return buf;
 	}
 
-	// получить код
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРґ
 	int GetCode() const {
 		return code;
 	}
 
-	// получить позицию
+	// РїРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ
 	const Position &GetPos() const {
 		return pos;
 	}
 
-	// получить код, с помощью приведения к типу int
+	// РїРѕР»СѓС‡РёС‚СЊ РєРѕРґ, СЃ РїРѕРјРѕС‰СЊСЋ РїСЂРёРІРµРґРµРЅРёСЏ Рє С‚РёРїСѓ int
 	operator int() const {
 		return code;
 	}
 
-	// доступ к закрытым полям класса может иметь только класс LexicalAnalyzer
-	// это сделано для того, чтобы только этот класс мог задавать значения лексемы
+	// РґРѕСЃС‚СѓРї Рє Р·Р°РєСЂС‹С‚С‹Рј РїРѕР»СЏРј РєР»Р°СЃСЃР° РјРѕР¶РµС‚ РёРјРµС‚СЊ С‚РѕР»СЊРєРѕ РєР»Р°СЃСЃ LexicalAnalyzer
+	// СЌС‚Рѕ СЃРґРµР»Р°РЅРѕ РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ С‚РѕР»СЊРєРѕ СЌС‚РѕС‚ РєР»Р°СЃСЃ РјРѕРі Р·Р°РґР°РІР°С‚СЊ Р·РЅР°С‡РµРЅРёСЏ Р»РµРєСЃРµРјС‹
 	friend class LexicalAnalyzer;
 };
 
 
-// контейнер лексем, может сохранять в себе неограниченное 
-// количество лексем. Необходим для перечитывания некоторого блока программы.
-// Активно взаимодействует с классом LexicalAnalyzer
+// РєРѕРЅС‚РµР№РЅРµСЂ Р»РµРєСЃРµРј, РјРѕР¶РµС‚ СЃРѕС…СЂР°РЅСЏС‚СЊ РІ СЃРµР±Рµ РЅРµРѕРіСЂР°РЅРёС‡РµРЅРЅРѕРµ 
+// РєРѕР»РёС‡РµСЃС‚РІРѕ Р»РµРєСЃРµРј. РќРµРѕР±С…РѕРґРёРј РґР»СЏ РїРµСЂРµС‡РёС‚С‹РІР°РЅРёСЏ РЅРµРєРѕС‚РѕСЂРѕРіРѕ Р±Р»РѕРєР° РїСЂРѕРіСЂР°РјРјС‹.
+// РђРєС‚РёРІРЅРѕ РІР·Р°РёРјРѕРґРµР№СЃС‚РІСѓРµС‚ СЃ РєР»Р°СЃСЃРѕРј LexicalAnalyzer
 typedef list<Lexem>	LexemContainer;
 
 
-// оператор вывода контейнера на стандартный вывод, используется при отладке
+// РѕРїРµСЂР°С‚РѕСЂ РІС‹РІРѕРґР° РєРѕРЅС‚РµР№РЅРµСЂР° РЅР° СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РІС‹РІРѕРґ, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё РѕС‚Р»Р°РґРєРµ
 ostream &operator<<( ostream &out, const LexemContainer &lc );
 
 
-// главный класс модуля - лексический анализатор
+// РіР»Р°РІРЅС‹Р№ РєР»Р°СЃСЃ РјРѕРґСѓР»СЏ - Р»РµРєСЃРёС‡РµСЃРєРёР№ Р°РЅР°Р»РёР·Р°С‚РѕСЂ
 class LexicalAnalyzer
 {
-	// последняя и предыдущая считанная лексема
+	// РїРѕСЃР»РµРґРЅСЏСЏ Рё РїСЂРµРґС‹РґСѓС‰Р°СЏ СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР°
 	Lexem lastLxm, prevLxm;
 
-	// буферная лексема, может возвращатся назад в поток
+	// Р±СѓС„РµСЂРЅР°СЏ Р»РµРєСЃРµРјР°, РјРѕР¶РµС‚ РІРѕР·РІСЂР°С‰Р°С‚СЃСЏ РЅР°Р·Р°Рґ РІ РїРѕС‚РѕРє
 	Lexem backLxm;
 		
-	// указатель на входной поток 
+	// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РІС…РѕРґРЅРѕР№ РїРѕС‚РѕРє 
 	CppFileRead *inStream;
 
-	// позиция в файле
+	// РїРѕР·РёС†РёСЏ РІ С„Р°Р№Р»Рµ
 	const Position &curPos;
 
-	// указатель на контейнер, если не равен NULL, значит считывание
-	// происходит из него, иначе из потока. Обнуляется если все лексемы
-	// считаны
+	// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєРѕРЅС‚РµР№РЅРµСЂ, РµСЃР»Рё РЅРµ СЂР°РІРµРЅ NULL, Р·РЅР°С‡РёС‚ СЃС‡РёС‚С‹РІР°РЅРёРµ
+	// РїСЂРѕРёСЃС…РѕРґРёС‚ РёР· РЅРµРіРѕ, РёРЅР°С‡Рµ РёР· РїРѕС‚РѕРєР°. РћР±РЅСѓР»СЏРµС‚СЃСЏ РµСЃР»Рё РІСЃРµ Р»РµРєСЃРµРјС‹
+	// СЃС‡РёС‚Р°РЅС‹
 	LexemContainer *lexemContainer;
 
 public:
 
-	// объект лексического анализатора можно создать только 
-	// указанием имени файла из которого следует производить чтение 
-	// лексем
+	// РѕР±СЉРµРєС‚ Р»РµРєСЃРёС‡РµСЃРєРѕРіРѕ Р°РЅР°Р»РёР·Р°С‚РѕСЂР° РјРѕР¶РЅРѕ СЃРѕР·РґР°С‚СЊ С‚РѕР»СЊРєРѕ 
+	// СѓРєР°Р·Р°РЅРёРµРј РёРјРµРЅРё С„Р°Р№Р»Р° РёР· РєРѕС‚РѕСЂРѕРіРѕ СЃР»РµРґСѓРµС‚ РїСЂРѕРёР·РІРѕРґРёС‚СЊ С‡С‚РµРЅРёРµ 
+	// Р»РµРєСЃРµРј
 	LexicalAnalyzer( FILE *in, Position &pos ) : curPos(pos), lexemContainer(NULL) {
 		inStream = new CppFileRead(in, pos);
 	}
 
 
-	// деструктор уничтожает входной поток
+	// РґРµСЃС‚СЂСѓРєС‚РѕСЂ СѓРЅРёС‡С‚РѕР¶Р°РµС‚ РІС…РѕРґРЅРѕР№ РїРѕС‚РѕРє
 	~LexicalAnalyzer() {
 		delete inStream;
 	}
 
 
-	// получить следующую лексему
+	// РїРѕР»СѓС‡РёС‚СЊ СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ
 	const Lexem &NextLexem();
 
-	// получить предыдущую лексему
+	// РїРѕР»СѓС‡РёС‚СЊ РїСЂРµРґС‹РґСѓС‰СѓСЋ Р»РµРєСЃРµРјСѓ
 	const Lexem &PrevLexem() const {
 		return prevLxm; 
 	}
 
-	// получить последнюю считанную лексему
+	// РїРѕР»СѓС‡РёС‚СЊ РїРѕСЃР»РµРґРЅСЋСЋ СЃС‡РёС‚Р°РЅРЅСѓСЋ Р»РµРєСЃРµРјСѓ
 	const Lexem &LastLexem() const {
 		return lastLxm;
 	}
 
-	// возвращает последнюю считанную лексему в поток,
-	// при следующем вызове NextLexem, будет получена именно
-	// она. Если режим установлен в LAM_FILE_TO_CONTAINER, 
-	// возвращаенная лексема второй раз не записывается	
-	void BackLexem( ) {	
-		// возвращать можно только одну лексему в поток, для большего
-		// количества лексем, существет контейнер
-		INTERNAL_IF( backLxm.GetCode() != 0 );		
-		backLxm = lastLxm;		
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ РїРѕСЃР»РµРґРЅСЋСЋ СЃС‡РёС‚Р°РЅРЅСѓСЋ Р»РµРєСЃРµРјСѓ РІ РїРѕС‚РѕРє,
+	// РїСЂРё СЃР»РµРґСѓСЋС‰РµРј РІС‹Р·РѕРІРµ NextLexem, Р±СѓРґРµС‚ РїРѕР»СѓС‡РµРЅР° РёРјРµРЅРЅРѕ
+	// РѕРЅР°. Р•СЃР»Рё СЂРµР¶РёРј СѓСЃС‚Р°РЅРѕРІР»РµРЅ РІ LAM_FILE_TO_CONTAINER, 
+	// РІРѕР·РІСЂР°С‰Р°РµРЅРЅР°СЏ Р»РµРєСЃРµРјР° РІС‚РѕСЂРѕР№ СЂР°Р· РЅРµ Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ 
+	void BackLexem( ) { 
+		// РІРѕР·РІСЂР°С‰Р°С‚СЊ РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РѕРґРЅСѓ Р»РµРєСЃРµРјСѓ РІ РїРѕС‚РѕРє, РґР»СЏ Р±РѕР»СЊС€РµРіРѕ
+		// РєРѕР»РёС‡РµСЃС‚РІР° Р»РµРєСЃРµРј, СЃСѓС‰РµСЃС‚РІРµС‚ РєРѕРЅС‚РµР№РЅРµСЂ
+		INTERNAL_IF( backLxm.GetCode() != 0 );
+		backLxm = lastLxm;
 	}
 
-	// загрузить контейнер для считывания. При этом указатель на контейнер
-	// должен равняться 0
+	// Р·Р°РіСЂСѓР·РёС‚СЊ РєРѕРЅС‚РµР№РЅРµСЂ РґР»СЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ. РџСЂРё СЌС‚РѕРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєРѕРЅС‚РµР№РЅРµСЂ
+	// РґРѕР»Р¶РµРЅ СЂР°РІРЅСЏС‚СЊСЃСЏ 0
 	void LoadContainer( LexemContainer *lc ) {
 		INTERNAL_IF( lexemContainer != NULL );
 		lexemContainer = lc;
 	}
 
-	// задать последнюю считанную лексему
+	// Р·Р°РґР°С‚СЊ РїРѕСЃР»РµРґРЅСЋСЋ СЃС‡РёС‚Р°РЅРЅСѓСЋ Р»РµРєСЃРµРјСѓ
 	void SetLastLexem( const Lexem &lxm ) {
 		lastLxm = lxm;
 	}
 };
 
 
-// ищет ключевые слова языка С++
+// РёС‰РµС‚ РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° СЏР·С‹РєР° РЎ++
 int LookupCPPKeywords( const char *keyname );
 
 
-// возвращает имя ключевого слова по коду
+// РІРѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РїРѕ РєРѕРґСѓ
 const char *GetKeywordName( int code );
 
 

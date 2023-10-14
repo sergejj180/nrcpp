@@ -1,4 +1,4 @@
-// заголовчный файл для лексического анализатора C++ - cpplex.h
+// Р·Р°РіРѕР»РѕРІС‡РЅС‹Р№ С„Р°Р№Р» РґР»СЏ Р»РµРєСЃРёС‡РµСЃРєРѕРіРѕ Р°РЅР°Р»РёР·Р°С‚РѕСЂР° C++ - cpplex.h
 
 
 
@@ -9,17 +9,17 @@
 						   (c) == INTEGER8  || (c) == UINTEGER8  ||	\
 						   (c) == CHARACTER || (c) == WCHARACTER )
 
-// коды лексем С++ 
+// РєРѕРґС‹ Р»РµРєСЃРµРј РЎ++ 
 enum CPP_TOKENS {
 
-	// любое имя, кроме ключевых слов
+	// Р»СЋР±РѕРµ РёРјСЏ, РєСЂРѕРјРµ РєР»СЋС‡РµРІС‹С… СЃР»РѕРІ
 	NAME = 257,
 
-	// константы
+	// РєРѕРЅСЃС‚Р°РЅС‚С‹
 	STRING, WSTRING, CHARACTER, WCHARACTER, INTEGER10, INTEGER16, INTEGER8,
 	UINTEGER10, UINTEGER16, UINTEGER8, LFLOAT, LDOUBLE,
 
-	// операторы
+	// РѕРїРµСЂР°С‚РѕСЂС‹
 	ARROW, INCREMENT, DECREMENT, DOT_POINT, ARROW_POINT,
 	LEFT_SHIFT, RIGHT_SHIFT, LESS_EQU, GREATER_EQU, EQUAL, 
 	NOT_EQUAL, LOGIC_AND, LOGIC_OR, MUL_ASSIGN, DIV_ASSIGN,
@@ -27,7 +27,7 @@ enum CPP_TOKENS {
 	LEFT_SHIFT_ASSIGN, RIGHT_SHIFT_ASSIGN, AND_ASSIGN, XOR_ASSIGN,
 	OR_ASSIGN, COLON_COLON, ELLIPSES,
 
-	// ключевые слова
+	// РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР°
 	KWASM,	KWAUTO,	KWBOOL,	KWBREAK, 
 	KWCASE,	KWCATCH, KWCHAR, KWCLASS,
 	KWCONST, KWCONST_CAST, KWCONTINUE, KWDEFAULT,
@@ -47,7 +47,7 @@ enum CPP_TOKENS {
 };
 
 
-// коды лексем препроцессора
+// РєРѕРґС‹ Р»РµРєСЃРµРј РїСЂРµРїСЂРѕС†РµСЃСЃРѕСЂР°
 enum KPP_TOKENS {
 	KPP_DEFINE = 257, KPP_ERROR,  KPP_UNDEF,  
 	KPP_ELIF,   KPP_IF,     KPP_INCLUDE,
@@ -56,32 +56,32 @@ enum KPP_TOKENS {
 };
 
 
-// класс считывания из файла
+// РєР»Р°СЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ РёР· С„Р°Р№Р»Р°
 class BaseRead
 {
 public:
 	BaseRead() { }
 	virtual ~BaseRead() { }
  
-	// считывание из потока в символ
+	// СЃС‡РёС‚С‹РІР°РЅРёРµ РёР· РїРѕС‚РѕРєР° РІ СЃРёРјРІРѕР»
 	virtual int operator>>( register int &c ) = 0;
 
-	// возврат символа в поток
+	// РІРѕР·РІСЂР°С‚ СЃРёРјРІРѕР»Р° РІ РїРѕС‚РѕРє
 	virtual void operator<<( register int &c ) = 0;
 };
 
 
-// класс считывания из буфера
+// РєР»Р°СЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ РёР· Р±СѓС„РµСЂР°
 class BufferRead : public BaseRead
 {
 	string buf;
 
-	// текущий указатель на место в строке
+	// С‚РµРєСѓС‰РёР№ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РјРµСЃС‚Рѕ РІ СЃС‚СЂРѕРєРµ
 	int i;	
 public:
 	BufferRead( string b ) : buf(b) { i = 0; }
 
-	// считывание из буфера в символ
+	// СЃС‡РёС‚С‹РІР°РЅРёРµ РёР· Р±СѓС„РµСЂР° РІ СЃРёРјРІРѕР»
 	int operator>>( register int &c ) {
 		if( i == buf.length() ) 
 			return (c = EOF);
@@ -90,12 +90,12 @@ public:
 		return c;
 	}
 
-	// возврат символа в поток
+	// РІРѕР·РІСЂР°С‚ СЃРёРјРІРѕР»Р° РІ РїРѕС‚РѕРє
 	void operator<<( register int &c ) { if(c != EOF) i--; }
 };
 
 
-// класс считывания из файла
+// РєР»Р°СЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ РёР· С„Р°Р№Р»Р°
 class FileRead : public BaseRead
 {
 	FILE *in;
@@ -104,64 +104,64 @@ public:
 	FileRead( FILE *i ) : in(i) { }
 	~FileRead( ) { fclose(in); }
 
-	// считывание из буфера в символ
+	// СЃС‡РёС‚С‹РІР°РЅРёРµ РёР· Р±СѓС„РµСЂР° РІ СЃРёРјРІРѕР»
 	int operator>>( register int &c ) {
 		c = fgetc(in);
 		return c;
 	}
 
-	// возврат символа в поток
+	// РІРѕР·РІСЂР°С‚ СЃРёРјРІРѕР»Р° РІ РїРѕС‚РѕРє
 	void operator<<( register int &c ) { ungetc(c, in); }
 };
 
 
-// счетчик строк
+// СЃС‡РµС‚С‡РёРє СЃС‚СЂРѕРє
 extern int linecount;
 
 
-// буфер с содержимым лексемы
+// Р±СѓС„РµСЂ СЃ СЃРѕРґРµСЂР¶РёРјС‹Рј Р»РµРєСЃРµРјС‹
 extern string lexbuf;
 
 
-// процедура удаляет пробелы сзади
+// РїСЂРѕС†РµРґСѓСЂР° СѓРґР°Р»СЏРµС‚ РїСЂРѕР±РµР»С‹ СЃР·Р°РґРё
 void SplitSpaces( string &s );
 
 
-// функция преобразует строку s в строковый литерал
+// С„СѓРЅРєС†РёСЏ РїСЂРµРѕР±СЂР°Р·СѓРµС‚ СЃС‚СЂРѕРєСѓ s РІ СЃС‚СЂРѕРєРѕРІС‹Р№ Р»РёС‚РµСЂР°Р»
 string &MakeStringLiteral( string &s );
 
 
-// функция считывает строку из файла,
-// возвращает fasle, если достигнут конец файла
+// С„СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РµС‚ СЃС‚СЂРѕРєСѓ РёР· С„Р°Р№Р»Р°,
+// РІРѕР·РІСЂР°С‰Р°РµС‚ fasle, РµСЃР»Рё РґРѕСЃС‚РёРіРЅСѓС‚ РєРѕРЅРµС† С„Р°Р№Р»Р°
 bool ReadString( BaseRead &ob, string &fstr );
 
 
-// считывает число из входного потока, пока
-// функция isfunc возвращает true 
+// СЃС‡РёС‚С‹РІР°РµС‚ С‡РёСЃР»Рѕ РёР· РІС…РѕРґРЅРѕРіРѕ РїРѕС‚РѕРєР°, РїРѕРєР°
+// С„СѓРЅРєС†РёСЏ isfunc РІРѕР·РІСЂР°С‰Р°РµС‚ true 
 void ReadDigit( BaseRead &ob, int (*isfunc)(int) );
 
 
-// игнорирует пробелы и новые строки
+// РёРіРЅРѕСЂРёСЂСѓРµС‚ РїСЂРѕР±РµР»С‹ Рё РЅРѕРІС‹Рµ СЃС‚СЂРѕРєРё
 int IgnoreNewlinesAndSpaces( BaseRead &ob );
 
 
-// игнорировать только пробелы
+// РёРіРЅРѕСЂРёСЂРѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ РїСЂРѕР±РµР»С‹
 int IgnoreSpaces( BaseRead &ob, bool putspaces = true );
 
 
-// функция возвращает код ключевого слова или -1
-// в случае если такого ключевого слова нет
+// С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРґ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РёР»Рё -1
+// РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё С‚Р°РєРѕРіРѕ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РЅРµС‚
 int LookupKeywordCode( const char *keyname, struct keywords *kmas, int szmas );
 
 
-// ищет ключевые слова kpp
+// РёС‰РµС‚ РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° kpp
 int LookupKppKeywords( const char *keyname );
 
 
-// выделить лексему 'идентификатор'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ'
 inline int LexemName( BaseRead &ob );
 
 
-// функция выделяет следующую лексему из
-// потока in
+// С„СѓРЅРєС†РёСЏ РІС‹РґРµР»СЏРµС‚ СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ РёР·
+// РїРѕС‚РѕРєР° in
 int Lex( BaseRead &ob );

@@ -1,4 +1,4 @@
-// реализация методов таблицы символов - SymbolTable.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ С‚Р°Р±Р»РёС†С‹ СЃРёРјРІРѕР»РѕРІ - SymbolTable.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -11,14 +11,14 @@ using namespace nrc;
 
 
 
-// функтор
+// С„СѓРЅРєС‚РѕСЂ
 bool IdentifierListFunctor::operator() ( const IdentifierList &il ) const
 {
 	return il.front()->GetName() == name;
 }
 
 
-// создадим таблицу
+// СЃРѕР·РґР°РґРёРј С‚Р°Р±Р»РёС†Сѓ
 HashTab::HashTab( unsigned htsz )
 	: size(htsz)
 {
@@ -26,14 +26,14 @@ HashTab::HashTab( unsigned htsz )
 }
 
 
-// деструктор уничтожает таблицу
+// РґРµСЃС‚СЂСѓРєС‚РѕСЂ СѓРЅРёС‡С‚РѕР¶Р°РµС‚ С‚Р°Р±Р»РёС†Сѓ
 HashTab::~HashTab()
 {
 	delete [] table;
 }
 
 
-// функция хеширования, возвращает индекс по имени
+// С„СѓРЅРєС†РёСЏ С…РµС€РёСЂРѕРІР°РЅРёСЏ, РІРѕР·РІСЂР°С‰Р°РµС‚ РёРЅРґРµРєСЃ РїРѕ РёРјРµРЅРё
 unsigned HashTab::Hash( const CharString &key ) const
 {
 	register const char *p;
@@ -47,7 +47,7 @@ unsigned HashTab::Hash( const CharString &key ) const
 }
 
 
-// найти элемент
+// РЅР°Р№С‚Рё СЌР»РµРјРµРЅС‚
 IdentifierList *HashTab::Find( const CharString &key ) const
 {
 	ListOfIdentifierList &lst = table[Hash(key)];
@@ -58,34 +58,34 @@ IdentifierList *HashTab::Find( const CharString &key ) const
 }
 
 
-// вставить элемент в таблицу
+// РІСЃС‚Р°РІРёС‚СЊ СЌР»РµРјРµРЅС‚ РІ С‚Р°Р±Р»РёС†Сѓ
 unsigned HashTab::Insert( const Identifier *id )
 {
 	ListOfIdentifierList &lst = table[ Hash(id->GetName()) ];
 	ListOfIdentifierList::iterator p = find_if(lst.begin(), lst.end(), 
 		IdentifierListFunctor(id->GetName()) );
 
-	// если такой элемент не найден, создаем новый список идентификатор, 
-	// вставляем его в список списков
+	// РµСЃР»Рё С‚Р°РєРѕР№ СЌР»РµРјРµРЅС‚ РЅРµ РЅР°Р№РґРµРЅ, СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЃРїРёСЃРѕРє РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ, 
+	// РІСЃС‚Р°РІР»СЏРµРј РµРіРѕ РІ СЃРїРёСЃРѕРє СЃРїРёСЃРєРѕРІ
 	if( p == lst.end() )
 	{
 		IdentifierList il;
 		il.push_back(id);
-		lst.push_back( il );		
+		lst.push_back( il );
 		return 1;
 	}
 	
-	// иначе вставляем идентификатор в имеющийся список
-	else	
+	// РёРЅР°С‡Рµ РІСЃС‚Р°РІР»СЏРµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РІ РёРјРµСЋС‰РёР№СЃСЏ СЃРїРёСЃРѕРє
+	else
 	{
-		(*p).push_back(id);	
+		(*p).push_back(id);
 		return (*p).size();
-	}	
+	}
 }
 
 
-// добавить using-область видимости, которая будет использоваться
-// исключительно при поиске
+// РґРѕР±Р°РІРёС‚СЊ using-РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ
+// РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅРѕ РїСЂРё РїРѕРёСЃРєРµ
 void GeneralSymbolTable::AddUsingNamespace( NameSpace *ns ) 
 {
 	if( usingList.HasSymbolTable(ns) < 0 )
@@ -93,8 +93,8 @@ void GeneralSymbolTable::AddUsingNamespace( NameSpace *ns )
 }
 
 
-// добавить using-область видимости, которая будет использоваться
-// исключительно при поиске
+// РґРѕР±Р°РІРёС‚СЊ using-РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, РєРѕС‚РѕСЂР°СЏ Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ
+// РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅРѕ РїСЂРё РїРѕРёСЃРєРµ
 void FunctionSymbolTable::AddUsingNamespace( NameSpace *ns ) 
 {
 	if( usingList.HasSymbolTable(ns) < 0 )
@@ -102,19 +102,19 @@ void FunctionSymbolTable::AddUsingNamespace( NameSpace *ns )
 }
 
 
-// функция поиска, специально вызываемая при поиске с учетом используемых
-// областей видимости. Должна переопределеяться в NameSpace
+// С„СѓРЅРєС†РёСЏ РїРѕРёСЃРєР°, СЃРїРµС†РёР°Р»СЊРЅРѕ РІС‹Р·С‹РІР°РµРјР°СЏ РїСЂРё РїРѕРёСЃРєРµ СЃ СѓС‡РµС‚РѕРј РёСЃРїРѕР»СЊР·СѓРµРјС‹С…
+// РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё. Р”РѕР»Р¶РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµСЏС‚СЊСЃСЏ РІ NameSpace
 bool GeneralSymbolTable::FindSymbolWithUsing( const CharString &name,
 					SymbolTableList &tested, IdentifierList &out ) const
 {	
 	if( IdentifierList *il = hashTab->Find(name) )
 		out.insert( out.end(), il->begin(), il->end() );
 	
-	// далее для каждой используемой ОВ, выполняем операцию поиска
+	// РґР°Р»РµРµ РґР»СЏ РєР°Р¶РґРѕР№ РёСЃРїРѕР»СЊР·СѓРµРјРѕР№ РћР’, РІС‹РїРѕР»РЅСЏРµРј РѕРїРµСЂР°С†РёСЋ РїРѕРёСЃРєР°
 	for( int i = 0; i<usingList.GetSymbolTableCount(); i++ )
 	{
-		// если эта область видимости уже участвовала в поиске,
-		// предупреждаем зацикливание, когда две ОВ используют друг друга
+		// РµСЃР»Рё СЌС‚Р° РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё СѓР¶Рµ СѓС‡Р°СЃС‚РІРѕРІР°Р»Р° РІ РїРѕРёСЃРєРµ,
+		// РїСЂРµРґСѓРїСЂРµР¶РґР°РµРј Р·Р°С†РёРєР»РёРІР°РЅРёРµ, РєРѕРіРґР° РґРІРµ РћР’ РёСЃРїРѕР»СЊР·СѓСЋС‚ РґСЂСѓРі РґСЂСѓРіР°
 		if( tested.HasSymbolTable( usingList[i] ) >= 0 )
 			continue;
 
@@ -122,21 +122,21 @@ bool GeneralSymbolTable::FindSymbolWithUsing( const CharString &name,
 		const GeneralSymbolTable *ns = dynamic_cast<const NameSpace *>(usingList[i]);
 		INTERNAL_IF( ns == NULL );
 
-		// все что найдено, записывается в out
-		ns->FindSymbolWithUsing(name, tested, out);			
+		// РІСЃРµ С‡С‚Рѕ РЅР°Р№РґРµРЅРѕ, Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ out
+		ns->FindSymbolWithUsing(name, tested, out);
 	}
 
-	// если список не пустой
+	// РµСЃР»Рё СЃРїРёСЃРѕРє РЅРµ РїСѓСЃС‚РѕР№
 	return !out.empty();
 }
 
 
-// поиск символа в локальной или глобальной области видимости,
-// ищет в своей области видимости и потом к найденному результату
-// прибавляет поиск в дружеских областях видимости (using). При этом
-// следует контролировать, чтобы процесс не зацикливался т.к. 2 области
-// могут быть дружескими по отношению друг к другу. Если не одно из
-// имен не найдено - возвращается false
+// РїРѕРёСЃРє СЃРёРјРІРѕР»Р° РІ Р»РѕРєР°Р»СЊРЅРѕР№ РёР»Рё РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё,
+// РёС‰РµС‚ РІ СЃРІРѕРµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРѕС‚РѕРј Рє РЅР°Р№РґРµРЅРЅРѕРјСѓ СЂРµР·СѓР»СЊС‚Р°С‚Сѓ
+// РїСЂРёР±Р°РІР»СЏРµС‚ РїРѕРёСЃРє РІ РґСЂСѓР¶РµСЃРєРёС… РѕР±Р»Р°СЃС‚СЏС… РІРёРґРёРјРѕСЃС‚Рё (using). РџСЂРё СЌС‚РѕРј
+// СЃР»РµРґСѓРµС‚ РєРѕРЅС‚СЂРѕР»РёСЂРѕРІР°С‚СЊ, С‡С‚РѕР±С‹ РїСЂРѕС†РµСЃСЃ РЅРµ Р·Р°С†РёРєР»РёРІР°Р»СЃСЏ С‚.Рє. 2 РѕР±Р»Р°СЃС‚Рё
+// РјРѕРіСѓС‚ Р±С‹С‚СЊ РґСЂСѓР¶РµСЃРєРёРјРё РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ РґСЂСѓРі Рє РґСЂСѓРіСѓ. Р•СЃР»Рё РЅРµ РѕРґРЅРѕ РёР·
+// РёРјРµРЅ РЅРµ РЅР°Р№РґРµРЅРѕ - РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
 bool GeneralSymbolTable::FindSymbol( const nrc::CharString &name, 
 			IdentifierList &out ) const 
 {
@@ -145,58 +145,58 @@ bool GeneralSymbolTable::FindSymbol( const nrc::CharString &name,
 }
 
 
-// производит поиск без учета using-областей, только глобальной (или локальной) ОВ
+// РїСЂРѕРёР·РІРѕРґРёС‚ РїРѕРёСЃРє Р±РµР· СѓС‡РµС‚Р° using-РѕР±Р»Р°СЃС‚РµР№, С‚РѕР»СЊРєРѕ РіР»РѕР±Р°Р»СЊРЅРѕР№ (РёР»Рё Р»РѕРєР°Р»СЊРЅРѕР№) РћР’
 bool GeneralSymbolTable::FindInScope( const nrc::CharString &name, IdentifierList &out ) const 
-{		
+{
 	if( IdentifierList *il = hashTab->Find(name) )
 		out.insert( out.end(), il->begin(), il->end() );
 
-	return !out.empty();	
+	return !out.empty();
 }
 
 
-// вставка символа таблицу
+// РІСЃС‚Р°РІРєР° СЃРёРјРІРѕР»Р° С‚Р°Р±Р»РёС†Сѓ
 bool GeneralSymbolTable::InsertSymbol( Identifier *id ) 
 {
 	unsigned icnt = hashTab->Insert(id);
 
-	// прибавляем к С-имени число, для разрешения конфликта имен,
-	// если только у идентификатора есть С-имя
+	// РїСЂРёР±Р°РІР»СЏРµРј Рє РЎ-РёРјРµРЅРё С‡РёСЃР»Рѕ, РґР»СЏ СЂР°Р·СЂРµС€РµРЅРёСЏ РєРѕРЅС„Р»РёРєС‚Р° РёРјРµРЅ,
+	// РµСЃР»Рё С‚РѕР»СЊРєРѕ Сѓ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° РµСЃС‚СЊ РЎ-РёРјСЏ
 	if( icnt > 1 && !id->GetC_Name().empty() )
 		const_cast<string &>(id->GetC_Name()) += CharString((int)icnt).c_str();
 	return true;
 }
 
 
-// функция поиска, специально вызываемая при поиске с учетом используемых
-// областей видимости. Должна переопределеяться в NameSpace
+// С„СѓРЅРєС†РёСЏ РїРѕРёСЃРєР°, СЃРїРµС†РёР°Р»СЊРЅРѕ РІС‹Р·С‹РІР°РµРјР°СЏ РїСЂРё РїРѕРёСЃРєРµ СЃ СѓС‡РµС‚РѕРј РёСЃРїРѕР»СЊР·СѓРµРјС‹С…
+// РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё. Р”РѕР»Р¶РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµСЏС‚СЊСЃСЏ РІ NameSpace
 bool FunctionSymbolTable::FindSymbolWithUsing( const CharString &name,
 							SymbolTableList &tested, IdentifierList &out ) const
 {
 	FindInScope(name, out);
-	
-	// далее для каждой используемой ОВ, выполняем операцию поиска
+
+	// РґР°Р»РµРµ РґР»СЏ РєР°Р¶РґРѕР№ РёСЃРїРѕР»СЊР·СѓРµРјРѕР№ РћР’, РІС‹РїРѕР»РЅСЏРµРј РѕРїРµСЂР°С†РёСЋ РїРѕРёСЃРєР°
 	for( int i = 0; i<usingList.GetSymbolTableCount(); i++ )
 	{
-		// если эта область видимости уже участвовала в поиске,
-		// предупреждаем зацикливание, когда две ОВ используют друг друга
+		// РµСЃР»Рё СЌС‚Р° РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё СѓР¶Рµ СѓС‡Р°СЃС‚РІРѕРІР°Р»Р° РІ РїРѕРёСЃРєРµ,
+		// РїСЂРµРґСѓРїСЂРµР¶РґР°РµРј Р·Р°С†РёРєР»РёРІР°РЅРёРµ, РєРѕРіРґР° РґРІРµ РћР’ РёСЃРїРѕР»СЊР·СѓСЋС‚ РґСЂСѓРі РґСЂСѓРіР°
 		if( tested.HasSymbolTable( usingList[i] ) >= 0 )
 			continue;
 
 		tested.AddSymbolTable( usingList[i] );
 		const GeneralSymbolTable *ns = dynamic_cast<const NameSpace *>(usingList[i]);
 		INTERNAL_IF( ns == NULL );
-		ns->FindSymbolWithUsing(name, tested, out);		
+		ns->FindSymbolWithUsing(name, tested, out);
 	}
 
-	// если что-то найдено - true
+	// РµСЃР»Рё С‡С‚Рѕ-С‚Рѕ РЅР°Р№РґРµРЅРѕ - true
 	return !out.empty();
 }
 
 
-// поиск символа в функциональной области видимости, потом в списке параметров функции
-// ищет в своей области видимости и потом к найденному результату
-// прибавляет поиск в дружеских областях видимости (using). 
+// РїРѕРёСЃРє СЃРёРјРІРѕР»Р° РІ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, РїРѕС‚РѕРј РІ СЃРїРёСЃРєРµ РїР°СЂР°РјРµС‚СЂРѕРІ С„СѓРЅРєС†РёРё
+// РёС‰РµС‚ РІ СЃРІРѕРµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРѕС‚РѕРј Рє РЅР°Р№РґРµРЅРЅРѕРјСѓ СЂРµР·СѓР»СЊС‚Р°С‚Сѓ
+// РїСЂРёР±Р°РІР»СЏРµС‚ РїРѕРёСЃРє РІ РґСЂСѓР¶РµСЃРєРёС… РѕР±Р»Р°СЃС‚СЏС… РІРёРґРёРјРѕСЃС‚Рё (using). 
 bool FunctionSymbolTable::FindSymbol( const nrc::CharString &name, IdentifierList &out ) const
 {
 	SymbolTableList tested;	
@@ -204,8 +204,8 @@ bool FunctionSymbolTable::FindSymbol( const nrc::CharString &name, IdentifierLis
 }
 
 
-// производит поиск без учета using-областей, только в функциональной области
-// видимости и в спике параметров
+// РїСЂРѕРёР·РІРѕРґРёС‚ РїРѕРёСЃРє Р±РµР· СѓС‡РµС‚Р° using-РѕР±Р»Р°СЃС‚РµР№, С‚РѕР»СЊРєРѕ РІ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё
+// РІРёРґРёРјРѕСЃС‚Рё Рё РІ СЃРїРёРєРµ РїР°СЂР°РјРµС‚СЂРѕРІ
 bool FunctionSymbolTable::FindInScope( const nrc::CharString &name, IdentifierList &out ) const
 {
 	ListOfIdentifierList::const_iterator p = 
@@ -213,28 +213,28 @@ bool FunctionSymbolTable::FindInScope( const nrc::CharString &name, IdentifierLi
 	if( p != localIdList.end() )
 		out.insert( out.end(), (*p).begin(), (*p).end() );
 	
-	// ищем также и в параметрах
+	// РёС‰РµРј С‚Р°РєР¶Рµ Рё РІ РїР°СЂР°РјРµС‚СЂР°С…
 	const FunctionParametrList &fpl = pFunction.GetFunctionPrototype().GetParametrList();
 	int pix = fpl.HasParametr(name);
 
-	// если найден параметр, добавляем его в рещультирующий список
-	if( pix >= 0 )	
+	// РµСЃР»Рё РЅР°Р№РґРµРЅ РїР°СЂР°РјРµС‚СЂ, РґРѕР±Р°РІР»СЏРµРј РµРіРѕ РІ СЂРµС‰СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ СЃРїРёСЃРѕРє
+	if( pix >= 0 )
 		out.push_back( &*fpl[pix] );
 	return !out.empty();
 }
 
 
-// вставка символа таблицу
+// РІСЃС‚Р°РІРєР° СЃРёРјРІРѕР»Р° С‚Р°Р±Р»РёС†Сѓ
 bool FunctionSymbolTable::InsertSymbol( Identifier *id )
 {
 	ListOfIdentifierList::iterator p = 
 		find_if( localIdList.begin(), localIdList.end(), IdentifierListFunctor(id->GetName()) );
 
-	// если список с таким именем создан, вставляем в него
+	// РµСЃР»Рё СЃРїРёСЃРѕРє СЃ С‚Р°РєРёРј РёРјРµРЅРµРј СЃРѕР·РґР°РЅ, РІСЃС‚Р°РІР»СЏРµРј РІ РЅРµРіРѕ
 	if( p != localIdList.end() )
 		(*p).push_back(id);
 
-	// иначе создаем новый список
+	// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЃРїРёСЃРѕРє
 	else
 	{
 		IdentifierList il;
@@ -242,17 +242,17 @@ bool FunctionSymbolTable::InsertSymbol( Identifier *id )
 		localIdList.push_back(il);
 	}
 	
-	return true;	
+	return true;
 }
 
 
-// очищает всю таблицу
+// РѕС‡РёС‰Р°РµС‚ РІСЃСЋ С‚Р°Р±Р»РёС†Сѓ
 void FunctionSymbolTable::ClearTable()
 {
 }
 
 
-// поиск символа	
+// РїРѕРёСЃРє СЃРёРјРІРѕР»Р° 
 bool LocalSymbolTable::FindSymbol( const nrc::CharString &name, 
 					IdentifierList &out ) const 
 {
@@ -271,20 +271,20 @@ bool LocalSymbolTable::FindSymbol( const nrc::CharString &name,
 }
 
 
-// вставка символа таблицу
+// РІСЃС‚Р°РІРєР° СЃРёРјРІРѕР»Р° С‚Р°Р±Р»РёС†Сѓ
 bool LocalSymbolTable::InsertSymbol( Identifier *id ) 
 {
-	// если таблица не создана, создать ее
+	// РµСЃР»Рё С‚Р°Р±Р»РёС†Р° РЅРµ СЃРѕР·РґР°РЅР°, СЃРѕР·РґР°С‚СЊ РµРµ
 	if( table == NULL )
 		table = new ListOfIdentifierList;
 	ListOfIdentifierList::iterator p = 
 		find_if( table->begin(), table->end(), IdentifierListFunctor(id->GetName()) );
 
-	// если список с таким именем создан, вставляем в него
+	// РµСЃР»Рё СЃРїРёСЃРѕРє СЃ С‚Р°РєРёРј РёРјРµРЅРµРј СЃРѕР·РґР°РЅ, РІСЃС‚Р°РІР»СЏРµРј РІ РЅРµРіРѕ
 	if( p != table->end() )
 		(*p).push_back(id);
 
-	// иначе создаем новый список
+	// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЃРїРёСЃРѕРє
 	else
 	{
 		IdentifierList il;
@@ -296,19 +296,19 @@ bool LocalSymbolTable::InsertSymbol( Identifier *id )
 }
 
 
-// глубокий поиск по всем областям видимости, 
-// поиск начинается с конца, т.е. с текущей ОВ и возвращается
-// первое соответствие - список идентификаторов имеющих
-// заданное имя. Если соотв. нет - возвращает пустая строка
+// РіР»СѓР±РѕРєРёР№ РїРѕРёСЃРє РїРѕ РІСЃРµРј РѕР±Р»Р°СЃС‚СЏРј РІРёРґРёРјРѕСЃС‚Рё, 
+// РїРѕРёСЃРє РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ РєРѕРЅС†Р°, С‚.Рµ. СЃ С‚РµРєСѓС‰РµР№ РћР’ Рё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ
+// РїРµСЂРІРѕРµ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ - СЃРїРёСЃРѕРє РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРІ РёРјРµСЋС‰РёС…
+// Р·Р°РґР°РЅРЅРѕРµ РёРјСЏ. Р•СЃР»Рё СЃРѕРѕС‚РІ. РЅРµС‚ - РІРѕР·РІСЂР°С‰Р°РµС‚ РїСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР°
 bool Scope::DeepSearch( const CharString &name, IdentifierList &out ) const
 {	
-	// проходим по всем областям видимости
+	// РїСЂРѕС…РѕРґРёРј РїРѕ РІСЃРµРј РѕР±Р»Р°СЃС‚СЏРј РІРёРґРёРјРѕСЃС‚Рё
 	list<SymbolTable *>::const_iterator i = symbolTableStack.end();	
-	for( i--; ; i-- )	
+	for( i--; ; i-- )
 	{
 		if( (*i)->FindSymbol(name, out) )
 			return true;
-	
+
 		if( i == symbolTableStack.begin() )
 			break;
 	}
@@ -317,12 +317,12 @@ bool Scope::DeepSearch( const CharString &name, IdentifierList &out ) const
 }
 
 
-// получить ближайщую глобальную область видимости
+// РїРѕР»СѓС‡РёС‚СЊ Р±Р»РёР¶Р°Р№С‰СѓСЋ РіР»РѕР±Р°Р»СЊРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 const SymbolTable &Scope::GetGlobalSymbolTable() const
 {
-	// проходим по всем областям видимости
+	// РїСЂРѕС…РѕРґРёРј РїРѕ РІСЃРµРј РѕР±Р»Р°СЃС‚СЏРј РІРёРґРёРјРѕСЃС‚Рё
 	list<SymbolTable *>::const_iterator i = symbolTableStack.end();	
-	for( i--; ; i-- )	
+	for( i--; ; i-- )
 	{
 		if( (*i)->IsGlobalSymbolTable() || (*i)->IsNamespaceSymbolTable() )
 			return **i;
@@ -331,16 +331,16 @@ const SymbolTable &Scope::GetGlobalSymbolTable() const
 			break;
 	}
 
-	INTERNAL( "'Scope::GetGlobalSymbolTable' не возвратил глобальную ОВ" );
+	INTERNAL( "'Scope::GetGlobalSymbolTable' РЅРµ РІРѕР·РІСЂР°С‚РёР» РіР»РѕР±Р°Р»СЊРЅСѓСЋ РћР’" );
 	return *(SymbolTable *)0;
 }
 
 
-// получить ближайшую функциональную область видимости. 
-// Текущая область видимости обязательно должна быть локальной
+// РїРѕР»СѓС‡РёС‚СЊ Р±Р»РёР¶Р°Р№С€СѓСЋ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё. 
+// РўРµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р»РѕРєР°Р»СЊРЅРѕР№
 const SymbolTable &Scope::GetFunctionalSymbolTable() const
 {
-	// если текущая область видимости функциональная, вернуть ее
+	// РµСЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ, РІРµСЂРЅСѓС‚СЊ РµРµ
 	if( GetCurrentSymbolTable()->IsFunctionSymbolTable() )
 		return *GetCurrentSymbolTable();
 
@@ -350,7 +350,7 @@ const SymbolTable &Scope::GetFunctionalSymbolTable() const
 		if( (*i)->IsFunctionSymbolTable() )
 			return **i;
 
-	INTERNAL( "'Scope::GetFunctionalSymbolTable' не возвратил функциональную ОВ" );
+	INTERNAL( "'Scope::GetFunctionalSymbolTable' РЅРµ РІРѕР·РІСЂР°С‚РёР» С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅСѓСЋ РћР’" );
 	return *(SymbolTable *)0;
 }
 

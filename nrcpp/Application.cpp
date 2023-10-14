@@ -1,4 +1,4 @@
-// главный модуль программы - Application.cpp
+// РіР»Р°РІРЅС‹Р№ РјРѕРґСѓР»СЊ РїСЂРѕРіСЂР°РјРјС‹ - Application.cpp
 
 #pragma warning(disable: 4786)
 
@@ -21,12 +21,12 @@ using namespace nrc;
 
 
 
-// объект приложение доступен для всех
+// РѕР±СЉРµРєС‚ РїСЂРёР»РѕР¶РµРЅРёРµ РґРѕСЃС‚СѓРїРµРЅ РґР»СЏ РІСЃРµС…
 Application theApp;
 
 
 
-// в параметре конструктора задается имя модуля
+// РІ РїР°СЂР°РјРµС‚СЂРµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° Р·Р°РґР°РµС‚СЃСЏ РёРјСЏ РјРѕРґСѓР»СЏ
 TranslationUnit::TranslationUnit( PCSTR fnam ) 
 {
 	fileName = fnam;
@@ -40,23 +40,23 @@ TranslationUnit::TranslationUnit( PCSTR fnam )
 	currentPos.line = 1;
 
 	if( !inStream )
-		theApp.Fatal("'%s' - невозможно открыть файл", fileName.c_str() );
+		theApp.Fatal("'%s' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р»", fileName.c_str() );
 
 	lexicalAnalyzer = new LexicalAnalyzer( inStream, currentPos );
 	parser = new Parser(*lexicalAnalyzer);	
 
-	// создаем систему управления областями видимости, при этом создаем
-	// глобальную таблицу символов
+	// СЃРѕР·РґР°РµРј СЃРёСЃС‚РµРјСѓ СѓРїСЂР°РІР»РµРЅРёСЏ РѕР±Р»Р°СЃС‚СЏРјРё РІРёРґРёРјРѕСЃС‚Рё, РїСЂРё СЌС‚РѕРј СЃРѕР·РґР°РµРј
+	// РіР»РѕР±Р°Р»СЊРЅСѓСЋ С‚Р°Р±Р»РёС†Сѓ СЃРёРјРІРѕР»РѕРІ
 	scope = new Scope( new GeneralSymbolTable(DEFAULT_GLOBAL_HASHTAB_SIZE, NULL) );
 	isCompile = false;
 
-	// выполнить внутенние декларации. В частности операторов выделения и 
-	// освобождения памяти
+	// РІС‹РїРѕР»РЅРёС‚СЊ РІРЅСѓС‚РµРЅРЅРёРµ РґРµРєР»Р°СЂР°С†РёРё. Р’ С‡Р°СЃС‚РЅРѕСЃС‚Рё РѕРїРµСЂР°С‚РѕСЂРѕРІ РІС‹РґРµР»РµРЅРёСЏ Рё 
+	// РѕСЃРІРѕР±РѕР¶РґРµРЅРёСЏ РїР°РјСЏС‚Рё
 	MakeImplicitDefinations();
 }
 
 
-// деструктор освобождает память
+// РґРµСЃС‚СЂСѓРєС‚РѕСЂ РѕСЃРІРѕР±РѕР¶РґР°РµС‚ РїР°РјСЏС‚СЊ
 TranslationUnit::~TranslationUnit()
 {
 	fclose(inStream);
@@ -65,7 +65,7 @@ TranslationUnit::~TranslationUnit()
 }
 
 
-// выполнить встроенные декларации. Операторы new, new[], delete, delete[]
+// РІС‹РїРѕР»РЅРёС‚СЊ РІСЃС‚СЂРѕРµРЅРЅС‹Рµ РґРµРєР»Р°СЂР°С†РёРё. РћРїРµСЂР°С‚РѕСЂС‹ new, new[], delete, delete[]
 void TranslationUnit::MakeImplicitDefinations()
 {
 	SymbolTable *global = const_cast<SymbolTable *>(scope->GetFirstSymbolTable());
@@ -73,7 +73,7 @@ void TranslationUnit::MakeImplicitDefinations()
 	FunctionParametrList fpl;
 	DerivedTypeList paramDtl;
 		
-	// создаем производный тип для delete
+	// СЃРѕР·РґР°РµРј РїСЂРѕРёР·РІРѕРґРЅС‹Р№ С‚РёРї РґР»СЏ delete
 	paramDtl.AddDerivedType( new Pointer(false,false));
 	fpl.AddFunctionParametr( new Parametr( 
 		(BaseType*)&ImplicitTypeManager(KWVOID).GetImplicitType(), false, false, paramDtl,
@@ -81,7 +81,7 @@ void TranslationUnit::MakeImplicitDefinations()
 	empty.AddDerivedType( new FunctionPrototype(false, false, fpl,
 		FunctionThrowTypeList(), false, false) );	
 
-	// создаем производный тип для new
+	// СЃРѕР·РґР°РµРј РїСЂРѕРёР·РІРѕРґРЅС‹Р№ С‚РёРї РґР»СЏ new
 	fpl.ClearFunctionParametrList();
 	fpl.AddFunctionParametr( new Parametr( 
 		(BaseType*)&ImplicitTypeManager(KWINT, KWUNSIGNED).GetImplicitType(), false, false, 
@@ -92,16 +92,16 @@ void TranslationUnit::MakeImplicitDefinations()
 
 	struct
 	{
-		// имя идентификатора
+		// РёРјСЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
 		PCSTR name;
 
-		// код оператора
+		// РєРѕРґ РѕРїРµСЂР°С‚РѕСЂР°
 		int opCode;
 
-		// имя оператора
+		// РёРјСЏ РѕРїРµСЂР°С‚РѕСЂР°
 		PCSTR opName;
 
-		// ссылка на список производных типов
+		// СЃСЃС‹Р»РєР° РЅР° СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ
 		const DerivedTypeList *pdtl;
 	} opmas[4] = {
 		 "operator new", KWNEW, "new", &ptr ,
@@ -119,7 +119,7 @@ void TranslationUnit::MakeImplicitDefinations()
 }
 
 
-// запускаем процесс компиляции
+// Р·Р°РїСѓСЃРєР°РµРј РїСЂРѕС†РµСЃСЃ РєРѕРјРїРёР»СЏС†РёРё
 void TranslationUnit::Compile() 
 {
 	isCompile = true;
@@ -127,46 +127,46 @@ void TranslationUnit::Compile()
 }
 
 
-// задать файл для генератора. Файл не должен существовать
+// Р·Р°РґР°С‚СЊ С„Р°Р№Р» РґР»СЏ РіРµРЅРµСЂР°С‚РѕСЂР°. Р¤Р°Р№Р» РЅРµ РґРѕР»Р¶РµРЅ СЃСѓС‰РµСЃС‚РІРѕРІР°С‚СЊ
 void ApplicationGenerator::OpenFile( PCSTR fnam )
 {
 	INTERNAL_IF( fout != NULL );
 
 #if !_DEBUG
-	// проверяем, если файл существует, вывести ошибку
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё С„Р°Р№Р» СЃСѓС‰РµСЃС‚РІСѓРµС‚, РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 	if( fopen(fnam, "r") != NULL )
-		theApp.Fatal("'%s' - файл уже существует; создание временного файла невозможно", fnam);
+		theApp.Fatal("'%s' - С„Р°Р№Р» СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚; СЃРѕР·РґР°РЅРёРµ РІСЂРµРјРµРЅРЅРѕРіРѕ С„Р°Р№Р»Р° РЅРµРІРѕР·РјРѕР¶РЅРѕ", fnam);
 #endif
 
 	fout = fopen(fnam, "w");
 	if( !fout )
-		theApp.Fatal("'%s' - невозможно создать временный файл для записи", fnam);
+		theApp.Fatal("'%s' - РЅРµРІРѕР·РјРѕР¶РЅРѕ СЃРѕР·РґР°С‚СЊ РІСЂРµРјРµРЅРЅС‹Р№ С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё", fnam);
 }
 
 
-// сбросить текущий буфер в файл и очистить его
+// СЃР±СЂРѕСЃРёС‚СЊ С‚РµРєСѓС‰РёР№ Р±СѓС„РµСЂ РІ С„Р°Р№Р» Рё РѕС‡РёСЃС‚РёС‚СЊ РµРіРѕ
 void ApplicationGenerator::FlushCurrentBuffer( ) 
 {
 	if( fputs(currentBuffer.c_str(), fout) == EOF )
-		theApp.Fatal( "невозможно произвести запись в выходной файл" );
+		theApp.Fatal( "РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРѕРёР·РІРµСЃС‚Рё Р·Р°РїРёСЃСЊ РІ РІС‹С…РѕРґРЅРѕР№ С„Р°Р№Р»" );
 	currentBuffer = "";
 }
 
 
-// сбросить буфер отката в файл и очистить его	
+// СЃР±СЂРѕСЃРёС‚СЊ Р±СѓС„РµСЂ РѕС‚РєР°С‚Р° РІ С„Р°Р№Р» Рё РѕС‡РёСЃС‚РёС‚СЊ РµРіРѕ	
 void ApplicationGenerator::FlushUndoBuffer( ) 
 {
 	if( fputs(undoBuffer.c_str(), fout) == EOF )
-		theApp.Fatal( "невозможно произвести запись в выходной файл" );
+		theApp.Fatal( "РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРѕРёР·РІРµСЃС‚Рё Р·Р°РїРёСЃСЊ РІ РІС‹С…РѕРґРЅРѕР№ С„Р°Р№Р»" );
 	undoBuffer = "";
 }
 
 
-// вывести сообщение на стандартный поток вывода
+// РІС‹РІРµСЃС‚Рё СЃРѕРѕР±С‰РµРЅРёРµ РЅР° СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РїРѕС‚РѕРє РІС‹РІРѕРґР°
 void Application::PutMessage( PCSTR head, PCSTR fname, const Position &pos, 
 							 PCSTR fmt, va_list lst )
 {
-	char errbuf[512];	// буфер для формирования сообщения об ошибке
+	char errbuf[512];	// Р±СѓС„РµСЂ РґР»СЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РѕС€РёР±РєРµ
 
 	_vsnprintf( errbuf, 512, fmt, lst );
 	
@@ -185,59 +185,59 @@ void Application::PutMessage( PCSTR head, PCSTR fname, const Position &pos,
 }
 
 
-// загрузить опции из командной строки
+// Р·Р°РіСЂСѓР·РёС‚СЊ РѕРїС†РёРё РёР· РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРё
 void Application::LoadOptions( int argc, char *argv[] )
 {
 }
 
 
-// вывести ошибку
+// РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 void Application::Error( const Position &pos, PCSTR fmt, ... )
 {
 	va_list vlst;	
 
 	errcount++;
 	va_start( vlst, fmt );
-	PutMessage( "ошибка", translationUnit == NULL ? "<файл не открыт>" : 
+	PutMessage( "РѕС€РёР±РєР°", translationUnit == NULL ? "<С„Р°Р№Р» РЅРµ РѕС‚РєСЂС‹С‚>" : 
 			translationUnit->GetFileName().c_str(), pos, fmt, vlst );
 	va_end( vlst );	
 
 	if( errcount == MAX_ERROR_COUNT )
-		Fatal( "количество ошибок превысило допустимый предел" );
+		Fatal( "РєРѕР»РёС‡РµСЃС‚РІРѕ РѕС€РёР±РѕРє РїСЂРµРІС‹СЃРёР»Рѕ РґРѕРїСѓСЃС‚РёРјС‹Р№ РїСЂРµРґРµР»" );
 }
 
 
-// вывести предупреждение
+// РІС‹РІРµСЃС‚Рё РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ
 void Application::Warning( const Position &pos, PCSTR fmt, ... )
 {
 	va_list vlst;	
 
 	warncount++;
 	va_start( vlst, fmt );
-	PutMessage( "предупреждение", translationUnit == NULL ? "<файл не открыт>" : 
+	PutMessage( "РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ", translationUnit == NULL ? "<С„Р°Р№Р» РЅРµ РѕС‚РєСЂС‹С‚>" : 
 		translationUnit->GetFileName().c_str(), pos, fmt, vlst );
 	va_end( vlst );	
 
 	if( warncount == MAX_WARNING_COUNT )
-		Fatal( "количество предупреждений превысило допустимый предел" );
+		Fatal( "РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёР№ РїСЂРµРІС‹СЃРёР»Рѕ РґРѕРїСѓСЃС‚РёРјС‹Р№ РїСЂРµРґРµР»" );
 }
 
 
-// вывести фатальную ошибку
+// РІС‹РІРµСЃС‚Рё С„Р°С‚Р°Р»СЊРЅСѓСЋ РѕС€РёР±РєСѓ
 void Application::Fatal( const Position &pos, PCSTR fmt, ... )
 {
 	va_list vlst;	
 
 	errcount++;
 	va_start( vlst, fmt );
-	PutMessage( "фатальная ошибка", translationUnit == NULL ? "<файл не открыт>" : 
+	PutMessage( "С„Р°С‚Р°Р»СЊРЅР°СЏ РѕС€РёР±РєР°", translationUnit == NULL ? "<С„Р°Р№Р» РЅРµ РѕС‚РєСЂС‹С‚>" : 
 		translationUnit->GetFileName().c_str(), pos, fmt, vlst );
 	va_end( vlst );	
 	exit( ERROR_EXIT_CODE );
 }
 
 
-// вывести внутренную ошибку компилятора
+// РІС‹РІРµСЃС‚Рё РІРЅСѓС‚СЂРµРЅРЅСѓСЋ РѕС€РёР±РєСѓ РєРѕРјРїРёР»СЏС‚РѕСЂР°
 void Application::Internal( const Position &pos, PCSTR msg, PCSTR fname, int line )
 {
 	errcount++;	
@@ -245,61 +245,61 @@ void Application::Internal( const Position &pos, PCSTR msg, PCSTR fname, int lin
 	string fullMsg = msg;
 	fullMsg = fullMsg + " --> (" + CharString(fname).DeleteRightWhileNot("\\/").c_str() + 
 		", " + CharString(line).c_str() + ")";
-	PutMessage( "внутренняя ошибка компилятора", translationUnit == NULL ? "<файл не открыт>" : 
+	PutMessage( "РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° РєРѕРјРїРёР»СЏС‚РѕСЂР°", translationUnit == NULL ? "<С„Р°Р№Р» РЅРµ РѕС‚РєСЂС‹С‚>" : 
 		translationUnit->GetFileName().c_str(), pos, fullMsg.c_str(), 0 );	
 	exit( ERROR_EXIT_CODE );
 }
 
 
-// вывести ошибку, которая обнаружена в опр. позиции
+// РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ, РєРѕС‚РѕСЂР°СЏ РѕР±РЅР°СЂСѓР¶РµРЅР° РІ РѕРїСЂ. РїРѕР·РёС†РёРё
 void Application::Error( PCSTR fmt, ... )
 {
 	va_list vlst;	
 
 	errcount++;
 	va_start( vlst, fmt );
-	PutMessage( "ошибка", translationUnit == NULL ? "<файл не открыт>" : 
+	PutMessage( "РѕС€РёР±РєР°", translationUnit == NULL ? "<С„Р°Р№Р» РЅРµ РѕС‚РєСЂС‹С‚>" : 
 		translationUnit->GetFileName().c_str(),	
 		translationUnit == NULL ? Position() : translationUnit->GetPosition(), fmt, vlst );
 	va_end( vlst );
 
-	// проверяем количество выведенных ошибок и если достигнут предел,
-	// выходим
+	// РїСЂРѕРІРµСЂСЏРµРј РєРѕР»РёС‡РµСЃС‚РІРѕ РІС‹РІРµРґРµРЅРЅС‹С… РѕС€РёР±РѕРє Рё РµСЃР»Рё РґРѕСЃС‚РёРіРЅСѓС‚ РїСЂРµРґРµР»,
+	// РІС‹С…РѕРґРёРј
 	if( errcount == MAX_ERROR_COUNT )
-		Fatal( "количество ошибок превысило допустимый предел" );
+		Fatal( "РєРѕР»РёС‡РµСЃС‚РІРѕ РѕС€РёР±РѕРє РїСЂРµРІС‹СЃРёР»Рѕ РґРѕРїСѓСЃС‚РёРјС‹Р№ РїСЂРµРґРµР»" );
 }
 
-// вывести предупреждение, которая обнаружена в опр. позиции
+// РІС‹РІРµСЃС‚Рё РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ, РєРѕС‚РѕСЂР°СЏ РѕР±РЅР°СЂСѓР¶РµРЅР° РІ РѕРїСЂ. РїРѕР·РёС†РёРё
 void Application::Warning( PCSTR fmt, ... )
 {
 	va_list vlst;	
 
 	warncount++;
 	va_start( vlst, fmt );
-	PutMessage( "предупреждение", translationUnit == NULL ? "<файл не открыт>" : 
+	PutMessage( "РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ", translationUnit == NULL ? "<С„Р°Р№Р» РЅРµ РѕС‚РєСЂС‹С‚>" : 
 		translationUnit->GetFileName().c_str(), 
 		translationUnit == NULL ? Position() : translationUnit->GetPosition(), fmt, vlst );
 	va_end( vlst );	
 
 	if( warncount == MAX_WARNING_COUNT )
-		Fatal( "количество предупреждений превысило допустимый предел" );
+		Fatal( "РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёР№ РїСЂРµРІС‹СЃРёР»Рѕ РґРѕРїСѓСЃС‚РёРјС‹Р№ РїСЂРµРґРµР»" );
 }
 
-// вывести фатальную ошибку, которая обнаружена в опр. позиции
+// РІС‹РІРµСЃС‚Рё С„Р°С‚Р°Р»СЊРЅСѓСЋ РѕС€РёР±РєСѓ, РєРѕС‚РѕСЂР°СЏ РѕР±РЅР°СЂСѓР¶РµРЅР° РІ РѕРїСЂ. РїРѕР·РёС†РёРё
 void Application::Fatal( PCSTR fmt, ... )
 {
 	va_list vlst;	
 
 	errcount++;
 	va_start( vlst, fmt );
-	PutMessage( "фатальная ошибка", translationUnit == NULL ? "<файл не открыт>" : 
+	PutMessage( "С„Р°С‚Р°Р»СЊРЅР°СЏ РѕС€РёР±РєР°", translationUnit == NULL ? "<С„Р°Р№Р» РЅРµ РѕС‚РєСЂС‹С‚>" : 
 		translationUnit->GetFileName().c_str(), 
 		translationUnit == NULL ? Position() : translationUnit->GetPosition(), fmt, vlst );
 	va_end( vlst );	
 	exit( ERROR_EXIT_CODE );
 }
 
-// вывести внутренную ошибку компилятора, которая обнаружена в опр. позиции
+// РІС‹РІРµСЃС‚Рё РІРЅСѓС‚СЂРµРЅРЅСѓСЋ РѕС€РёР±РєСѓ РєРѕРјРїРёР»СЏС‚РѕСЂР°, РєРѕС‚РѕСЂР°СЏ РѕР±РЅР°СЂСѓР¶РµРЅР° РІ РѕРїСЂ. РїРѕР·РёС†РёРё
 void Application::Internal( PCSTR msg, PCSTR fname, int line  )
 {
 	errcount++;	
@@ -307,7 +307,7 @@ void Application::Internal( PCSTR msg, PCSTR fname, int line  )
 	fullMsg = fullMsg + " --> (" + CharString(fname).DeleteRightWhileNot("\\/").c_str() +
 		", " + CharString(line).c_str() + ")";
 
-	PutMessage( "внутренняя ошибка компилятора", translationUnit == NULL ? "<файл не открыт>" : 
+	PutMessage( "РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° РєРѕРјРїРёР»СЏС‚РѕСЂР°", translationUnit == NULL ? "<С„Р°Р№Р» РЅРµ РѕС‚РєСЂС‹С‚>" : 
 		translationUnit->GetFileName().c_str(), 
 		translationUnit == NULL ? Position() : translationUnit->GetPosition(), 
 		fullMsg.c_str(), 0 );	
@@ -315,10 +315,10 @@ void Application::Internal( PCSTR msg, PCSTR fname, int line  )
 }
 
 
-// компилировать файлы
+// РєРѕРјРїРёР»РёСЂРѕРІР°С‚СЊ С„Р°Р№Р»С‹
 int Application::Make()
 {	
-	// задаем выходной файл для генератора
+	// Р·Р°РґР°РµРј РІС‹С…РѕРґРЅРѕР№ С„Р°Р№Р» РґР»СЏ РіРµРЅРµСЂР°С‚РѕСЂР°
 	generator.OpenFile("out.txt");
 	translationUnit = new TranslationUnit ("in.txt");		
 
@@ -329,7 +329,7 @@ int Application::Make()
 }
 
 
-// стартовая точка
+// СЃС‚Р°СЂС‚РѕРІР°СЏ С‚РѕС‡РєР°
 int main( int argc, char *argv[] )
 {
 	SetConsoleCP(1251); 
@@ -339,11 +339,11 @@ int main( int argc, char *argv[] )
 		theApp.LoadOptions(argc, argv);
 		return theApp.Make();
 
-	} catch( PCSTR msg ) {	// перехват с сообщением
+	} catch( PCSTR msg ) {	// РїРµСЂРµС…РІР°С‚ СЃ СЃРѕРѕР±С‰РµРЅРёРµРј
 		INTERNAL( msg );
 
-	} catch( ... )	{		// перехват на самый крайний случай
-		INTERNAL( "непредвиденная остановка компиляции" );
+	} catch( ... )	{		// РїРµСЂРµС…РІР°С‚ РЅР° СЃР°РјС‹Р№ РєСЂР°Р№РЅРёР№ СЃР»СѓС‡Р°Р№
+		INTERNAL( "РЅРµРїСЂРµРґРІРёРґРµРЅРЅР°СЏ РѕСЃС‚Р°РЅРѕРІРєР° РєРѕРјРїРёР»СЏС†РёРё" );
 	}
 
 	return 0;

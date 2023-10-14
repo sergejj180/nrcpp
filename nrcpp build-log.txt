@@ -41,3 +41,409 @@ make: *** [Makefile:91: all] Error 2
 
 fsdfsds@DESKTOP-UQ1REN9 MINGW64 /d/repos/nrcpp
 # cmake -G "MSYS Makefiles" -D"CMAKE_SYSTEM_PREFIX_PATH:PATH=/mingw64/x86_64-w64-mingw32"
+
+
+
+sergejj180@DESKTOP-B45NUF0 MINGW64 /d/nrcpp2
+# make
+[  9%] Built target nrc
+[ 14%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj
+In file included from D:/nrcpp2/nrcpp/Coordinator.h:3,
+                 from D:/nrcpp2/nrcpp/BodyMaker.cpp:21:
+D:/nrcpp2/nrcpp/ExpressionMaker.h:10:15: error: redefinition of 'class ExpressionMakerUtils::InitAns
+wer'
+   10 |         class InitAnswer {
+      |               ^~~~~~~~~~
+In file included from D:/nrcpp2/nrcpp/BodyMaker.cpp:19:
+D:/nrcpp2/nrcpp/ExpressionMaker.h:10:15: note: previous definition of 'class ExpressionMakerUtils::I
+nitAnswer'
+   10 |         class InitAnswer {
+      |               ^~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:69:21: error: redefinition of 'bool ExpressionMakerUtils::IsArithm
+eticOrPointer(const TypyziedEntity&)'
+   69 |         inline bool IsArithmeticOrPointer( const TypyziedEntity &type ) {
+      |                     ^~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:69:21: note: 'bool ExpressionMakerUtils::IsArithmeticOrPointer(con
+st TypyziedEntity&)' previously defined here
+   69 |         inline bool IsArithmeticOrPointer( const TypyziedEntity &type ) {
+      |                     ^~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:131:13: error: default argument given for parameter 3 of 'int Expr
+essionMakerUtils::CheckMemberThisVisibility(const POperand&, const Position&, bool)' [-fpermissive]
+  131 |         int CheckMemberThisVisibility( const POperand &dm,
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:131:13: note: previous specification in 'int ExpressionMakerUtils:
+:CheckMemberThisVisibility(const POperand&, const Position&, bool)' here
+  131 |         int CheckMemberThisVisibility( const POperand &dm,
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:148:7: error: redefinition of 'class ThisMaker'
+  148 | class ThisMaker
+      |       ^~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:148:7: note: previous definition of 'class ThisMaker'
+  148 | class ThisMaker
+      |       ^~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:169:7: error: redefinition of 'class LiteralMaker'
+  169 | class LiteralMaker
+      |       ^~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:169:7: note: previous definition of 'class LiteralMaker'
+  169 | class LiteralMaker
+      |       ^~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:197:7: error: redefinition of 'class IdentifierOperandMaker'
+  197 | class IdentifierOperandMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:197:7: note: previous definition of 'class IdentifierOperandMaker'
+  197 | class IdentifierOperandMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:265:7: error: redefinition of 'class Caster'
+  265 | class Caster
+      |       ^~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:265:7: note: previous definition of 'class Caster'
+  265 | class Caster
+      |       ^~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:311:7: error: redefinition of 'class ScalarToScalarCaster'
+  311 | class ScalarToScalarCaster : public Caster
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:311:7: note: previous definition of 'class ScalarToScalarCaster'
+  311 | class ScalarToScalarCaster : public Caster
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:444:7: error: redefinition of 'class OperatorCaster'
+  444 | class OperatorCaster : public Caster
+      |       ^~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:444:7: note: previous definition of 'class OperatorCaster'
+  444 | class OperatorCaster : public Caster
+      |       ^~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:566:7: error: redefinition of 'class ConstructorCaster'
+  566 | class ConstructorCaster : public Caster
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:566:7: note: previous definition of 'class ConstructorCaster'
+  566 | class ConstructorCaster : public Caster
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:651:7: error: redefinition of 'class ClassToClassCaster'
+  651 | class ClassToClassCaster : public Caster
+      |       ^~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:651:7: note: previous definition of 'class ClassToClassCaster'
+  651 | class ClassToClassCaster : public Caster
+      |       ^~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:732:7: error: redefinition of 'class AutoCastManager'
+  732 | class AutoCastManager
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:732:7: note: previous definition of 'class AutoCastManager'
+  732 | class AutoCastManager
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:765:7: error: redefinition of 'class OverloadResolutor'
+  765 | class OverloadResolutor
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:765:7: note: previous definition of 'class OverloadResolutor'
+  765 | class OverloadResolutor
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:852:7: error: redefinition of 'class OverloadOperatorFounder'
+  852 | class OverloadOperatorFounder
+      |       ^~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:852:7: note: previous definition of 'class OverloadOperatorFounde
+'
+  852 | class OverloadOperatorFounder
+      |       ^~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:904:7: error: redefinition of 'class UnaryOverloadOperatorCaller'
+  904 | class UnaryOverloadOperatorCaller
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:904:7: note: previous definition of 'class UnaryOverloadOperatorCa
+ller'
+  904 | class UnaryOverloadOperatorCaller
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:933:7: error: redefinition of 'class BinaryOverloadOperatorCaller'
+  933 | class BinaryOverloadOperatorCaller
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:933:7: note: previous definition of 'class BinaryOverloadOperatorC
+aller'
+  933 | class BinaryOverloadOperatorCaller
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:964:7: error: redefinition of 'class SizeofEvaluator'
+  964 | class SizeofEvaluator
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:964:7: note: previous definition of 'class SizeofEvaluator'
+  964 | class SizeofEvaluator
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:996:7: error: redefinition of 'class UnaryInterpretator'
+  996 | class UnaryInterpretator
+      |       ^~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:996:7: note: previous definition of 'class UnaryInterpretator'
+  996 | class UnaryInterpretator
+      |       ^~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1022:7: error: redefinition of 'class BinaryInterpretator'
+ 1022 | class BinaryInterpretator
+      |       ^~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1022:7: note: previous definition of 'class BinaryInterpretator'
+ 1022 | class BinaryInterpretator
+      |       ^~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1051:7: error: redefinition of 'class TernaryInterpretator'
+ 1051 | class TernaryInterpretator
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1051:7: note: previous definition of 'class TernaryInterpretator'
+ 1051 | class TernaryInterpretator
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1071:7: error: redefinition of 'class ExpressionPrinter'
+ 1071 | class ExpressionPrinter
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1071:7: note: previous definition of 'class ExpressionPrinter'
+ 1071 | class ExpressionPrinter
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1099:7: error: redefinition of 'class DefaultArgumentChecker'
+ 1099 | class DefaultArgumentChecker
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1099:7: note: previous definition of 'class DefaultArgumentChecke
+'
+ 1099 | class DefaultArgumentChecker
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1129:7: error: redefinition of 'class AgregatController'
+ 1129 | class AgregatController
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1129:7: note: previous definition of 'class AgregatController'
+ 1129 | class AgregatController
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1179:7: error: redefinition of 'class ArrayAgregatController'
+ 1179 | class ArrayAgregatController : public AgregatController
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1179:7: note: previous definition of 'class ArrayAgregatControlle
+'
+ 1179 | class ArrayAgregatController : public AgregatController
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1226:7: error: redefinition of 'class StructureAgregatController'
+ 1226 | class StructureAgregatController : public AgregatController
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1226:7: note: previous definition of 'class StructureAgregatContro
+ller'
+ 1226 | class StructureAgregatController : public AgregatController
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1264:7: error: redefinition of 'class UnionAgregatController'
+ 1264 | class UnionAgregatController : public AgregatController
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1264:7: note: previous definition of 'class UnionAgregatControlle
+'
+ 1264 | class UnionAgregatController : public AgregatController
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1306:7: error: redefinition of 'class ListInitializationValidator'
+ 1306 | class ListInitializationValidator
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1306:7: note: previous definition of 'class ListInitializationVali
+dator'
+ 1306 | class ListInitializationValidator
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1370:7: error: redefinition of 'class InitializationValidator'
+ 1370 | class InitializationValidator
+      |       ^~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1370:7: note: previous definition of 'class InitializationValidato
+r'
+ 1370 | class InitializationValidator
+      |       ^~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1412:7: error: redefinition of 'class ObjectInitElement'
+ 1412 | class ObjectInitElement
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1412:7: note: previous definition of 'class ObjectInitElement'
+ 1412 | class ObjectInitElement
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1509:7: error: redefinition of 'class CtorInitListValidator'
+ 1509 | class CtorInitListValidator
+      |       ^~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1509:7: note: previous definition of 'class CtorInitListValidator'
+ 1509 | class CtorInitListValidator
+      |       ^~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1570:7: error: redefinition of 'class TypeCastBinaryMaker'
+ 1570 | class TypeCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1570:7: note: previous definition of 'class TypeCastBinaryMaker'
+ 1570 | class TypeCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1608:7: error: redefinition of 'class FunctionCallBinaryMaker'
+ 1608 | class FunctionCallBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1608:7: note: previous definition of 'class FunctionCallBinaryMake
+r'
+ 1608 | class FunctionCallBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1678:7: error: redefinition of 'class ArrayBinaryMaker'
+ 1678 | class ArrayBinaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1678:7: note: previous definition of 'class ArrayBinaryMaker'
+ 1678 | class ArrayBinaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1704:7: error: redefinition of 'class SelectorBinaryMaker'
+ 1704 | class SelectorBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1704:7: note: previous definition of 'class SelectorBinaryMaker'
+ 1704 | class SelectorBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1737:7: error: redefinition of 'class LogicalUnaryMaker'
+ 1737 | class LogicalUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1737:7: note: previous definition of 'class LogicalUnaryMaker'
+ 1737 | class LogicalUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1760:7: error: redefinition of 'class BitReverseUnaryMaker'
+ 1760 | class BitReverseUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1760:7: note: previous definition of 'class BitReverseUnaryMaker'
+ 1760 | class BitReverseUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1783:7: error: redefinition of 'class IntegralBinaryMaker'
+ 1783 | class IntegralBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1783:7: note: previous definition of 'class IntegralBinaryMaker'
+ 1783 | class IntegralBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1813:7: error: redefinition of 'class MulDivBinaryMaker'
+ 1813 | class MulDivBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1813:7: note: previous definition of 'class MulDivBinaryMaker'
+ 1813 | class MulDivBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1842:7: error: redefinition of 'class ArithmeticUnaryMaker'
+ 1842 | class ArithmeticUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1842:7: note: previous definition of 'class ArithmeticUnaryMaker'
+ 1842 | class ArithmeticUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1868:7: error: redefinition of 'class ThrowUnaryMaker'
+ 1868 | class ThrowUnaryMaker
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1868:7: note: previous definition of 'class ThrowUnaryMaker'
+ 1868 | class ThrowUnaryMaker
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1891:7: error: redefinition of 'class IndirectionUnaryMaker'
+ 1891 | class IndirectionUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1891:7: note: previous definition of 'class IndirectionUnaryMaker'
+ 1891 | class IndirectionUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1914:7: error: redefinition of 'class IncDecUnaryMaker'
+ 1914 | class IncDecUnaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1914:7: note: previous definition of 'class IncDecUnaryMaker'
+ 1914 | class IncDecUnaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1943:7: error: redefinition of 'class AddressUnaryMaker'
+ 1943 | class AddressUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1943:7: note: previous definition of 'class AddressUnaryMaker'
+ 1943 | class AddressUnaryMaker
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1966:7: error: redefinition of 'class PlusBinaryMaker'
+ 1966 | class PlusBinaryMaker
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1966:7: note: previous definition of 'class PlusBinaryMaker'
+ 1966 | class PlusBinaryMaker
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1992:7: error: redefinition of 'class MinusBinaryMaker'
+ 1992 | class MinusBinaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:1992:7: note: previous definition of 'class MinusBinaryMaker'
+ 1992 | class MinusBinaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2018:7: error: redefinition of 'class ConditionBinaryMaker'
+ 2018 | class ConditionBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2018:7: note: previous definition of 'class ConditionBinaryMaker'
+ 2018 | class ConditionBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2048:7: error: redefinition of 'class LogicalBinaryMaker'
+ 2048 | class LogicalBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2048:7: note: previous definition of 'class LogicalBinaryMaker'
+ 2048 | class LogicalBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2077:7: error: redefinition of 'class IfTernaryMaker'
+ 2077 | class IfTernaryMaker
+      |       ^~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2077:7: note: previous definition of 'class IfTernaryMaker'
+ 2077 | class IfTernaryMaker
+      |       ^~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2108:7: error: redefinition of 'class AssignBinaryMaker'
+ 2108 | class AssignBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2108:7: note: previous definition of 'class AssignBinaryMaker'
+ 2108 | class AssignBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2144:7: error: redefinition of 'class ComaBinaryMaker'
+ 2144 | class ComaBinaryMaker
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2144:7: note: previous definition of 'class ComaBinaryMaker'
+ 2144 | class ComaBinaryMaker
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2170:7: error: redefinition of 'class NewTernaryMaker'
+ 2170 | class NewTernaryMaker
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2170:7: note: previous definition of 'class NewTernaryMaker'
+ 2170 | class NewTernaryMaker
+      |       ^~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2221:7: error: redefinition of 'class DeleteUnaryMaker'
+ 2221 | class DeleteUnaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2221:7: note: previous definition of 'class DeleteUnaryMaker'
+ 2221 | class DeleteUnaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2250:7: error: redefinition of 'class PointerToMemberBinaryMaker'
+ 2250 | class PointerToMemberBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2250:7: note: previous definition of 'class PointerToMemberBinaryM
+aker'
+ 2250 | class PointerToMemberBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2281:7: error: redefinition of 'class TypeidUnaryMaker'
+ 2281 | class TypeidUnaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2281:7: note: previous definition of 'class TypeidUnaryMaker'
+ 2281 | class TypeidUnaryMaker
+      |       ^~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2304:7: error: redefinition of 'class DynamicCastBinaryMaker'
+ 2304 | class DynamicCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2304:7: note: previous definition of 'class DynamicCastBinaryMake
+'
+ 2304 | class DynamicCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2331:7: error: redefinition of 'class StaticCastBinaryMaker'
+ 2331 | class StaticCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2331:7: note: previous definition of 'class StaticCastBinaryMaker'
+ 2331 | class StaticCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2367:7: error: redefinition of 'class ReinterpretCastBinaryMaker'
+ 2367 | class ReinterpretCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2367:7: note: previous definition of 'class ReinterpretCastBinaryM
+aker'
+ 2367 | class ReinterpretCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2395:7: error: redefinition of 'class ConstCastBinaryMaker'
+ 2395 | class ConstCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionMaker.h:2395:7: note: previous definition of 'class ConstCastBinaryMaker'
+ 2395 | class ConstCastBinaryMaker
+      |       ^~~~~~~~~~~~~~~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:104: nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj] Error 1
+make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
+
+
+sergejj180@DESKTOP-B45NUF0 MINGW64 /d/nrcpp2
+# make
+[  9%] Built target nrc
+[ 14%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.obj
+[ 19%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj
+[ 23%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.obj
+[ 28%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj
+D:/nrcpp2/nrcpp/ExpressionChecker.cpp: In member function 'virtual void OperatorCaster::DoCast(const
+ POperand&, POperand&, const Position&)':
+D:/nrcpp2/nrcpp/ExpressionChecker.cpp:1227:17: error: cannot bind non-const lvalue reference of type
+ 'PExpressionList&' {aka 'nrc::SmartPtr<std::vector<nrc::SmartPtr<Operand> > >&'} to an rvalue of ty
+pe 'PExpressionList' {aka 'nrc::SmartPtr<std::vector<nrc::SmartPtr<Operand> > >'}
+ 1227 |                 PExpressionList(new ExpressionList));
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:/nrcpp2/nrcpp/ExpressionChecker.cpp:171:81: note:   initializing argument 2 of 'POperand Expressio
+nMakerUtils::MakeFunctionCall(POperand&, PExpressionList&)'
+  171 | POperand ExpressionMakerUtils::MakeFunctionCall( POperand &fn, PExpressionList &params )
+      |                                                                ~~~~~~~~~~~~~~~~~^~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:160: nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj] Error 1
+make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
+
+
+

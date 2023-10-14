@@ -1,4 +1,4 @@
-// реализация синтаксического анализатора - Parser.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕРіРѕ Р°РЅР°Р»РёР·Р°С‚РѕСЂР° - Parser.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -25,34 +25,34 @@ using namespace nrc;
 using namespace ParserUtils;
 
  
-// счетчик переполнения
+// СЃС‡РµС‚С‡РёРє РїРµСЂРµРїРѕР»РЅРµРЅРёСЏ
 int OverflowController::counter = 0;
 
-// счетчик переполнения для конструкций
+// СЃС‡РµС‚С‡РёРє РїРµСЂРµРїРѕР»РЅРµРЅРёСЏ РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёР№
 int StatementParserImpl::OverflowStackController::deep = 0;
 
 
-// проверяет по пакету, и последней считанной лексеме, возможно
-// ли определение класса
+// РїСЂРѕРІРµСЂСЏРµС‚ РїРѕ РїР°РєРµС‚Сѓ, Рё РїРѕСЃР»РµРґРЅРµР№ СЃС‡РёС‚Р°РЅРЅРѕР№ Р»РµРєСЃРµРјРµ, РІРѕР·РјРѕР¶РЅРѕ
+// Р»Рё РѕРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°СЃСЃР°
 inline static bool NeedClassParserImpl( const Lexem &lastLxm, const NodePackage *np ) ;
 
 
-// проверяет по идентификатору и последней считанной лексеме, необходим
-// ли функции разбор тела
+// РїСЂРѕРІРµСЂСЏРµС‚ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ Рё РїРѕСЃР»РµРґРЅРµР№ СЃС‡РёС‚Р°РЅРЅРѕР№ Р»РµРєСЃРµРјРµ, РЅРµРѕР±С…РѕРґРёРј
+// Р»Рё С„СѓРЅРєС†РёРё СЂР°Р·Р±РѕСЂ С‚РµР»Р°
 inline static bool NeedFunctionParserImpl( LexicalAnalyzer &la, const Identifier *id );
 
 
-// проверяет по пакету, и последней считанной лексеме, требуется ли 
-// определение перечисления
+// РїСЂРѕРІРµСЂСЏРµС‚ РїРѕ РїР°РєРµС‚Сѓ, Рё РїРѕСЃР»РµРґРЅРµР№ СЃС‡РёС‚Р°РЅРЅРѕР№ Р»РµРєСЃРµРјРµ, С‚СЂРµР±СѓРµС‚СЃСЏ Р»Рё 
+// РѕРїСЂРµРґРµР»РµРЅРёРµ РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 inline static bool NeedEnumReading( const Lexem &lastLxm, const NodePackage *np ) ;
 
 
-// считать список инициализации и выполнить проверку
+// СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё Рё РІС‹РїРѕР»РЅРёС‚СЊ РїСЂРѕРІРµСЂРєСѓ
 inline static ListInitComponent *ReadInitList( LexicalAnalyzer &la, 
 			PDeclarationMaker &pdm, const Position &errPos );
 
 
-// метод запуска синтаксического анализатора
+// РјРµС‚РѕРґ Р·Р°РїСѓСЃРєР° СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕРіРѕ Р°РЅР°Р»РёР·Р°С‚РѕСЂР°
 void Parser::Run()
 {
 	Lexem lxm;
@@ -61,37 +61,37 @@ void Parser::Run()
 		lxm = lexicalAnalyzer.NextLexem();
 		if( lxm == EOF )
 		{
-			// все области видимости должны быть закрыты
+			// РІСЃРµ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ Р·Р°РєСЂС‹С‚С‹
 			if( !GetCurrentSymbolTable().IsGlobalSymbolTable() )
-				theApp.Fatal( lxm.GetPos(), "неожиданный конец файла" );
+				theApp.Fatal( lxm.GetPos(), "РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РєРѕРЅРµС† С„Р°Р№Р»Р°" );
 			break;
 		}
 
-		// либо объявление области видимости, либо объявление синонима ОВ
+		// Р»РёР±Рѕ РѕР±СЉСЏРІР»РµРЅРёРµ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, Р»РёР±Рѕ РѕР±СЉСЏРІР»РµРЅРёРµ СЃРёРЅРѕРЅРёРјР° РћР’
 		if( lxm == KWNAMESPACE )
 		{
 			lxm = lexicalAnalyzer.NextLexem();
 
-			// безимянная область видимости
+			// Р±РµР·РёРјСЏРЅРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 			if( lxm == '{' )
 			{
 				if( MakerUtils::MakeNamepsaceDeclRegion(NULL) )
 					crampControl.push_back(0);
 			}
 
-			// иначе считываем имя области видимости
+			// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 			else
 			{
 				lexicalAnalyzer.BackLexem();
 				try {
-					// считываем имя области видимости и передаем его в строитель
-					// области видимости
+					// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРµСЂРµРґР°РµРј РµРіРѕ РІ СЃС‚СЂРѕРёС‚РµР»СЊ
+					// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 					PNodePackage nspkg = QualifiedConstructionReader(lexicalAnalyzer, 
 						false, true).ReadQualifiedConstruction();
-					
+
 					Lexem nxt = lexicalAnalyzer.NextLexem() ;
 						
-					// возможно идет объявление синонима области видимости
+					// РІРѕР·РјРѕР¶РЅРѕ РёРґРµС‚ РѕР±СЉСЏРІР»РµРЅРёРµ СЃРёРЅРѕРЅРёРјР° РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 					if( nxt == '=' )
 					{
 						MakerUtils::MakeNamespaceAlias( &*nspkg, &*QualifiedConstructionReader(
@@ -107,9 +107,9 @@ void Parser::Run()
 							crampControl.push_back(0);
 
 						if( nxt != '{' )
-							SyntaxError(nxt);						
+							SyntaxError(nxt);
 					}
-			
+
 				} catch( const Lexem &ep ) {
 					SyntaxError(ep);
 					IgnoreStreamWhileNotDelim(lexicalAnalyzer);
@@ -118,57 +118,57 @@ void Parser::Run()
 			}
 		}
 
-		// using namespace 'name' или
+		// using namespace 'name' РёР»Рё
 		// using 'name'
 		else if( lxm == KWUSING )
 		{
-			// использование области видимости
+			// РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 			if( lexicalAnalyzer.NextLexem() == KWNAMESPACE )
 			{
 				try {
-					// считываем имя области видимости и передаем его в строитель
-					// области видимости
+					// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРµСЂРµРґР°РµРј РµРіРѕ РІ СЃС‚СЂРѕРёС‚РµР»СЊ
+					// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 					PNodePackage nspkg = QualifiedConstructionReader(lexicalAnalyzer, 
 						false, true).ReadQualifiedConstruction();
-					
+
 					MakerUtils::MakeUsingNamespace( &*nspkg );
 					if( lexicalAnalyzer.NextLexem() != ';' )
 						throw lexicalAnalyzer.LastLexem();
 
 				} catch( const Lexem &ep ) {
 					SyntaxError(ep);
-					IgnoreStreamWhileNotDelim(lexicalAnalyzer);				
+					IgnoreStreamWhileNotDelim(lexicalAnalyzer);
 				}
-				
+
 			}
 
-			// иначе using-декларация
+			// РёРЅР°С‡Рµ using-РґРµРєР»Р°СЂР°С†РёСЏ
 			else
 			{
 				lexicalAnalyzer.BackLexem();
 				try {
-					// считываем имя области видимости и передаем его в строитель
-					// области видимости
+					// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРµСЂРµРґР°РµРј РµРіРѕ РІ СЃС‚СЂРѕРёС‚РµР»СЊ
+					// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 					PNodePackage nspkg = QualifiedConstructionReader(
 						lexicalAnalyzer).ReadQualifiedConstruction();
-					
+
 					MakerUtils::MakeUsingNotMember( &*nspkg );
 					if( lexicalAnalyzer.NextLexem() != ';' )
 						throw lexicalAnalyzer.LastLexem();
 
 				} catch( const Lexem &ep ) {
 					SyntaxError(ep);
-					IgnoreStreamWhileNotDelim(lexicalAnalyzer);				
+					IgnoreStreamWhileNotDelim(lexicalAnalyzer);
 				}
-				
+
 			}
 		}
 
 		else if( lxm == '}' )
 		{
-			// проверяем, что находится в crampControl. Если 0,
-			// достаем из стека область видимости, иначе задаем новую
-			// спецификацию связывания
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РЅР°С…РѕРґРёС‚СЃСЏ РІ crampControl. Р•СЃР»Рё 0,
+			// РґРѕСЃС‚Р°РµРј РёР· СЃС‚РµРєР° РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, РёРЅР°С‡Рµ Р·Р°РґР°РµРј РЅРѕРІСѓСЋ
+			// СЃРїРµС†РёС„РёРєР°С†РёСЋ СЃРІСЏР·С‹РІР°РЅРёСЏ
 			if( crampControl.empty() )
 				SyntaxError(lxm);
 			else if( crampControl.back() != 0 )
@@ -177,56 +177,56 @@ void Parser::Run()
 				linkSpec = crampControl.empty() || crampControl.back() != 1 ? LS_CPP : LS_C;
 			}
 
-			// иначе именованная область видимости
+			// РёРЅР°С‡Рµ РёРјРµРЅРѕРІР°РЅРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 			else
 			{
 				INTERNAL_IF( !GetCurrentSymbolTable().IsNamespaceSymbolTable() );
 				GetScopeSystem().DestroySymbolTable();
 				crampControl.pop_back();
-			}			
+			}
 		}
 
 		else
 		{
 			lexicalAnalyzer.BackLexem();
-			DeclareParserImpl(lexicalAnalyzer).Parse();		
+			DeclareParserImpl(lexicalAnalyzer).Parse();
 		}
 	}
 }
 
 
-// метод разбора деклараций, возвращает пакет, по заголовку которго 
-// можно определить что делать дальше: создавать парсер класс, 
-// создавать парсер функции, либо прекратить, т.к. декларация проанализирована. 
-// В случае если прекратить, интеллектуальный указатель сам освободит память
+// РјРµС‚РѕРґ СЂР°Р·Р±РѕСЂР° РґРµРєР»Р°СЂР°С†РёР№, РІРѕР·РІСЂР°С‰Р°РµС‚ РїР°РєРµС‚, РїРѕ Р·Р°РіРѕР»РѕРІРєСѓ РєРѕС‚РѕСЂРіРѕ 
+// РјРѕР¶РЅРѕ РѕРїСЂРµРґРµР»РёС‚СЊ С‡С‚Рѕ РґРµР»Р°С‚СЊ РґР°Р»СЊС€Рµ: СЃРѕР·РґР°РІР°С‚СЊ РїР°СЂСЃРµСЂ РєР»Р°СЃСЃ, 
+// СЃРѕР·РґР°РІР°С‚СЊ РїР°СЂСЃРµСЂ С„СѓРЅРєС†РёРё, Р»РёР±Рѕ РїСЂРµРєСЂР°С‚РёС‚СЊ, С‚.Рє. РґРµРєР»Р°СЂР°С†РёСЏ РїСЂРѕР°РЅР°Р»РёР·РёСЂРѕРІР°РЅР°. 
+// Р’ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РїСЂРµРєСЂР°С‚РёС‚СЊ, РёРЅС‚РµР»Р»РµРєС‚СѓР°Р»СЊРЅС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ СЃР°Рј РѕСЃРІРѕР±РѕРґРёС‚ РїР°РјСЏС‚СЊ
 void DeclareParserImpl::Parse()
 {	
 	NodePackage *tsl = NULL, *dcl = NULL;
 	DeclaratorReader dr(DV_GLOBAL_DECLARATION, lexicalAnalyzer);
 
-	try {		
+	try {
 		dr.ReadTypeSpecifierList();
 		tsl = dr.GetTypeSpecPackage().Release();
-				
-		// если последняя считанная лексема '{', а предпоследняя "строка",
-		// значит имеем спецификацию связывания, и выходим
+
+		// РµСЃР»Рё РїРѕСЃР»РµРґРЅСЏСЏ СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° '{', Р° РїСЂРµРґРїРѕСЃР»РµРґРЅСЏСЏ "СЃС‚СЂРѕРєР°",
+		// Р·РЅР°С‡РёС‚ РёРјРµРµРј СЃРїРµС†РёС„РёРєР°С†РёСЋ СЃРІСЏР·С‹РІР°РЅРёСЏ, Рё РІС‹С…РѕРґРёРј
 		if( lexicalAnalyzer.LastLexem() == '{' && tsl->GetLastChildPackage() && 
 			tsl->GetLastChildPackage()->GetPackageID() == STRING )
 			return;
 
-		// в этом месте может быть определение класса, если последние
-		// два пакета были ключ класса и PC_QUALIFIED_NAME, а последняя
-		// считанная лексема - '{' или ':'
+		// РІ СЌС‚РѕРј РјРµСЃС‚Рµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°СЃСЃР°, РµСЃР»Рё РїРѕСЃР»РµРґРЅРёРµ
+		// РґРІР° РїР°РєРµС‚Р° Р±С‹Р»Рё РєР»СЋС‡ РєР»Р°СЃСЃР° Рё PC_QUALIFIED_NAME, Р° РїРѕСЃР»РµРґРЅСЏСЏ
+		// СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° - '{' РёР»Рё ':'
 		if( NeedClassParserImpl(lexicalAnalyzer.LastLexem(), tsl) )
 		{
 			ClassParserImpl cpi(lexicalAnalyzer, tsl, ClassMember::NOT_CLASS_MEMBER);
 			cpi.Parse();
 
-			// генерируем определение класса, если класс был построен
+			// РіРµРЅРµСЂРёСЂСѓРµРј РѕРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°СЃСЃР°, РµСЃР»Рё РєР»Р°СЃСЃ Р±С‹Р» РїРѕСЃС‚СЂРѕРµРЅ
 			if( cpi.IsBuilt() )
 				TranslatorUtils::TranslateClass(cpi.GetClassType());
 
-			// завершаем определение
+			// Р·Р°РІРµСЂС€Р°РµРј РѕРїСЂРµРґРµР»РµРЅРёРµ
 			if( lexicalAnalyzer.NextLexem() == ';' )
 			{
 				delete tsl;
@@ -237,7 +237,7 @@ void DeclareParserImpl::Parse()
 
 		}
 
-		// иначе если требуется считать перечисление, считываем
+		// РёРЅР°С‡Рµ РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚Р°С‚СЊ РїРµСЂРµС‡РёСЃР»РµРЅРёРµ, СЃС‡РёС‚С‹РІР°РµРј
 		else if( NeedEnumReading(lexicalAnalyzer.LastLexem(), tsl) )
 		{
 			EnumParserImpl epi(lexicalAnalyzer, tsl, ClassMember::NOT_CLASS_MEMBER);
@@ -252,7 +252,7 @@ void DeclareParserImpl::Parse()
 
 		}
 
-		// иначе если объявление класса или перечисления
+		// РёРЅР°С‡Рµ РµСЃР»Рё РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 		else if( tsl->GetChildPackageCount() == 2 && 
 				 tsl->GetChildPackage(1)->GetPackageID() == PC_QUALIFIED_NAME && 
 				 lexicalAnalyzer.LastLexem() == ';' )
@@ -270,57 +270,57 @@ void DeclareParserImpl::Parse()
 			else if( pc == KWENUM )
 			{
 				EnumTypeMaker etm( tsl,  ClassMember::NOT_CLASS_MEMBER );
-				etm.Make();			
+				etm.Make();
 				return;
 			}
 		}
 
 
-		// считываем список деклараций
+		// СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РґРµРєР»Р°СЂР°С†РёР№
 		bool firstDecl = true;
 		for( ;; )
 		{
 			dcl = dr.ReadNextDeclarator().Release();
 
-			// в декларации должно присутствовать имя
+			// РІ РґРµРєР»Р°СЂР°С†РёРё РґРѕР»Р¶РЅРѕ РїСЂРёСЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ РёРјСЏ
 			if( dcl->FindPackage(PC_QUALIFIED_NAME) < 0 )
 				throw lexicalAnalyzer.LastLexem() ;
 
-			// далее создаем декларацию из пакета и проверяем ее
+			// РґР°Р»РµРµ СЃРѕР·РґР°РµРј РґРµРєР»Р°СЂР°С†РёСЋ РёР· РїР°РєРµС‚Р° Рё РїСЂРѕРІРµСЂСЏРµРј РµРµ
 			DeclarationCoordinator dcoord(tsl, dcl);
 			PDeclarationMaker dmak = dcoord.Coordinate();
 			if( !dmak.IsNull() )
 			{
 				dmak->Make();
 
-				// далее идет проверка на тело функции, должны быть след. условия
-				// 1. это первая декларация
-				// 2. идентификатор является функцией
-				// 3. последняя считанная лексема - '{', или ':', try - если функция конструктор				
+				// РґР°Р»РµРµ РёРґРµС‚ РїСЂРѕРІРµСЂРєР° РЅР° С‚РµР»Рѕ С„СѓРЅРєС†РёРё, РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ СЃР»РµРґ. СѓСЃР»РѕРІРёСЏ
+				// 1. СЌС‚Рѕ РїРµСЂРІР°СЏ РґРµРєР»Р°СЂР°С†РёСЏ
+				// 2. РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№
+				// 3. РїРѕСЃР»РµРґРЅСЏСЏ СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° - '{', РёР»Рё ':', try - РµСЃР»Рё С„СѓРЅРєС†РёСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 				if( firstDecl )
-				{	
+				{
 					if( NeedFunctionParserImpl(lexicalAnalyzer, dmak->GetIdentifier()) )
 					{
 						Function &fn = *const_cast<Function *>(
 							static_cast<const Function *>(dmak->GetIdentifier()) );
 
-						// если у функции уже есть тело, игнорируем его и выходим
+						// РµСЃР»Рё Сѓ С„СѓРЅРєС†РёРё СѓР¶Рµ РµСЃС‚СЊ С‚РµР»Рѕ, РёРіРЅРѕСЂРёСЂСѓРµРј РµРіРѕ Рё РІС‹С…РѕРґРёРј
 						if( fn.IsHaveBody() )
 						{
 							theApp.Error(lexicalAnalyzer.LastLexem().GetPos(), 
-								"'%s' - у функции уже есть тело",
+								"'%s' - Сѓ С„СѓРЅРєС†РёРё СѓР¶Рµ РµСЃС‚СЊ С‚РµР»Рѕ",
 								fn.GetQualifiedName().c_str());
 
-							// игнорируем его
+							// РёРіРЅРѕСЂРёСЂСѓРµРј РµРіРѕ
 							lexicalAnalyzer.BackLexem();
-							FunctionBodyReader(lexicalAnalyzer, true).Read();						
+							FunctionBodyReader(lexicalAnalyzer, true).Read();
 						}
 
 						else
 						{
 							lexicalAnalyzer.BackLexem();
 							FunctionParserImpl fnpi(lexicalAnalyzer, fn);
-							fnpi.Parse();							
+							fnpi.Parse();
 						}
 
 						dcoord.RestoreScopeSystem();
@@ -331,64 +331,64 @@ void DeclareParserImpl::Parse()
 				}
 			}
 
-			// инициализатор объекта, задаем для генерации
+			// РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РѕР±СЉРµРєС‚Р°, Р·Р°РґР°РµРј РґР»СЏ РіРµРЅРµСЂР°С†РёРё
 			PObjectInitializator objIator = NULL;
 
-			// считываем инициализатор
+			// СЃС‡РёС‚С‹РІР°РµРј РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ
 			PExpressionList initList = dr.GetInitializatorList();
-			if( lexicalAnalyzer.LastLexem() == '=' )				
+			if( lexicalAnalyzer.LastLexem() == '=' )
 			{
-				// если список инициализаторов уже считан, то это синтаксическая
-				// ошибка
+				// РµСЃР»Рё СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ СѓР¶Рµ СЃС‡РёС‚Р°РЅ, С‚Рѕ СЌС‚Рѕ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ
+				// РѕС€РёР±РєР°
 				if( !initList.IsNull() )
 					throw lexicalAnalyzer.LastLexem();
 
-				// проверяем, если следующая лексема '{',
-				// значит считываем список инициализации
+				// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° '{',
+				// Р·РЅР°С‡РёС‚ СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 				else if( lexicalAnalyzer.NextLexem() == '{' )
 				{
 					objIator = BodyMakerUtils::MakeObjectInitializator(
 					  ReadInitList(lexicalAnalyzer, dmak, lexicalAnalyzer.LastLexem().GetPos()) );
 					INTERNAL_IF( dmak.IsNull() );
-					
-					// генерируем декларацию
+
+					// РіРµРЅРµСЂРёСЂСѓРµРј РґРµРєР»Р°СЂР°С†РёСЋ
 					TranslatorUtils::TranslateDeclaration( 
 						*dynamic_cast<const TypyziedEntity *>(dmak->GetIdentifier()),
 						objIator, true);
 
-					// предотвращаем проверку инициализации
+					// РїСЂРµРґРѕС‚РІСЂР°С‰Р°РµРј РїСЂРѕРІРµСЂРєСѓ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 					dmak = NULL;
 				}
 
-				// иначе считываем обычное выражение
+				// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј РѕР±С‹С‡РЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 				else
 				{
 					lexicalAnalyzer.BackLexem();
 					ExpressionReader er( lexicalAnalyzer, NULL, true );
 					er.Read();
 					initList = new ExpressionList;
-					initList->push_back(er.GetResultOperand());					
+					initList->push_back(er.GetResultOperand());
 				}
 			}
 
-			// инициализируем объект списком значений. Список значений
-			// может отсутствовать, в этом случае происходит инициализация по умолчанию
-			if( !dmak.IsNull() && dmak->GetIdentifier() != NULL )			
+			// РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РѕР±СЉРµРєС‚ СЃРїРёСЃРєРѕРј Р·РЅР°С‡РµРЅРёР№. РЎРїРёСЃРѕРє Р·РЅР°С‡РµРЅРёР№
+			// РјРѕР¶РµС‚ РѕС‚СЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ, РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РїСЂРѕРёСЃС…РѕРґРёС‚ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+			if( !dmak.IsNull() && dmak->GetIdentifier() != NULL )
 			{
 				dmak->Initialize( *initList );
-				// строитель может вернуть NULL, если идентификатор не является объектом			
+				// СЃС‚СЂРѕРёС‚РµР»СЊ РјРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ NULL, РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РѕР±СЉРµРєС‚РѕРј
 				objIator = BodyMakerUtils::MakeObjectInitializator(initList, *dmak);
-				// генерируем декларацию
+				// РіРµРЅРµСЂРёСЂСѓРµРј РґРµРєР»Р°СЂР°С†РёСЋ
 				TranslatorUtils::TranslateDeclaration( 
 					*dynamic_cast<const TypyziedEntity *>(dmak->GetIdentifier()),
 					objIator, true);
 			}
-						
-			// возможно было объявление члена, в этом случае требуется
-			// восстановить систему ОВ, т.к. в нее были помещены области 
-			// видимости члена
+
+			// РІРѕР·РјРѕР¶РЅРѕ Р±С‹Р»Рѕ РѕР±СЉСЏРІР»РµРЅРёРµ С‡Р»РµРЅР°, РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ С‚СЂРµР±СѓРµС‚СЃСЏ
+			// РІРѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРёСЃС‚РµРјСѓ РћР’, С‚.Рє. РІ РЅРµРµ Р±С‹Р»Рё РїРѕРјРµС‰РµРЅС‹ РѕР±Р»Р°СЃС‚Рё 
+			// РІРёРґРёРјРѕСЃС‚Рё С‡Р»РµРЅР°
 			dcoord.RestoreScopeSystem();
-				
+
 			if( lexicalAnalyzer.LastLexem() != ';' &&  
 				lexicalAnalyzer.LastLexem() != ',' )
 				throw lexicalAnalyzer.LastLexem() ;
@@ -400,7 +400,7 @@ void DeclareParserImpl::Parse()
 			dcl = NULL;
 		}
 
-	} catch( Lexem &lxm ) {				
+	} catch( Lexem &lxm ) {
 		SyntaxError(lxm);
 		IgnoreStreamWhileNotDelim(lexicalAnalyzer);
 	}
@@ -410,28 +410,28 @@ void DeclareParserImpl::Parse()
 }
 
 
-// метод разбора деклараций. Возвращает true, если декларация была считана,
-// иначе возвращает false
+// РјРµС‚РѕРґ СЂР°Р·Р±РѕСЂР° РґРµРєР»Р°СЂР°С†РёР№. Р’РѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РґРµРєР»Р°СЂР°С†РёСЏ Р±С‹Р»Р° СЃС‡РёС‚Р°РЅР°,
+// РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµС‚ false
 void InstructionParserImpl::Parse()
 {
-	// считывание, либо выражения, либо декларации
-	TypeExpressionReader ter( lexicalAnalyzer );	
+	// СЃС‡РёС‚С‹РІР°РЅРёРµ, Р»РёР±Рѕ РІС‹СЂР°Р¶РµРЅРёСЏ, Р»РёР±Рѕ РґРµРєР»Р°СЂР°С†РёРё
+	TypeExpressionReader ter( lexicalAnalyzer );
 	const NodePackage *tsl = NULL;
 
-	// инструкции могут возбуждать исключительные ситуации
+	// РёРЅСЃС‚СЂСѓРєС†РёРё РјРѕРіСѓС‚ РІРѕР·Р±СѓР¶РґР°С‚СЊ РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅС‹Рµ СЃРёС‚СѓР°С†РёРё
 	try
-	{	
+	{
 		ter.Read();
-		INTERNAL_IF( ter.GetResultPackage() == NULL );		
+		INTERNAL_IF( ter.GetResultPackage() == NULL );
 
-		// если имеем выражение, должно быть ';', и на этом разбор интсрукций
-		// заканчивается
+		// РµСЃР»Рё РёРјРµРµРј РІС‹СЂР°Р¶РµРЅРёРµ, РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ ';', Рё РЅР° СЌС‚РѕРј СЂР°Р·Р±РѕСЂ РёРЅС‚СЃСЂСѓРєС†РёР№
+		// Р·Р°РєР°РЅС‡РёРІР°РµС‚СЃСЏ
 		if( ter.GetResultPackage()->IsExpressionPackage() )
-		{		
+		{
 			const ExpressionPackage &epkg = 
 				static_cast<const ExpressionPackage &>(*ter.GetResultPackage());
 		#if  _DEBUG
-		//	cout << ExpressionPrinter(epkg.GetExpression()).GetExpressionString() << endl; 
+		// cout << ExpressionPrinter(epkg.GetExpression()).GetExpressionString() << endl; 
 			{
 				const ClassType *thisCls = NULL;
 				if( const FunctionSymbolTable *fst = GetScopeSystem().GetFunctionSymbolTable() )
@@ -446,86 +446,86 @@ void InstructionParserImpl::Parse()
 			if( lexicalAnalyzer.LastLexem() != ';' )
 				throw lexicalAnalyzer.LastLexem() ;
 
-			// строим инструкцию и выходим
+			// СЃС‚СЂРѕРёРј РёРЅСЃС‚СЂСѓРєС†РёСЋ Рё РІС‹С…РѕРґРёРј
 			insList.push_back( BodyMakerUtils::ExpressionInstructionMaker(epkg.GetExpression(), 
 				lexicalAnalyzer.LastLexem().GetPos()) );
 			delete &epkg;
 			return;
 		}
 
-		// если есть декларация класса, сохраняем его в списке
+		// РµСЃР»Рё РµСЃС‚СЊ РґРµРєР»Р°СЂР°С†РёСЏ РєР»Р°СЃСЃР°, СЃРѕС…СЂР°РЅСЏРµРј РµРіРѕ РІ СЃРїРёСЃРєРµ
 		if( ter.GetRedClass() )
 			insList.push_back( BodyMakerUtils::ClassInstructionMaker(*ter.GetRedClass(),
 				lexicalAnalyzer.LastLexem().GetPos()) );
 
-		// иначе имеем декларацию
+		// РёРЅР°С‡Рµ РёРјРµРµРј РґРµРєР»Р°СЂР°С†РёСЋ
 		SmartPtr<const NodePackage> rpkg = 
-			static_cast<const NodePackage *>(ter.GetResultPackage());		
+			static_cast<const NodePackage *>(ter.GetResultPackage());
 
-		// проверяем, если имеем декларацию типа, значит последняя считанная лексема ';'
-		// и необходимо выйти, декларация уже построения
+		// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РёРјРµРµРј РґРµРєР»Р°СЂР°С†РёСЋ С‚РёРїР°, Р·РЅР°С‡РёС‚ РїРѕСЃР»РµРґРЅСЏСЏ СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° ';'
+		// Рё РЅРµРѕР±С…РѕРґРёРјРѕ РІС‹Р№С‚Рё, РґРµРєР»Р°СЂР°С†РёСЏ СѓР¶Рµ РїРѕСЃС‚СЂРѕРµРЅРёСЏ
 		if( rpkg->GetPackageID() == PC_CLASS_DECLARATION )
 			return ;
 		
-		// иначе проверяем, считана ли декларация
+		// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј, СЃС‡РёС‚Р°РЅР° Р»Рё РґРµРєР»Р°СЂР°С†РёСЏ
 		const NodePackage *tsl = static_cast<const NodePackage*>(rpkg->GetChildPackage(0));
 		INTERNAL_IF( rpkg->GetPackageID() != PC_DECLARATION || 
 				rpkg->GetChildPackageCount() != 2 );
 		AutoDeclarationCoordinator dcoord(tsl, (NodePackage*)rpkg->GetChildPackage(1));
 		PDeclarationMaker dmak = dcoord.Coordinate();
-		// строим декларацию
-		if( !dmak.IsNull() )				
+		// СЃС‚СЂРѕРёРј РґРµРєР»Р°СЂР°С†РёСЋ
+		if( !dmak.IsNull() )
 			dmak->Make();
 
-		// инициализатор объекта, задаем для генерации
+		// РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РѕР±СЉРµРєС‚Р°, Р·Р°РґР°РµРј РґР»СЏ РіРµРЅРµСЂР°С†РёРё
 		PObjectInitializator objIator = NULL;
 
-		// считываем инициализатор
+		// СЃС‡РёС‚С‹РІР°РµРј РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ
 		PExpressionList initList = ter.GetInitializatorList();
-		if( lexicalAnalyzer.LastLexem() == '=' )				
+		if( lexicalAnalyzer.LastLexem() == '=' )
 		{
-			// если список инициализаторов уже считан, то это синтаксическая
-			// ошибка
+			// РµСЃР»Рё СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ СѓР¶Рµ СЃС‡РёС‚Р°РЅ, С‚Рѕ СЌС‚Рѕ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ
+			// РѕС€РёР±РєР°
 			if( !initList.IsNull() )
 				throw lexicalAnalyzer.LastLexem();
 
-			// проверяем, если следующая лексема '{',
-			// значит считываем список инициализации
+			// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° '{',
+			// Р·РЅР°С‡РёС‚ СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 			else if( lexicalAnalyzer.NextLexem() == '{' )
 			{
 				objIator = BodyMakerUtils::MakeObjectInitializator(
 					ReadInitList(lexicalAnalyzer, dmak, lexicalAnalyzer.LastLexem().GetPos()) );
 
-				// после того, как инициализатор и идентификатор известны, строим декларацию
+				// РїРѕСЃР»Рµ С‚РѕРіРѕ, РєР°Рє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РёР·РІРµСЃС‚РЅС‹, СЃС‚СЂРѕРёРј РґРµРєР»Р°СЂР°С†РёСЋ
 				insList.push_back( BodyMakerUtils::DeclarationInstructionMaker( 
 					*dynamic_cast<const TypyziedEntity *>(dmak->GetIdentifier()), objIator,
 					lexicalAnalyzer.LastLexem().GetPos() )  );
-	
-				// предотвращаем проверку инициализации
+
+				// РїСЂРµРґРѕС‚РІСЂР°С‰Р°РµРј РїСЂРѕРІРµСЂРєСѓ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 				dmak = NULL;
 			}
 
-			// иначе считываем обычное выражение
+			// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј РѕР±С‹С‡РЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 			else
 			{
 				lexicalAnalyzer.BackLexem();
 				ExpressionReader er( lexicalAnalyzer, NULL, true );
 				er.Read();
 				initList = new ExpressionList;
-				initList->push_back(er.GetResultOperand());					
+				initList->push_back(er.GetResultOperand());
 			}
 		}
 
-		// инициализируем объект списком значений. Список значений
-		// может отсутствовать, в этом случае происходит инициализация по умолчанию
-		if( !dmak.IsNull() && dmak->GetIdentifier() != NULL )		
+		// РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РѕР±СЉРµРєС‚ СЃРїРёСЃРєРѕРј Р·РЅР°С‡РµРЅРёР№. РЎРїРёСЃРѕРє Р·РЅР°С‡РµРЅРёР№
+		// РјРѕР¶РµС‚ РѕС‚СЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ, РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РїСЂРѕРёСЃС…РѕРґРёС‚ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+		if( !dmak.IsNull() && dmak->GetIdentifier() != NULL )
 		{
 			dmak->Initialize( *initList ),
 
-			// строитель может вернуть NULL, если идентификатор не является объектом			
+			// СЃС‚СЂРѕРёС‚РµР»СЊ РјРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ NULL, РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РѕР±СЉРµРєС‚РѕРј
 			objIator = BodyMakerUtils::MakeObjectInitializator(initList, *dmak);
-		
-			// после того, как инициализатор и идентификатор известны, строим декларацию
+
+			// РїРѕСЃР»Рµ С‚РѕРіРѕ, РєР°Рє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РёР·РІРµСЃС‚РЅС‹, СЃС‚СЂРѕРёРј РґРµРєР»Р°СЂР°С†РёСЋ
 			insList.push_back( BodyMakerUtils::DeclarationInstructionMaker( 
 				*dynamic_cast<const TypyziedEntity *>(dmak->GetIdentifier()), objIator,
 				lexicalAnalyzer.LastLexem().GetPos() ) );
@@ -534,64 +534,64 @@ void InstructionParserImpl::Parse()
 		if( lexicalAnalyzer.LastLexem() == ';' )
 			;
 
-		// иначе, если не ',', выводим синтаксическую ошибку
+		// РёРЅР°С‡Рµ, РµСЃР»Рё РЅРµ ',', РІС‹РІРѕРґРёРј СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєСѓСЋ РѕС€РёР±РєСѓ
 		else if( lexicalAnalyzer.LastLexem() != ',' )
 			throw lexicalAnalyzer.LastLexem() ;
 
-		// иначе считываем список деклараций
+		// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РґРµРєР»Р°СЂР°С†РёР№
 		else
 		for( ;; )
 		{
 			DeclaratorReader dr(DV_LOCAL_DECLARATION, lexicalAnalyzer);
 			PNodePackage dcl = dr.ReadNextDeclarator();
 
-			// в декларации должно присутствовать имя
+			// РІ РґРµРєР»Р°СЂР°С†РёРё РґРѕР»Р¶РЅРѕ РїСЂРёСЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ РёРјСЏ
 			if( dcl->FindPackage(PC_QUALIFIED_NAME) < 0 )
 				throw lexicalAnalyzer.LastLexem() ;
 
-			// далее создаем декларацию из пакета и проверяем ее
+			// РґР°Р»РµРµ СЃРѕР·РґР°РµРј РґРµРєР»Р°СЂР°С†РёСЋ РёР· РїР°РєРµС‚Р° Рё РїСЂРѕРІРµСЂСЏРµРј РµРµ
 			AutoDeclarationCoordinator dcoord(tsl, &*dcl);
 			PDeclarationMaker dmak = dcoord.Coordinate();
-			if( !dmak.IsNull() )			
+			if( !dmak.IsNull() )
 				dmak->Make();
-			
-			// считываем инициализатор
+
+			// СЃС‡РёС‚С‹РІР°РµРј РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ
 			PExpressionList initList = dr.GetInitializatorList();
-			if( lexicalAnalyzer.LastLexem() == '=' )				
+			if( lexicalAnalyzer.LastLexem() == '=' )
 			{
-				// если список инициализаторов уже считан, то это синтаксическая
-				// ошибка
+				// РµСЃР»Рё СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ СѓР¶Рµ СЃС‡РёС‚Р°РЅ, С‚Рѕ СЌС‚Рѕ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ
+				// РѕС€РёР±РєР°
 				if( !initList.IsNull() )
 					throw lexicalAnalyzer.LastLexem();
-							
-				// считываем список инициализации
+
+				// СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 				else if( lexicalAnalyzer.NextLexem() == '{' )
 				{
 					objIator = BodyMakerUtils::MakeObjectInitializator(
-					  ReadInitList(lexicalAnalyzer, dmak, lexicalAnalyzer.LastLexem().GetPos()) );			
-		
-					// после того, как инициализатор и идентификатор известны, строим декларацию
+					  ReadInitList(lexicalAnalyzer, dmak, lexicalAnalyzer.LastLexem().GetPos()) );
+
+					// РїРѕСЃР»Рµ С‚РѕРіРѕ, РєР°Рє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РёР·РІРµСЃС‚РЅС‹, СЃС‚СЂРѕРёРј РґРµРєР»Р°СЂР°С†РёСЋ
 					insList.push_back( BodyMakerUtils::DeclarationInstructionMaker( 
 						*dynamic_cast<const TypyziedEntity *>(dmak->GetIdentifier()), objIator,
 						lexicalAnalyzer.LastLexem().GetPos() ) );
 
-					// предотвращаем проверку инициализации
+					// РїСЂРµРґРѕС‚РІСЂР°С‰Р°РµРј РїСЂРѕРІРµСЂРєСѓ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 					dmak = NULL;
 				}
 
-				// иначе считываем обычное выражение			
+				// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј РѕР±С‹С‡РЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 				else
 				{
 					lexicalAnalyzer.BackLexem();
 					ExpressionReader er( lexicalAnalyzer, NULL, true );
 					er.Read();
 					initList = new ExpressionList;
-					initList->push_back(er.GetResultOperand());					
+					initList->push_back(er.GetResultOperand());
 				}
 			}
 
-			// инициализируем объект списком значений. Список значений
-			// может отсутствовать, в этом случае происходит инициализация по умолчанию
+			// РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РѕР±СЉРµРєС‚ СЃРїРёСЃРєРѕРј Р·РЅР°С‡РµРЅРёР№. РЎРїРёСЃРѕРє Р·РЅР°С‡РµРЅРёР№
+			// РјРѕР¶РµС‚ РѕС‚СЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ, РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РїСЂРѕРёСЃС…РѕРґРёС‚ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 			if( !dmak.IsNull() && dmak->GetIdentifier() != NULL )
 			{
 				dmak->Initialize( *initList ),
@@ -600,109 +600,109 @@ void InstructionParserImpl::Parse()
 					*dynamic_cast<const TypyziedEntity *>(dmak->GetIdentifier()), objIator,
 					lexicalAnalyzer.LastLexem().GetPos() )  );
 			}
-			
-			// проверяем, если есть
+
+			// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РµСЃС‚СЊ
 			if( lexicalAnalyzer.LastLexem() == ';' )
 				break;
 
-			// иначе, если не ',', выводим синтаксическую ошибку
+			// РёРЅР°С‡Рµ, РµСЃР»Рё РЅРµ ',', РІС‹РІРѕРґРёРј СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєСѓСЋ РѕС€РёР±РєСѓ
 			else if( lexicalAnalyzer.LastLexem() != ',' )
 				throw lexicalAnalyzer.LastLexem();
-		}		
+		}
 
-	// перехватываем метку
+	// РїРµСЂРµС…РІР°С‚С‹РІР°РµРј РјРµС‚РєСѓ
 	} catch( const LabelLexem &labLxm ) {
-		// если мы в блоке и имеем считанную метку, передаем ее дальше
+		// РµСЃР»Рё РјС‹ РІ Р±Р»РѕРєРµ Рё РёРјРµРµРј СЃС‡РёС‚Р°РЅРЅСѓСЋ РјРµС‚РєСѓ, РїРµСЂРµРґР°РµРј РµРµ РґР°Р»СЊС€Рµ
 		// StatementParserImpl
 		if( inBlock )
 			throw;
 
-		// иначе обрабатываем как синтаксическую ошибку
+		// РёРЅР°С‡Рµ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РєР°Рє СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєСѓСЋ РѕС€РёР±РєСѓ
 		SyntaxError(labLxm);
 		IgnoreStreamWhileNotDelim(lexicalAnalyzer);
 		insList.clear();
 	
-	// перехватываем в остальных случаях
+	// РїРµСЂРµС…РІР°С‚С‹РІР°РµРј РІ РѕСЃС‚Р°Р»СЊРЅС‹С… СЃР»СѓС‡Р°СЏС…
 	} catch( const Lexem &lxm ) {
 		SyntaxError(lxm);
 		IgnoreStreamWhileNotDelim(lexicalAnalyzer);
-		insList.clear();		// очищаем список в случае синтаксической ошибки
+		insList.clear(); // РѕС‡РёС‰Р°РµРј СЃРїРёСЃРѕРє РІ СЃР»СѓС‡Р°Рµ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕР№ РѕС€РёР±РєРё
 	}
 }
 
 
-// в конструктор получаем пакет со списком типов, последним
-// в котором должен быть класс, а также лексический анализатор
+// РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕР»СѓС‡Р°РµРј РїР°РєРµС‚ СЃРѕ СЃРїРёСЃРєРѕРј С‚РёРїРѕРІ, РїРѕСЃР»РµРґРЅРёРј
+// РІ РєРѕС‚РѕСЂРѕРј РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РєР»Р°СЃСЃ, Р° С‚Р°РєР¶Рµ Р»РµРєСЃРёС‡РµСЃРєРёР№ Р°РЅР°Р»РёР·Р°С‚РѕСЂ
 ClassParserImpl::ClassParserImpl( LexicalAnalyzer &la, NodePackage *np, ClassMember::AS as ) 
 	: lexicalAnalyzer(la), typePkg(*np)
 
 {
-	// 1. создаем класс, если он еще не создан, а также проверяем
-	//    его корректность
-	// 2. считываем базовые типы, если последней считанной лексемой 
-	//    была ':'
-	// 3. проверяем возможность определения класса в текущей области видимости
-	// 4. вставляем области видимости класса, которыми он квалифицирован
-	//    в объявлении и сам класс в стек областей видимости	
+	// 1. СЃРѕР·РґР°РµРј РєР»Р°СЃСЃ, РµСЃР»Рё РѕРЅ РµС‰Рµ РЅРµ СЃРѕР·РґР°РЅ, Р° С‚Р°РєР¶Рµ РїСЂРѕРІРµСЂСЏРµРј
+	//    РµРіРѕ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ
+	// 2. СЃС‡РёС‚С‹РІР°РµРј Р±Р°Р·РѕРІС‹Рµ С‚РёРїС‹, РµСЃР»Рё РїРѕСЃР»РµРґРЅРµР№ СЃС‡РёС‚Р°РЅРЅРѕР№ Р»РµРєСЃРµРјРѕР№ 
+	//    Р±С‹Р»Р° ':'
+	// 3. РїСЂРѕРІРµСЂСЏРµРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РѕРїСЂРµРґРµР»РµРЅРёСЏ РєР»Р°СЃСЃР° РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
+	// 4. РІСЃС‚Р°РІР»СЏРµРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РєР»Р°СЃСЃР°, РєРѕС‚РѕСЂС‹РјРё РѕРЅ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅ
+	//    РІ РѕР±СЉСЏРІР»РµРЅРёРё Рё СЃР°Рј РєР»Р°СЃСЃ РІ СЃС‚РµРє РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё	
 	//
-	// Если на этапах 1 и 3 были зафиксированы ошибки, тело класса,
-	// игнорируется от '{' до соответвующей ей '}'
+	// Р•СЃР»Рё РЅР° СЌС‚Р°РїР°С… 1 Рё 3 Р±С‹Р»Рё Р·Р°С„РёРєСЃРёСЂРѕРІР°РЅС‹ РѕС€РёР±РєРё, С‚РµР»Рѕ РєР»Р°СЃСЃР°,
+	// РёРіРЅРѕСЂРёСЂСѓРµС‚СЃСЏ РѕС‚ '{' РґРѕ СЃРѕРѕС‚РІРµС‚РІСѓСЋС‰РµР№ РµР№ '}'
 	ClassTypeMaker ctm(np, as, GetCurrentSymbolTable(), true);
-	clsType = ctm.Make();			// класс может не "построится", тогда clsType == 0
+	clsType = ctm.Make(); // РєР»Р°СЃСЃ РјРѕР¶РµС‚ РЅРµ "РїРѕСЃС‚СЂРѕРёС‚СЃСЏ", С‚РѕРіРґР° clsType == 0
 	qualifierList = ctm.GetQualifierList();
 	isUnion = clsType && clsType->GetBaseTypeCode() == BaseType::BT_UNION;	
 
-	// требуется считка списка базовых классов
+	// С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚РєР° СЃРїРёСЃРєР° Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ
 	if( lexicalAnalyzer.LastLexem() == ':' )
 		ReadBaseClassList();
 
-	// синтаксическая ошибка
+	// СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°
 	if( lexicalAnalyzer.LastLexem() != '{' )
 		throw lexicalAnalyzer.LastLexem();
 
-	// если класс не был найден, либо его определение невозможно
-	// просто игнорируем все тело класса
-	if( clsType == NULL || !CheckerUtils::ClassDefineChecker(
+	// РµСЃР»Рё РєР»Р°СЃСЃ РЅРµ Р±С‹Р» РЅР°Р№РґРµРЅ, Р»РёР±Рѕ РµРіРѕ РѕРїСЂРµРґРµР»РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
+	// РїСЂРѕСЃС‚Рѕ РёРіРЅРѕСЂРёСЂСѓРµРј РІСЃРµ С‚РµР»Рѕ РєР»Р°СЃСЃР°
+	if( clsType == NULL || !CheckerUtils::ClassDefineChecker( 
 				*clsType, qualifierList, GetPackagePosition(np->GetLastChildPackage()) ) 
 	  )
 	{
-		// игнорируем тело класса 
+		// РёРіРЅРѕСЂРёСЂСѓРµРј С‚РµР»Рѕ РєР»Р°СЃСЃР° 
 		CompoundStatementReader(lexicalAnalyzer, true).Read();
 		wasRead = true;
 	}
 
-	// иначе вставляем области видимости класса в общий стек,
-	// причем глобальная область видимости не должна вставляться если она есть
+	// РёРЅР°С‡Рµ РІСЃС‚Р°РІР»СЏРµРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РєР»Р°СЃСЃР° РІ РѕР±С‰РёР№ СЃС‚РµРє,
+	// РїСЂРёС‡РµРј РіР»РѕР±Р°Р»СЊРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РґРѕР»Р¶РЅР° РІСЃС‚Р°РІР»СЏС‚СЊСЃСЏ РµСЃР»Рё РѕРЅР° РµСЃС‚СЊ
 	else
 	{
 		wasRead = false;
 		curAccessSpec = clsType->GetBaseTypeCode() == BaseType::BT_CLASS ?
 			ClassMember::AS_PRIVATE : ClassMember::AS_PUBLIC; 
 
-		// если первая область видимости глобальная, вынуть из списка
+		// РµСЃР»Рё РїРµСЂРІР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РіР»РѕР±Р°Р»СЊРЅР°СЏ, РІС‹РЅСѓС‚СЊ РёР· СЃРїРёСЃРєР°
 		if( !qualifierList.IsEmpty() && qualifierList[0] == 
 			::GetScopeSystem().GetFirstSymbolTable() )
 			qualifierList.PopFront();
 
-		// загружаем области видимости
+		// Р·Р°РіСЂСѓР¶Р°РµРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 		::GetScopeSystem().PushSymbolTableList(qualifierList);
 
-		// загружаем сам класс
+		// Р·Р°РіСЂСѓР¶Р°РµРј СЃР°Рј РєР»Р°СЃСЃ
 		::GetScopeSystem().MakeNewSymbolTable(clsType);
 	}
 }
 
 
-// считать члены класса
+// СЃС‡РёС‚Р°С‚СЊ С‡Р»РµРЅС‹ РєР»Р°СЃСЃР°
 void ClassParserImpl::Parse()
 {
-	// если не было ошибки при объявлении имени класса, считываем тело класса,
-	// в противном случае оно уже считано
-	if( wasRead )		
+	// РµСЃР»Рё РЅРµ Р±С‹Р»Рѕ РѕС€РёР±РєРё РїСЂРё РѕР±СЉСЏРІР»РµРЅРёРё РёРјРµРЅРё РєР»Р°СЃСЃР°, СЃС‡РёС‚С‹РІР°РµРј С‚РµР»Рѕ РєР»Р°СЃСЃР°,
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РѕРЅРѕ СѓР¶Рµ СЃС‡РёС‚Р°РЅРѕ
+	if( wasRead )
 		return;
-	
-	// считываем '{'
-	INTERNAL_IF( lexicalAnalyzer.NextLexem() != '{' );			
+
+	// СЃС‡РёС‚С‹РІР°РµРј '{'
+	INTERNAL_IF( lexicalAnalyzer.NextLexem() != '{' );
 	for( ;; )
 	{
 		Lexem lxm = lexicalAnalyzer.NextLexem();
@@ -716,26 +716,26 @@ void ClassParserImpl::Parse()
 				SyntaxError(lexicalAnalyzer.LastLexem());
 				lexicalAnalyzer.BackLexem();
 			}
-							
+
 			curAccessSpec = lxm == KWPUBLIC ? ClassMember::AS_PUBLIC
 				: (lxm == KWPRIVATE ? ClassMember::AS_PRIVATE : ClassMember::AS_PROTECTED);
 		}
 		
-		// если using-декларация
+		// РµСЃР»Рё using-РґРµРєР»Р°СЂР°С†РёСЏ
 		else if( lxm == KWUSING )
 		{
 			try {
-				// считываем имя области видимости и передаем его в строитель
-				// области видимости
+				// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРµСЂРµРґР°РµРј РµРіРѕ РІ СЃС‚СЂРѕРёС‚РµР»СЊ
+				// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 				PNodePackage nspkg = QualifiedConstructionReader(
 					lexicalAnalyzer).ReadQualifiedConstruction();
-				
+
 				MakerUtils::MakeUsingMember( &*nspkg, curAccessSpec );
 
-				// проверяем, если считали оператор приведения, значит
-				// проверяем последнюю лексему
+				// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё СЃС‡РёС‚Р°Р»Рё РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ, Р·РЅР°С‡РёС‚
+				// РїСЂРѕРІРµСЂСЏРµРј РїРѕСЃР»РµРґРЅСЋСЋ Р»РµРєСЃРµРјСѓ
 				if( nspkg->FindPackage(PC_CAST_OPERATOR) >= 0 )
-				{	
+				{
 					if( lexicalAnalyzer.LastLexem() != ';' )
 						throw lexicalAnalyzer.LastLexem();
 				}
@@ -745,57 +745,57 @@ void ClassParserImpl::Parse()
 
 			} catch( const Lexem &ep ) {
 				SyntaxError(ep);
-				IgnoreStreamWhileNotDelim(lexicalAnalyzer);				
+				IgnoreStreamWhileNotDelim(lexicalAnalyzer);
 			}
 		}
 
-		// если декларация шаблона 
+		// РµСЃР»Рё РґРµРєР»Р°СЂР°С†РёСЏ С€Р°Р±Р»РѕРЅР° 
 		else if( lxm == KWTEMPLATE )
 		{
 		}
 
-		// иначе считываем член класса
+		// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј С‡Р»РµРЅ РєР»Р°СЃСЃР°
 		else
 		{
 			lexicalAnalyzer.BackLexem();
-			ParseMember();			
+			ParseMember();
 		}
 	}
 
-	// задаем классу флаг, что он полностью объявлен, т.е. не является
-	// не полным
+	// Р·Р°РґР°РµРј РєР»Р°СЃСЃСѓ С„Р»Р°Рі, С‡С‚Рѕ РѕРЅ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ, С‚.Рµ. РЅРµ СЏРІР»СЏРµС‚СЃСЏ
+	// РЅРµ РїРѕР»РЅС‹Рј
 	clsType->uncomplete = false;
 
-	// генерируем специальные функции-члены, которые не заданы явно,
-	// к-ор по умолчанию, к-ор копирования, д-ор, оператор копирования
+	// РіРµРЅРµСЂРёСЂСѓРµРј СЃРїРµС†РёР°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё-С‡Р»РµРЅС‹, РєРѕС‚РѕСЂС‹Рµ РЅРµ Р·Р°РґР°РЅС‹ СЏРІРЅРѕ,
+	// Рє-РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, Рє-РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ, Рґ-РѕСЂ, РѕРїРµСЂР°С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
 	GenerateSMF();
 
-	// обработать считанные inline-функции
+	// РѕР±СЂР°Р±РѕС‚Р°С‚СЊ СЃС‡РёС‚Р°РЅРЅС‹Рµ inline-С„СѓРЅРєС†РёРё
 	LoadInlineFunctions();
 
-	// вытаскиваем все области, которые были положены в стек в конструкторе
-	// и задаем классу что он сформирован
+	// РІС‹С‚Р°СЃРєРёРІР°РµРј РІСЃРµ РѕР±Р»Р°СЃС‚Рё, РєРѕС‚РѕСЂС‹Рµ Р±С‹Р»Рё РїРѕР»РѕР¶РµРЅС‹ РІ СЃС‚РµРє РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ
+	// Рё Р·Р°РґР°РµРј РєР»Р°СЃСЃСѓ С‡С‚Рѕ РѕРЅ СЃС„РѕСЂРјРёСЂРѕРІР°РЅ
 	for( int i = 0; i<qualifierList.GetSymbolTableCount(); i++ )
 		::GetScopeSystem().DestroySymbolTable();
 
-	// удаляем сам класс из стека областей видимости
+	// СѓРґР°Р»СЏРµРј СЃР°Рј РєР»Р°СЃСЃ РёР· СЃС‚РµРєР° РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё
 	::GetScopeSystem().DestroySymbolTable();
 
-	// загружаем friend-функции, после того как классовая область видимости
-	// удалена.
+	// Р·Р°РіСЂСѓР¶Р°РµРј friend-С„СѓРЅРєС†РёРё, РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє РєР»Р°СЃСЃРѕРІР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
+	// СѓРґР°Р»РµРЅР°.
 	LoadFriendFunctions();
 }
 
 
-// считать список базовых типов и сохранить их в классе,
-// также проверить их корректность
+// СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє Р±Р°Р·РѕРІС‹С… С‚РёРїРѕРІ Рё СЃРѕС…СЂР°РЅРёС‚СЊ РёС… РІ РєР»Р°СЃСЃРµ,
+// С‚Р°РєР¶Рµ РїСЂРѕРІРµСЂРёС‚СЊ РёС… РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ
 void ClassParserImpl::ReadBaseClassList()
 {
-	// считываем ':'
+	// СЃС‡РёС‚С‹РІР°РµРј ':'
 	INTERNAL_IF( lexicalAnalyzer.NextLexem() != ':' );
 
-	// далее считываем список базовых классов, пока не появится '{',
-	// либо не будет синтаксической ошибки
+	// РґР°Р»РµРµ СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ, РїРѕРєР° РЅРµ РїРѕСЏРІРёС‚СЃСЏ '{',
+	// Р»РёР±Рѕ РЅРµ Р±СѓРґРµС‚ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕР№ РѕС€РёР±РєРё
 	for( ;; )
 	{
 		PNodePackage bcp = new NodePackage( PC_BASE_CLASS );
@@ -826,31 +826,31 @@ void ClassParserImpl::ReadBaseClassList()
 		else
 			lexicalAnalyzer.BackLexem();
 
-		// считываем имя класса
+		// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РєР»Р°СЃСЃР°
 		QualifiedConstructionReader qcr(lexicalAnalyzer, false, true);
 		bcp->AddChildPackage( qcr.ReadQualifiedConstruction().Release() );
 
-		// если класс не был найден, то создавать базовый класс для него
-		// не нужно, просто продолжаем считывание 
+		// РµСЃР»Рё РєР»Р°СЃСЃ РЅРµ Р±С‹Р» РЅР°Р№РґРµРЅ, С‚Рѕ СЃРѕР·РґР°РІР°С‚СЊ Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РЅРµРіРѕ
+		// РЅРµ РЅСѓР¶РЅРѕ, РїСЂРѕСЃС‚Рѕ РїСЂРѕРґРѕР»Р¶Р°РµРј СЃС‡РёС‚С‹РІР°РЅРёРµ 
 		if( clsType != NULL )
 		{
-		
-		// создаем базовый класс
+
+		// СЃРѕР·РґР°РµРј Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ
 		PBaseClassCharacteristic bchar = MakerUtils::MakeBaseClass( &*bcp, 
 			clsType->GetBaseTypeCode() == BaseType::BT_CLASS );
 
-		// может быть NULL, если при создании базового класса была ошибка
+		// РјРѕР¶РµС‚ Р±С‹С‚СЊ NULL, РµСЃР»Рё РїСЂРё СЃРѕР·РґР°РЅРёРё Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР° Р±С‹Р»Р° РѕС€РёР±РєР°
 		if( bchar.IsNull() )
 			;
 
-		// проверяем, имеется ли класс в списке
+		// РїСЂРѕРІРµСЂСЏРµРј, РёРјРµРµС‚СЃСЏ Р»Рё РєР»Р°СЃСЃ РІ СЃРїРёСЃРєРµ
 		else if( clsType->baseClassList.HasBaseClass( &bchar->GetPointerToClass() ) >= 0 )
 			theApp.Error( GetPackagePosition(bcp->GetLastChildPackage()),
-				"'%s' - класс уже задан как базовый", 
+				"'%s' - РєР»Р°СЃСЃ СѓР¶Рµ Р·Р°РґР°РЅ РєР°Рє Р±Р°Р·РѕРІС‹Р№", 
 					bchar->GetPointerToClass().GetName().c_str());
 
-		// иначе добавляем, при этом если класс полиморфный, то и формируемый
-		// класс полиморфный, также добавляем кол-во абстрактных методов
+		// РёРЅР°С‡Рµ РґРѕР±Р°РІР»СЏРµРј, РїСЂРё СЌС‚РѕРј РµСЃР»Рё РєР»Р°СЃСЃ РїРѕР»РёРјРѕСЂС„РЅС‹Р№, С‚Рѕ Рё С„РѕСЂРјРёСЂСѓРµРјС‹Р№
+		// РєР»Р°СЃСЃ РїРѕР»РёРјРѕСЂС„РЅС‹Р№, С‚Р°РєР¶Рµ РґРѕР±Р°РІР»СЏРµРј РєРѕР»-РІРѕ Р°Р±СЃС‚СЂР°РєС‚РЅС‹С… РјРµС‚РѕРґРѕРІ
 		else
 		{
 			clsType->AddBaseClass(bchar);
@@ -858,28 +858,28 @@ void ClassParserImpl::ReadBaseClassList()
 			if( bcls.IsPolymorphic() )
 				clsType->polymorphic = true;
 
-			clsType->abstractMethodCount += bcls.abstractMethodCount;			
+			clsType->abstractMethodCount += bcls.abstractMethodCount;
 		}
 		
 		} // clsType != NULL
 
-		// следующая лексема должна быть либо ',' либо '{',	
+		// СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р»РёР±Рѕ ',' Р»РёР±Рѕ '{',	
 		lxm = lexicalAnalyzer.NextLexem();
 		if( lxm != ',' && lxm != '{' )
 		{
-			clsType->baseClassList.ClearBaseClassList();	// очищаем список
-			throw lxm;										// синтаксическая ошибка
+			clsType->baseClassList.ClearBaseClassList(); // РѕС‡РёС‰Р°РµРј СЃРїРёСЃРѕРє
+			throw lxm; // СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°
 		}
 
 		if( lxm == '{' )
 		{
-			// проверяем, если класс является объединением,
-			// он не может иметь списка базовых классов
+			// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ РѕР±СЉРµРґРёРЅРµРЅРёРµРј,
+			// РѕРЅ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃРїРёСЃРєР° Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ
 			if( clsType && clsType->GetBaseTypeCode() == BaseType::BT_UNION &&
 				!clsType->baseClassList.IsEmpty() )
 			{
 				theApp.Error(lxm.GetPos(), 
-					"'%s' - объединение не может иметь базовых классов",
+					"'%s' - РѕР±СЉРµРґРёРЅРµРЅРёРµ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ",
 					clsType->GetName().c_str());
 				 clsType->baseClassList.ClearBaseClassList();
 			}
@@ -891,19 +891,19 @@ void ClassParserImpl::ReadBaseClassList()
 }
 
 
-// разобрать член
+// СЂР°Р·РѕР±СЂР°С‚СЊ С‡Р»РµРЅ
 void ClassParserImpl::ParseMember( )
 {
 	NodePackage *tsl = NULL, *dcl = NULL;
 	DeclaratorReader dr(DV_CLASS_MEMBER, lexicalAnalyzer);
 
-	try {		
+	try {
 		dr.ReadTypeSpecifierList();
-		tsl = dr.GetTypeSpecPackage().Release();	
-				
-		// в этом месте может быть определение класса, если последние
-		// два пакета были ключ класса и PC_QUALIFIED_NAME, а последняя
-		// считанная лексема - '{' или ':'
+		tsl = dr.GetTypeSpecPackage().Release();
+
+		// РІ СЌС‚РѕРј РјРµСЃС‚Рµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°СЃСЃР°, РµСЃР»Рё РїРѕСЃР»РµРґРЅРёРµ
+		// РґРІР° РїР°РєРµС‚Р° Р±С‹Р»Рё РєР»СЋС‡ РєР»Р°СЃСЃР° Рё PC_QUALIFIED_NAME, Р° РїРѕСЃР»РµРґРЅСЏСЏ
+		// СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° - '{' РёР»Рё ':'
 		if( NeedClassParserImpl(lexicalAnalyzer.LastLexem(), tsl) )
 		{
 			ClassParserImpl cpi(lexicalAnalyzer, tsl, curAccessSpec);
@@ -918,7 +918,7 @@ void ClassParserImpl::ParseMember( )
 				lexicalAnalyzer.BackLexem();
 		}
 
-		// иначе если требуется считать перечисление, считываем
+		// РёРЅР°С‡Рµ РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚Р°С‚СЊ РїРµСЂРµС‡РёСЃР»РµРЅРёРµ, СЃС‡РёС‚С‹РІР°РµРј
 		else if( NeedEnumReading(lexicalAnalyzer.LastLexem(), tsl) )
 		{
 			EnumParserImpl epi(lexicalAnalyzer, tsl, curAccessSpec);
@@ -933,7 +933,7 @@ void ClassParserImpl::ParseMember( )
 
 		}
 
-		// иначе если объявление класса или перечисления
+		// РёРЅР°С‡Рµ РµСЃР»Рё РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 		else if( tsl->GetChildPackageCount() == 2 && 
 				 tsl->GetChildPackage(1)->GetPackageID() == PC_QUALIFIED_NAME && 
 				 lexicalAnalyzer.LastLexem() == ';' )
@@ -956,7 +956,7 @@ void ClassParserImpl::ParseMember( )
 			}
 		}
 
-		// иначе если объявление дружеского класса
+		// РёРЅР°С‡Рµ РµСЃР»Рё РѕР±СЉСЏРІР»РµРЅРёРµ РґСЂСѓР¶РµСЃРєРѕРіРѕ РєР»Р°СЃСЃР°
 		else if( tsl->GetChildPackageCount() == 3 &&
 			tsl->GetChildPackage(0)->GetPackageID() == KWFRIEND &&
 			(tsl->GetChildPackage(1)->GetPackageID() == KWCLASS  ||
@@ -971,30 +971,30 @@ void ClassParserImpl::ParseMember( )
 		}
 
 
-		// считываем список деклараций
+		// СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РґРµРєР»Р°СЂР°С†РёР№
 		bool firstDecl = true;
 		for( ;; )
 		{
 			dcl = dr.ReadNextDeclarator().Release();
 
-			// здесь проверяем, если дочерних пакетов не у типа не
-			// у декларатора, значит выходим
+			// Р·РґРµСЃСЊ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РґРѕС‡РµСЂРЅРёС… РїР°РєРµС‚РѕРІ РЅРµ Сѓ С‚РёРїР° РЅРµ
+			// Сѓ РґРµРєР»Р°СЂР°С‚РѕСЂР°, Р·РЅР°С‡РёС‚ РІС‹С…РѕРґРёРј
 			if( dcl->IsNoChildPackages() && tsl->IsNoChildPackages() )
 				throw lexicalAnalyzer.LastLexem();
 
-			// далее создаем декларацию из пакета и проверяем ее
+			// РґР°Р»РµРµ СЃРѕР·РґР°РµРј РґРµРєР»Р°СЂР°С†РёСЋ РёР· РїР°РєРµС‚Р° Рё РїСЂРѕРІРµСЂСЏРµРј РµРµ
 			MemberDeclarationCoordinator dcoord(tsl, dcl, *clsType, curAccessSpec);
 			PMemberDeclarationMaker dmak = dcoord.Coordinate();
 
-			// строитель должен быть определен
+			// СЃС‚СЂРѕРёС‚РµР»СЊ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РѕРїСЂРµРґРµР»РµРЅ
 			if( !dmak.IsNull() )
 			{
 				dmak->Make();
 
-				// далее идет проверка на тело функции, должны быть след. условия
-				// 1. это первая декларация
-				// 2. идентификатор является функцией
-				// 3. последняя считанная лексема - '{', или ':', try - если функция конструктор				
+				// РґР°Р»РµРµ РёРґРµС‚ РїСЂРѕРІРµСЂРєР° РЅР° С‚РµР»Рѕ С„СѓРЅРєС†РёРё, РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ СЃР»РµРґ. СѓСЃР»РѕРІРёСЏ
+				// 1. СЌС‚Рѕ РїРµСЂРІР°СЏ РґРµРєР»Р°СЂР°С†РёСЏ
+				// 2. РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№
+				// 3. РїРѕСЃР»РµРґРЅСЏСЏ СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° - '{', РёР»Рё ':', try - РµСЃР»Рё С„СѓРЅРєС†РёСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 				if( firstDecl )
 				{	
 					if( NeedFunctionParserImpl(lexicalAnalyzer, dmak->GetIdentifier()) )
@@ -1002,17 +1002,17 @@ void ClassParserImpl::ParseMember( )
 						Function &fn = *const_cast<Function *>(
 							static_cast<const Function *>(dmak->GetIdentifier()) );
 
-						// считываем тело в контейнер и сохраняем внутри класса,
-						// чтобы по окончании определения класса, разобрать тело метода
+						// СЃС‡РёС‚С‹РІР°РµРј С‚РµР»Рѕ РІ РєРѕРЅС‚РµР№РЅРµСЂ Рё СЃРѕС…СЂР°РЅСЏРµРј РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°,
+						// С‡С‚РѕР±С‹ РїРѕ РѕРєРѕРЅС‡Р°РЅРёРё РѕРїСЂРµРґРµР»РµРЅРёСЏ РєР»Р°СЃСЃР°, СЂР°Р·РѕР±СЂР°С‚СЊ С‚РµР»Рѕ РјРµС‚РѕРґР°
 						lexicalAnalyzer.BackLexem();
 						FunctionBodyReader fbr(lexicalAnalyzer, false);
 						fbr.Read();
 
-						// после тела может идти ';'
+						// РїРѕСЃР»Рµ С‚РµР»Р° РјРѕР¶РµС‚ РёРґС‚Рё ';'
 						if( lexicalAnalyzer.NextLexem() != ';' )
 							lexicalAnalyzer.BackLexem();
 
-						// сохраняем
+						// СЃРѕС…СЂР°РЅСЏРµРј
 						methodBodyList.push_back( FnContainerPair(&fn, fbr.GetLexemContainer()) );
 						return;
 					}
@@ -1021,53 +1021,53 @@ void ClassParserImpl::ParseMember( )
 				}
 
 
-				// если имеем функцию, то это может быть только чистый
-				// спецификатор, либо без инициализации, иначе полный инициализатор
+				// РµСЃР»Рё РёРјРµРµРј С„СѓРЅРєС†РёСЋ, С‚Рѕ СЌС‚Рѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ С‡РёСЃС‚С‹Р№
+				// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ, Р»РёР±Рѕ Р±РµР· РёРЅРёС†РёР°Р»РёР·Р°С†РёРё, РёРЅР°С‡Рµ РїРѕР»РЅС‹Р№ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ
 				if( const Method *meth = dynamic_cast<const Method *>(dmak->GetIdentifier()) )
-				{				
-					// далее может идти задание чистого спецификатора для метода					
+				{
+					// РґР°Р»РµРµ РјРѕР¶РµС‚ РёРґС‚Рё Р·Р°РґР°РЅРёРµ С‡РёСЃС‚РѕРіРѕ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° РґР»СЏ РјРµС‚РѕРґР°
 					if( lexicalAnalyzer.LastLexem() == '=' )
-					{					
+					{
 						if( lexicalAnalyzer.NextLexem().GetBuf() != "0" )
 							throw lexicalAnalyzer.LastLexem();
 
-						// проверяем инициализацию
+						// РїСЂРѕРІРµСЂСЏРµРј РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ
 						dmak->Initialize( MIT_PURE_VIRTUAL, *ErrorOperand::GetInstance() );
 
-						// задаем. соотв. параметры класса
+						// Р·Р°РґР°РµРј. СЃРѕРѕС‚РІ. РїР°СЂР°РјРµС‚СЂС‹ РєР»Р°СЃСЃР°
 						if( meth->IsAbstract() )
 							clsType->abstractMethodCount += 1;
 
 						lexicalAnalyzer.NextLexem();
 					}
 
-					// иначе инициализации без ничего, в этом случае выявляем
-					// виртуальность функции в иерархии
+					// РёРЅР°С‡Рµ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё Р±РµР· РЅРёС‡РµРіРѕ, РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РІС‹СЏРІР»СЏРµРј
+					// РІРёСЂС‚СѓР°Р»СЊРЅРѕСЃС‚СЊ С„СѓРЅРєС†РёРё РІ РёРµСЂР°СЂС…РёРё
 					else
-					{						
+					{
 						dmak->Initialize( MIT_NONE, *ErrorOperand::GetInstance() );
 					}
 				}
 
-				// иначе инициализация данного-члена или дружеской функции,
-				// в последнем случае всегда ошибка
+				// РёРЅР°С‡Рµ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅРѕРіРѕ-С‡Р»РµРЅР° РёР»Рё РґСЂСѓР¶РµСЃРєРѕР№ С„СѓРЅРєС†РёРё,
+				// РІ РїРѕСЃР»РµРґРЅРµРј СЃР»СѓС‡Р°Рµ РІСЃРµРіРґР° РѕС€РёР±РєР°
 				else if( lexicalAnalyzer.LastLexem() == '=' )
 				{
 					ExpressionReader er(lexicalAnalyzer, NULL, true);
 					er.Read();	
 
-					// проверяем инициализацию данного члена
+					// РїСЂРѕРІРµСЂСЏРµРј РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ РґР°РЅРЅРѕРіРѕ С‡Р»РµРЅР°
 					if( dmak->GetIdentifier() != NULL )
 						dmak->Initialize( MIT_DATA_MEMBER, *er.GetResultOperand() );
 				}
 
-				// если идет ':', видимо имеем битовое поле
+				// РµСЃР»Рё РёРґРµС‚ ':', РІРёРґРёРјРѕ РёРјРµРµРј Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ
 				else if( lexicalAnalyzer.LastLexem() == ':' )
 				{
 					ExpressionReader er(lexicalAnalyzer, NULL, true);
 					er.Read();
 					
-					// проверяем создание битового поля
+					// РїСЂРѕРІРµСЂСЏРµРј СЃРѕР·РґР°РЅРёРµ Р±РёС‚РѕРІРѕРіРѕ РїРѕР»СЏ
 					if( dmak->GetIdentifier() != NULL )
 						dmak->Initialize( MIT_BITFIELD, *er.GetResultOperand() );
 				}
@@ -1084,7 +1084,7 @@ void ClassParserImpl::ParseMember( )
 			dcl = NULL;
 		}
 
-	} catch( Lexem &lxm ) {				
+	} catch( Lexem &lxm ) {
 		SyntaxError(lxm);
 		IgnoreStreamWhileNotDelim(lexicalAnalyzer);
 	}
@@ -1094,11 +1094,11 @@ void ClassParserImpl::ParseMember( )
 }
 
 
-// по завершении определения класса, разбираем inline-функции, которые
-// находятся в контейнере
+// РїРѕ Р·Р°РІРµСЂС€РµРЅРёРё РѕРїСЂРµРґРµР»РµРЅРёСЏ РєР»Р°СЃСЃР°, СЂР°Р·Р±РёСЂР°РµРј inline-С„СѓРЅРєС†РёРё, РєРѕС‚РѕСЂС‹Рµ
+// РЅР°С…РѕРґСЏС‚СЃСЏ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ
 void ClassParserImpl::LoadInlineFunctions()
 {
-	// если список пустой, выйти
+	// РµСЃР»Рё СЃРїРёСЃРѕРє РїСѓСЃС‚РѕР№, РІС‹Р№С‚Рё
 	if( methodBodyList.empty() )
 		return;
 
@@ -1108,8 +1108,8 @@ void ClassParserImpl::LoadInlineFunctions()
 		Function &fn = *(*p).first;
 		LexemContainer *lc = &*(*p).second;
 
-		// пропускаем постройку, если ф-ция дружественная. Этим
-		// будет заниматься ф-ция LoadFriendFunctions
+		// РїСЂРѕРїСѓСЃРєР°РµРј РїРѕСЃС‚СЂРѕР№РєСѓ, РµСЃР»Рё С„-С†РёСЏ РґСЂСѓР¶РµСЃС‚РІРµРЅРЅР°СЏ. Р­С‚РёРј
+		// Р±СѓРґРµС‚ Р·Р°РЅРёРјР°С‚СЊСЃСЏ С„-С†РёСЏ LoadFriendFunctions
 		if( clsType->GetFriendList().FindClassFriend(&fn) >= 0 )
 		{
 			p++;
@@ -1119,47 +1119,47 @@ void ClassParserImpl::LoadInlineFunctions()
 		if( fn.IsHaveBody() )
 		{
 			theApp.Error( lc->front().GetPos(),
-				"'%s' - у метода уже есть тело", fn.GetQualifiedName().c_str());
+				"'%s' - Сѓ РјРµС‚РѕРґР° СѓР¶Рµ РµСЃС‚СЊ С‚РµР»Рѕ", fn.GetQualifiedName().c_str());
 			p = methodBodyList.erase(p);
 			continue;
 		}
 
-		lexicalAnalyzer.LoadContainer( lc );	// загружаем контейнер
+		lexicalAnalyzer.LoadContainer( lc ); // Р·Р°РіСЂСѓР¶Р°РµРј РєРѕРЅС‚РµР№РЅРµСЂ
 		FunctionParserImpl fpi( lexicalAnalyzer, fn );
 		fpi.Parse();
 
-		// удаляем тело, чтобы по второму заходу обработать friend-функции
-		p = methodBodyList.erase(p);	
+		// СѓРґР°Р»СЏРµРј С‚РµР»Рѕ, С‡С‚РѕР±С‹ РїРѕ РІС‚РѕСЂРѕРјСѓ Р·Р°С…РѕРґСѓ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ friend-С„СѓРЅРєС†РёРё
+		p = methodBodyList.erase(p); 
 	}
 }
 
 
-// загружаем дружественные функции, считанные в процессе постройки класса
+// Р·Р°РіСЂСѓР¶Р°РµРј РґСЂСѓР¶РµСЃС‚РІРµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё, СЃС‡РёС‚Р°РЅРЅС‹Рµ РІ РїСЂРѕС†РµСЃСЃРµ РїРѕСЃС‚СЂРѕР№РєРё РєР»Р°СЃСЃР°
 void ClassParserImpl::LoadFriendFunctions()
 {
-	// если список пустой, выйти
+	// РµСЃР»Рё СЃРїРёСЃРѕРє РїСѓСЃС‚РѕР№, РІС‹Р№С‚Рё
 	if( methodBodyList.empty() )
 		return;
 
-	// проходим по списку загружая функции
+	// РїСЂРѕС…РѕРґРёРј РїРѕ СЃРїРёСЃРєСѓ Р·Р°РіСЂСѓР¶Р°СЏ С„СѓРЅРєС†РёРё
 	for( list<FnContainerPair>::iterator p = methodBodyList.begin(); 
 		p != methodBodyList.end(); p++ )
 	{
 		Function &fn = *(*p).first;
 		LexemContainer *lc = &*(*p).second;
 
-		// область видимости должна быть та же
+		// РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґРѕР»Р¶РЅР° Р±С‹С‚СЊ С‚Р° Р¶Рµ
 		INTERNAL_IF( &fn.GetSymbolTableEntry() != &::GetCurrentSymbolTable() );
 	
-		// у дружественной ф-ции может быть тело
+		// Сѓ РґСЂСѓР¶РµСЃС‚РІРµРЅРЅРѕР№ С„-С†РёРё РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РµР»Рѕ
 		if( fn.IsHaveBody() )
 		{
 			theApp.Error( lc->front().GetPos(),
-				"'%s' - у метода уже есть тело", fn.GetQualifiedName().c_str());
+				"'%s' - Сѓ РјРµС‚РѕРґР° СѓР¶Рµ РµСЃС‚СЊ С‚РµР»Рѕ", fn.GetQualifiedName().c_str());
 			continue;
 		}
 
-		lexicalAnalyzer.LoadContainer( lc );	// загружаем контейнер
+		lexicalAnalyzer.LoadContainer( lc ); // Р·Р°РіСЂСѓР¶Р°РµРј РєРѕРЅС‚РµР№РЅРµСЂ
 		FunctionParserImpl fpi( lexicalAnalyzer, fn );
 		fpi.Parse();
 
@@ -1167,64 +1167,64 @@ void ClassParserImpl::LoadFriendFunctions()
 }
 
 
-// анализатор, пакет с перечислением, спецификатор доступа если находимся внутри класса
+// Р°РЅР°Р»РёР·Р°С‚РѕСЂ, РїР°РєРµС‚ СЃ РїРµСЂРµС‡РёСЃР»РµРЅРёРµРј, СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° РµСЃР»Рё РЅР°С…РѕРґРёРјСЃСЏ РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°
 void EnumParserImpl::Parse( )
 {
 	EnumTypeMaker ctm(&typePkg, curAccessSpec,  true);
-	enumType = ctm.Make();			// перечисление может не "построится", тогда NULL
+	enumType = ctm.Make(); // РїРµСЂРµС‡РёСЃР»РµРЅРёРµ РјРѕР¶РµС‚ РЅРµ "РїРѕСЃС‚СЂРѕРёС‚СЃСЏ", С‚РѕРіРґР° NULL
 	
-	// если перечисление не создано, либо оно объявляется дважды, либо
-	// оно объявляется не в глобальной области видимости
+	// РµСЃР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёРµ РЅРµ СЃРѕР·РґР°РЅРѕ, Р»РёР±Рѕ РѕРЅРѕ РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ РґРІР°Р¶РґС‹, Р»РёР±Рѕ
+	// РѕРЅРѕ РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ РЅРµ РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	if( enumType == NULL ||
 		!enumType->IsUncomplete() || 
 		(!ctm.GetQualifierList().IsEmpty() &&
 		 !(GetCurrentSymbolTable().IsGlobalSymbolTable() || 
 		   GetCurrentSymbolTable().IsNamespaceSymbolTable()) ) )
 	{
-		// выводим ошибку
+		// РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
 		if( enumType != NULL )
 			theApp.Error(errPos, 
 				"'%s' - %s",
 				enumType->GetQualifiedName().c_str(),
 				!enumType->IsUncomplete() ?
-				"перечисление уже определено" : 
-				"перечисление должно определяться в глобальной области видимости");
+				"РїРµСЂРµС‡РёСЃР»РµРЅРёРµ СѓР¶Рµ РѕРїСЂРµРґРµР»РµРЅРѕ" : 
+				"РїРµСЂРµС‡РёСЃР»РµРЅРёРµ РґРѕР»Р¶РЅРѕ РѕРїСЂРµРґРµР»СЏС‚СЊСЃСЏ РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё");
 		FunctionBodyReader(lexicalAnalyzer, true).Read();
 		return;
 	}
 
-	// иначе считываем все константы перечисления
+	// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј РІСЃРµ РєРѕРЅСЃС‚Р°РЅС‚С‹ РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 	Lexem lxm ;
 	if( lexicalAnalyzer.NextLexem() != '{' )
 		throw lexicalAnalyzer.LastLexem();
 
-	// список констант
+	// СЃРїРёСЃРѕРє РєРѕРЅСЃС‚Р°РЅС‚
 	EnumConstantList ecl;
 	int lastVal = -1;
 	for( ;; )
-	{		
+	{
 		lxm = lexicalAnalyzer.NextLexem();
 
-		// следующая константа
+		// СЃР»РµРґСѓСЋС‰Р°СЏ РєРѕРЅСЃС‚Р°РЅС‚Р°
 		if( lxm == NAME )
 		{
 			CharString name = lxm.GetBuf();
 			lxm = lexicalAnalyzer.NextLexem();
 
-			// считываем инициализатор
-			PEnumConstant pec = NULL;			
+			// СЃС‡РёС‚С‹РІР°РµРј РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ
+			PEnumConstant pec = NULL;
 			if( lxm == '=' )
 			{
 				ExpressionReader er( lexicalAnalyzer, NULL, true);
 				er.Read();
-				POperand ival = er.GetResultOperand();				
+				POperand ival = er.GetResultOperand();
 				double v;
 				if( ExpressionMakerUtils::IsInterpretable(ival, v) &&
 					ExpressionMakerUtils::IsIntegral(ival->GetType()) )
 					lastVal = v;
 				else
 					theApp.Error(errPos,
-						"'%s' - инициализируемое значение должно быть целой константой",
+						"'%s' - РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С†РµР»РѕР№ РєРѕРЅСЃС‚Р°РЅС‚РѕР№",
 						name.c_str());
 				lxm = lexicalAnalyzer.LastLexem();
 			}
@@ -1240,20 +1240,20 @@ void EnumParserImpl::Parse( )
 			}
 
 
-			// если '{', выходим
+			// РµСЃР»Рё '{', РІС‹С…РѕРґРёРј
 			if( lxm == '}' )
 				break;
 
-			// иначе должен быть ','
+			// РёРЅР°С‡Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ ','
 			if( lxm != ',' )
-				throw lxm;						
+				throw lxm;
 		}
 
-		// если конец, выходим
+		// РµСЃР»Рё РєРѕРЅРµС†, РІС‹С…РѕРґРёРј
 		else if( lxm == '}' )
 			break;
 
-		// иначе синтаксическая ошибка
+		// РёРЅР°С‡Рµ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°
 		else
 			throw lxm;
 	}
@@ -1262,9 +1262,9 @@ void EnumParserImpl::Parse( )
 }
 
 
-// конструктор принимает функцию и лексический анализатор и 
-// список областей видимости для восстановления. Последий параметр может
-// быть равен 0
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїСЂРёРЅРёРјР°РµС‚ С„СѓРЅРєС†РёСЋ Рё Р»РµРєСЃРёС‡РµСЃРєРёР№ Р°РЅР°Р»РёР·Р°С‚РѕСЂ Рё 
+// СЃРїРёСЃРѕРє РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ. РџРѕСЃР»РµРґРёР№ РїР°СЂР°РјРµС‚СЂ РјРѕР¶РµС‚
+// Р±С‹С‚СЊ СЂР°РІРµРЅ 0
 FunctionParserImpl::FunctionParserImpl( LexicalAnalyzer &la, Function &fn )
 		:  lexicalAnalyzer(la) 
 {	
@@ -1272,110 +1272,110 @@ FunctionParserImpl::FunctionParserImpl( LexicalAnalyzer &la, Function &fn )
 		new ConstructorFunctionBody(fn, la.LastLexem().GetPos()) : 
 		new FunctionBody(fn, la.LastLexem().GetPos());
 
-	// проверяем, если у функции уже есть тело, вывести ошибку
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё Сѓ С„СѓРЅРєС†РёРё СѓР¶Рµ РµСЃС‚СЊ С‚РµР»Рѕ, РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 	if( fn.IsHaveBody() )
 		theApp.Error(la.LastLexem().GetPos(),
-			"'%s' - у функции уже есть тело", fn.GetQualifiedName().c_str());
-	// задаем тело функции. Тело должно задаваться один раз
+			"'%s' - Сѓ С„СѓРЅРєС†РёРё СѓР¶Рµ РµСЃС‚СЊ С‚РµР»Рѕ", fn.GetQualifiedName().c_str());
+	// Р·Р°РґР°РµРј С‚РµР»Рѕ С„СѓРЅРєС†РёРё. РўРµР»Рѕ РґРѕР»Р¶РЅРѕ Р·Р°РґР°РІР°С‚СЊСЃСЏ РѕРґРёРЅ СЂР°Р·
 	else
-		fn.SetFunctionBody();	
+		fn.SetFunctionBody();
 	
-	// задаем функциональную область видимости
+	// Р·Р°РґР°РµРј С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 	GetScopeSystem().MakeNewSymbolTable( new FunctionSymbolTable(fn, fn.GetSymbolTableEntry()) );
 
 }
 
 
-// считать список инициализации конструктора и выполнить необх. проверки
+// СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° Рё РІС‹РїРѕР»РЅРёС‚СЊ РЅРµРѕР±С…. РїСЂРѕРІРµСЂРєРё
 void FunctionParserImpl::ReadContructorInitList( CtorInitListValidator &cilv )
-{			
+{
 	for( unsigned orderNum = 1;; )
 	{
 		QualifiedConstructionReader qcr(lexicalAnalyzer, false, true);
 		PNodePackage id = qcr.ReadQualifiedConstruction();
-		
-		// не может быть указателя на член
+
+		// РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С‡Р»РµРЅ
 		if( qcr.IsPointerToMember() )
 			throw lexicalAnalyzer.LastLexem();
-			
-		// создаем идентификатор, прежде достанем функциональную область
-		// видимости, т.к. этого требует стандарт		
+
+		// СЃРѕР·РґР°РµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ, РїСЂРµР¶РґРµ РґРѕСЃС‚Р°РЅРµРј С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ
+		// РІРёРґРёРјРѕСЃС‚Рё, С‚.Рє. СЌС‚РѕРіРѕ С‚СЂРµР±СѓРµС‚ СЃС‚Р°РЅРґР°СЂС‚
 		SymbolTable *st = &::GetCurrentSymbolTable();
 		GetScopeSystem().DestroySymbolTable();
 		POperand result = IdentifierOperandMaker(*id).Make();
 		GetScopeSystem().MakeNewSymbolTable(st);
 
-		// следующая лексема должна быть '('
+		// СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ '('
 		Lexem lxm = lexicalAnalyzer.NextLexem();
 		if( lxm != '(' )
 			throw lxm;
-		
-		// считываем список выражений
+
+		// СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РІС‹СЂР°Р¶РµРЅРёР№
 		PExpressionList initializatorList = new ExpressionList;
-		if( lexicalAnalyzer.NextLexem() != ')' )			
+		if( lexicalAnalyzer.NextLexem() != ')' )
 		{
 		lexicalAnalyzer.BackLexem();
 		for( ;; )
-		{			
-			// считываем очередное выражение
+		{
+			// СЃС‡РёС‚С‹РІР°РµРј РѕС‡РµСЂРµРґРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 			ExpressionReader er(lexicalAnalyzer, NULL, true);
 			er.Read();
 
-			// сохраняем выражение
+			// СЃРѕС…СЂР°РЅСЏРµРј РІС‹СЂР°Р¶РµРЅРёРµ
 			initializatorList->push_back( er.GetResultOperand() );
 
 			if( lexicalAnalyzer.LastLexem() == ')' )
 				break;
 
-			// проверяем чтобы конструкция была корректной
-			if( lexicalAnalyzer.LastLexem() != ',' )				
+			// РїСЂРѕРІРµСЂСЏРµРј С‡С‚РѕР±С‹ РєРѕРЅСЃС‚СЂСѓРєС†РёСЏ Р±С‹Р»Р° РєРѕСЂСЂРµРєС‚РЅРѕР№
+			if( lexicalAnalyzer.LastLexem() != ',' )
 				throw lexicalAnalyzer.LastLexem();
 		}
 		}
 
-		// добавляем явный инициализатор 
+		// РґРѕР±Р°РІР»СЏРµРј СЏРІРЅС‹Р№ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ 
 		cilv.AddInitElement(result, initializatorList,
 			lexicalAnalyzer.LastLexem().GetPos(), orderNum);
 
-		// считываем до '{'
+		// СЃС‡РёС‚С‹РІР°РµРј РґРѕ '{'
 		lxm = lexicalAnalyzer.NextLexem();
 		if( lxm == '{' )
 			break;
 		
 		else if( lxm != ',' )
-			throw lxm;		
+			throw lxm;
 	}
 }
 
 
-// разбор тела функции
+// СЂР°Р·Р±РѕСЂ С‚РµР»Р° С„СѓРЅРєС†РёРё
 void FunctionParserImpl::Parse()
 {
 	register Lexem lxm = lexicalAnalyzer.NextLexem();
 	INTERNAL_IF( lxm != '{' && lxm != ':' && lxm != KWTRY );
 	bool isTryRootBlock = false;
-	// если try-блок, после него может идти список инициализации
+	// РµСЃР»Рё try-Р±Р»РѕРє, РїРѕСЃР»Рµ РЅРµРіРѕ РјРѕР¶РµС‚ РёРґС‚Рё СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 	if( lxm == KWTRY )
 	{
 		lxm = lexicalAnalyzer.NextLexem();
-		isTryRootBlock = true;				// устанавливаем флаг, что корневой - try-блок
-	}	
+		isTryRootBlock = true; // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј С„Р»Р°Рі, С‡С‚Рѕ РєРѕСЂРЅРµРІРѕР№ - try-Р±Р»РѕРє
+	}
 
-	// если имеем тело конструктора, проверяем инициализацию членов
+	// РµСЃР»Рё РёРјРµРµРј С‚РµР»Рѕ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°, РїСЂРѕРІРµСЂСЏРµРј РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ С‡Р»РµРЅРѕРІ
 	if( fnBody->IsConstructorBody() )
 	{
 		CtorInitListValidator cilv( 
 			static_cast<const ConstructorMethod &>(fnBody->GetFunction()), 
-			lexicalAnalyzer.LastLexem().GetPos() );	
+			lexicalAnalyzer.LastLexem().GetPos() );
 
-		// считываем список инициализации конструктора
-		if( lxm == ':' )			
-			ReadContructorInitList(cilv);		// последняя считанная лексема должна быть '{'
+		// СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
+		if( lxm == ':' )
+			ReadContructorInitList(cilv); // РїРѕСЃР»РµРґРЅСЏСЏ СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ '{'
 
-		// проверяем инициализацию членов
+		// РїСЂРѕРІРµСЂСЏРµРј РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ С‡Р»РµРЅРѕРІ
 		cilv.Validate();
 
-		// задаем список инициализации
+		// Р·Р°РґР°РµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 		static_cast<ConstructorFunctionBody &>(*fnBody).
 			SetConstructorInitList(cilv.GetInitElementList());
 	}
@@ -1383,54 +1383,54 @@ void FunctionParserImpl::Parse()
 	if( lexicalAnalyzer.LastLexem() != '{' )
 		throw lexicalAnalyzer.LastLexem();
 
-	// задаем корневую конструкцию
+	// Р·Р°РґР°РµРј РєРѕСЂРЅРµРІСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 	if( isTryRootBlock )
 		fnBody->SetBodyConstruction( 
 			new TryCatchConstruction(NULL, lexicalAnalyzer.PrevLexem().GetPos()) );
-	// иначе составную
+	// РёРЅР°С‡Рµ СЃРѕСЃС‚Р°РІРЅСѓСЋ
 	else
 		fnBody->SetBodyConstruction( 
 			new CompoundConstruction(NULL, lexicalAnalyzer.PrevLexem().GetPos()) );
 
-	// создаем контроллер конструкций
+	// СЃРѕР·РґР°РµРј РєРѕРЅС‚СЂРѕР»Р»РµСЂ РєРѕРЅСЃС‚СЂСѓРєС†РёР№
 	ConstructionController constructionController(fnBody->GetBodyConstruction());
 
-	// выполняем считывание блока
+	// РІС‹РїРѕР»РЅСЏРµРј СЃС‡РёС‚С‹РІР°РЅРёРµ Р±Р»РѕРєР°
 	StatementParserImpl spi(lexicalAnalyzer, constructionController, *fnBody);
 	spi.Parse();
 
-	// после того как тело сфомрировано, выполняем заключительные проверки
+	// РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє С‚РµР»Рѕ СЃС„РѕРјСЂРёСЂРѕРІР°РЅРѕ, РІС‹РїРѕР»РЅСЏРµРј Р·Р°РєР»СЋС‡РёС‚РµР»СЊРЅС‹Рµ РїСЂРѕРІРµСЂРєРё
 	PostBuildingChecks(*fnBody).DoChecks();
 }
 
 
-// считать и создать using конструкцию
+// СЃС‡РёС‚Р°С‚СЊ Рё СЃРѕР·РґР°С‚СЊ using РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 void StatementParserImpl::ReadUsingStatement( )
 {
-	// using namespace 'name' или
+	// using namespace 'name' РёР»Рё
 	// using 'name'
-	try {		
-		// использование области видимости
+	try {
+		// РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 		if( la.NextLexem() == KWNAMESPACE )
 		{
-			// считываем имя области видимости и передаем его в строитель
-			// области видимости
+			// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРµСЂРµРґР°РµРј РµРіРѕ РІ СЃС‚СЂРѕРёС‚РµР»СЊ
+			// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 			PNodePackage nspkg = QualifiedConstructionReader(la, 
 					false, true).ReadQualifiedConstruction();
 					
 			MakerUtils::MakeUsingNamespace( &*nspkg );
 			if( la.NextLexem() != ';' )
-				throw la.LastLexem();		
+				throw la.LastLexem();
 		}
 
-		// иначе using-декларация
+		// РёРЅР°С‡Рµ using-РґРµРєР»Р°СЂР°С†РёСЏ
 		else
 		{
 			la.BackLexem();
 		
-			// считываем имя области видимости и передаем его в строитель
-			// области видимости
-			PNodePackage nspkg = QualifiedConstructionReader(la).ReadQualifiedConstruction();					
+			// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРµСЂРµРґР°РµРј РµРіРѕ РІ СЃС‚СЂРѕРёС‚РµР»СЊ
+			// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
+			PNodePackage nspkg = QualifiedConstructionReader(la).ReadQualifiedConstruction();
 			MakerUtils::MakeUsingNotMember( &*nspkg );
 			if( la.NextLexem() != ';' )
 				throw la.LastLexem();
@@ -1438,24 +1438,24 @@ void StatementParserImpl::ReadUsingStatement( )
 
 	} catch( const Lexem &ep ) {
 		SyntaxError(ep);
-		IgnoreStreamWhileNotDelim(la);				
-	}	
+		IgnoreStreamWhileNotDelim(la);
+	}
 }
 
 
-// считать for конструкцию
+// СЃС‡РёС‚Р°С‚СЊ for РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 ForConstruction *StatementParserImpl::ReadForConstruction( ConstructionController &cntCtrl )
 {
 	Position fpos = la.LastLexem().GetPos();
 	if( la.NextLexem() != '(' ) 
 		throw la.LastLexem();
-		
+
 	InstructionList init;
 	PInstruction cond = NULL;
 	POperand iter = NULL;
 	if( la.NextLexem() != ';' )
 	{
-		// считываем секцию инициализации
+		// СЃС‡РёС‚С‹РІР°РµРј СЃРµРєС†РёСЋ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 		la.BackLexem();
 		InstructionParserImpl ipl(la, init);
 		ipl.Parse();
@@ -1484,28 +1484,28 @@ ForConstruction *StatementParserImpl::ReadForConstruction( ConstructionControlle
 }
 
 
-// считать выражение для конструкций, вернуть результат
+// СЃС‡РёС‚Р°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёР№, РІРµСЂРЅСѓС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚
 POperand StatementParserImpl::ReadExpression( bool noComa )
 {
 	ExpressionReader er(la, NULL, noComa);
 	er.Read();
-	return er.GetResultOperand();		
+	return er.GetResultOperand();
 }
 
-	
-// считать инструкцию. Инструкцией является декларация с инициализацией
-// или выражение. Используется в if, switch, while, for
+
+// СЃС‡РёС‚Р°С‚СЊ РёРЅСЃС‚СЂСѓРєС†РёСЋ. РРЅСЃС‚СЂСѓРєС†РёРµР№ СЏРІР»СЏРµС‚СЃСЏ РґРµРєР»Р°СЂР°С†РёСЏ СЃ РёРЅРёС†РёР°Р»РёР·Р°С†РёРµР№
+// РёР»Рё РІС‹СЂР°Р¶РµРЅРёРµ. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ if, switch, while, for
 PInstruction StatementParserImpl::ReadCondition( )
 {
 	TypeExpressionReader ter(la);
 	ter.Read( false, false );
 	Position insPos = la.LastLexem().GetPos();
 
-	// проверяем пакет,
-	INTERNAL_IF( ter.GetResultPackage() == NULL );	
+	// РїСЂРѕРІРµСЂСЏРµРј РїР°РєРµС‚,
+	INTERNAL_IF( ter.GetResultPackage() == NULL );
 
-	// если имеем выражение, значит строим выражение
-	if( ter.GetResultPackage()->IsExpressionPackage() )			
+	// РµСЃР»Рё РёРјРµРµРј РІС‹СЂР°Р¶РµРЅРёРµ, Р·РЅР°С‡РёС‚ СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ
+	if( ter.GetResultPackage()->IsExpressionPackage() )
 	{
 		POperand exp = static_cast<const ExpressionPackage &>(
 			*ter.GetResultPackage()).GetExpression();
@@ -1513,18 +1513,18 @@ PInstruction StatementParserImpl::ReadCondition( )
 		return new ExpressionInstruction(exp, insPos);
 	}
 
-	// иначе имеем декларацию, следует считать инициализатор
+	// РёРЅР°С‡Рµ РёРјРµРµРј РґРµРєР»Р°СЂР°С†РёСЋ, СЃР»РµРґСѓРµС‚ СЃС‡РёС‚Р°С‚СЊ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ
 	else
 	{
 		if( la.LastLexem() != '=' )
 			throw la.LastLexem();
 
-		// если инициализатор задан в скобках, это ошибка
+		// РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ Р·Р°РґР°РЅ РІ СЃРєРѕР±РєР°С…, СЌС‚Рѕ РѕС€РёР±РєР°
 		if( !ter.GetInitializatorList().IsNull() )
-			theApp.Error(la.LastLexem().GetPos(), "инициализатор уже задан");
+			theApp.Error(la.LastLexem().GetPos(), "РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ СѓР¶Рµ Р·Р°РґР°РЅ");
 		POperand iator = ReadExpression();
 
-		// строим инструкцию
+		// СЃС‚СЂРѕРёРј РёРЅСЃС‚СЂСѓРєС†РёСЋ
 		PInstruction cond = BodyMakerUtils::MakeCondition( 
 			static_cast<const NodePackage &>(*ter.GetResultPackage()), iator, insPos);
 		delete ter.GetResultPackage();
@@ -1533,16 +1533,16 @@ PInstruction StatementParserImpl::ReadCondition( )
 }
 
 
-// считать catch-декларацию
+// СЃС‡РёС‚Р°С‚СЊ catch-РґРµРєР»Р°СЂР°С†РёСЋ
 PTypyziedEntity StatementParserImpl::ReadCatchDeclaration( )
 {
 	if( la.NextLexem() != '(' )
 		throw la.LastLexem();
 	
-	// считываем тип, если не считано '...'
+	// СЃС‡РёС‚С‹РІР°РµРј С‚РёРї, РµСЃР»Рё РЅРµ СЃС‡РёС‚Р°РЅРѕ '...'
 	if( la.NextLexem() == ELLIPSES )
 	{
-		// след. лексема должна быть ')'
+		// СЃР»РµРґ. Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ ')'
 		if( la.NextLexem() != ')' )
 			throw la.LastLexem();
 		return NULL;
@@ -1552,30 +1552,30 @@ PTypyziedEntity StatementParserImpl::ReadCatchDeclaration( )
 	{
 		Position dpos = la.LastLexem().GetPos();
 
-		// считываем декларацию
+		// СЃС‡РёС‚С‹РІР°РµРј РґРµРєР»Р°СЂР°С†РёСЋ
 		la.BackLexem();
 		DeclaratorReader dr( DV_CATCH_DECLARATION, la, true );
-		dr.ReadTypeSpecifierList();		
+		dr.ReadTypeSpecifierList();
 		PNodePackage typeLst = dr.GetTypeSpecPackage();
 	
-		// если не было считано типа, ошибка
+		// РµСЃР»Рё РЅРµ Р±С‹Р»Рѕ СЃС‡РёС‚Р°РЅРѕ С‚РёРїР°, РѕС€РёР±РєР°
 		if( typeLst->IsNoChildPackages() )
 			throw la.LastLexem();
 		
-		// считываем декларатор
+		// СЃС‡РёС‚С‹РІР°РµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 		PNodePackage decl = dr.ReadNextDeclarator();
 		if( la.LastLexem() != ')' )
 			throw la.LastLexem();
 
-		// строим декларацию, возвращаем
+		// СЃС‚СЂРѕРёРј РґРµРєР»Р°СЂР°С†РёСЋ, РІРѕР·РІСЂР°С‰Р°РµРј
 		return CatchDeclarationMaker(*typeLst, *decl, dpos).Make();
-	}	
+	}
 }
 
 
-// считать список catch-обработчиков
+// СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє catch-РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРІ
 void StatementParserImpl::ReadCatchList()
-{	
+{
 	for( ;; )
 	{
 		if( la.NextLexem() != KWCATCH )
@@ -1585,23 +1585,23 @@ void StatementParserImpl::ReadCatchList()
 		}
 		
 		Position cpos = la.LastLexem().GetPos();
-		// создаем область видимости для catch-блока		
+		// СЃРѕР·РґР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ catch-Р±Р»РѕРєР°
 		MakeLST();
 
-		// считываем catch-декларацию
+		// СЃС‡РёС‚С‹РІР°РµРј catch-РґРµРєР»Р°СЂР°С†РёСЋ
 		PTypyziedEntity catchObj = ReadCatchDeclaration();
 		if( la.NextLexem() != '{' )
 			throw la.LastLexem();
 
-		// строим catch-конструкцию
+		// СЃС‚СЂРѕРёРј catch-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 		CatchConstruction *cc = CatchConstructionMaker(
 			catchObj, controller.GetCurrentConstruction(), cpos).Make();
 		PBodyComponent pCatch = cc;
 
-		// считываем catch-блок, сохраняем его в catch-конструкции
+		// СЃС‡РёС‚С‹РІР°РµРј catch-Р±Р»РѕРє, СЃРѕС…СЂР°РЅСЏРµРј РµРіРѕ РІ catch-РєРѕРЅСЃС‚СЂСѓРєС†РёРё
 		cc->AddChildComponent( ParseBlock() );
 
-		// восстанавливаем область видимости и текущую конструкцию
+		// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё Рё С‚РµРєСѓС‰СѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 		GetScopeSystem().DestroySymbolTable();
 		controller.SetCurrentConstruction( cc->GetParentConstruction() );
 		pCatch.Release();
@@ -1609,17 +1609,17 @@ void StatementParserImpl::ReadCatchList()
 }
 
 
-// считать блок 
+// СЃС‡РёС‚Р°С‚СЊ Р±Р»РѕРє 
 CompoundConstruction *StatementParserImpl::ParseBlock( )
 {
 	INTERNAL_IF( la.LastLexem() != '{' );
 
-	// сохраняем текущую ОВ и текущую конструкицю, 
-	// для того чтобы в случае ошибки восстановить их
+	// СЃРѕС…СЂР°РЅСЏРµРј С‚РµРєСѓС‰СѓСЋ РћР’ Рё С‚РµРєСѓС‰СѓСЋ РєРѕРЅСЃС‚СЂСѓРєРёС†СЋ, 
+	// РґР»СЏ С‚РѕРіРѕ С‡С‚РѕР±С‹ РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ РёС…
 	const SymbolTable &cur = GetCurrentSymbolTable();
 	Construction &parent = controller.GetCurrentConstruction();
 
-	// создаем составну. конструкцию, делаем ее текущей
+	// СЃРѕР·РґР°РµРј СЃРѕСЃС‚Р°РІРЅСѓ. РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, РґРµР»Р°РµРј РµРµ С‚РµРєСѓС‰РµР№
 	CompoundConstruction *compound = 
 		BodyMakerUtils::SimpleConstructionMaker<CompoundConstruction>(
 			parent, la.LastLexem().GetPos() );
@@ -1628,12 +1628,12 @@ CompoundConstruction *StatementParserImpl::ParseBlock( )
 	{
 		la.BackLexem();
 
-		// при считывании компонента могут возникать 
-		// синтаксические ошибки
+		// РїСЂРё СЃС‡РёС‚С‹РІР°РЅРёРё РєРѕРјРїРѕРЅРµРЅС‚Р° РјРѕРіСѓС‚ РІРѕР·РЅРёРєР°С‚СЊ 
+		// СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРёРµ РѕС€РёР±РєРё
 		try {
 			compound->AddChildComponent( ParseComponent() );
 		} catch( const Lexem &lxm ) {
-			// восстановим текущую конструкцию, восстановим область видимости
+			// РІРѕСЃСЃС‚Р°РЅРѕРІРёРј С‚РµРєСѓС‰СѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, РІРѕСЃСЃС‚Р°РЅРѕРІРёРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 			controller.SetCurrentConstruction(compound);
 			while( &GetCurrentSymbolTable() != &cur )
 			{
@@ -1642,77 +1642,77 @@ CompoundConstruction *StatementParserImpl::ParseBlock( )
 			}
 
 			SyntaxError(lxm);
-			IgnoreStreamWhileNotDelim(la);	
+			IgnoreStreamWhileNotDelim(la);
 		}
 	}
 	
-	// восстанавливаем родительскую конструкцию
+	// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 	controller.SetCurrentConstruction(&parent);
 	return compound;
 }
 
 
-// считать компонент функции
+// СЃС‡РёС‚Р°С‚СЊ РєРѕРјРїРѕРЅРµРЅС‚ С„СѓРЅРєС†РёРё
 BodyComponent *StatementParserImpl::ParseComponent( )
-{	
+{
 	using namespace BodyMakerUtils;
 
-	// контролируем переполнение стека
+	// РєРѕРЅС‚СЂРѕР»РёСЂСѓРµРј РїРµСЂРµРїРѕР»РЅРµРЅРёРµ СЃС‚РµРєР°
 	OverflowStackController osc(la);
-	PBodyComponent pComp = NULL;		// компонент, который считывается
+	PBodyComponent pComp = NULL; // РєРѕРјРїРѕРЅРµРЅС‚, РєРѕС‚РѕСЂС‹Р№ СЃС‡РёС‚С‹РІР°РµС‚СЃСЏ
 
-	// считываем следующую лексему
+	// СЃС‡РёС‚С‹РІР°РµРј СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ
 	register int lcode = la.NextLexem();
 	Position compPos = la.LastLexem().GetPos();
 
-	// пустая инструкция
+	// РїСѓСЃС‚Р°СЏ РёРЅСЃС‚СЂСѓРєС†РёСЏ
 	if( lcode == ';' )
 		return SimpleComponentMaker<EmptyInstruction>(compPos);	
 
-	// using-декларация или using-namespace
+	// using-РґРµРєР»Р°СЂР°С†РёСЏ РёР»Рё using-namespace
 	else if( lcode == KWUSING )
 	{
 		ReadUsingStatement();
 
-		// создаем пустую инструкцию в качестве замены using-декларации		
+		// СЃРѕР·РґР°РµРј РїСѓСЃС‚СѓСЋ РёРЅСЃС‚СЂСѓРєС†РёСЋ РІ РєР°С‡РµСЃС‚РІРµ Р·Р°РјРµРЅС‹ using-РґРµРєР»Р°СЂР°С†РёРё
 		return SimpleComponentMaker<EmptyInstruction>(compPos);
 	}
 
-	// namespace-алиас
+	// namespace-Р°Р»РёР°СЃ
 	else if( lcode == KWNAMESPACE )	
 	{
-		// считываем имя области видимости и передаем его в строитель
-		// области видимости
+		// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё РїРµСЂРµРґР°РµРј РµРіРѕ РІ СЃС‚СЂРѕРёС‚РµР»СЊ
+		// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 		PNodePackage nspkg = QualifiedConstructionReader(
 			la, true, true).ReadQualifiedConstruction();
-					
+
 		if( la.NextLexem() != '=' )
 			throw la.LastLexem();
-					
-		// иначе считываем синоним области видимости		
+
+		// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј СЃРёРЅРѕРЅРёРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 		MakerUtils::MakeNamespaceAlias( &*nspkg, &*QualifiedConstructionReader(
 				la, false, true).ReadQualifiedConstruction());
 
 		if( la.NextLexem() != ';' )
-			throw la.LastLexem();	
+			throw la.LastLexem();
 
-		// создаем пустую инструкцию в качестве замены namespace-декларации		
+		// СЃРѕР·РґР°РµРј РїСѓСЃС‚СѓСЋ РёРЅСЃС‚СЂСѓРєС†РёСЋ РІ РєР°С‡РµСЃС‚РІРµ Р·Р°РјРµРЅС‹ namespace-РґРµРєР»Р°СЂР°С†РёРё
 		return SimpleComponentMaker<EmptyInstruction>(compPos);
 	}
 	
-	// case выражение:	компонент
+	// case РІС‹СЂР°Р¶РµРЅРёРµ: РєРѕРјРїРѕРЅРµРЅС‚
 	else if( lcode == KWCASE )
 	{
 		POperand exp = ReadExpression( true );
 		if( la.LastLexem() != ':' )
 			throw la.LastLexem();
 
-		// считываем опять компонент
+		// СЃС‡РёС‚С‹РІР°РµРј РѕРїСЏС‚СЊ РєРѕРјРїРѕРЅРµРЅС‚
 		BodyComponent &bc = *ParseComponent( );
 		return CaseLabelMaker(exp, bc, controller.GetCurrentConstruction(), compPos);
 	}
 
-	// default: компонент
+	// default: РєРѕРјРїРѕРЅРµРЅС‚
 	else if( lcode == KWDEFAULT )
 	{
 		if( la.NextLexem() != ':' )
@@ -1721,12 +1721,12 @@ BodyComponent *StatementParserImpl::ParseComponent( )
 		return DefaultLabelMaker(bc, controller.GetCurrentConstruction(), compPos);
 	}
 
-	// asm ( строка ) ;
+	// asm ( СЃС‚СЂРѕРєР° ) ;
 	else if( lcode == KWASM )
 	{
 		if( la.NextLexem() != '(' ) 
 			throw la.LastLexem();
-		Lexem lxm = la.NextLexem();			// сохраняем строковый литерал
+		Lexem lxm = la.NextLexem(); // СЃРѕС…СЂР°РЅСЏРµРј СЃС‚СЂРѕРєРѕРІС‹Р№ Р»РёС‚РµСЂР°Р»
 		if( lxm != STRING || la.NextLexem() != ')' )
 			throw la.LastLexem();
 		if( la.NextLexem() != ';' ) 
@@ -1735,7 +1735,7 @@ BodyComponent *StatementParserImpl::ParseComponent( )
 		return AsmOperationMaker(lxm.GetBuf(), compPos);
 	}
 
-	// return выражение? ;
+	// return РІС‹СЂР°Р¶РµРЅРёРµ? ;
 	else if( lcode == KWRETURN )
 	{
 		POperand exp = NULL;
@@ -1757,7 +1757,7 @@ BodyComponent *StatementParserImpl::ParseComponent( )
 	{
 		if( la.NextLexem() != ';' )
 			throw la.LastLexem();
-		return BreakOperationMaker( controller.GetCurrentConstruction(), compPos);			
+		return BreakOperationMaker( controller.GetCurrentConstruction(), compPos);
 	}
 
 	// continue;
@@ -1767,8 +1767,8 @@ BodyComponent *StatementParserImpl::ParseComponent( )
 			throw la.LastLexem();
 		return ContinueOperationMaker( controller.GetCurrentConstruction(), compPos);
 	}
-	
-	// goto метка;
+
+	// goto РјРµС‚РєР°;
 	else if( lcode == KWGOTO )
 	{
 		Lexem lxm = la.NextLexem();
@@ -1779,21 +1779,21 @@ BodyComponent *StatementParserImpl::ParseComponent( )
 		return GotoOperationMaker( lxm.GetBuf(), fnBody, compPos );
 	}
 	
-	// do компонент while( выражение ) ;
+	// do РєРѕРјРїРѕРЅРµРЅС‚ while( РІС‹СЂР°Р¶РµРЅРёРµ ) ;
 	else if( lcode == KWDO )
 	{
-		// создаем область видимости для do
+		// СЃРѕР·РґР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ do
 		MakeLST();
 
-		// создаем do
+		// СЃРѕР·РґР°РµРј do
 		DoWhileConstruction *dwc = SimpleConstructionMaker<DoWhileConstruction>(
 			controller.GetCurrentConstruction(), compPos);
 		pComp = dwc;
 
-		// задаем как текущую
+		// Р·Р°РґР°РµРј РєР°Рє С‚РµРєСѓС‰СѓСЋ
 		controller.SetCurrentConstruction(dwc);
 
-		// считать компонент
+		// СЃС‡РёС‚Р°С‚СЊ РєРѕРјРїРѕРЅРµРЅС‚
 		PBodyComponent doChild = ParseComponent();
 		if( la.NextLexem() != KWWHILE )
 			throw la.LastLexem();
@@ -1805,75 +1805,75 @@ BodyComponent *StatementParserImpl::ParseComponent( )
 		if( la.NextLexem() != ';' )
 			throw la.LastLexem();
 
-		// задаем выражение do-конструкции, проверяем выражение, 
-		// присоединяем дочерний компонент, восстанавливаем родительскую конструкцию, 
-		// восстанавливаем ОВ		
+		// Р·Р°РґР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ do-РєРѕРЅСЃС‚СЂСѓРєС†РёРё, РїСЂРѕРІРµСЂСЏРµРј РІС‹СЂР°Р¶РµРЅРёРµ, 
+		// РїСЂРёСЃРѕРµРґРёРЅСЏРµРј РґРѕС‡РµСЂРЅРёР№ РєРѕРјРїРѕРЅРµРЅС‚, РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, 
+		// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РћР’
 		dwc->SetCondition(doExpr);
 		ValidCondition(doExpr, "do", compPos);
 		dwc->AddChildComponent( doChild.Release() );
 		controller.SetCurrentConstruction( dwc->GetParentConstruction() );
 		GetScopeSystem().DestroySymbolTable();
-		return pComp.Release();		// возвращаем do-конструкцию
+		return pComp.Release(); // РІРѕР·РІСЂР°С‰Р°РµРј do-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 
 	}
 
-	// for( инициализация? ;  сравнение? ; выражение? ) компонент
+	// for( РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ? ;  СЃСЂР°РІРЅРµРЅРёРµ? ; РІС‹СЂР°Р¶РµРЅРёРµ? ) РєРѕРјРїРѕРЅРµРЅС‚
 	else if( lcode == KWFOR )
 	{
-		// создаем область видимости для конструкции
+		// СЃРѕР·РґР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёРё
 		MakeLST();
 
-		// считываем и создаем саму конструкцию
+		// СЃС‡РёС‚С‹РІР°РµРј Рё СЃРѕР·РґР°РµРј СЃР°РјСѓ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 		ForConstruction *fc = ReadForConstruction(controller);
 		pComp = fc;
-		// задаем как текущую
+		// Р·Р°РґР°РµРј РєР°Рє С‚РµРєСѓС‰СѓСЋ
 		controller.SetCurrentConstruction(fc);
 		BodyComponent *forChild = ParseComponent();
 
-		// присоединяем дочерний компонент, восстанавливаем родительскую конструкцию, 
-		// восстанавливаем ОВ		
+		// РїСЂРёСЃРѕРµРґРёРЅСЏРµРј РґРѕС‡РµСЂРЅРёР№ РєРѕРјРїРѕРЅРµРЅС‚, РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, 
+		// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РћР’
 		fc->AddChildComponent( forChild );
 		controller.SetCurrentConstruction( fc->GetParentConstruction() );
 		GetScopeSystem().DestroySymbolTable();
 
-		// вернуть for-конструкцию
+		// РІРµСЂРЅСѓС‚СЊ for-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 		return pComp.Release();
 	}
 
-	// while( сравнение ) компонент
+	// while( СЃСЂР°РІРЅРµРЅРёРµ ) РєРѕРјРїРѕРЅРµРЅС‚
 	else if( lcode == KWWHILE )
 	{
-		// создаем область видимости для конструкции
-		MakeLST();	
+		// СЃРѕР·РґР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёРё
+		MakeLST();
 		if( la.NextLexem() != '(' )
 			throw la.LastLexem();
 		PInstruction whileCond = ReadCondition();
 		if( la.LastLexem() != ')' )
 			throw la.LastLexem();
 
-		// создаем while-конструкцию, проверяем корректность выражения
+		// СЃРѕР·РґР°РµРј while-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, РїСЂРѕРІРµСЂСЏРµРј РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РІС‹СЂР°Р¶РµРЅРёСЏ
 		WhileConstruction *wc = ConditionConstructionMaker<WhileConstruction>(whileCond, 
 			controller.GetCurrentConstruction(), compPos);
 		ValidCondition(whileCond, "while");
 		pComp = wc;
-		// задаем как текущую
+		// Р·Р°РґР°РµРј РєР°Рє С‚РµРєСѓС‰СѓСЋ
 		controller.SetCurrentConstruction(wc);
 		BodyComponent *whileChild = ParseComponent();
 
-		// присоединяем дочерний компонент, восстанавливаем родительскую конструкцию, 
-		// восстанавливаем ОВ		
+		// РїСЂРёСЃРѕРµРґРёРЅСЏРµРј РґРѕС‡РµСЂРЅРёР№ РєРѕРјРїРѕРЅРµРЅС‚, РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, 
+		// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РћР’
 		wc->AddChildComponent( whileChild );
 		controller.SetCurrentConstruction( wc->GetParentConstruction() );
 		GetScopeSystem().DestroySymbolTable();
 
-		// вернуть while-конструкцию
+		// РІРµСЂРЅСѓС‚СЊ while-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 		return pComp.Release();
 	}
 
-	// switch( сравнение ) компонент
+	// switch( СЃСЂР°РІРЅРµРЅРёРµ ) РєРѕРјРїРѕРЅРµРЅС‚
 	else if( lcode == KWSWITCH )
 	{	
-		// создаем область видимости для конструкции
+		// СЃРѕР·РґР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёРё
 		MakeLST();
 		if( la.NextLexem() != '(' )
 			throw la.LastLexem();
@@ -1881,107 +1881,107 @@ BodyComponent *StatementParserImpl::ParseComponent( )
 		if( la.LastLexem() != ')' )
 			throw la.LastLexem();
 		
-		// создаем swicth-конструкцию, проверяем корректность выражения
+		// СЃРѕР·РґР°РµРј swicth-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, РїСЂРѕРІРµСЂСЏРµРј РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РІС‹СЂР°Р¶РµРЅРёСЏ
 		SwitchConstruction *sc = ConditionConstructionMaker<SwitchConstruction>(switchCond, 
 			controller.GetCurrentConstruction(), compPos);
 		ValidCondition(switchCond, "switch", true);
 		pComp = sc;
-		// задаем как текущую
+		// Р·Р°РґР°РµРј РєР°Рє С‚РµРєСѓС‰СѓСЋ
 		controller.SetCurrentConstruction(sc);
 		BodyComponent *switchChild = ParseComponent();	
 
-		// присоединяем дочерний компонент, восстанавливаем родительскую конструкцию, 
-		// восстанавливаем ОВ		
+		// РїСЂРёСЃРѕРµРґРёРЅСЏРµРј РґРѕС‡РµСЂРЅРёР№ РєРѕРјРїРѕРЅРµРЅС‚, РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, 
+		// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РћР’
 		sc->AddChildComponent( switchChild );
 		controller.SetCurrentConstruction( sc->GetParentConstruction() );
 		GetScopeSystem().DestroySymbolTable();
 
-		// вернуть swicth-конструкцию
+		// РІРµСЂРЅСѓС‚СЊ swicth-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 		return pComp.Release();
 	}
 
-	// if( сравнение ) компонент [else компонент]?
+	// if( СЃСЂР°РІРЅРµРЅРёРµ ) РєРѕРјРїРѕРЅРµРЅС‚ [else РєРѕРјРїРѕРЅРµРЅС‚]?
 	else if( lcode == KWIF )
 	{
-		// создаем область видимости для конструкции
-		MakeLST();	
+		// СЃРѕР·РґР°РµРј РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёРё
+		MakeLST();
 		if( la.NextLexem() != '(' )
 			throw la.LastLexem();
 		PInstruction ifCond = ReadCondition();
 		if( la.LastLexem() != ')' )
 			throw la.LastLexem();
 
-		// создаем if-конструкцию, проверяем корректность выражения
+		// СЃРѕР·РґР°РµРј if-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, РїСЂРѕРІРµСЂСЏРµРј РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РІС‹СЂР°Р¶РµРЅРёСЏ
 		IfConstruction *ic = ConditionConstructionMaker<IfConstruction>(ifCond, 
 			controller.GetCurrentConstruction(), compPos);
 		ValidCondition(ifCond, "if");
 		pComp = ic;
-		// задаем как текущую
+		// Р·Р°РґР°РµРј РєР°Рє С‚РµРєСѓС‰СѓСЋ
 		controller.SetCurrentConstruction(ic);
-		BodyComponent *ifChild = ParseComponent();			
-	
-		// присоединяем дочерний компонент
+		BodyComponent *ifChild = ParseComponent();
+
+		// РїСЂРёСЃРѕРµРґРёРЅСЏРµРј РґРѕС‡РµСЂРЅРёР№ РєРѕРјРїРѕРЅРµРЅС‚
 		ic->AddChildComponent( ifChild );
-		
-		// если есть else
+
+		// РµСЃР»Рё РµСЃС‚СЊ else
 		if( la.NextLexem() == KWELSE )
 		{
 			ElseConstruction *ec = SimpleConstructionMaker<ElseConstruction>(
 					const_cast<Construction&>(*ic->GetParentConstruction()), compPos);
 			PBodyComponent pElse = ec;
-			// задаем как текущую
+			// Р·Р°РґР°РµРј РєР°Рє С‚РµРєСѓС‰СѓСЋ
 			controller.SetCurrentConstruction(ic);
 			BodyComponent *elseChild = ParseComponent();
 
-			// присоединяем дочерний компонент, присоединяем к if
+			// РїСЂРёСЃРѕРµРґРёРЅСЏРµРј РґРѕС‡РµСЂРЅРёР№ РєРѕРјРїРѕРЅРµРЅС‚, РїСЂРёСЃРѕРµРґРёРЅСЏРµРј Рє if
 			ec->AddChildComponent(elseChild);
 			ic->SetElseConstruction( ec );
 
-			// освобождаем интеллектуальный указатель который хранит else
-			pElse.Release();				
+			// РѕСЃРІРѕР±РѕР¶РґР°РµРј РёРЅС‚РµР»Р»РµРєС‚СѓР°Р»СЊРЅС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ РєРѕС‚РѕСЂС‹Р№ С…СЂР°РЅРёС‚ else
+			pElse.Release();
 		}
-		
+
 		else
 			la.BackLexem();
 
-		// восстанавливаем родительскую конструкцию, восстанавливаем ОВ				
+		// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РћР’
 		controller.SetCurrentConstruction( ic->GetParentConstruction() );
 		GetScopeSystem().DestroySymbolTable();
 
-		// вернуть if-конструкцию
+		// РІРµСЂРЅСѓС‚СЊ if-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 		return pComp.Release();
 	}
 
-	// try блок список-обработчиков
+	// try Р±Р»РѕРє СЃРїРёСЃРѕРє-РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРІ
 	else if( lcode == KWTRY )
 	{
 		if( la.NextLexem() != '{' )
 			throw la.LastLexem();
 
-		// создаем try конструкцию
+		// СЃРѕР·РґР°РµРј try РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 		TryCatchConstruction *tcc = SimpleConstructionMaker<TryCatchConstruction>(
 					controller.GetCurrentConstruction(), compPos);
 		pComp = tcc;
 
-		// задаем как текущую, считываем блок, добавляем блок
+		// Р·Р°РґР°РµРј РєР°Рє С‚РµРєСѓС‰СѓСЋ, СЃС‡РёС‚С‹РІР°РµРј Р±Р»РѕРє, РґРѕР±Р°РІР»СЏРµРј Р±Р»РѕРє
 		controller.SetCurrentConstruction(tcc);
-		BodyComponent *block = ParseBlock();		
+		BodyComponent *block = ParseBlock();
 		tcc->AddChildComponent(block);
 
-		if( la.NextLexem() != KWCATCH )		
-			theApp.Error(la.LastLexem().GetPos(), "try без обработчиков");
-		else	
+		if( la.NextLexem() != KWCATCH )
+			theApp.Error(la.LastLexem().GetPos(), "try Р±РµР· РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРІ");
+		else
 		{
 			la.BackLexem();
 			ReadCatchList();
 		}
 
-		// восстанавливаем родительскую конструкцию, возвращаем try-блок
+		// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ, РІРѕР·РІСЂР°С‰Р°РµРј try-Р±Р»РѕРє
 		controller.SetCurrentConstruction( tcc->GetParentConstruction() );
 		return pComp.Release();
 	}
 
-	// блок
+	// Р±Р»РѕРє
 	else if( lcode == '{' )
 	{
 		bool isMade = BodyMakerUtils::MakeLocalSymbolTable( controller.GetCurrentConstruction() );
@@ -1991,82 +1991,82 @@ BodyComponent *StatementParserImpl::ParseComponent( )
 		return cc;
 	}
 
-	// если '}', аварийное завршение компиляции
+	// РµСЃР»Рё '}', Р°РІР°СЂРёР№РЅРѕРµ Р·Р°РІСЂС€РµРЅРёРµ РєРѕРјРїРёР»СЏС†РёРё
 	else if( lcode == '}' )
-		theApp.Fatal( la.LastLexem().GetPos(), "аварийное завершение компиляции перед '}'" );
+		theApp.Fatal( la.LastLexem().GetPos(), "Р°РІР°СЂРёР№РЅРѕРµ Р·Р°РІРµСЂС€РµРЅРёРµ РєРѕРјРїРёР»СЏС†РёРё РїРµСЂРµРґ '}'" );
 
-	// конец файла
+	// РєРѕРЅРµС† С„Р°Р№Р»Р°
 	else if( lcode == EOF )
-		theApp.Fatal( la.LastLexem().GetPos(), "неожиданный конец файла" );
+		theApp.Fatal( la.LastLexem().GetPos(), "РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РєРѕРЅРµС† С„Р°Р№Р»Р°" );
 
-	// инструкция: выражение, декларация, декларация класса, метка
+	// РёРЅСЃС‚СЂСѓРєС†РёСЏ: РІС‹СЂР°Р¶РµРЅРёРµ, РґРµРєР»Р°СЂР°С†РёСЏ, РґРµРєР»Р°СЂР°С†РёСЏ РєР»Р°СЃСЃР°, РјРµС‚РєР°
 	else
 	{
 		la.BackLexem();
-		InstructionList insList;		// выходной список инструкций
+		InstructionList insList; // РІС‹С…РѕРґРЅРѕР№ СЃРїРёСЃРѕРє РёРЅСЃС‚СЂСѓРєС†РёР№
 		InstructionParserImpl ipl(la, insList, true);
 
-		// можем перехватить метку
+		// РјРѕР¶РµРј РїРµСЂРµС…РІР°С‚РёС‚СЊ РјРµС‚РєСѓ
 		try {
 			ipl.Parse();
 			return InstructionListMaker( ipl.GetInstructionList(), compPos );
 		} catch( const LabelLexem &labLxm ) {
-			// создаем метку
+			// СЃРѕР·РґР°РµРј РјРµС‚РєСѓ
 			Label label( labLxm.GetBuf(), 
 				const_cast<FunctionSymbolTable *>(GetScopeSystem().GetFunctionSymbolTable()), 
 				labLxm.GetPos() );
 
-			// перехватили метку, считываем компонент
+			// РїРµСЂРµС…РІР°С‚РёР»Рё РјРµС‚РєСѓ, СЃС‡РёС‚С‹РІР°РµРј РєРѕРјРїРѕРЅРµРЅС‚
 			return SimpleLabelMaker(label, *ParseComponent(), fnBody, compPos);
 		}
 	}
 
-	// всегда ошибка, если доходим до сюда
-	INTERNAL("'StatementParserImpl::ParseComponent' - ошибка в строительстве компонента");
+	// РІСЃРµРіРґР° РѕС€РёР±РєР°, РµСЃР»Рё РґРѕС…РѕРґРёРј РґРѕ СЃСЋРґР°
+	INTERNAL("'StatementParserImpl::ParseComponent' - РѕС€РёР±РєР° РІ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІРµ РєРѕРјРїРѕРЅРµРЅС‚Р°");
 	return NULL;
 }
 
-// считать блок или try-блок, в зависимости от корневой конструкции
+// СЃС‡РёС‚Р°С‚СЊ Р±Р»РѕРє РёР»Рё try-Р±Р»РѕРє, РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РєРѕСЂРЅРµРІРѕР№ РєРѕРЅСЃС‚СЂСѓРєС†РёРё
 void StatementParserImpl::Parse() {
-	// значит считываем блок, а за ним catch-обработчики
+	// Р·РЅР°С‡РёС‚ СЃС‡РёС‚С‹РІР°РµРј Р±Р»РѕРє, Р° Р·Р° РЅРёРј catch-РѕР±СЂР°Р±РѕС‚С‡РёРєРё
 	if( controller.GetCurrentConstruction().GetConstructionID() == Construction::CC_TRY )
 	{
 		TryCatchConstruction &tcc = static_cast<TryCatchConstruction &>(
 			controller.GetCurrentConstruction());
 
-		// считываем блок
-		BodyComponent *block = ParseBlock();		
+		// СЃС‡РёС‚С‹РІР°РµРј Р±Р»РѕРє
+		BodyComponent *block = ParseBlock();
 		tcc.AddChildComponent(block);
 
-		if( la.NextLexem() != KWCATCH )		
-			theApp.Error(la.LastLexem().GetPos(), "try без обработчиков");
-		else	
+		if( la.NextLexem() != KWCATCH )
+			theApp.Error(la.LastLexem().GetPos(), "try Р±РµР· РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРІ");
+		else
 		{
 			la.BackLexem();
 			try {
 				ReadCatchList();
 			} catch( const Lexem &lxm ) {
-				theApp.Fatal(lxm.GetPos(), "аварийное завершение компиляции перед '%s'",
+				theApp.Fatal(lxm.GetPos(), "Р°РІР°СЂРёР№РЅРѕРµ Р·Р°РІРµСЂС€РµРЅРёРµ РєРѕРјРїРёР»СЏС†РёРё РїРµСЂРµРґ '%s'",
 					lxm.GetBuf().c_str());
 			}
-		}		
+		}
 	}
 
-	// иначе считываем просто блок
+	// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј РїСЂРѕСЃС‚Рѕ Р±Р»РѕРє
 	else
 		ParseBlock();
 }
 
 
-// вывести синтаксическую ошибку обнаруженную рядом с лексемой 'lxm'
+// РІС‹РІРµСЃС‚Рё СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєСѓСЋ РѕС€РёР±РєСѓ РѕР±РЅР°СЂСѓР¶РµРЅРЅСѓСЋ СЂСЏРґРѕРј СЃ Р»РµРєСЃРµРјРѕР№ 'lxm'
 void ParserUtils::SyntaxError( const Lexem &lxm )
 {
 	theApp.Error(
-		lxm.GetPos(), "синтаксическая ошибка перед '%s'", lxm.GetBuf().c_str());
+		lxm.GetPos(), "СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР° РїРµСЂРµРґ '%s'", lxm.GetBuf().c_str());
 }
 
 
-// функция считывает лексемы до тех пор пока не появится ';'
+// С„СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РµС‚ Р»РµРєСЃРµРјС‹ РґРѕ С‚РµС… РїРѕСЂ РїРѕРєР° РЅРµ РїРѕСЏРІРёС‚СЃСЏ ';'
 void ParserUtils::IgnoreStreamWhileNotDelim( LexicalAnalyzer &la )
 {
 	Lexem lxm;
@@ -2074,10 +2074,10 @@ void ParserUtils::IgnoreStreamWhileNotDelim( LexicalAnalyzer &la )
 	{
 		lxm = la.NextLexem();
 		if( lxm == EOF )
-			theApp.Fatal( lxm.GetPos(), "неожиданный конец файла" );
+			theApp.Fatal( lxm.GetPos(), "РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РєРѕРЅРµС† С„Р°Р№Р»Р°" );
 
 		else if( lxm == '{' || lxm == '}' )
-			theApp.Fatal( lxm.GetPos(), "аварийное завершение компиялции перед '%c'",
+			theApp.Fatal( lxm.GetPos(), "Р°РІР°СЂРёР№РЅРѕРµ Р·Р°РІРµСЂС€РµРЅРёРµ РєРѕРјРїРёСЏР»С†РёРё РїРµСЂРµРґ '%c'",
 			(char)lxm);
 
 		else if( lxm == ';' )
@@ -2086,7 +2086,7 @@ void ParserUtils::IgnoreStreamWhileNotDelim( LexicalAnalyzer &la )
 }
 
 
-// получить позицию пакета
+// РїРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ РїР°РєРµС‚Р°
 Position ParserUtils::GetPackagePosition( const Package *pkg )
 {
 	INTERNAL_IF( pkg == NULL );
@@ -2099,20 +2099,20 @@ Position ParserUtils::GetPackagePosition( const Package *pkg )
 		{
 			NodePackage *np = (NodePackage *)pkg;
 			if( np->IsNoChildPackages() )
-				INTERNAL( "'ParserUtils::GetPackagePosition' - нет дочерних пакетов" );
+				INTERNAL( "'ParserUtils::GetPackagePosition' - РЅРµС‚ РґРѕС‡РµСЂРЅРёС… РїР°РєРµС‚РѕРІ" );
 			else
 				pkg = np->GetChildPackage(0);
 		}
 
 		else
-			INTERNAL( "'ParserUtils::GetPackagePosition' - неизвестный тип пакета" );
+			INTERNAL( "'ParserUtils::GetPackagePosition' - РЅРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї РїР°РєРµС‚Р°" );
 	}
 
 	return Position();
 }
 
 
-// распечатать все дерево пакетов, вернуть буфер
+// СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ РІСЃРµ РґРµСЂРµРІРѕ РїР°РєРµС‚РѕРІ, РІРµСЂРЅСѓС‚СЊ Р±СѓС„РµСЂ
 CharString ParserUtils::PrintPackageTree( const NodePackage *np )
 {
 	string outbuf;
@@ -2129,24 +2129,24 @@ CharString ParserUtils::PrintPackageTree( const NodePackage *np )
 
 		else if( pkg->IsExpressionPackage() )
 			;
-		
+
 		else
-			INTERNAL( "'ParserUtils::GetPackagePosition' - неизвестный тип пакета" );
+			INTERNAL( "'ParserUtils::GetPackagePosition' - РЅРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї РїР°РєРµС‚Р°" );
 	}
 
 	return outbuf.c_str();
 }
 
 
-// проверяет, если входной пакет и лекс. находится в состоянии
-// декларации типа (класс, перечисление), считать тип, выполнить
-// декларацию вернуть. Если не требуется считывать деклараторы, вернуть true, иначе false
+// РїСЂРѕРІРµСЂСЏРµС‚, РµСЃР»Рё РІС…РѕРґРЅРѕР№ РїР°РєРµС‚ Рё Р»РµРєСЃ. РЅР°С…РѕРґРёС‚СЃСЏ РІ СЃРѕСЃС‚РѕСЏРЅРёРё
+// РґРµРєР»Р°СЂР°С†РёРё С‚РёРїР° (РєР»Р°СЃСЃ, РїРµСЂРµС‡РёСЃР»РµРЅРёРµ), СЃС‡РёС‚Р°С‚СЊ С‚РёРї, РІС‹РїРѕР»РЅРёС‚СЊ
+// РґРµРєР»Р°СЂР°С†РёСЋ РІРµСЂРЅСѓС‚СЊ. Р•СЃР»Рё РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚С‹РІР°С‚СЊ РґРµРєР»Р°СЂР°С‚РѕСЂС‹, РІРµСЂРЅСѓС‚СЊ true, РёРЅР°С‡Рµ false
 bool ParserUtils::LocalTypeDeclaration( 
 		LexicalAnalyzer &lexicalAnalyzer, NodePackage *pkg, const BaseType *&outbt )
 {
-	// в этом месте может быть определение класса, если последние
-	// два пакета были ключ класса и PC_QUALIFIED_NAME, а последняя
-	// считанная лексема - '{' или ':'
+	// РІ СЌС‚РѕРј РјРµСЃС‚Рµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°СЃСЃР°, РµСЃР»Рё РїРѕСЃР»РµРґРЅРёРµ
+	// РґРІР° РїР°РєРµС‚Р° Р±С‹Р»Рё РєР»СЋС‡ РєР»Р°СЃСЃР° Рё PC_QUALIFIED_NAME, Р° РїРѕСЃР»РµРґРЅСЏСЏ
+	// СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° - '{' РёР»Рё ':'
 	if( NeedClassParserImpl(lexicalAnalyzer.LastLexem(), pkg) )
 	{
 		ClassParserImpl cpi(lexicalAnalyzer, pkg, ClassMember::NOT_CLASS_MEMBER);
@@ -2154,13 +2154,13 @@ bool ParserUtils::LocalTypeDeclaration(
 		outbt = &cpi.GetClassType();
 
 		if( lexicalAnalyzer.NextLexem() == ';' )
-			return true;			
+			return true;
 		else
 			lexicalAnalyzer.BackLexem();
 
 	}
 
-	// иначе если требуется считать перечисление, считываем
+	// РёРЅР°С‡Рµ РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚Р°С‚СЊ РїРµСЂРµС‡РёСЃР»РµРЅРёРµ, СЃС‡РёС‚С‹РІР°РµРј
 	else if( NeedEnumReading(lexicalAnalyzer.LastLexem(), pkg) )
 	{
 		EnumParserImpl epi(lexicalAnalyzer, pkg, ClassMember::NOT_CLASS_MEMBER);
@@ -2173,7 +2173,7 @@ bool ParserUtils::LocalTypeDeclaration(
 			lexicalAnalyzer.BackLexem();
 	}
 
-	// иначе если объявление класса или перечисления
+	// РёРЅР°С‡Рµ РµСЃР»Рё РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 	else if( pkg->GetChildPackageCount() == 2 && 
 			 pkg->GetChildPackage(1)->GetPackageID() == PC_QUALIFIED_NAME && 
 			 lexicalAnalyzer.LastLexem() == ';' )
@@ -2190,7 +2190,7 @@ bool ParserUtils::LocalTypeDeclaration(
 		else if( pc == KWENUM )
 		{
 			EnumTypeMaker etm( pkg,  ClassMember::NOT_CLASS_MEMBER );
-			outbt = etm.Make();				
+			outbt = etm.Make();
 		}
 
 		else
@@ -2202,8 +2202,8 @@ bool ParserUtils::LocalTypeDeclaration(
 }
 
 
-// проверяет по идентификатору и последней считанной лексеме, необходим
-// ли функции разбор тела
+// РїСЂРѕРІРµСЂСЏРµС‚ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ Рё РїРѕСЃР»РµРґРЅРµР№ СЃС‡РёС‚Р°РЅРЅРѕР№ Р»РµРєСЃРµРјРµ, РЅРµРѕР±С…РѕРґРёРј
+// Р»Рё С„СѓРЅРєС†РёРё СЂР°Р·Р±РѕСЂ С‚РµР»Р°
 inline static bool NeedFunctionParserImpl( LexicalAnalyzer &la, const Identifier *id )
 {
 	const Function *fn = dynamic_cast<const Function *>(id);
@@ -2212,21 +2212,21 @@ inline static bool NeedFunctionParserImpl( LexicalAnalyzer &la, const Identifier
 	if( (lastLxm == '{' ||
 		(dynamic_cast<const ConstructorMethod *>(fn) &&
 		 (lastLxm == ':' || lastLxm == KWTRY)) ) && fn != NULL )
-		return true;	
+		return true;
 
-	return false;		
+	return false;
 }
 
 
-// проверяет по пакету, и последней считанной лексеме, возможно
-// ли определение класса
+// РїСЂРѕРІРµСЂСЏРµС‚ РїРѕ РїР°РєРµС‚Сѓ, Рё РїРѕСЃР»РµРґРЅРµР№ СЃС‡РёС‚Р°РЅРЅРѕР№ Р»РµРєСЃРµРјРµ, РІРѕР·РјРѕР¶РЅРѕ
+// Р»Рё РѕРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°СЃСЃР°
 inline static bool NeedClassParserImpl( const Lexem &lastLxm, const NodePackage *np ) 
 {
 	if( np->IsNoChildPackages() )
 		return false;
 
 	int lid = np->GetLastChildPackage()->GetPackageID();
-	if( lid == KWCLASS || lid == KWSTRUCT || lid == KWUNION )	// безимянное объявление
+	if( lid == KWCLASS || lid == KWSTRUCT || lid == KWUNION ) // Р±РµР·РёРјСЏРЅРЅРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ
 	{
 		if( lastLxm == '{' || 
 			lastLxm == ':' )
@@ -2245,15 +2245,15 @@ inline static bool NeedClassParserImpl( const Lexem &lastLxm, const NodePackage 
 }
 
 
-// проверяет по пакету, и последней считанной лексеме, требуется ли 
-// определение перечисления
+// РїСЂРѕРІРµСЂСЏРµС‚ РїРѕ РїР°РєРµС‚Сѓ, Рё РїРѕСЃР»РµРґРЅРµР№ СЃС‡РёС‚Р°РЅРЅРѕР№ Р»РµРєСЃРµРјРµ, С‚СЂРµР±СѓРµС‚СЃСЏ Р»Рё 
+// РѕРїСЂРµРґРµР»РµРЅРёРµ РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 inline static bool NeedEnumReading( const Lexem &lastLxm, const NodePackage *np ) 
 {
 	if( np->IsNoChildPackages() )
 		return false;
 
 	int lid = np->GetLastChildPackage()->GetPackageID();
-	if( lid == KWENUM )	// безимянное объявление
+	if( lid == KWENUM ) // Р±РµР·РёРјСЏРЅРЅРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ
 		return lastLxm == '{';
 
 	if( lid != PC_QUALIFIED_NAME || np->GetChildPackageCount() < 2 )
@@ -2266,16 +2266,16 @@ inline static bool NeedEnumReading( const Lexem &lastLxm, const NodePackage *np 
 }
 
 
-// считать список инициализации и выполнить проверку
+// СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё Рё РІС‹РїРѕР»РЅРёС‚СЊ РїСЂРѕРІРµСЂРєСѓ
 inline static ListInitComponent *ReadInitList( LexicalAnalyzer &la, 
 			PDeclarationMaker &pdm, const Position &errPos )
 {
-	// считываем
+	// СЃС‡РёС‚С‹РІР°РµРј
 	InitializationListReader ilr(la);
 	ilr.Read();
 	INTERNAL_IF( ilr.GetListInitComponent() == NULL );
 
-	// проверяем, чтобы инициализатор был объектом
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ Р±С‹Р» РѕР±СЉРµРєС‚РѕРј
 	
 	if( pdm.IsNull() || pdm->GetIdentifier() == NULL )
 		return const_cast<ListInitComponent *>(ilr.GetListInitComponent());
@@ -2285,14 +2285,14 @@ inline static ListInitComponent *ReadInitList( LexicalAnalyzer &la,
 		ListInitializationValidator( *ilr.GetListInitComponent(), 
 			errPos, const_cast<::Object &>(*ob) ).Validate();
 
-		// вернуть список для генерации
+		// РІРµСЂРЅСѓС‚СЊ СЃРїРёСЃРѕРє РґР»СЏ РіРµРЅРµСЂР°С†РёРё
 		return const_cast<ListInitComponent *>(ilr.GetListInitComponent());
 	}
 
-	// иначе проверяем инициализацию списком
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ СЃРїРёСЃРєРѕРј
 	else
 	{
-		theApp.Error(errPos, "инициализация списком не-объекта");
+		theApp.Error(errPos, "РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЃРїРёСЃРєРѕРј РЅРµ-РѕР±СЉРµРєС‚Р°");
 		return const_cast<ListInitComponent *>(ilr.GetListInitComponent());
 	}
 }

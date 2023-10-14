@@ -1,4 +1,4 @@
-// реализация интерфейса для КЛАССОВ-КООРДИНАТОРОВ - Coordinator.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃР° РґР»СЏ РљР›РђРЎРЎРћР’-РљРћРћР Р”РРќРђРўРћР РћР’ - Coordinator.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -20,79 +20,79 @@ using namespace nrc;
 #include "ExpressionMaker.h"
 
 
-// помимо областей видимости члена, сохраняем 
-// закрытый метод, сохраняет менеджер имени члена и области
-// видимости члена
+// РїРѕРјРёРјРѕ РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё С‡Р»РµРЅР°, СЃРѕС…СЂР°РЅСЏРµРј 
+// Р·Р°РєСЂС‹С‚С‹Р№ РјРµС‚РѕРґ, СЃРѕС…СЂР°РЅСЏРµС‚ РјРµРЅРµРґР¶РµСЂ РёРјРµРЅРё С‡Р»РµРЅР° Рё РѕР±Р»Р°СЃС‚Рё
+// РІРёРґРёРјРѕСЃС‚Рё С‡Р»РµРЅР°
 void DeclarationCoordinator::StoreMemberScope( const NodePackage &np ) const
 {
 	INTERNAL_IF( np.GetPackageID() != PC_QUALIFIED_NAME );
 	memberQnm = new QualifiedNameManager(&np, &GetCurrentSymbolTable());
 
-	// сохраняем список квалификаторов
+	// СЃРѕС…СЂР°РЅСЏРµРј СЃРїРёСЃРѕРє РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ
 	memberStl = memberQnm->GetQualifierList();
 
-	// если областей видимости нет, выходим. Событие происходит при
-	// неверном поиске
+	// РµСЃР»Рё РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё РЅРµС‚, РІС‹С…РѕРґРёРј. РЎРѕР±С‹С‚РёРµ РїСЂРѕРёСЃС…РѕРґРёС‚ РїСЂРё
+	// РЅРµРІРµСЂРЅРѕРј РїРѕРёСЃРєРµ
 	if( memberStl.IsEmpty() )
 		return;
 
-	// далее все области видимости из списка вставляем в общюю
-	// систему ОВ
+	// РґР°Р»РµРµ РІСЃРµ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РёР· СЃРїРёСЃРєР° РІСЃС‚Р°РІР»СЏРµРј РІ РѕР±С‰СЋСЋ
+	// СЃРёСЃС‚РµРјСѓ РћР’
 	
-	// если первая область видимости глобальная, вынуть из списка
+	// РµСЃР»Рё РїРµСЂРІР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РіР»РѕР±Р°Р»СЊРЅР°СЏ, РІС‹РЅСѓС‚СЊ РёР· СЃРїРёСЃРєР°
 	if( memberStl[0] == GetScopeSystem().GetFirstSymbolTable() )
 		memberStl.PopFront();
 
-	// загружаем области видимости
+	// Р·Р°РіСЂСѓР¶Р°РµРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	GetScopeSystem().PushSymbolTableList(memberStl);
 }
 
 
-// восстановить систему ОВ после определения члена ИОВ или класса
+// РІРѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРёСЃС‚РµРјСѓ РћР’ РїРѕСЃР»Рµ РѕРїСЂРµРґРµР»РµРЅРёСЏ С‡Р»РµРЅР° РРћР’ РёР»Рё РєР»Р°СЃСЃР°
 void DeclarationCoordinator::RestoreScopeSystem() const
 {
-	// вытаскиваем все области, которые были положены в стек 
+	// РІС‹С‚Р°СЃРєРёРІР°РµРј РІСЃРµ РѕР±Р»Р°СЃС‚Рё, РєРѕС‚РѕСЂС‹Рµ Р±С‹Р»Рё РїРѕР»РѕР¶РµРЅС‹ РІ СЃС‚РµРє 
 	for( int i = 0; i<memberStl.GetSymbolTableCount(); i++ )
 		::GetScopeSystem().DestroySymbolTable();
 	memberStl.Clear();
 }
 
 
-// скоординировать постройку декларации, создать из пакета
-// временную структуру и далее на ее основании выбрать строителя
+// СЃРєРѕРѕСЂРґРёРЅРёСЂРѕРІР°С‚СЊ РїРѕСЃС‚СЂРѕР№РєСѓ РґРµРєР»Р°СЂР°С†РёРё, СЃРѕР·РґР°С‚СЊ РёР· РїР°РєРµС‚Р°
+// РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ Рё РґР°Р»РµРµ РЅР° РµРµ РѕСЃРЅРѕРІР°РЅРёРё РІС‹Р±СЂР°С‚СЊ СЃС‚СЂРѕРёС‚РµР»СЏ
 PDeclarationMaker DeclarationCoordinator::Coordinate() const
 {
 	int ix = declarator->FindPackage(PC_QUALIFIED_NAME);
 	INTERNAL_IF( ix < 0 );
 
-	// проверяем, если идет определение члена, т.е. имя составное
-	// значит сразу возвращаем строитель определений члена
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РёРґРµС‚ РѕРїСЂРµРґРµР»РµРЅРёРµ С‡Р»РµРЅР°, С‚.Рµ. РёРјСЏ СЃРѕСЃС‚Р°РІРЅРѕРµ
+	// Р·РЅР°С‡РёС‚ СЃСЂР°Р·Сѓ РІРѕР·РІСЂР°С‰Р°РµРј СЃС‚СЂРѕРёС‚РµР»СЊ РѕРїСЂРµРґРµР»РµРЅРёР№ С‡Р»РµРЅР°
 	if( static_cast<const NodePackage *>(declarator->GetChildPackage(ix))->
 			GetChildPackageCount() > 1 )
 	{
-		// предварительно поместим области видимости члена (класс(ы))
-		// в систему ОВ. В деструкторе координатора они вынимаются
+		// РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ РїРѕРјРµСЃС‚РёРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё С‡Р»РµРЅР° (РєР»Р°СЃСЃ(С‹))
+		// РІ СЃРёСЃС‚РµРјСѓ РћР’. Р’ РґРµСЃС‚СЂСѓРєС‚РѕСЂРµ РєРѕРѕСЂРґРёРЅР°С‚РѕСЂР° РѕРЅРё РІС‹РЅРёРјР°СЋС‚СЃСЏ
 		StoreMemberScope( *static_cast<const NodePackage *>(declarator->GetChildPackage(ix)) );
 		return new MemberDefinationMaker(typeSpecList, declarator, *memberQnm);
 	}
 
-	// иначе создаем временную структуру и собираем в нее декларацию
+	// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ Рё СЃРѕР±РёСЂР°РµРј РІ РЅРµРµ РґРµРєР»Р°СЂР°С†РёСЋ
 	PTempObjectContainer toc = 
 		new TempObjectContainer ( 
 			ParserUtils::GetPackagePosition(declarator->GetChildPackage(ix)),
 			ParserUtils::PrintPackageTree((NodePackage*)declarator->GetChildPackage(ix))
 		);
 
-	// начинаем анализ спецификаторов типа
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	MakerUtils::AnalyzeTypeSpecifierPkg( typeSpecList, &*toc );
 
-	// далее анализируем декларатор
+	// РґР°Р»РµРµ Р°РЅР°Р»РёР·РёСЂСѓРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 	MakerUtils::AnalyzeDeclaratorPkg( declarator, &*toc );
 	
-	// уточняем базовый тип
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 	MakerUtils::SpecifyBaseType( &*toc );
 	
-	// выбираем строителя - основное предназначение координатора
+	// РІС‹Р±РёСЂР°РµРј СЃС‚СЂРѕРёС‚РµР»СЏ - РѕСЃРЅРѕРІРЅРѕРµ РїСЂРµРґРЅР°Р·РЅР°С‡РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚РѕСЂР°
 	const NodePackage &np = 
 		*(NodePackage *)((NodePackage*)declarator->GetChildPackage(ix))->GetChildPackage(0);
 	if( np.GetPackageID() == PC_OVERLOAD_OPERATOR )
@@ -104,7 +104,7 @@ PDeclarationMaker DeclarationCoordinator::Coordinate() const
 
 	else if( np.GetPackageID() == PC_CAST_OPERATOR )
 	{
-		theApp.Error( toc->errPos, "операторы приведения могут быть только членами класса");
+		theApp.Error( toc->errPos, "РѕРїРµСЂР°С‚РѕСЂС‹ РїСЂРёРІРµРґРµРЅРёСЏ РјРѕРіСѓС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ С‡Р»РµРЅР°РјРё РєР»Р°СЃСЃР°");
 		return NULL;
 	}
 
@@ -115,41 +115,41 @@ PDeclarationMaker DeclarationCoordinator::Coordinate() const
 }
 
 
-// скоординировать постройку декларации, создать из пакета
-// временную структуру и далее на ее основании выбрать строителя
+// СЃРєРѕРѕСЂРґРёРЅРёСЂРѕРІР°С‚СЊ РїРѕСЃС‚СЂРѕР№РєСѓ РґРµРєР»Р°СЂР°С†РёРё, СЃРѕР·РґР°С‚СЊ РёР· РїР°РєРµС‚Р°
+// РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ Рё РґР°Р»РµРµ РЅР° РµРµ РѕСЃРЅРѕРІР°РЅРёРё РІС‹Р±СЂР°С‚СЊ СЃС‚СЂРѕРёС‚РµР»СЏ
 PDeclarationMaker AutoDeclarationCoordinator::Coordinate() const
 {
 	int ix = declarator->FindPackage(PC_QUALIFIED_NAME);
 	INTERNAL_IF( ix < 0 );
 	Position errPos = ParserUtils::GetPackagePosition(declarator->GetChildPackage(ix));
 
-	// проверяем, если идет определение члена, т.е. имя составное
-	// значит это является ошибкой
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РёРґРµС‚ РѕРїСЂРµРґРµР»РµРЅРёРµ С‡Р»РµРЅР°, С‚.Рµ. РёРјСЏ СЃРѕСЃС‚Р°РІРЅРѕРµ
+	// Р·РЅР°С‡РёС‚ СЌС‚Рѕ СЏРІР»СЏРµС‚СЃСЏ РѕС€РёР±РєРѕР№
 	if( static_cast<const NodePackage *>(declarator->GetChildPackage(ix))->
 			GetChildPackageCount() > 1 )
 	{
 		theApp.Error(errPos,
-			"декларация члена невозможна в локальной области видимости");
+			"РґРµРєР»Р°СЂР°С†РёСЏ С‡Р»РµРЅР° РЅРµРІРѕР·РјРѕР¶РЅР° РІ Р»РѕРєР°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё");
 		return NULL;
 	}
 
-	// иначе создаем временную структуру и собираем в нее декларацию
+	// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ Рё СЃРѕР±РёСЂР°РµРј РІ РЅРµРµ РґРµРєР»Р°СЂР°С†РёСЋ
 	PTempObjectContainer toc = 
 		new TempObjectContainer ( 
 			errPos,
 			ParserUtils::PrintPackageTree((NodePackage*)declarator->GetChildPackage(ix))
 		);
 
-	// начинаем анализ спецификаторов типа
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	MakerUtils::AnalyzeTypeSpecifierPkg( typeSpecList, &*toc );
 
-	// далее анализируем декларатор
+	// РґР°Р»РµРµ Р°РЅР°Р»РёР·РёСЂСѓРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 	MakerUtils::AnalyzeDeclaratorPkg( declarator, &*toc );
 	
-	// уточняем базовый тип
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 	MakerUtils::SpecifyBaseType( &*toc );
 	
-	// выбираем строителя - основное предназначение координатора
+	// РІС‹Р±РёСЂР°РµРј СЃС‚СЂРѕРёС‚РµР»СЏ - РѕСЃРЅРѕРІРЅРѕРµ РїСЂРµРґРЅР°Р·РЅР°С‡РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚РѕСЂР°
 	const NodePackage &np = 
 		*(NodePackage *)((NodePackage*)declarator->GetChildPackage(ix))->GetChildPackage(0);
 	if( np.GetPackageID() == PC_OVERLOAD_OPERATOR )
@@ -161,7 +161,7 @@ PDeclarationMaker AutoDeclarationCoordinator::Coordinate() const
 
 	else if( np.GetPackageID() == PC_CAST_OPERATOR )
 	{
-		theApp.Error( toc->errPos, "операторы приведения могут быть только членами класса");
+		theApp.Error( toc->errPos, "РѕРїРµСЂР°С‚РѕСЂС‹ РїСЂРёРІРµРґРµРЅРёСЏ РјРѕРіСѓС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ С‡Р»РµРЅР°РјРё РєР»Р°СЃСЃР°");
 		return NULL;
 	}
 
@@ -172,7 +172,7 @@ PDeclarationMaker AutoDeclarationCoordinator::Coordinate() const
 }
 
 
-// определить строителя декларации 
+// РѕРїСЂРµРґРµР»РёС‚СЊ СЃС‚СЂРѕРёС‚РµР»СЏ РґРµРєР»Р°СЂР°С†РёРё 
 PMemberDeclarationMaker MemberDeclarationCoordinator::Coordinate()
 {
 	int ix = declarator->FindPackage(PC_QUALIFIED_NAME);
@@ -182,68 +182,68 @@ PMemberDeclarationMaker MemberDeclarationCoordinator::Coordinate()
 	
 	
 	ep = ParserUtils::GetPackagePosition(ix < 0 ? typeSpecList : np);
-	name = ix < 0 ? "<без имени>" : ParserUtils::PrintPackageTree(np);
+	name = ix < 0 ? "<Р±РµР· РёРјРµРЅРё>" : ParserUtils::PrintPackageTree(np);
 
-	// декларатор должен обязательно присутствовать
+	// РґРµРєР»Р°СЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РїСЂРёСЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ
 	if( declarator->IsNoChildPackages() )
 	{
-		theApp.Error(ep, "пропущен декларатор в объявлении члена");
+		theApp.Error(ep, "РїСЂРѕРїСѓС‰РµРЅ РґРµРєР»Р°СЂР°С‚РѕСЂ РІ РѕР±СЉСЏРІР»РµРЅРёРё С‡Р»РµРЅР°");
 		return NULL;
 	}
 
-	// сразу проверяем, чтобы имя не было квалифицированным
+	// СЃСЂР°Р·Сѓ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РёРјСЏ РЅРµ Р±С‹Р»Рѕ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј
 	if( np && np->GetChildPackageCount() > 1 )
 	{
-		theApp.Error(ep, "'%s' - нельзя объявлять квалифицированное имя внутри класса",
+		theApp.Error(ep, "'%s' - РЅРµР»СЊР·СЏ РѕР±СЉСЏРІР»СЏС‚СЊ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРµ РёРјСЏ РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°",
 			name.c_str());
 		return NULL;
 	}
 
-	// обработка оператора приведения, отличается от обработки остальных членов
+	// РѕР±СЂР°Р±РѕС‚РєР° РѕРїРµСЂР°С‚РѕСЂР° РїСЂРёРІРµРґРµРЅРёСЏ, РѕС‚Р»РёС‡Р°РµС‚СЃСЏ РѕС‚ РѕР±СЂР°Р±РѕС‚РєРё РѕСЃС‚Р°Р»СЊРЅС‹С… С‡Р»РµРЅРѕРІ
 	if( np && np->GetChildPackage(0)->GetPackageID() == PC_CAST_OPERATOR )
 	{		
 		TempCastOperatorContainer tcoc;
-		MakerUtils::AnalyzeCastOperatorPkg(*(const NodePackage *)np->GetChildPackage(0), tcoc);		
+		MakerUtils::AnalyzeCastOperatorPkg(*(const NodePackage *)np->GetChildPackage(0), tcoc); 
 
-		// конструктор для объектов, которые не могут содержать составные
-		// имена, либо могут не иметь имени вовсе
+		// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґР»СЏ РѕР±СЉРµРєС‚РѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅРµ РјРѕРіСѓС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ СЃРѕСЃС‚Р°РІРЅС‹Рµ
+		// РёРјРµРЅР°, Р»РёР±Рѕ РјРѕРіСѓС‚ РЅРµ РёРјРµС‚СЊ РёРјРµРЅРё РІРѕРІСЃРµ
 		PTempObjectContainer toc = new TempObjectContainer( ep, tcoc.opFullName, curAccessSpec );
 		
-		// начинаем анализ спецификаторов типа
+		// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 		MakerUtils::AnalyzeTypeSpecifierPkg( typeSpecList, &*toc );
 
-		// далее анализируем декларатор
+		// РґР°Р»РµРµ Р°РЅР°Р»РёР·РёСЂСѓРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 		MakerUtils::AnalyzeDeclaratorPkg( declarator, &*toc );
 	
-		// уточняем базовый тип, но только если список не пустой
+		// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї, РЅРѕ С‚РѕР»СЊРєРѕ РµСЃР»Рё СЃРїРёСЃРѕРє РЅРµ РїСѓСЃС‚РѕР№
 		if( !typeSpecList->IsNoChildPackages() )
 		{
-			// если содержится один пакет, и это 'virtual',
-			// то это допустимо, иначе следует вывести ошибку
+			// РµСЃР»Рё СЃРѕРґРµСЂР¶РёС‚СЃСЏ РѕРґРёРЅ РїР°РєРµС‚, Рё СЌС‚Рѕ 'virtual',
+			// С‚Рѕ СЌС‚Рѕ РґРѕРїСѓСЃС‚РёРјРѕ, РёРЅР°С‡Рµ СЃР»РµРґСѓРµС‚ РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 			if( typeSpecList->GetChildPackageCount() == 1 && 
 				typeSpecList->GetChildPackage(0)->GetPackageID() == KWVIRTUAL )
 				toc->fnSpecCode = KWVIRTUAL;
 
-			// иначе уточняем
+			// РёРЅР°С‡Рµ СѓС‚РѕС‡РЅСЏРµРј
 			else
-				MakerUtils::SpecifyBaseType( &*toc );	
+				MakerUtils::SpecifyBaseType( &*toc ); 
 		}
 
-		return new CastOperatorMaker(clsType, curAccessSpec, toc, tcoc);		
+		return new CastOperatorMaker(clsType, curAccessSpec, toc, tcoc); 
 	}
 
-	// конструктор для объектов, которые не могут содержать составные
-	// имена, либо могут не иметь имени вовсе
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґР»СЏ РѕР±СЉРµРєС‚РѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅРµ РјРѕРіСѓС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ СЃРѕСЃС‚Р°РІРЅС‹Рµ
+	// РёРјРµРЅР°, Р»РёР±Рѕ РјРѕРіСѓС‚ РЅРµ РёРјРµС‚СЊ РёРјРµРЅРё РІРѕРІСЃРµ
 	PTempObjectContainer toc = new TempObjectContainer( ep, name, curAccessSpec );
 
-	// начинаем анализ спецификаторов типа
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	MakerUtils::AnalyzeTypeSpecifierPkg( typeSpecList, &*toc );
 
-	// далее анализируем декларатор
+	// РґР°Р»РµРµ Р°РЅР°Р»РёР·РёСЂСѓРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 	MakerUtils::AnalyzeDeclaratorPkg( declarator, &*toc );
 	
-	// уточняем базовый тип, но только если это не деструктор и не конструктор
-	if( np														 && 
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї, РЅРѕ С‚РѕР»СЊРєРѕ РµСЃР»Рё СЌС‚Рѕ РЅРµ РґРµСЃС‚СЂСѓРєС‚РѕСЂ Рё РЅРµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+	if( np && 
 		(np->GetChildPackage(0)->GetPackageID() == PC_DESTRUCTOR &&
 		 (typeSpecList->IsNoChildPackages() || (typeSpecList->GetChildPackageCount() == 1 &&
 		  typeSpecList->GetChildPackage(0)->GetPackageID() == KWVIRTUAL) )	||
@@ -254,21 +254,21 @@ PMemberDeclarationMaker MemberDeclarationCoordinator::Coordinate()
 	else
 		MakerUtils::SpecifyBaseType( &*toc );
 
-	// если имени нет - значит это первое объявление конструктора,
-	// внутри класса. Если имя совпадает с именем класса, значит это
-	// не первое объявление конструктора. В любом случае вызываем
-	// строитель конструктора
+	// РµСЃР»Рё РёРјРµРЅРё РЅРµС‚ - Р·РЅР°С‡РёС‚ СЌС‚Рѕ РїРµСЂРІРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°,
+	// РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°. Р•СЃР»Рё РёРјСЏ СЃРѕРІРїР°РґР°РµС‚ СЃ РёРјРµРЅРµРј РєР»Р°СЃСЃР°, Р·РЅР°С‡РёС‚ СЌС‚Рѕ
+	// РЅРµ РїРµСЂРІРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°. Р’ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ РІС‹Р·С‹РІР°РµРј
+	// СЃС‚СЂРѕРёС‚РµР»СЊ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 	if( ix < 0 || toc->name == clsType.GetName() )
 	{
-		// имя конструктора не должно совпадать с именем класса. У конструктора
-		// не должно быть имени вообще, поэтому меняем его
+		// РёРјСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РЅРµ РґРѕР»Р¶РЅРѕ СЃРѕРІРїР°РґР°С‚СЊ СЃ РёРјРµРЅРµРј РєР»Р°СЃСЃР°. РЈ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
+		// РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РёРјРµРЅРё РІРѕРѕР±С‰Рµ, РїРѕСЌС‚РѕРјСѓ РјРµРЅСЏРµРј РµРіРѕ
 		toc->name = ('.' +
-			string(clsType.GetName().c_str()) ).c_str();	
+			string(clsType.GetName().c_str()) ).c_str(); 
 		return new ConstructorMaker(clsType, curAccessSpec, toc);
 	}
 
-	// иначе если заголовок имени - PC_OVERLOAD_OPERATOR, возвращаем
-	// строитель перегруженного оператора
+	// РёРЅР°С‡Рµ РµСЃР»Рё Р·Р°РіРѕР»РѕРІРѕРє РёРјРµРЅРё - PC_OVERLOAD_OPERATOR, РІРѕР·РІСЂР°С‰Р°РµРј
+	// СЃС‚СЂРѕРёС‚РµР»СЊ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
 	else if( np->GetChildPackage(0)->GetPackageID() == PC_OVERLOAD_OPERATOR )
 	{
 		TempOverloadOperatorContainer tooc;
@@ -276,83 +276,83 @@ PMemberDeclarationMaker MemberDeclarationCoordinator::Coordinate()
 			*(const NodePackage *)np->GetChildPackage(0), tooc);
 		toc->name = tooc.opFullName;
 
-		// может быть friend-декларация, тогда следует вызвать строителя
-		// перегруженных операторов, в противном случае обычный строитель
-		// операторов-членов
+		// РјРѕР¶РµС‚ Р±С‹С‚СЊ friend-РґРµРєР»Р°СЂР°С†РёСЏ, С‚РѕРіРґР° СЃР»РµРґСѓРµС‚ РІС‹Р·РІР°С‚СЊ СЃС‚СЂРѕРёС‚РµР»СЏ
+		// РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹С… РѕРїРµСЂР°С‚РѕСЂРѕРІ, РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РѕР±С‹С‡РЅС‹Р№ СЃС‚СЂРѕРёС‚РµР»СЊ
+		// РѕРїРµСЂР°С‚РѕСЂРѕРІ-С‡Р»РµРЅРѕРІ
 		if( toc->friendSpec )
-			return new FriendFunctionMaker(clsType, curAccessSpec, toc, tooc) ;			
+			return new FriendFunctionMaker(clsType, curAccessSpec, toc, tooc) ; 
 		else
 			return new OperatorMemberMaker(clsType, curAccessSpec, toc, tooc) ;
 	}
 
-	// иначе если заголовок имени - PC_DESTRUCTOR, возвращаем
-	// строитель деструктора
+	// РёРЅР°С‡Рµ РµСЃР»Рё Р·Р°РіРѕР»РѕРІРѕРє РёРјРµРЅРё - PC_DESTRUCTOR, РІРѕР·РІСЂР°С‰Р°РµРј
+	// СЃС‚СЂРѕРёС‚РµР»СЊ РґРµСЃС‚СЂСѓРєС‚РѕСЂР°
 	else if( np->GetChildPackage(0)->GetPackageID() == PC_DESTRUCTOR )
 		return new DestructorMaker(clsType, curAccessSpec, toc);
 
-	// иначе если список производных типов начинается с функции, значит
-	// это либо метод, либо дружеская функция
+	// РёРЅР°С‡Рµ РµСЃР»Рё СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ С„СѓРЅРєС†РёРё, Р·РЅР°С‡РёС‚
+	// СЌС‚Рѕ Р»РёР±Рѕ РјРµС‚РѕРґ, Р»РёР±Рѕ РґСЂСѓР¶РµСЃРєР°СЏ С„СѓРЅРєС†РёСЏ
 	else if( toc->dtl.IsFunction() && toc->ssCode != KWTYPEDEF )
 	{
-		// если задан спецификатор дружбы - значит возвратить строителя
-		// дружеских функций
+		// РµСЃР»Рё Р·Р°РґР°РЅ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹ - Р·РЅР°С‡РёС‚ РІРѕР·РІСЂР°С‚РёС‚СЊ СЃС‚СЂРѕРёС‚РµР»СЏ
+		// РґСЂСѓР¶РµСЃРєРёС… С„СѓРЅРєС†РёР№
 		if( toc->friendSpec )
 			return new FriendFunctionMaker(clsType, curAccessSpec, toc);
 		else
 			return new MethodMaker(clsType, curAccessSpec, toc);
 	}
 
-	// иначе возвращаем строитель данного-члена
+	// РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј СЃС‚СЂРѕРёС‚РµР»СЊ РґР°РЅРЅРѕРіРѕ-С‡Р»РµРЅР°
 	else 
-		return new DataMemberMaker(clsType, curAccessSpec, toc);		
+		return new DataMemberMaker(clsType, curAccessSpec, toc); 
 }
 
 
-// скоординировать и построить унарное выражение
+// СЃРєРѕРѕСЂРґРёРЅРёСЂРѕРІР°С‚СЊ Рё РїРѕСЃС‚СЂРѕРёС‚СЊ СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 POperand UnaryExpressionCoordinator::Coordinate() const
 {
-	// выражение должно присутствовать
+	// РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ РїСЂРёСЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ
 	INTERNAL_IF( right.IsNull() );
 
-	// сначала проверяем, если выражение ошибочно, вернуть его же
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ РѕС€РёР±РѕС‡РЅРѕ, РІРµСЂРЅСѓС‚СЊ РµРіРѕ Р¶Рµ
 	if( right->IsErrorOperand() )
 		return right;
 
-	// если операнд тип, вернуть ошибку
+	// РµСЃР»Рё РѕРїРµСЂР°РЅРґ С‚РёРї, РІРµСЂРЅСѓС‚СЊ РѕС€РёР±РєСѓ
 	if( right->IsTypeOperand() && op != KWSIZEOF && op != KWTYPEID )
 	{
-		theApp.Error(errPos, "тип не может быть операндом в выражении");
+		theApp.Error(errPos, "С‚РёРї РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїРµСЂР°РЅРґРѕРј РІ РІС‹СЂР°Р¶РµРЅРёРё");
 		return ErrorOperand::GetInstance();
 	}
 
-	// если операнд перегруженная функция, возможно только применение
-	// оператора '&'
+	// РµСЃР»Рё РѕРїРµСЂР°РЅРґ РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ, РІРѕР·РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РїСЂРёРјРµРЅРµРЅРёРµ
+	// РѕРїРµСЂР°С‚РѕСЂР° '&'
 	if( right->IsOverloadOperand() && op != '&' )
 	{
 		theApp.Error(errPos, 
-			"'%s' - перегруженная функция не может быть операндом в выражении",
+			"'%s' - РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїРµСЂР°РЅРґРѕРј РІ РІС‹СЂР°Р¶РµРЅРёРё",
 			static_cast<const OverloadOperand &>(*right).GetOverloadList().
 			front()->GetName().c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// проверяем, если мы имеем член, то он должен использоваться только через
-	// this, за исключением выражения '&'.
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РјС‹ РёРјРµРµРј С‡Р»РµРЅ, С‚Рѕ РѕРЅ РґРѕР»Р¶РµРЅ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ С‡РµСЂРµР·
+	// this, Р·Р° РёСЃРєР»СЋС‡РµРЅРёРµРј РІС‹СЂР°Р¶РµРЅРёСЏ '&'.
 	if( right->IsPrimaryOperand() && op != '&' )
 		ExpressionMakerUtils::CheckMemberThisVisibility(right, errPos);
 
-	// далее пытаемся проверить операнд на интерпретируемость
+	// РґР°Р»РµРµ РїС‹С‚Р°РµРјСЃСЏ РїСЂРѕРІРµСЂРёС‚СЊ РѕРїРµСЂР°РЅРґ РЅР° РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјРѕСЃС‚СЊ
 	POperand rval = UnaryInterpretator(right, op, errPos).Interpretate();
 	if( !rval.IsNull() )
 		return rval;
 
-	// пытаемся вызвать перегруженный оператор, если получается,
-	// результат преобразуется в вызов функции
+	// РїС‹С‚Р°РµРјСЃСЏ РІС‹Р·РІР°С‚СЊ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ, РµСЃР»Рё РїРѕР»СѓС‡Р°РµС‚СЃСЏ,
+	// СЂРµР·СѓР»СЊС‚Р°С‚ РїСЂРµРѕР±СЂР°Р·СѓРµС‚СЃСЏ РІ РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё
 	rval = UnaryOverloadOperatorCaller(right, op, errPos).Call();
 	if( !rval.IsNull() )
 		return rval;
 
-	// далее проверяем допустимые операторы
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј РґРѕРїСѓСЃС‚РёРјС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹
 	switch( op )
 	{
 	case '!':  return LogicalUnaryMaker(right, op, errPos).Make();
@@ -373,55 +373,55 @@ POperand UnaryExpressionCoordinator::Coordinate() const
 	case KWTYPEID:  return TypeidUnaryMaker(right, op, errPos).Make();
 	case KWTHROW:	return ThrowUnaryMaker(right, op, errPos).Make();
 
-		// иначе неизвестный унарный оператор
+		// РёРЅР°С‡Рµ РЅРµРёР·РІРµСЃС‚РЅС‹Р№ СѓРЅР°СЂРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ
 	default:
-		INTERNAL( "'UnaryExpressionCoordinator::Coordinate': неизвестный унарный оператор");
+		INTERNAL( "'UnaryExpressionCoordinator::Coordinate': РЅРµРёР·РІРµСЃС‚РЅС‹Р№ СѓРЅР°СЂРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ");
 	}
 
 	return NULL;		// kill warning
 }
 
 
-// выполнить предварительные проверки корректности выражения
-// и построить его
+// РІС‹РїРѕР»РЅРёС‚СЊ РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅС‹Рµ РїСЂРѕРІРµСЂРєРё РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚Рё РІС‹СЂР°Р¶РµРЅРёСЏ
+// Рё РїРѕСЃС‚СЂРѕРёС‚СЊ РµРіРѕ
 POperand TernaryExpressionCoordinator::Coordinate() const
 {
-	// выражение должно присутствовать
+	// РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ РїСЂРёСЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ
 	INTERNAL_IF( cond.IsNull() || left.IsNull() || right.IsNull() );
 
-	// каждый операнд должен быть корректным
+	// РєР°Р¶РґС‹Р№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РєРѕСЂСЂРµРєС‚РЅС‹Рј
 	if( cond->IsErrorOperand() || left->IsErrorOperand() || right->IsErrorOperand() )
 		return ErrorOperand::GetInstance();
 
-	// если операнд тип, вернуть ошибку
+	// РµСЃР»Рё РѕРїРµСЂР°РЅРґ С‚РёРї, РІРµСЂРЅСѓС‚СЊ РѕС€РёР±РєСѓ
 	if( cond->IsTypeOperand() || left->IsTypeOperand() || right->IsTypeOperand() )
 	{
-		theApp.Error(errPos, "тип не может быть операндом в выражении");
+		theApp.Error(errPos, "С‚РёРї РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїРµСЂР°РЅРґРѕРј РІ РІС‹СЂР°Р¶РµРЅРёРё");
 		return ErrorOperand::GetInstance();
 	}
 
-	// если операнд перегруженная функция
+	// РµСЃР»Рё РѕРїРµСЂР°РЅРґ РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ
 	if( cond->IsOverloadOperand() || left->IsOverloadOperand() || right->IsOverloadOperand() )
 	{
 		theApp.Error(errPos, 
-			"перегруженная функция не может быть операндом в выражении");
+			"РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїРµСЂР°РЅРґРѕРј РІ РІС‹СЂР°Р¶РµРЅРёРё");
 		return ErrorOperand::GetInstance();
 	}
 
-	// проверка на наличие 'this' в текущей области видимости, если
-	// операнд является нестатическим данным-членом класса
+	// РїСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ 'this' РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, РµСЃР»Рё
+	// РѕРїРµСЂР°РЅРґ СЏРІР»СЏРµС‚СЃСЏ РЅРµСЃС‚Р°С‚РёС‡РµСЃРєРёРј РґР°РЅРЅС‹Рј-С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР°
 	if( left->IsPrimaryOperand() )
 		ExpressionMakerUtils::CheckMemberThisVisibility(left, errPos);
 	if( right->IsPrimaryOperand() )
-		ExpressionMakerUtils::CheckMemberThisVisibility(right, errPos);		
+		ExpressionMakerUtils::CheckMemberThisVisibility(right, errPos); 
 	if( cond->IsPrimaryOperand() )
-		ExpressionMakerUtils::CheckMemberThisVisibility(cond, errPos);		
+		ExpressionMakerUtils::CheckMemberThisVisibility(cond, errPos); 
 
-	// далее пытаемся проверить операнд на интерпретируемость
+	// РґР°Р»РµРµ РїС‹С‚Р°РµРјСЃСЏ РїСЂРѕРІРµСЂРёС‚СЊ РѕРїРµСЂР°РЅРґ РЅР° РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјРѕСЃС‚СЊ
 	POperand rval = TernaryInterpretator(cond, left, right).Interpretate();
 	if( !rval.IsNull() )
 		return rval;
 
-	// иначе строим выражение
+	// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ
 	return IfTernaryMaker(cond, left, right, op, errPos).Make();
 }

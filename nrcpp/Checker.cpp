@@ -1,4 +1,4 @@
-// реализация методов КЛАССОВ-ЧЕКЕРОВ - Checker.h
+// СЂРµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ РљР›РђРЎРЎРћР’-Р§Р•РљР•Р РћР’ - Checker.h
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -18,21 +18,21 @@ using namespace nrc;
 #include "Overload.h"
 
 
-// использовать утилиты проверки
+// РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СѓС‚РёР»РёС‚С‹ РїСЂРѕРІРµСЂРєРё
 using namespace CheckerUtils;
 
 
-// проверяет, может ли класс быть базовым для другого класса
+// РїСЂРѕРІРµСЂСЏРµС‚, РјРѕР¶РµС‚ Р»Рё РєР»Р°СЃСЃ Р±С‹С‚СЊ Р±Р°Р·РѕРІС‹Рј РґР»СЏ РґСЂСѓРіРѕРіРѕ РєР»Р°СЃСЃР°
 bool CheckerUtils::BaseClassChecker(const ClassType &cls, const SymbolTableList &stl, 
 									const Position &errPos, PCSTR cname )
 {
-	// 1. класс должен быть полностью объявленным
-	// 2. класс не должен быть объединением
-	// 3. класс должен быть доступным в данной области видимости
+	// 1. РєР»Р°СЃСЃ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Рј
+	// 2. РєР»Р°СЃСЃ РЅРµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РѕР±СЉРµРґРёРЅРµРЅРёРµРј
+	// 3. РєР»Р°СЃСЃ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РґРѕСЃС‚СѓРїРЅС‹Рј РІ РґР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	if( cls.IsUncomplete() )
 	{
 		theApp.Error(errPos, 
-			"'%s' - не полностью объявленный класс используется в качестве базового",
+			"'%s' - РЅРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ РєР»Р°СЃСЃ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ РєР°С‡РµСЃС‚РІРµ Р±Р°Р·РѕРІРѕРіРѕ",
 			cname);
 		return false;
 	}
@@ -40,7 +40,7 @@ bool CheckerUtils::BaseClassChecker(const ClassType &cls, const SymbolTableList 
 	if( cls.GetBaseTypeCode() == BaseType::BT_UNION )
 	{
 		theApp.Error(errPos, 
-			"'%s' - объединение не может быть базовым классом",
+			"'%s' - РѕР±СЉРµРґРёРЅРµРЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р±Р°Р·РѕРІС‹Рј РєР»Р°СЃСЃРѕРј",
 			cname);
 		return false;
 	}
@@ -49,16 +49,16 @@ bool CheckerUtils::BaseClassChecker(const ClassType &cls, const SymbolTableList 
 }
 
 
-// проверяет возможность определения класса
+// РїСЂРѕРІРµСЂСЏРµС‚ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РѕРїСЂРµРґРµР»РµРЅРёСЏ РєР»Р°СЃСЃР°
 bool CheckerUtils::ClassDefineChecker( const ClassType &cls, const SymbolTableList &stl, 
 									   const Position &errPos )
 {		
-	// 1. класс нельзя определять, если он уже определен
-	// 2. класс нельзя определять, если текущая область видимости не глобальная,
-	//	  а класс квалифицирован другими областями видимости
+	// 1. РєР»Р°СЃСЃ РЅРµР»СЊР·СЏ РѕРїСЂРµРґРµР»СЏС‚СЊ, РµСЃР»Рё РѕРЅ СѓР¶Рµ РѕРїСЂРµРґРµР»РµРЅ
+	// 2. РєР»Р°СЃСЃ РЅРµР»СЊР·СЏ РѕРїСЂРµРґРµР»СЏС‚СЊ, РµСЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РіР»РѕР±Р°Р»СЊРЅР°СЏ,
+	//	  Р° РєР»Р°СЃСЃ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅ РґСЂСѓРіРёРјРё РѕР±Р»Р°СЃС‚СЏРјРё РІРёРґРёРјРѕСЃС‚Рё
 	if( !cls.IsUncomplete() )
 	{
-		theApp.Error(errPos, "'%s' - класс уже определен", cls.GetName().c_str());	
+		theApp.Error(errPos, "'%s' - РєР»Р°СЃСЃ СѓР¶Рµ РѕРїСЂРµРґРµР»РµРЅ", cls.GetName().c_str());	
 		return false;
 	}
 
@@ -67,7 +67,7 @@ bool CheckerUtils::ClassDefineChecker( const ClassType &cls, const SymbolTableLi
 		  GetCurrentSymbolTable().IsNamespaceSymbolTable()) )		 
 	{ 
 		theApp.Error(errPos, 
-			"'%s' - класс должен определяться в глобальной области видимости", 
+			"'%s' - РєР»Р°СЃСЃ РґРѕР»Р¶РµРЅ РѕРїСЂРµРґРµР»СЏС‚СЊСЃСЏ РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё", 
 			cls.GetName().c_str());	
 		return false;		
 	}
@@ -76,13 +76,13 @@ bool CheckerUtils::ClassDefineChecker( const ClassType &cls, const SymbolTableLi
 }
 
 
-// проверяет, если тип typedef, является классом, вернуть класс иначе 0
+// РїСЂРѕРІРµСЂСЏРµС‚, РµСЃР»Рё С‚РёРї typedef, СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј, РІРµСЂРЅСѓС‚СЊ РєР»Р°СЃСЃ РёРЅР°С‡Рµ 0
 const ClassType *CheckerUtils::TypedefIsClass( const ::Object &obj )
 {
 	INTERNAL_IF( obj.GetStorageSpecifier() != ::Object::SS_TYPEDEF );
 
-	// если список производных типов не пустой, базовый имеет код
-	// не класса, присутствуют cv-квалификаторы, 
+	// РµСЃР»Рё СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ РЅРµ РїСѓСЃС‚РѕР№, Р±Р°Р·РѕРІС‹Р№ РёРјРµРµС‚ РєРѕРґ
+	// РЅРµ РєР»Р°СЃСЃР°, РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‚ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹, 
 	BaseType::BT bt = obj.GetBaseType().GetBaseTypeCode();
 	if( !obj.GetDerivedTypeList().IsEmpty() ||
 		(bt != BaseType::BT_CLASS && bt != BaseType::BT_STRUCT && bt != BaseType::BT_UNION) ||
@@ -93,16 +93,16 @@ const ClassType *CheckerUtils::TypedefIsClass( const ::Object &obj )
 }
 
 
-// проверить достуность имени. Если имя не является членом класса, оно не проверяется
-// на доступность
+// РїСЂРѕРІРµСЂРёС‚СЊ РґРѕСЃС‚СѓРЅРѕСЃС‚СЊ РёРјРµРЅРё. Р•СЃР»Рё РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР°, РѕРЅРѕ РЅРµ РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ
+// РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
 void CheckerUtils::CheckAccess( const QualifiedNameManager &qnm, const Identifier &id, 
 				const Position &errPos, const SymbolTable &ct )
 {
 	if( !id.GetSymbolTableEntry().IsClassSymbolTable() )
 		return;
 
-	// если идентификатор содержится в списке синонимов, значит его необходимо
-	// сохранить задать как основной
+	// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЃРѕРґРµСЂР¶РёС‚СЃСЏ РІ СЃРїРёСЃРєРµ СЃРёРЅРѕРЅРёРјРѕРІ, Р·РЅР°С‡РёС‚ РµРіРѕ РЅРµРѕР±С…РѕРґРёРјРѕ
+	// СЃРѕС…СЂР°РЅРёС‚СЊ Р·Р°РґР°С‚СЊ РєР°Рє РѕСЃРЅРѕРІРЅРѕР№
 	const ClassMember *cm = NULL;
 	if( const Identifier *ui = qnm.GetSynonymList().find_using_identifier(&id) )
 		cm = dynamic_cast<const ClassMember *>(ui);
@@ -112,14 +112,14 @@ void CheckerUtils::CheckAccess( const QualifiedNameManager &qnm, const Identifie
 	INTERNAL_IF( cm == NULL );
 
 
-	// вспомагательная структура для генерации исключительных ситуаций
-	// и вывода ошибки
+	// РІСЃРїРѕРјР°РіР°С‚РµР»СЊРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ РіРµРЅРµСЂР°С†РёРё РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅС‹С… СЃРёС‚СѓР°С†РёР№
+	// Рё РІС‹РІРѕРґР° РѕС€РёР±РєРё
 	struct ENoAccess
 	{
-		// информация необходимая для вывода ошибки
+		// РёРЅС„РѕСЂРјР°С†РёСЏ РЅРµРѕР±С…РѕРґРёРјР°СЏ РґР»СЏ РІС‹РІРѕРґР° РѕС€РёР±РєРё
 		CharString stName, memName, asName;
 
-		// на основании параметров задаем имена
+		// РЅР° РѕСЃРЅРѕРІР°РЅРёРё РїР°СЂР°РјРµС‚СЂРѕРІ Р·Р°РґР°РµРј РёРјРµРЅР°
 		ENoAccess( const SymbolTable &ct, const ClassType &mcls, const ClassMember &cm ) {
 			stName = ManagerUtils::GetSymbolTableName(ct);			
 			memName = dynamic_cast<const Identifier &>(cm).GetQualifiedName();
@@ -128,93 +128,93 @@ void CheckerUtils::CheckAccess( const QualifiedNameManager &qnm, const Identifie
 	};
 
 
-	// выявляем текущую область видимости. Если она является локальной,
-	// значит требуется подняться до функциональной
+	// РІС‹СЏРІР»СЏРµРј С‚РµРєСѓС‰СѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё. Р•СЃР»Рё РѕРЅР° СЏРІР»СЏРµС‚СЃСЏ Р»РѕРєР°Р»СЊРЅРѕР№,
+	// Р·РЅР°С‡РёС‚ С‚СЂРµР±СѓРµС‚СЃСЏ РїРѕРґРЅСЏС‚СЊСЃСЏ РґРѕ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕР№
 	const SymbolTable *curST = &ct;
 	if( curST->IsLocalSymbolTable() )	
 		curST = &GetScopeSystem().GetFunctionalSymbolTable();	
 
-	// в блоке могут генерироваться исключительные ситуации типа ENoAccess
+	// РІ Р±Р»РѕРєРµ РјРѕРіСѓС‚ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊСЃСЏ РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅС‹Рµ СЃРёС‚СѓР°С†РёРё С‚РёРїР° ENoAccess
 	try {
 
-	// имя одиночное и требует конкретной проверки на основании
-	// текущей области видимости
+	// РёРјСЏ РѕРґРёРЅРѕС‡РЅРѕРµ Рё С‚СЂРµР±СѓРµС‚ РєРѕРЅРєСЂРµС‚РЅРѕР№ РїСЂРѕРІРµСЂРєРё РЅР° РѕСЃРЅРѕРІР°РЅРёРё
+	// С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	if( qnm.GetQualifierList().IsEmpty() )
 	{
-		// если текущая область видимости функциональная, она обязательно
-		// должна быть функцией членом
+		// РµСЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ, РѕРЅР° РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ
+		// РґРѕР»Р¶РЅР° Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№ С‡Р»РµРЅРѕРј
 		if( curST->IsFunctionSymbolTable() )
 		{
 			const Function &fn = static_cast<const FunctionSymbolTable *>(curST)->GetFunction();
 			INTERNAL_IF( !fn.IsClassMember() );
 
-			// получаем класс к которому принадлежит функция-член,
-			// моделируем обращение к члену через 'this'
+			// РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ Рє РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ С„СѓРЅРєС†РёСЏ-С‡Р»РµРЅ,
+			// РјРѕРґРµР»РёСЂСѓРµРј РѕР±СЂР°С‰РµРЅРёРµ Рє С‡Р»РµРЅСѓ С‡РµСЂРµР· 'this'
 			const ClassType &fnCls = 
 				static_cast<const ClassType &>(fn.GetSymbolTableEntry());
 
 			AccessControlChecker achk( *curST, fnCls, *cm );
 
-			// если член недоступен, генерируем ситуацию выводя ошибку
+			// РµСЃР»Рё С‡Р»РµРЅ РЅРµРґРѕСЃС‚СѓРїРµРЅ, РіРµРЅРµСЂРёСЂСѓРµРј СЃРёС‚СѓР°С†РёСЋ РІС‹РІРѕРґСЏ РѕС€РёР±РєСѓ
 			if( !achk.IsAccessible() )
 				throw ENoAccess( *curST, fnCls, *cm );
 		}
 
-		// иначе текущая область видимости должна быть классом
+		// РёРЅР°С‡Рµ С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РєР»Р°СЃСЃРѕРј
 		else if( curST->IsClassSymbolTable() )
 		{
-			// имя одиночное, соотв. доступ к нему совершается через 'this',
-			// абстрактно. Т.е. через текущий класс
+			// РёРјСЏ РѕРґРёРЅРѕС‡РЅРѕРµ, СЃРѕРѕС‚РІ. РґРѕСЃС‚СѓРї Рє РЅРµРјСѓ СЃРѕРІРµСЂС€Р°РµС‚СЃСЏ С‡РµСЂРµР· 'this',
+			// Р°Р±СЃС‚СЂР°РєС‚РЅРѕ. Рў.Рµ. С‡РµСЂРµР· С‚РµРєСѓС‰РёР№ РєР»Р°СЃСЃ
 			const ClassType &memCls = static_cast<const ClassType &>(*curST);
 			AccessControlChecker achk( *curST, memCls , *cm );
 
-			// если член недоступен, генерируем ситуацию выводя ошибку
+			// РµСЃР»Рё С‡Р»РµРЅ РЅРµРґРѕСЃС‚СѓРїРµРЅ, РіРµРЅРµСЂРёСЂСѓРµРј СЃРёС‚СѓР°С†РёСЋ РІС‹РІРѕРґСЏ РѕС€РёР±РєСѓ
 			if( !achk.IsAccessible() )
 				throw ENoAccess( *curST, memCls , *cm );
 		}
 
-		// иначе остается глобальная и именованная области, а они
-		// не могут напрямую обратиться к члену класса без квалификации,
-		// поэтому внутренняя ошибка
+		// РёРЅР°С‡Рµ РѕСЃС‚Р°РµС‚СЃСЏ РіР»РѕР±Р°Р»СЊРЅР°СЏ Рё РёРјРµРЅРѕРІР°РЅРЅР°СЏ РѕР±Р»Р°СЃС‚Рё, Р° РѕРЅРё
+		// РЅРµ РјРѕРіСѓС‚ РЅР°РїСЂСЏРјСѓСЋ РѕР±СЂР°С‚РёС‚СЊСЃСЏ Рє С‡Р»РµРЅСѓ РєР»Р°СЃСЃР° Р±РµР· РєРІР°Р»РёС„РёРєР°С†РёРё,
+		// РїРѕСЌС‚РѕРјСѓ РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР°
 		else
-			INTERNAL( "'CheckerUtils::CheckAccess' текущая область видимости "
-					  "некорректна для проверки члена класса" );
+			INTERNAL( "'CheckerUtils::CheckAccess' С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё "
+					  "РЅРµРєРѕСЂСЂРµРєС‚РЅР° РґР»СЏ РїСЂРѕРІРµСЂРєРё С‡Р»РµРЅР° РєР»Р°СЃСЃР°" );
 	}
 
-	// далее проверяем, если имя квалифицированное, значит требуется проверить
-	// всю квалификацию и в качестве результата получить указатель на последний класс
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РёРјСЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРµ, Р·РЅР°С‡РёС‚ С‚СЂРµР±СѓРµС‚СЃСЏ РїСЂРѕРІРµСЂРёС‚СЊ
+	// РІСЃСЋ РєРІР°Р»РёС„РёРєР°С†РёСЋ Рё РІ РєР°С‡РµСЃС‚РІРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° РїРѕР»СѓС‡РёС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РїРѕСЃР»РµРґРЅРёР№ РєР»Р°СЃСЃ
 	else if( const ClassType *cls = CheckQualifiedAccess(qnm, errPos, *curST) )
 	{
-		// проверяем доступ к члену через класс
+		// РїСЂРѕРІРµСЂСЏРµРј РґРѕСЃС‚СѓРї Рє С‡Р»РµРЅСѓ С‡РµСЂРµР· РєР»Р°СЃСЃ
 		AccessControlChecker achk( *curST, *cls, *cm );
 
-		// если член недоступен, генерируем ситуацию выводя ошибку
+		// РµСЃР»Рё С‡Р»РµРЅ РЅРµРґРѕСЃС‚СѓРїРµРЅ, РіРµРЅРµСЂРёСЂСѓРµРј СЃРёС‚СѓР°С†РёСЋ РІС‹РІРѕРґСЏ РѕС€РёР±РєСѓ
 		if( !achk.IsAccessible() )
 			throw ENoAccess( *curST, *cls, *cm );
 	}
 
 	
-	// была ошибка доступа, перехватываем информацию для вывода ошибки
+	// Р±С‹Р»Р° РѕС€РёР±РєР° РґРѕСЃС‚СѓРїР°, РїРµСЂРµС…РІР°С‚С‹РІР°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ РґР»СЏ РІС‹РІРѕРґР° РѕС€РёР±РєРё
 	} catch( const ENoAccess &einfo ) {
-		theApp.Error( errPos, "'%s' - %s член недоступен в '%s'",
+		theApp.Error( errPos, "'%s' - %s С‡Р»РµРЅ РЅРµРґРѕСЃС‚СѓРїРµРЅ РІ '%s'",
 			einfo.memName.c_str(), einfo.asName.c_str(), 
 			einfo.stName.c_str() );
 	}
 }
 
 
-// проверка доступа для квалифицированного имени, проверяет доступность
-// каждого члена в квалификации и если последний член является классом,
-// вернуть его для проверки вместе с членом в CheckAccess, иначе вернуть 0.
-// Облась видимости 'ct' должна быть корректно преобразована из локальной
-// в функциональную, если требуется. Список квалификаторов в 'qnm' не должен
-// быть пустым.	
+// РїСЂРѕРІРµСЂРєР° РґРѕСЃС‚СѓРїР° РґР»СЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРіРѕ РёРјРµРЅРё, РїСЂРѕРІРµСЂСЏРµС‚ РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
+// РєР°Р¶РґРѕРіРѕ С‡Р»РµРЅР° РІ РєРІР°Р»РёС„РёРєР°С†РёРё Рё РµСЃР»Рё РїРѕСЃР»РµРґРЅРёР№ С‡Р»РµРЅ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј,
+// РІРµСЂРЅСѓС‚СЊ РµРіРѕ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІРјРµСЃС‚Рµ СЃ С‡Р»РµРЅРѕРј РІ CheckAccess, РёРЅР°С‡Рµ РІРµСЂРЅСѓС‚СЊ 0.
+// РћР±Р»Р°СЃСЊ РІРёРґРёРјРѕСЃС‚Рё 'ct' РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РєРѕСЂСЂРµРєС‚РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅР° РёР· Р»РѕРєР°Р»СЊРЅРѕР№
+// РІ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅСѓСЋ, РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ. РЎРїРёСЃРѕРє РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ РІ 'qnm' РЅРµ РґРѕР»Р¶РµРЅ
+// Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј.	
 const ClassType *CheckerUtils::CheckQualifiedAccess( const QualifiedNameManager &qnm,
 		const Position &errPos, const SymbolTable &ct )
 {
 	INTERNAL_IF( ct.IsLocalSymbolTable() );
 
-	// список квалификаторов имени должен быть непустой
+	// СЃРїРёСЃРѕРє РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ РёРјРµРЅРё РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РЅРµРїСѓСЃС‚РѕР№
 	INTERNAL_IF( qnm.GetQualifierList().IsEmpty() );
 	const SymbolTableList &qualList = qnm.GetQualifierList();
 
@@ -222,8 +222,8 @@ const ClassType *CheckerUtils::CheckQualifiedAccess( const QualifiedNameManager 
 	{
 		const SymbolTable &qst = qualList.GetSymbolTable(i);
 
-		// если квалификатор является последним, проверим, если
-		// он является классом, вернуть его иначе 0
+		// РµСЃР»Рё РєРІР°Р»РёС„РёРєР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ РїРѕСЃР»РµРґРЅРёРј, РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё
+		// РѕРЅ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј, РІРµСЂРЅСѓС‚СЊ РµРіРѕ РёРЅР°С‡Рµ 0
 		if( i == qualList.GetSymbolTableCount()-1 )
 		{		
 			if( qst.IsClassSymbolTable() )
@@ -232,8 +232,8 @@ const ClassType *CheckerUtils::CheckQualifiedAccess( const QualifiedNameManager 
 		}
 
 
-		// если область видимости является классом, получаем следующую
-		// и проверяем ее на доступность
+		// РµСЃР»Рё РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј, РїРѕР»СѓС‡Р°РµРј СЃР»РµРґСѓСЋС‰СѓСЋ
+		// Рё РїСЂРѕРІРµСЂСЏРµРј РµРµ РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
 		if( qst.IsClassSymbolTable() )
 		{
 			const ClassMember *mem = 
@@ -242,11 +242,11 @@ const ClassType *CheckerUtils::CheckQualifiedAccess( const QualifiedNameManager 
 			INTERNAL_IF( mem == NULL );
 			AccessControlChecker achk( ct, static_cast<const ClassType &>(qst), *mem);
 
-			// если член не является доступным, выводим ошибку
+			// РµСЃР»Рё С‡Р»РµРЅ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РґРѕСЃС‚СѓРїРЅС‹Рј, РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
 			if( !achk.IsAccessible() )
 			{
 				theApp.Error( errPos,
-					"'%s' - %s член недоступен в '%s'",
+					"'%s' - %s С‡Р»РµРЅ РЅРµРґРѕСЃС‚СѓРїРµРЅ РІ '%s'",
 					dynamic_cast<const Identifier *>(mem)->GetQualifiedName().c_str(),
 					ManagerUtils::GetAccessSpecifierName(mem->GetAccessSpecifier()),
 					ManagerUtils::GetSymbolTableName(ct).c_str() );
@@ -260,14 +260,14 @@ const ClassType *CheckerUtils::CheckQualifiedAccess( const QualifiedNameManager 
 }
 
 
-// проверить корректность списка производных типов
+// РїСЂРѕРІРµСЂРёС‚СЊ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ
 bool CheckerUtils::CheckDerivedTypeList( const TempObjectContainer &object )
 {
-	// произвести стандартную проверку производных типов. 
-	// Не может быть указателя на ссылку, ссылки на ссылку, массивов ссылок, 
-	// массива функций, функции возвращающей массив, указатель на член-ссылку.
-	// У функции не может быть cv-квалификаторов в глобальной 
-	// области видимости, только если не задан спецификатор хранения typedef.
+	// РїСЂРѕРёР·РІРµСЃС‚Рё СЃС‚Р°РЅРґР°СЂС‚РЅСѓСЋ РїСЂРѕРІРµСЂРєСѓ РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ. 
+	// РќРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° СЃСЃС‹Р»РєСѓ, СЃСЃС‹Р»РєРё РЅР° СЃСЃС‹Р»РєСѓ, РјР°СЃСЃРёРІРѕРІ СЃСЃС‹Р»РѕРє, 
+	// РјР°СЃСЃРёРІР° С„СѓРЅРєС†РёР№, С„СѓРЅРєС†РёРё РІРѕР·РІСЂР°С‰Р°СЋС‰РµР№ РјР°СЃСЃРёРІ, СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ-СЃСЃС‹Р»РєСѓ.
+	// РЈ С„СѓРЅРєС†РёРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ 
+	// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, С‚РѕР»СЊРєРѕ РµСЃР»Рё РЅРµ Р·Р°РґР°РЅ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ typedef.
 	for( int i = 0; i<object.dtl.GetDerivedTypeCount()-1; i++ )
 	{
 		const DerivedType &dt1 = *object.dtl.GetDerivedType(i),
@@ -276,7 +276,7 @@ bool CheckerUtils::CheckDerivedTypeList( const TempObjectContainer &object )
 		if( dt1.GetDerivedTypeCode() == DerivedType::DT_POINTER &&
 			dt2.GetDerivedTypeCode() == DerivedType::DT_REFERENCE )
 		{
-			theApp.Error(object.errPos, "'%s' - некорректный тип 'указатель на ссылку'",
+			theApp.Error(object.errPos, "'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С‚РёРї 'СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЃСЃС‹Р»РєСѓ'",
 				object.name.c_str());
 			return false;
 		}
@@ -284,7 +284,7 @@ bool CheckerUtils::CheckDerivedTypeList( const TempObjectContainer &object )
 		if( dt1.GetDerivedTypeCode() == DerivedType::DT_REFERENCE &&
 			dt2.GetDerivedTypeCode() == DerivedType::DT_REFERENCE )
 		{
-			theApp.Error(object.errPos, "'%s' - некорректный тип 'ссылка на ссылку'",
+			theApp.Error(object.errPos, "'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С‚РёРї 'СЃСЃС‹Р»РєР° РЅР° СЃСЃС‹Р»РєСѓ'",
 				object.name.c_str());
 			return false;
 		}
@@ -294,9 +294,9 @@ bool CheckerUtils::CheckDerivedTypeList( const TempObjectContainer &object )
 			  dt2.GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE) )
 		{
 			
-			theApp.Error(object.errPos, "'%s' - некорректный тип 'массив %s'",
+			theApp.Error(object.errPos, "'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С‚РёРї 'РјР°СЃСЃРёРІ %s'",
 				object.name.c_str(), 
-				dt2.GetDerivedTypeCode() == DerivedType::DT_REFERENCE ? "ссылок" : "функций");
+				dt2.GetDerivedTypeCode() == DerivedType::DT_REFERENCE ? "СЃСЃС‹Р»РѕРє" : "С„СѓРЅРєС†РёР№");
 
 			return false;
 		}
@@ -304,7 +304,7 @@ bool CheckerUtils::CheckDerivedTypeList( const TempObjectContainer &object )
 		if( dt1.GetDerivedTypeCode() == DerivedType::DT_POINTER_TO_MEMBER &&
 			dt2.GetDerivedTypeCode() == DerivedType::DT_REFERENCE )
 		{
-			theApp.Error(object.errPos, "'%s' - некорректный тип 'указатель на член-ссылку'",
+			theApp.Error(object.errPos, "'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С‚РёРї 'СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ-СЃСЃС‹Р»РєСѓ'",
 				object.name.c_str());
 			return false;
 		}
@@ -314,33 +314,33 @@ bool CheckerUtils::CheckDerivedTypeList( const TempObjectContainer &object )
 			(dt2.GetDerivedTypeCode() == DerivedType::DT_ARRAY || 
 			 dt2.GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE) )
 		{
-			theApp.Error(object.errPos, "'%s' - некорректный тип 'функция возвращающая %s'",
+			theApp.Error(object.errPos, "'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С‚РёРї 'С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°СЋС‰Р°СЏ %s'",
 				object.name.c_str(), 
-				dt2.GetDerivedTypeCode() == DerivedType::DT_ARRAY ? "массив" : "функцию");
+				dt2.GetDerivedTypeCode() == DerivedType::DT_ARRAY ? "РјР°СЃСЃРёРІ" : "С„СѓРЅРєС†РёСЋ");
 			return false;
 		}
 
-		// если массив, который не является головой списка - без размера,
-		// это ошибка
+		// РµСЃР»Рё РјР°СЃСЃРёРІ, РєРѕС‚РѕСЂС‹Р№ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РіРѕР»РѕРІРѕР№ СЃРїРёСЃРєР° - Р±РµР· СЂР°Р·РјРµСЂР°,
+		// СЌС‚Рѕ РѕС€РёР±РєР°
 		if( dt2.GetDerivedTypeCode() == DerivedType::DT_ARRAY &&
 			dt2.GetDerivedTypeSize() <= 0 )
 		{
-			theApp.Error(object.errPos, "'%s' - неизвестный или нулевой размер массива",
+			theApp.Error(object.errPos, "'%s' - РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РёР»Рё РЅСѓР»РµРІРѕР№ СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°",
 				object.name.c_str());
 			return false;
 		}
 
-		// последняя проверка, прототип функции не может иметь cv-квалификаторов,
-		// если это не указатель на член функцию. 
-		// Следует отметить, что если прототип функции является головой списка, 
-		// тогда его проверкой занимается вызывающая функция
+		// РїРѕСЃР»РµРґРЅСЏСЏ РїСЂРѕРІРµСЂРєР°, РїСЂРѕС‚РѕС‚РёРї С„СѓРЅРєС†РёРё РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ,
+		// РµСЃР»Рё СЌС‚Рѕ РЅРµ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ С„СѓРЅРєС†РёСЋ. 
+		// РЎР»РµРґСѓРµС‚ РѕС‚РјРµС‚РёС‚СЊ, С‡С‚Рѕ РµСЃР»Рё РїСЂРѕС‚РѕС‚РёРї С„СѓРЅРєС†РёРё СЏРІР»СЏРµС‚СЃСЏ РіРѕР»РѕРІРѕР№ СЃРїРёСЃРєР°, 
+		// С‚РѕРіРґР° РµРіРѕ РїСЂРѕРІРµСЂРєРѕР№ Р·Р°РЅРёРјР°РµС‚СЃСЏ РІС‹Р·С‹РІР°СЋС‰Р°СЏ С„СѓРЅРєС†РёСЏ
 		if( dt2.GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE )
 		{
 			if( dt1.GetDerivedTypeCode() != DerivedType::DT_POINTER_TO_MEMBER &&
 				((FunctionPrototype &)dt2).CV_Qualified() != 0 )
 			{
 				theApp.Error(object.errPos, 
-					"'%s' - некорректное использование cv-квалификаторов функции",
+					"'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ С„СѓРЅРєС†РёРё",
 					object.name.c_str());
 				return false;
 			}
@@ -351,19 +351,19 @@ bool CheckerUtils::CheckDerivedTypeList( const TempObjectContainer &object )
 }
 
 
-// произвести проверку совместимости базового типа и производных. 
-// Не может быть объекта, массива, указателя на член, ссылки типа void. 
-// Не может быть объекта или массива объектов абстрактного класса, 
-// только если это не typedef декларация. 
-// Не может быть объекта или массива из незавершенного класса, только если
-// это не объявление
+// РїСЂРѕРёР·РІРµСЃС‚Рё РїСЂРѕРІРµСЂРєСѓ СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…. 
+// РќРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕР±СЉРµРєС‚Р°, РјР°СЃСЃРёРІР°, СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С‡Р»РµРЅ, СЃСЃС‹Р»РєРё С‚РёРїР° void. 
+// РќРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕР±СЉРµРєС‚Р° РёР»Рё РјР°СЃСЃРёРІР° РѕР±СЉРµРєС‚РѕРІ Р°Р±СЃС‚СЂР°РєС‚РЅРѕРіРѕ РєР»Р°СЃСЃР°, 
+// С‚РѕР»СЊРєРѕ РµСЃР»Рё СЌС‚Рѕ РЅРµ typedef РґРµРєР»Р°СЂР°С†РёСЏ. 
+// РќРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕР±СЉРµРєС‚Р° РёР»Рё РјР°СЃСЃРёРІР° РёР· РЅРµР·Р°РІРµСЂС€РµРЅРЅРѕРіРѕ РєР»Р°СЃСЃР°, С‚РѕР»СЊРєРѕ РµСЃР»Рё
+// СЌС‚Рѕ РЅРµ РѕР±СЉСЏРІР»РµРЅРёРµ
 bool CheckerUtils::CheckRelationOfBaseTypeToDerived( TempObjectContainer &object,
 							 bool declaration, bool expr ) 
 {
-	// если базовый тип void
+	// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї void
 	if( object.finalType->GetBaseTypeCode() == BaseType::BT_VOID )
 	{
-		// если нет производных типов и декларация не typedef, ошибка
+		// РµСЃР»Рё РЅРµС‚ РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ Рё РґРµРєР»Р°СЂР°С†РёСЏ РЅРµ typedef, РѕС€РёР±РєР°
 		if( object.dtl.IsEmpty() )
 		{
 			if( object.ssCode == KWTYPEDEF || expr )
@@ -371,52 +371,52 @@ bool CheckerUtils::CheckRelationOfBaseTypeToDerived( TempObjectContainer &object
 			else
 			{
 				theApp.Error(object.errPos,
-					"'%s' - объект не может иметь тип 'void'", object.name.c_str());
+					"'%s' - РѕР±СЉРµРєС‚ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ С‚РёРї 'void'", object.name.c_str());
 				return false;
 			}
 		}
 
-		// иначе есть производные типы, теперь необходимо, чтобы это был
-		// указатель или функция
+		// РёРЅР°С‡Рµ РµСЃС‚СЊ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ С‚РёРїС‹, С‚РµРїРµСЂСЊ РЅРµРѕР±С…РѕРґРёРјРѕ, С‡С‚РѕР±С‹ СЌС‚Рѕ Р±С‹Р»
+		// СѓРєР°Р·Р°С‚РµР»СЊ РёР»Рё С„СѓРЅРєС†РёСЏ
 		const PDerivedType &ldt = object.dtl.GetTailDerivedType();
 		if( ldt->GetDerivedTypeCode() == DerivedType::DT_POINTER   ||
 			ldt->GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE )
 			return true;
 
-		// иначе ошибка
+		// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 		else
 		{
 			PCSTR msg;
 			if( ldt->GetDerivedTypeCode() == DerivedType::DT_ARRAY )
-				msg = "массив типа void";
+				msg = "РјР°СЃСЃРёРІ С‚РёРїР° void";
 			else if( ldt->GetDerivedTypeCode() == DerivedType::DT_REFERENCE )
-				msg = "ссылка на void";
+				msg = "СЃСЃС‹Р»РєР° РЅР° void";
 			else if( ldt->GetDerivedTypeCode() == DerivedType::DT_POINTER_TO_MEMBER )
-				msg = "указатель на член типа void";
+				msg = "СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ С‚РёРїР° void";
 			else 
 				INTERNAL("'CheckRelationOfBaseTypeToDerived' "
-						 "принимает некорректный код производного типа");
+						 "РїСЂРёРЅРёРјР°РµС‚ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РєРѕРґ РїСЂРѕРёР·РІРѕРґРЅРѕРіРѕ С‚РёРїР°");
 
 			theApp.Error(object.errPos,
-					"'%s' - объект не может иметь тип '%s'", object.name.c_str(), msg);
+					"'%s' - РѕР±СЉРµРєС‚ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ С‚РёРї '%s'", object.name.c_str(), msg);
 				return false;
 		}
 	}
 
-	// иначе если базовый тип это класс
+	// РёРЅР°С‡Рµ РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї СЌС‚Рѕ РєР»Р°СЃСЃ
 	else if( object.finalType->IsClassType() )
 	{
 		ClassType *cls = static_cast<ClassType *>(object.finalType);
 		
 
-		// если класс не полностью объявлен или абстрактный, он может базовым типом
-		// только для ссылок, указателей, указателей на члены
+		// РµСЃР»Рё РєР»Р°СЃСЃ РЅРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ РёР»Рё Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№, РѕРЅ РјРѕР¶РµС‚ Р±Р°Р·РѕРІС‹Рј С‚РёРїРѕРј
+		// С‚РѕР»СЊРєРѕ РґР»СЏ СЃСЃС‹Р»РѕРє, СѓРєР°Р·Р°С‚РµР»РµР№, СѓРєР°Р·Р°С‚РµР»РµР№ РЅР° С‡Р»РµРЅС‹
 		if( cls->IsUncomplete() || cls->IsAbstract() ) 
 		{
 			bool incomplete = cls->IsUncomplete();
 
-			// список производных типов пустой, поэтому должна
-			// быть только объявление (typedef, extern, либо static, typedef у членов)
+			// СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ РїСѓСЃС‚РѕР№, РїРѕСЌС‚РѕРјСѓ РґРѕР»Р¶РЅР°
+			// Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ РѕР±СЉСЏРІР»РµРЅРёРµ (typedef, extern, Р»РёР±Рѕ static, typedef Сѓ С‡Р»РµРЅРѕРІ)
 			if( object.dtl.IsEmpty() )
 				if( declaration )				
 					return true;
@@ -424,9 +424,9 @@ bool CheckerUtils::CheckRelationOfBaseTypeToDerived( TempObjectContainer &object
 				else
 				{
 					theApp.Error(object.errPos,
-						"'%s' - класс '%s' является %s",						 
+						"'%s' - РєР»Р°СЃСЃ '%s' СЏРІР»СЏРµС‚СЃСЏ %s",						 
 						object.name.c_str(), cls->GetQualifiedName().c_str(), 
-							incomplete ? "незавершенным" : "абстрактным");
+							incomplete ? "РЅРµР·Р°РІРµСЂС€РµРЅРЅС‹Рј" : "Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рј");
 
 					return false;
 				}
@@ -436,9 +436,9 @@ bool CheckerUtils::CheckRelationOfBaseTypeToDerived( TempObjectContainer &object
 				!declaration )
 			{
 				theApp.Error(object.errPos,
-						"'%s' - класс '%s' является %s",						 
+						"'%s' - РєР»Р°СЃСЃ '%s' СЏРІР»СЏРµС‚СЃСЏ %s",						 
 						object.name.c_str(), cls->GetQualifiedName().c_str(), 
-							incomplete ? "незавершенным" : "абстрактным");
+							incomplete ? "РЅРµР·Р°РІРµСЂС€РµРЅРЅС‹Рј" : "Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рј");
 				return false;
 			}
 			
@@ -450,12 +450,12 @@ bool CheckerUtils::CheckRelationOfBaseTypeToDerived( TempObjectContainer &object
 }
 
 
-// проверить корректность объявления параметров по умолчанию у функций.
-// Если второй параметр 0, значит проверяем корректность только у первой
+// РїСЂРѕРІРµСЂРёС‚СЊ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РѕР±СЉСЏРІР»РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ Сѓ С„СѓРЅРєС†РёР№.
+// Р•СЃР»Рё РІС‚РѕСЂРѕР№ РїР°СЂР°РјРµС‚СЂ 0, Р·РЅР°С‡РёС‚ РїСЂРѕРІРµСЂСЏРµРј РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ С‚РѕР»СЊРєРѕ Сѓ РїРµСЂРІРѕР№
 void CheckerUtils::DefaultArgumentCheck( const FunctionPrototype &declFn, 
 				const FunctionPrototype *fnInTable, const Position &errPos )
 {
-	// проверяем, только чтобы параметры по умолчанию шли по порядку
+	// РїСЂРѕРІРµСЂСЏРµРј, С‚РѕР»СЊРєРѕ С‡С‚РѕР±С‹ РїР°СЂР°РјРµС‚СЂС‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ С€Р»Рё РїРѕ РїРѕСЂСЏРґРєСѓ
 	if( fnInTable == NULL )
 	{
 		const FunctionParametrList &fpl = declFn.GetParametrList();
@@ -466,14 +466,14 @@ void CheckerUtils::DefaultArgumentCheck( const FunctionPrototype &declFn,
 			else if( haveDP )
 			{
 				theApp.Error(errPos,
-					"'%s' - пропущено значение по умолчанию",
+					"'%s' - РїСЂРѕРїСѓС‰РµРЅРѕ Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ",
 					fpl[i]->GetName().c_str());
 				break;
 			}
 	}
 
-	// иначе сравниваем две функции с заданием аргументов по умолчанию
-	// функции из таблицы
+	// РёРЅР°С‡Рµ СЃСЂР°РІРЅРёРІР°РµРј РґРІРµ С„СѓРЅРєС†РёРё СЃ Р·Р°РґР°РЅРёРµРј Р°СЂРіСѓРјРµРЅС‚РѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+	// С„СѓРЅРєС†РёРё РёР· С‚Р°Р±Р»РёС†С‹
 	else
 	{
 		const FunctionParametrList &dFpl = declFn.GetParametrList(),
@@ -483,30 +483,30 @@ void CheckerUtils::DefaultArgumentCheck( const FunctionPrototype &declFn,
 		bool haveDP = false;
 		for( int i = 0; i<dFpl.GetFunctionParametrCount(); i++ )
 		{
-			// значение по умолчанию для параметра не может переопределяться
+			// Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РґР»СЏ РїР°СЂР°РјРµС‚СЂР° РЅРµ РјРѕР¶РµС‚ РїРµСЂРµРѕРїСЂРµРґРµР»СЏС‚СЊСЃСЏ
 			if( dFpl[i]->IsHaveDefaultValue() )
 			{
 				haveDP = true;
 				if( inFpl[i]->IsHaveDefaultValue() )
 				{
 					theApp.Error(errPos,
-						"'%s' - значение по умолчанию переопределяется",
+						"'%s' - Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚СЃСЏ",
 						dFpl[i]->GetName().c_str());
 					break;
 				}
 
-				// иначе задаем значение по умолчанию для функции в таблице
+				// РёРЅР°С‡Рµ Р·Р°РґР°РµРј Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РґР»СЏ С„СѓРЅРєС†РёРё РІ С‚Р°Р±Р»РёС†Рµ
 				else
 					const_cast<Parametr&>(*inFpl[i]).
 							SetDefaultValue( dFpl[i]->GetDefaultValue() );
 			}
 
-			// иначе если значение по умолчанию уже было, а в функции,
-			// которая в таблице оно пропущено, вывести ошибку
+			// РёРЅР°С‡Рµ РµСЃР»Рё Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ СѓР¶Рµ Р±С‹Р»Рѕ, Р° РІ С„СѓРЅРєС†РёРё,
+			// РєРѕС‚РѕСЂР°СЏ РІ С‚Р°Р±Р»РёС†Рµ РѕРЅРѕ РїСЂРѕРїСѓС‰РµРЅРѕ, РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 			else if( haveDP && !inFpl[i]->IsHaveDefaultValue() )
 			{
 				theApp.Error(errPos,
-					"'%s' - пропущено значение по умолчанию",
+					"'%s' - РїСЂРѕРїСѓС‰РµРЅРѕ Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ",
 					dFpl[i]->GetName().c_str());							
 				break;
 			}
@@ -515,7 +515,7 @@ void CheckerUtils::DefaultArgumentCheck( const FunctionPrototype &declFn,
 }
 
 
-// вывести ошибку, установить флаг
+// РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ, СѓСЃС‚Р°РЅРѕРІРёС‚СЊ С„Р»Р°Рі
 void GlobalDeclarationChecker::Error( PCSTR msg, PCSTR arg ) 
 {
 	theApp.Error(object.errPos, msg, arg);
@@ -523,11 +523,11 @@ void GlobalDeclarationChecker::Error( PCSTR msg, PCSTR arg )
 }
 
 
-// скрытая функция проверки
+// СЃРєСЂС‹С‚Р°СЏ С„СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё
 void GlobalDeclarationChecker::Check()
 {
-	// проверяем спецификаторы хранения которые могут использоваться
-	// в глобальной области видимости
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С…СЂР°РЅРµРЅРёСЏ РєРѕС‚РѕСЂС‹Рµ РјРѕРіСѓС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ
+	// РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	if( object.ssCode != -1		  &&
 		object.ssCode != KWSTATIC &&
 		object.ssCode != KWEXTERN &&
@@ -537,117 +537,117 @@ void GlobalDeclarationChecker::Check()
 			object.ssCode != KWAUTO		&&
 			object.ssCode != KWREGISTER )
 		{
-			Error("'спецификатор хранения %s' некорректен в данном контексте",
+			Error("'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РІ РґР°РЅРЅРѕРј РєРѕРЅС‚РµРєСЃС‚Рµ",
 				GetKeywordName(object.ssCode));
 			object.ssCode = -1;
 		}
 	}
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	if( object.friendSpec )
-		Error("'%s' - 'спецификатор дружбы friend' некорректен в данном контексте",
+		Error("'%s' - 'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹ friend' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РІ РґР°РЅРЅРѕРј РєРѕРЅС‚РµРєСЃС‚Рµ",
 			object.name.c_str());
 
-	// проверяем если задан спецификатор функции, а объект не является ф-цией
+	// РїСЂРѕРІРµСЂСЏРµРј РµСЃР»Рё Р·Р°РґР°РЅ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё, Р° РѕР±СЉРµРєС‚ РЅРµ СЏРІР»СЏРµС‚СЃСЏ С„-С†РёРµР№
 	if( object.fnSpecCode != -1 )
 	{
 		if( !object.dtl.IsFunction() )
 		{
 			theApp.Error( object.errPos,
-				"'%s' - использование спецификатора функции '%s', в объявлении не-функции",
+				"'%s' - РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С„СѓРЅРєС†РёРё '%s', РІ РѕР±СЉСЏРІР»РµРЅРёРё РЅРµ-С„СѓРЅРєС†РёРё",
 				object.name.c_str(), GetKeywordName(object.fnSpecCode) );
 			incorrect = true;
 		}
 
-		// в глобальной декларации может использоваться только спецификатор inline
+		// РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РґРµРєР»Р°СЂР°С†РёРё РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ inline
 		if( object.fnSpecCode != KWINLINE )
 		{
 			theApp.Error( object.errPos,
-				"'%s' - использование спецификатора функции '%s' некорректно в данном контексте",
+				"'%s' - РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С„СѓРЅРєС†РёРё '%s' РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ РІ РґР°РЅРЅРѕРј РєРѕРЅС‚РµРєСЃС‚Рµ",
 				object.name.c_str(), GetKeywordName(object.fnSpecCode) );
 			incorrect = true;
 		}
 	}
 
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	if( !CheckDerivedTypeList(object) )
 		incorrect = true;	
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	if( !CheckRelationOfBaseTypeToDerived(object, object.ssCode == KWEXTERN ||
 									object.ssCode == KWTYPEDEF ) )
 		incorrect = true;	
 
-	// проверим, если декларация является функцией
+	// РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РґРµРєР»Р°СЂР°С†РёСЏ СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№
 	if( object.dtl.IsFunction() )
 	{
 		const FunctionPrototype &fnp =	
 			static_cast<const FunctionPrototype &>(*object.dtl.GetHeadDerivedType());
 
-		// cv-квалификаторы функции могут присутствовать только при
-		// наличии typedef
+		// cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹ С„СѓРЅРєС†РёРё РјРѕРіСѓС‚ РїСЂРёСЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ РїСЂРё
+		// РЅР°Р»РёС‡РёРё typedef
 		if( fnp.CV_Qualified() != 0 && object.ssCode != KWTYPEDEF )
-			Error( "'%s' - некорректное использование cv-квалификаторов функции",
+			Error( "'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ С„СѓРЅРєС†РёРё",
 					object.name.c_str());
 	}
 
-	// проверим если декларация является массив, его размер должен быть известен
+	// РїСЂРѕРІРµСЂРёРј РµСЃР»Рё РґРµРєР»Р°СЂР°С†РёСЏ СЏРІР»СЏРµС‚СЃСЏ РјР°СЃСЃРёРІ, РµРіРѕ СЂР°Р·РјРµСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РёР·РІРµСЃС‚РµРЅ
 /*	else if( object.dtl.IsArray() )
 	{
 		if( object.dtl[0]->GetDerivedTypeSize() < 0 &&
 			object.ssCode != KWTYPEDEF && object.ssCode != KWEXTERN )			
-			Error( "'%s' - неизвестный размер массива", object.name.c_str());
+			Error( "'%s' - РЅРµРёР·РІРµСЃС‚РЅС‹Р№ СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°", object.name.c_str());
 
 		if( object.dtl[0]->GetDerivedTypeSize() == 0 )
-			Error( "'%s' - нулевой размер массива", object.name.c_str());
+			Error( "'%s' - РЅСѓР»РµРІРѕР№ СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°", object.name.c_str());
 	} */
 
-	// проверяем, если базовый тип классовый и он локальный и
-	// спецификатор доступа extern или static, ошибка
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№ Рё РѕРЅ Р»РѕРєР°Р»СЊРЅС‹Р№ Рё
+	// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° extern РёР»Рё static, РѕС€РёР±РєР°
 	if( object.finalType->IsClassType() &&
 		static_cast<const ClassType*>(object.finalType)->IsLocal() &&
 		(object.ssCode == KWSTATIC || object.ssCode == KWEXTERN) )	
-		Error( "'%s' - базовый тип не имеет связывания", object.name.c_str());	
+		Error( "'%s' - Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅРµ РёРјРµРµС‚ СЃРІСЏР·С‹РІР°РЅРёСЏ", object.name.c_str());	
 }
 
 
-// скрытая функция проверки параметра, выполняет основную работу
-// объекта 
+// СЃРєСЂС‹С‚Р°СЏ С„СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё РїР°СЂР°РјРµС‚СЂР°, РІС‹РїРѕР»РЅСЏРµС‚ РѕСЃРЅРѕРІРЅСѓСЋ СЂР°Р±РѕС‚Сѓ
+// РѕР±СЉРµРєС‚Р° 
 void ParametrChecker::Check()
 {	
-	// параметр может иметь только спец. хранения регистр или вообще не иметь
+	// РїР°СЂР°РјРµС‚СЂ РјРѕР¶РµС‚ РёРјРµС‚СЊ С‚РѕР»СЊРєРѕ СЃРїРµС†. С…СЂР°РЅРµРЅРёСЏ СЂРµРіРёСЃС‚СЂ РёР»Рё РІРѕРѕР±С‰Рµ РЅРµ РёРјРµС‚СЊ
 	if( parametr.ssCode != -1		  &&
 		parametr.ssCode != KWREGISTER )
 		theApp.Error( parametr.errPos,
-		 "'%s' - 'спецификатор хранения %s' некорректен для параметра",
+		 "'%s' - 'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РїР°СЂР°РјРµС‚СЂР°",
 			parametr.name.c_str(), GetKeywordName(parametr.ssCode)),
 			incorrect = true;
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	if( parametr.friendSpec )
 		theApp.Error( parametr.errPos,
-			"'%s' - 'спецификатор дружбы friend' некорректен для параметра",
+			"'%s' - 'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹ friend' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РїР°СЂР°РјРµС‚СЂР°",
 			parametr.name.c_str()), incorrect = true;
 
-	// проверяем если задан спецификатор функции в параметре это считается ошибкой
+	// РїСЂРѕРІРµСЂСЏРµРј РµСЃР»Рё Р·Р°РґР°РЅ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё РІ РїР°СЂР°РјРµС‚СЂРµ СЌС‚Рѕ СЃС‡РёС‚Р°РµС‚СЃСЏ РѕС€РёР±РєРѕР№
 	if( parametr.fnSpecCode != -1 )
 	{
 		theApp.Error( parametr.errPos,
-			"'%s' - использование спецификатора функции '%s', в объявлении параметра",
+			"'%s' - РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С„СѓРЅРєС†РёРё '%s', РІ РѕР±СЉСЏРІР»РµРЅРёРё РїР°СЂР°РјРµС‚СЂР°",
 			parametr.name.c_str(), GetKeywordName(parametr.fnSpecCode) );
 		incorrect = true;
 	}
 
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	if( !CheckDerivedTypeList(parametr) )
 		incorrect = true;
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	if( !CheckRelationOfBaseTypeToDerived(parametr, false) )
 		incorrect = true;	
 
-	// далее если параметр является функции - преобразуем его в указатель
-	// на функцию и проверяем cv-квалификаторы
+	// РґР°Р»РµРµ РµСЃР»Рё РїР°СЂР°РјРµС‚СЂ СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРё - РїСЂРµРѕР±СЂР°Р·СѓРµРј РµРіРѕ РІ СѓРєР°Р·Р°С‚РµР»СЊ
+	// РЅР° С„СѓРЅРєС†РёСЋ Рё РїСЂРѕРІРµСЂСЏРµРј cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹
 	if( parametr.dtl.IsFunction() )
 	{
 		const FunctionPrototype &fp = 
@@ -655,14 +655,14 @@ void ParametrChecker::Check()
 
 		if( fp.CV_Qualified() != 0 )
 			theApp.Error( parametr.errPos,
-			"'%s' - некорректное использование cv-квалификаторов функции",
+			"'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ С„СѓРЅРєС†РёРё",
 				parametr.name.c_str()), 
 				incorrect = true;
 
 		parametr.dtl.PushHeadDerivedType( new Pointer(false, false) );
 	}
 
-	// если массив, преобразуем его в указатель
+	// РµСЃР»Рё РјР°СЃСЃРёРІ, РїСЂРµРѕР±СЂР°Р·СѓРµРј РµРіРѕ РІ СѓРєР°Р·Р°С‚РµР»СЊ
 	else if( parametr.dtl.IsArray() )
 	{
 		parametr.dtl.PopHeadDerivedType();
@@ -670,108 +670,108 @@ void ParametrChecker::Check()
 	}
 
 
-	// проверка переопределения параметра
+	// РїСЂРѕРІРµСЂРєР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂР°
 	if( fnParamList.HasParametr(parametr.name) >= 0 )
 	{
-		theApp.Error( parametr.errPos, "'%s' - параметр переопределен", parametr.name.c_str());
-		parametr.name = (string("<без имени ") + 
+		theApp.Error( parametr.errPos, "'%s' - РїР°СЂР°РјРµС‚СЂ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ", parametr.name.c_str());
+		parametr.name = (string("<Р±РµР· РёРјРµРЅРё ") + 
 			CharString(fnParamList.GetFunctionParametrCount()).c_str() + ">").c_str();
 	}
 
 }
 
 
-// проверка типа throw-спецификации
+// РїСЂРѕРІРµСЂРєР° С‚РёРїР° throw-СЃРїРµС†РёС„РёРєР°С†РёРё
 void ThrowTypeChecker::Check()
 {
 	register TempObjectContainer &toc = throwType;
 
-	// не может иметь спецификатор хранения
+	// РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ
 	if( toc.ssCode != -1 )		
 		theApp.Error( toc.errPos,
-		 "'спецификатор хранения %s' некорректен для %s",
+		 "'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ %s",
 			GetKeywordName(toc.ssCode), toc.name.c_str());			
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	if( toc.friendSpec )
 		theApp.Error( toc.errPos,
-		 "'спецификатор дружбы friend' некорректен для %s", toc.name.c_str());
+		 "'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹ friend' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ %s", toc.name.c_str());
 			
 
-	// проверяем если задан спецификатор функции в параметре это считается ошибкой
+	// РїСЂРѕРІРµСЂСЏРµРј РµСЃР»Рё Р·Р°РґР°РЅ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё РІ РїР°СЂР°РјРµС‚СЂРµ СЌС‚Рѕ СЃС‡РёС‚Р°РµС‚СЃСЏ РѕС€РёР±РєРѕР№
 	if( toc.fnSpecCode != -1 )	
 		theApp.Error( toc.errPos,
-			"'%s' - использование спецификатора функции '%s' некорректно",
+			"'%s' - РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С„СѓРЅРєС†РёРё '%s' РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ",
 			toc.name.c_str(), GetKeywordName(toc.fnSpecCode) );			
 
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	CheckDerivedTypeList(toc);		
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	CheckRelationOfBaseTypeToDerived(toc, false);	
 }
 
 
-// скрытая функция проверки типа, выполняет основную работуо бъекта 
+// СЃРєСЂС‹С‚Р°СЏ С„СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё С‚РёРїР°, РІС‹РїРѕР»РЅСЏРµС‚ РѕСЃРЅРѕРІРЅСѓСЋ СЂР°Р±РѕС‚СѓРѕ Р±СЉРµРєС‚Р° 
 void CatchDeclarationChecker::Check()
 {
-	// не может иметь спецификатор хранения
+	// РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ
 	if( toc.ssCode != -1 )		
 		theApp.Error( toc.errPos,
-		 "'спецификатор хранения %s' некорректен для catch-декларации",
+		 "'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ catch-РґРµРєР»Р°СЂР°С†РёРё",
 			GetKeywordName(toc.ssCode));			
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	if( toc.friendSpec )
 		theApp.Error( toc.errPos,
-		 "'спецификатор дружбы friend' некорректен для для catch-декларации");
+		 "'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹ friend' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РґР»СЏ catch-РґРµРєР»Р°СЂР°С†РёРё");
 			
 
-	// проверяем если задан спецификатор функции в параметре это считается ошибкой
+	// РїСЂРѕРІРµСЂСЏРµРј РµСЃР»Рё Р·Р°РґР°РЅ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё РІ РїР°СЂР°РјРµС‚СЂРµ СЌС‚Рѕ СЃС‡РёС‚Р°РµС‚СЃСЏ РѕС€РёР±РєРѕР№
 	if( toc.fnSpecCode != -1 )	
 		theApp.Error( toc.errPos,
-			"'%s' - использование спецификатора функции '%s' некорректно",
+			"'%s' - РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С„СѓРЅРєС†РёРё '%s' РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ",
 			toc.name.c_str(), GetKeywordName(toc.fnSpecCode) );			
 
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	CheckDerivedTypeList(toc);		
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	CheckRelationOfBaseTypeToDerived(toc, false);
 
-	// преобразуем функция типа T - в указатель на функцию типа T
+	// РїСЂРµРѕР±СЂР°Р·СѓРµРј С„СѓРЅРєС†РёСЏ С‚РёРїР° T - РІ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С„СѓРЅРєС†РёСЋ С‚РёРїР° T
 	if( toc.dtl.IsFunction() )
 	{
 		if( static_cast<const FunctionPrototype &>(*toc.dtl[0]).CV_Qualified() != 0 )
 			theApp.Error( toc.errPos,
-			"'%s' - некорректное использование cv-квалификаторов функции",
+			"'%s' - РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ С„СѓРЅРєС†РёРё",
 				toc.name.c_str());				
 
 		toc.dtl.PushHeadDerivedType( new Pointer(false, false) );
 	}
 
-	// массив типа T - в указатель на T
+	// РјР°СЃСЃРёРІ С‚РёРїР° T - РІ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° T
 	else if( toc.dtl.IsArray() )
 	{
 		toc.dtl.PopHeadDerivedType();
 		toc.dtl.PushHeadDerivedType( new Pointer(false, false) );
 	}
 
-	// далее проверяем, у catch-декларации не может быть необъявленного типа 
-	// или указателя на него
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј, Сѓ catch-РґРµРєР»Р°СЂР°С†РёРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅРµРѕР±СЉСЏРІР»РµРЅРЅРѕРіРѕ С‚РёРїР° 
+	// РёР»Рё СѓРєР°Р·Р°С‚РµР»СЏ РЅР° РЅРµРіРѕ
 	if( (toc.finalType->IsClassType() && 
 		 static_cast<const ClassType *>(toc.finalType)->IsUncomplete()) ||
 		(toc.finalType->GetBaseTypeCode() == BaseType::BT_VOID &&
 		 toc.dtl.IsEmpty()) )
 		theApp.Error( toc.errPos, 
-			"не полный тип '%s' является некорректными для catch-декларации",
+			"РЅРµ РїРѕР»РЅС‹Р№ С‚РёРї '%s' СЏРІР»СЏРµС‚СЃСЏ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹РјРё РґР»СЏ catch-РґРµРєР»Р°СЂР°С†РёРё",
 			toc.finalType->IsClassType() ? 
 			static_cast<const ClassType *>(toc.finalType)->GetQualifiedName().c_str() :
 			"void" );
 }
 
 
-// возвращает true, если объект является константым
+// РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РѕР±СЉРµРєС‚ СЏРІР»СЏРµС‚СЃСЏ РєРѕРЅСЃС‚Р°РЅС‚С‹Рј
 bool DataMemberChecker::ConstantMember()
 {
 	const DerivedType *dt = NULL;
@@ -799,101 +799,101 @@ bool DataMemberChecker::ConstantMember()
 }
 
 
-// возвращает true, если класс содержит тривиальные к-тор,
-// к-тор копирования, деструктор, оператор копирования
+// РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РєР»Р°СЃСЃ СЃРѕРґРµСЂР¶РёС‚ С‚СЂРёРІРёР°Р»СЊРЅС‹Рµ Рє-С‚РѕСЂ,
+// Рє-С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ, РґРµСЃС‚СЂСѓРєС‚РѕСЂ, РѕРїРµСЂР°С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
 PCSTR DataMemberChecker::HasNonTrivialSMF( const ClassType &cls )
 {
 	SMFManager smfm(cls);
 	if( smfm.GetDefaultConstructor().first &&
 		!smfm.GetDefaultConstructor().first->IsTrivial() )
-		return "конструктор по умолчанию";
+		return "РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ";
 
 	if( smfm.GetCopyConstructor().first &&
 		!smfm.GetCopyConstructor().first->IsTrivial() )
-		return "конструктор копирования" ;
+		return "РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ" ;
 	
 	if( smfm.GetCopyOperator().first &&
 		!smfm.GetCopyOperator().first->IsTrivial() )
-		return "оператор копирования";
+		return "РѕРїРµСЂР°С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ";
 
 	if( smfm.GetDestructor().first && 
 		!smfm.GetDestructor().first->IsTrivial() )
-		return "деструктор";
+		return "РґРµСЃС‚СЂСѓРєС‚РѕСЂ";
 
 	return NULL;
 }
 
 
-// метод проверки члена перед вставкой его в таблицу
+// РјРµС‚РѕРґ РїСЂРѕРІРµСЂРєРё С‡Р»РµРЅР° РїРµСЂРµРґ РІСЃС‚Р°РІРєРѕР№ РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 void DataMemberChecker::Check()
 {
-	// проверяем спецификаторы хранения данного-члена
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С…СЂР°РЅРµРЅРёСЏ РґР°РЅРЅРѕРіРѕ-С‡Р»РµРЅР°
 	if( dm.ssCode != -1		  &&
 		dm.ssCode != KWSTATIC &&
 		dm.ssCode != KWMUTABLE &&
 		dm.ssCode != KWTYPEDEF )
 		theApp.Error(dm.errPos,
-			"'спецификатор хранения %s' некорректен для данного-члена",
+			"'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РґР°РЅРЅРѕРіРѕ-С‡Р»РµРЅР°",
 			GetKeywordName(dm.ssCode)), incorrect = true;
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	if( dm.friendSpec )
 		theApp.Error(dm.errPos,
-			"'%s' - 'спецификатор дружбы friend' некорректен для данного-члена",
+			"'%s' - 'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹ friend' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РґР°РЅРЅРѕРіРѕ-С‡Р»РµРЅР°",
 			dm.name.c_str()), incorrect = true;
 
-	// проверяем если задан спецификатор функции, а объект не является ф-цией
+	// РїСЂРѕРІРµСЂСЏРµРј РµСЃР»Рё Р·Р°РґР°РЅ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё, Р° РѕР±СЉРµРєС‚ РЅРµ СЏРІР»СЏРµС‚СЃСЏ С„-С†РёРµР№
 	if( dm.fnSpecCode != -1 )	
 		theApp.Error( dm.errPos,
-				"'%s' - использование спецификатора функции '%s', в объявлении не-функции",
+				"'%s' - РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С„СѓРЅРєС†РёРё '%s', РІ РѕР±СЉСЏРІР»РµРЅРёРё РЅРµ-С„СѓРЅРєС†РёРё",
 				dm.name.c_str(), GetKeywordName(dm.fnSpecCode) ), incorrect = true;
 			
 
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	if( !CheckDerivedTypeList(dm) )
 		incorrect = true;	
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	if( !CheckRelationOfBaseTypeToDerived(dm, 
 					dm.ssCode == KWTYPEDEF || dm.ssCode == KWSTATIC ) )
 		incorrect = true;
 
-	// имя члена должно отличаться от имени класса в котором оно определяется
+	// РёРјСЏ С‡Р»РµРЅР° РґРѕР»Р¶РЅРѕ РѕС‚Р»РёС‡Р°С‚СЊСЃСЏ РѕС‚ РёРјРµРЅРё РєР»Р°СЃСЃР° РІ РєРѕС‚РѕСЂРѕРј РѕРЅРѕ РѕРїСЂРµРґРµР»СЏРµС‚СЃСЏ
 	ClassType *cls = dynamic_cast<ClassType *>(&GetCurrentSymbolTable());
 	INTERNAL_IF( cls == NULL );
 	INTERNAL_IF( dm.name.empty() );
 	
 	if( cls->GetName() == dm.name )
 		theApp.Error( dm.errPos,
-			"'%s' - данное-член не может иметь имя класса в котором объявляется",
+			"'%s' - РґР°РЅРЅРѕРµ-С‡Р»РµРЅ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РёРјСЏ РєР»Р°СЃСЃР° РІ РєРѕС‚РѕСЂРѕРј РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ",
 			dm.name.c_str() ), redeclared = true;
 
-	// локальный класс не может иметь статических данных-членов
+	// Р»РѕРєР°Р»СЊРЅС‹Р№ РєР»Р°СЃСЃ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃС‚Р°С‚РёС‡РµСЃРєРёС… РґР°РЅРЅС‹С…-С‡Р»РµРЅРѕРІ
 	if( cls->IsLocal() &&  dm.ssCode == KWSTATIC )
 		theApp.Error( dm.errPos,
-			"'%s' - локальный класс '%s', не может иметь статических данных-членов",
+			"'%s' - Р»РѕРєР°Р»СЊРЅС‹Р№ РєР»Р°СЃСЃ '%s', РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃС‚Р°С‚РёС‡РµСЃРєРёС… РґР°РЅРЅС‹С…-С‡Р»РµРЅРѕРІ",
 			dm.name.c_str(), cls->GetName().c_str() ), incorrect = true;
 
 
-	// в случае если член объявляется внутри объединения, то он не должен
-	// быть статическим или ссылкой
+	// РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё С‡Р»РµРЅ РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ РІРЅСѓС‚СЂРё РѕР±СЉРµРґРёРЅРµРЅРёСЏ, С‚Рѕ РѕРЅ РЅРµ РґРѕР»Р¶РµРЅ
+	// Р±С‹С‚СЊ СЃС‚Р°С‚РёС‡РµСЃРєРёРј РёР»Рё СЃСЃС‹Р»РєРѕР№
 	if( cls->GetBaseTypeCode() == BaseType::BT_UNION )
 	{
-		// ссылкой не может быть потому, что ссылка потеряет свое свойство
-		// неизменяемости, если объявить объединение с ссылкой и указателем
-		// на один объект
+		// СЃСЃС‹Р»РєРѕР№ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ СЃСЃС‹Р»РєР° РїРѕС‚РµСЂСЏРµС‚ СЃРІРѕРµ СЃРІРѕР№СЃС‚РІРѕ
+		// РЅРµРёР·РјРµРЅСЏРµРјРѕСЃС‚Рё, РµСЃР»Рё РѕР±СЉСЏРІРёС‚СЊ РѕР±СЉРµРґРёРЅРµРЅРёРµ СЃ СЃСЃС‹Р»РєРѕР№ Рё СѓРєР°Р·Р°С‚РµР»РµРј
+		// РЅР° РѕРґРёРЅ РѕР±СЉРµРєС‚
 		if( dm.dtl.IsReference() )
 			theApp.Error( dm.errPos,
-				"'%s' - ссылка не может быть членом объединения",
+				"'%s' - СЃСЃС‹Р»РєР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‡Р»РµРЅРѕРј РѕР±СЉРµРґРёРЅРµРЅРёСЏ",
 				dm.name.c_str() ), incorrect = true;
 
 		if( dm.ssCode == KWSTATIC )
 			theApp.Error( dm.errPos,
-				"'%s' - статический данное-член не может быть членом объединения",
+				"'%s' - СЃС‚Р°С‚РёС‡РµСЃРєРёР№ РґР°РЅРЅРѕРµ-С‡Р»РµРЅ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‡Р»РµРЅРѕРј РѕР±СЉРµРґРёРЅРµРЅРёСЏ",
 				dm.name.c_str() ), incorrect = true;
 
-		// также следует проверить чтобы у объекта был тривиальный конструктор,
-		// деструктор, оператор копирования и к-тор копирования
+		// С‚Р°РєР¶Рµ СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ С‡С‚РѕР±С‹ Сѓ РѕР±СЉРµРєС‚Р° Р±С‹Р» С‚СЂРёРІРёР°Р»СЊРЅС‹Р№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ,
+		// РґРµСЃС‚СЂСѓРєС‚РѕСЂ, РѕРїРµСЂР°С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ Рё Рє-С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
 		if( dm.finalType->IsClassType() )
 		{
 			bool chk = true;
@@ -909,112 +909,112 @@ void DataMemberChecker::Check()
 				const ClassType &dmCls = static_cast<const ClassType &>(*dm.finalType);
 				if( PCSTR smfName = HasNonTrivialSMF(dmCls) )
 					theApp.Error(dm.errPos,
-						"'%s' - класс '%s' содержит нетривиальный %s",
+						"'%s' - РєР»Р°СЃСЃ '%s' СЃРѕРґРµСЂР¶РёС‚ РЅРµС‚СЂРёРІРёР°Р»СЊРЅС‹Р№ %s",
 						dm.name.c_str(), dmCls.GetQualifiedName().c_str(), smfName);				
 			}
 		}
 	}
 	
 
-	// в случае если член объявлен как mutable, он должен быть не константным
-	// и не ссылкой
+	// РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё С‡Р»РµРЅ РѕР±СЉСЏРІР»РµРЅ РєР°Рє mutable, РѕРЅ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РЅРµ РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Рј
+	// Рё РЅРµ СЃСЃС‹Р»РєРѕР№
 	if( dm.ssCode == KWMUTABLE )
 	{
 		if( dm.dtl.IsReference() )
 		{
 			theApp.Error( dm.errPos,
-				"'%s' - ссылка не может иметь спецификатор хранения 'mutable'",
+				"'%s' - СЃСЃС‹Р»РєР° РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ 'mutable'",
 				dm.name.c_str() ), incorrect = true;
 		}
 
 		else if( ConstantMember() )
 		{
 			theApp.Error( dm.errPos,
-				"'%s' - константный данное-член не может иметь спецификатор хранения 'mutable'",
+				"'%s' - РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Р№ РґР°РЅРЅРѕРµ-С‡Р»РµРЅ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ 'mutable'",
 				dm.name.c_str() ), incorrect = true;	
 		}
 	}
 
-	// проверим если декларация является массив, его размер должен быть известен
+	// РїСЂРѕРІРµСЂРёРј РµСЃР»Рё РґРµРєР»Р°СЂР°С†РёСЏ СЏРІР»СЏРµС‚СЃСЏ РјР°СЃСЃРёРІ, РµРіРѕ СЂР°Р·РјРµСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РёР·РІРµСЃС‚РµРЅ
 	if( dm.dtl.IsArray() )
 	{
 		if( dm.dtl[0]->GetDerivedTypeSize() < 0 && 
 			!(dm.ssCode == KWSTATIC || dm.ssCode == KWTYPEDEF) )			
-			theApp.Error( dm.errPos, "'%s' - неизвестный размер массива", dm.name.c_str());
+			theApp.Error( dm.errPos, "'%s' - РЅРµРёР·РІРµСЃС‚РЅС‹Р№ СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°", dm.name.c_str());
 
 		if( dm.dtl[0]->GetDerivedTypeSize() == 0 )
-			theApp.Error( dm.errPos, "'%s' - нулевой размер массива", dm.name.c_str());
+			theApp.Error( dm.errPos, "'%s' - РЅСѓР»РµРІРѕР№ СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°", dm.name.c_str());
 	}
 }
 
 
-// метод проверки метода перед вставкой его в таблицу
+// РјРµС‚РѕРґ РїСЂРѕРІРµСЂРєРё РјРµС‚РѕРґР° РїРµСЂРµРґ РІСЃС‚Р°РІРєРѕР№ РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 void MethodChecker::Check()
 {
-	// проверяем спецификаторы хранения данного-члена
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С…СЂР°РЅРµРЅРёСЏ РґР°РЅРЅРѕРіРѕ-С‡Р»РµРЅР°
 	if( method.ssCode != -1		  &&
 		method.ssCode != KWSTATIC )
 		theApp.Error(method.errPos,
-			"'спецификатор хранения %s' некорректен для метода класса",
+			"'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РјРµС‚РѕРґР° РєР»Р°СЃСЃР°",
 			GetKeywordName(method.ssCode)), incorrect = true;
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	INTERNAL_IF( method.friendSpec );
 		
-	// спецификатор функции не может быть explicit
+	// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ explicit
 	if( method.fnSpecCode == KWEXPLICIT )	
 		theApp.Error( method.errPos,
-				"'%s' - 'explicit' может использоваться только с конструкторами",
+				"'%s' - 'explicit' РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ СЃ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°РјРё",
 				method.name.c_str() ), incorrect = true;
 			
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	if( !CheckDerivedTypeList(method) )
 		incorrect = true;	
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	if( !CheckRelationOfBaseTypeToDerived(method, false) )					
 		incorrect = true;
 
-	// статическая функиця не может быть виртуальным и объявляться
-	// с const,volatile
+	// СЃС‚Р°С‚РёС‡РµСЃРєР°СЏ С„СѓРЅРєРёС†СЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј Рё РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ
+	// СЃ const,volatile
 	if( method.ssCode == KWSTATIC )
 	{
 		if( method.fnSpecCode == KWVIRTUAL )
 			theApp.Error( method.errPos,
-					"'%s' - статический метод не может быть виртуальным",
+					"'%s' - СЃС‚Р°С‚РёС‡РµСЃРєРёР№ РјРµС‚РѕРґ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј",
 					method.name.c_str() ), incorrect = true;		
 
 		INTERNAL_IF( !method.dtl.IsFunction() );
 		FunctionPrototype &fp = ((FunctionPrototype &)*method.dtl.GetHeadDerivedType());
 		if( fp.IsConst() || fp.IsVolatile() )
 			theApp.Error( method.errPos,
-					"'%s' - статический метод не может объявляться с cv-квалификаторами",
+					"'%s' - СЃС‚Р°С‚РёС‡РµСЃРєРёР№ РјРµС‚РѕРґ РЅРµ РјРѕР¶РµС‚ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂР°РјРё",
 					method.name.c_str() ), incorrect = true;		
 	}
 
 	
-	// если метод имеет имя своего класса, значит это конструткор
-	// и он должен проверяться в ConstructorChecker'e
+	// РµСЃР»Рё РјРµС‚РѕРґ РёРјРµРµС‚ РёРјСЏ СЃРІРѕРµРіРѕ РєР»Р°СЃСЃР°, Р·РЅР°С‡РёС‚ СЌС‚Рѕ РєРѕРЅСЃС‚СЂСѓС‚РєРѕСЂ
+	// Рё РѕРЅ РґРѕР»Р¶РµРЅ РїСЂРѕРІРµСЂСЏС‚СЊСЃСЏ РІ ConstructorChecker'e
 	INTERNAL_IF( method.name.empty() );
 	const ClassType &cls = static_cast<const ClassType&>(GetCurrentSymbolTable());
 	if( method.name == cls.GetName() )
 	{
 		theApp.Error(method.errPos,
-			"'%s' - метод имеет имя класса в котором объявляется "
-			"(возможно это должен быть конструктор)",
+			"'%s' - РјРµС‚РѕРґ РёРјРµРµС‚ РёРјСЏ РєР»Р°СЃСЃР° РІ РєРѕС‚РѕСЂРѕРј РѕР±СЉСЏРІР»СЏРµС‚СЃСЏ "
+			"(РІРѕР·РјРѕР¶РЅРѕ СЌС‚Рѕ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ)",
 			method.name.c_str() ), incorrect = true;
 		redeclared = true;
 	}
 
-	// объединение не может иметь виртуальных методов
+	// РѕР±СЉРµРґРёРЅРµРЅРёРµ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹С… РјРµС‚РѕРґРѕРІ
 	if( cls.GetBaseTypeCode() == BaseType::BT_UNION && method.fnSpecCode == KWVIRTUAL )
 		theApp.Error(method.errPos,
-			"'%s' - объединение не может иметь виртуальные методы",
+			"'%s' - РѕР±СЉРµРґРёРЅРµРЅРёРµ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рµ РјРµС‚РѕРґС‹",
 			method.name.c_str() ), incorrect = true;
 }
 
 	
-// метод возвращающий true, если параметр является целым
+// РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°СЋС‰РёР№ true, РµСЃР»Рё РїР°СЂР°РјРµС‚СЂ СЏРІР»СЏРµС‚СЃСЏ С†РµР»С‹Рј
 bool ClassOperatorChecker::IsInteger( const Parametr &prm ) const
 {
 	return prm.GetBaseType().GetBaseTypeCode() == BaseType::BT_INT &&
@@ -1022,53 +1022,53 @@ bool ClassOperatorChecker::IsInteger( const Parametr &prm ) const
 }
 
 
-// метод проверки перегруженного оператора класса
+// РјРµС‚РѕРґ РїСЂРѕРІРµСЂРєРё РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР° РєР»Р°СЃСЃР°
 void ClassOperatorChecker::Check()
 {
-	// проверяем спецификаторы хранения перегруженного оператора
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С…СЂР°РЅРµРЅРёСЏ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
 	if( op.ssCode == KWSTATIC )
 	{
 		if( tooc.opCode != KWNEW && tooc.opCode != KWDELETE &&
 			tooc.opCode != OC_NEW_ARRAY && tooc.opCode != OC_DELETE_ARRAY )
 			theApp.Error(op.errPos,
-				"'%s' - перегруженный оператор класса не может быть статическим",
+				"'%s' - РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РєР»Р°СЃСЃР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃС‚Р°С‚РёС‡РµСЃРєРёРј",
 				op.name.c_str());
 	}
 
 	else if( op.ssCode != -1 )		
 		theApp.Error(op.errPos,
-			"'спецификатор хранения %s' некорректен для перегруженного оператора класса",
+			"'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР° РєР»Р°СЃСЃР°",
 			GetKeywordName(op.ssCode));
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	INTERNAL_IF( op.friendSpec );
 		
-	// спецификатор функции не может быть explicit
+	// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ explicit
 	if( op.fnSpecCode == KWEXPLICIT )	
 		theApp.Error( op.errPos,
-				"'%s' - 'explicit' может использоваться только с конструкторами",
+				"'%s' - 'explicit' РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ СЃ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°РјРё",
 				op.name.c_str() );
 			
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	CheckDerivedTypeList(op);		
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	CheckRelationOfBaseTypeToDerived(op, false);
 
 
-	// перегруженный оператор обязательно должен быть функцией
+	// РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№
 	if( !op.dtl.IsFunction() )
 		theApp.Error( op.errPos,
-				"'%s' - перегруженный оператор должен быть функцией",
+				"'%s' - РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№",
 				op.name.c_str() );
 
 
 	else
 	{
-	// теперь проверяем, соотв. параметров и оператора. Унарные операторы
-	// не должны иметь параметров, бинарные должны иметь 1 параметр,
-	// "+, -, ++, --, *, &" могут иметь как 0 так и 1 параметр, оператор ()
-	// может иметь несколько параметров и '...'.
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј, СЃРѕРѕС‚РІ. РїР°СЂР°РјРµС‚СЂРѕРІ Рё РѕРїРµСЂР°С‚РѕСЂР°. РЈРЅР°СЂРЅС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹
+	// РЅРµ РґРѕР»Р¶РЅС‹ РёРјРµС‚СЊ РїР°СЂР°РјРµС‚СЂРѕРІ, Р±РёРЅР°СЂРЅС‹Рµ РґРѕР»Р¶РЅС‹ РёРјРµС‚СЊ 1 РїР°СЂР°РјРµС‚СЂ,
+	// "+, -, ++, --, *, &" РјРѕРіСѓС‚ РёРјРµС‚СЊ РєР°Рє 0 С‚Р°Рє Рё 1 РїР°СЂР°РјРµС‚СЂ, РѕРїРµСЂР°С‚РѕСЂ ()
+	// РјРѕР¶РµС‚ РёРјРµС‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ РїР°СЂР°РјРµС‚СЂРѕРІ Рё '...'.
 	int code = tooc.opCode; 
 	const FunctionPrototype &fp = 
 			static_cast<const FunctionPrototype&>(*op.dtl.GetHeadDerivedType());
@@ -1078,78 +1078,78 @@ void ClassOperatorChecker::Check()
 	{
 		if( pcount > 1 ) 
 			theApp.Error( op.errPos,
-				"'%s' - оператор должен объявляться с 0 или 1 параметром",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ 0 РёР»Рё 1 РїР°СЂР°РјРµС‚СЂРѕРј",
 				op.name.c_str() );
 	}
 
 	else if( code == INCREMENT || code == DECREMENT )
 	{
-		// может объявляться с одним параметром, тогда это постфиксный кремент,
-		// но необъодимо чтобы параметр имел тип int
+		// РјРѕР¶РµС‚ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ РѕРґРЅРёРј РїР°СЂР°РјРµС‚СЂРѕРј, С‚РѕРіРґР° СЌС‚Рѕ РїРѕСЃС‚С„РёРєСЃРЅС‹Р№ РєСЂРµРјРµРЅС‚,
+		// РЅРѕ РЅРµРѕР±СЉРѕРґРёРјРѕ С‡С‚РѕР±С‹ РїР°СЂР°РјРµС‚СЂ РёРјРµР» С‚РёРї int
 		if( pcount == 1 )
 		{
 			if( !IsInteger( *fp.GetParametrList().GetFunctionParametr(0) ) )
 				theApp.Error( op.errPos,
-					"'%s' - оператор постфиксного %s должен иметь параметр типа 'int'",
-					op.name.c_str(), code == INCREMENT ? "инкремента" : "декремента" );
+					"'%s' - РѕРїРµСЂР°С‚РѕСЂ РїРѕСЃС‚С„РёРєСЃРЅРѕРіРѕ %s РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ РїР°СЂР°РјРµС‚СЂ С‚РёРїР° 'int'",
+					op.name.c_str(), code == INCREMENT ? "РёРЅРєСЂРµРјРµРЅС‚Р°" : "РґРµРєСЂРµРјРµРЅС‚Р°" );
 		}
 
 		else if( pcount != 0 )
 			theApp.Error( op.errPos,
-				"'%s' - оператор должен объявляться с 0 или 1 параметром",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ 0 РёР»Рё 1 РїР°СЂР°РјРµС‚СЂРѕРј",
 				op.name.c_str() );
 	}
 
-	// если оператор унарный
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ СѓРЅР°СЂРЅС‹Р№
 	else if( code == '!' || code == '~' || code == ARROW )
 	{
 		if( pcount != 0 )
 			theApp.Error( op.errPos,
-				"'%s' - оператор должен объявляться без параметров",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ",
 				op.name.c_str() );
 	}
 
-	// если оператор является оператором выделения или освобождения памяти
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ РѕРїРµСЂР°С‚РѕСЂРѕРј РІС‹РґРµР»РµРЅРёСЏ РёР»Рё РѕСЃРІРѕР±РѕР¶РґРµРЅРёСЏ РїР°РјСЏС‚Рё
 	else if( code == KWNEW || code == OC_NEW_ARRAY )
 	{
 		op.ssCode = KWSTATIC;
 		if( op.fnSpecCode == KWVIRTUAL )	
 			theApp.Error( op.errPos,
-				"'%s' - оператор является статическим и не может быть виртуальным",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ СЃС‚Р°С‚РёС‡РµСЃРєРёРј Рё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј",
 				op.name.c_str() );
 				
-		// У оператора new и new[] первый параметр
-		// должен быть целым и возвращаемое значение должно быть void *. 
+		// РЈ РѕРїРµСЂР°С‚РѕСЂР° new Рё new[] РїРµСЂРІС‹Р№ РїР°СЂР°РјРµС‚СЂ
+		// РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С†РµР»С‹Рј Рё РІРѕР·РІСЂР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ void *. 
 		if( !IsInteger(*fp.GetParametrList().GetFunctionParametr(0)) )
 			theApp.Error( op.errPos,
-					"'%s' - первый параметр должен быть типа 'size_t'",
+					"'%s' - РїРµСЂРІС‹Р№ РїР°СЂР°РјРµС‚СЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С‚РёРїР° 'size_t'",
 					op.name.c_str());
 
-		// возвращаемое значение должно быть типа void*
+		// РІРѕР·РІСЂР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С‚РёРїР° void*
 		if( op.finalType->GetBaseTypeCode() != BaseType::BT_VOID ||
 			op.dtl.GetDerivedTypeCount() != 2					 ||
 			op.dtl.GetDerivedType(1)->GetDerivedTypeCode() != DerivedType::DT_POINTER )
 			theApp.Error( op.errPos,
-					"'%s' - возвращаемое значение должно быть типа 'void *'",
+					"'%s' - РІРѕР·РІСЂР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С‚РёРїР° 'void *'",
 					op.name.c_str());
 
 	}
 	
-	// если оператор освобождения-выделения для массивов
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РѕСЃРІРѕР±РѕР¶РґРµРЅРёСЏ-РІС‹РґРµР»РµРЅРёСЏ РґР»СЏ РјР°СЃСЃРёРІРѕРІ
 	else if( code == KWDELETE || code == OC_DELETE_ARRAY )
 	{
 		op.ssCode = KWSTATIC;
 		if( op.fnSpecCode == KWVIRTUAL )	
 			theApp.Error( op.errPos,
-				"'%s' - оператор является статическим и не может быть виртуальным",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ СЃС‚Р°С‚РёС‡РµСЃРєРёРј Рё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј",
 				op.name.c_str() );
 
-		// декларация оператора деалокации может иметь две формы:
-		// 'void operator delete( void *, size_t)' или 'void operator delete(void*)'.	
+		// РґРµРєР»Р°СЂР°С†РёСЏ РѕРїРµСЂР°С‚РѕСЂР° РґРµР°Р»РѕРєР°С†РёРё РјРѕР¶РµС‚ РёРјРµС‚СЊ РґРІРµ С„РѕСЂРјС‹:
+		// 'void operator delete( void *, size_t)' РёР»Рё 'void operator delete(void*)'.	
 		bool correct = op.finalType->GetBaseTypeCode() == BaseType::BT_VOID && 
 			op.dtl.GetDerivedTypeCount() == 1;
 		
-		// проверяем первый параметр, он должен быть типа void *
+		// РїСЂРѕРІРµСЂСЏРµРј РїРµСЂРІС‹Р№ РїР°СЂР°РјРµС‚СЂ, РѕРЅ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С‚РёРїР° void *
 		if( pcount >= 1 )
 		{
 			const Parametr &prm = *fp.GetParametrList().GetFunctionParametr(0);
@@ -1160,7 +1160,7 @@ void ClassOperatorChecker::Check()
 				correct = false;
 		}
 		
-		// проверяем второй параметр
+		// РїСЂРѕРІРµСЂСЏРµРј РІС‚РѕСЂРѕР№ РїР°СЂР°РјРµС‚СЂ
 		if( pcount == 2 )
 		{			
 			if( !IsInteger(*fp.GetParametrList().GetFunctionParametr(1)) )
@@ -1170,38 +1170,38 @@ void ClassOperatorChecker::Check()
 		else if( pcount != 1 )
 			correct = false;
 
-		// теперь, если оператор объявлен не корректно, выведем ошибку
+		// С‚РµРїРµСЂСЊ, РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РѕР±СЉСЏРІР»РµРЅ РЅРµ РєРѕСЂСЂРµРєС‚РЅРѕ, РІС‹РІРµРґРµРј РѕС€РёР±РєСѓ
 		if( !correct )
 			theApp.Error( op.errPos,
-				"декларация оператора деалокации может иметь две формы: "
-				"'void operator %s(void *)' или 'void operator %s(void *, size_t)'",
+				"РґРµРєР»Р°СЂР°С†РёСЏ РѕРїРµСЂР°С‚РѕСЂР° РґРµР°Р»РѕРєР°С†РёРё РјРѕР¶РµС‚ РёРјРµС‚СЊ РґРІРµ С„РѕСЂРјС‹: "
+				"'void operator %s(void *)' РёР»Рё 'void operator %s(void *, size_t)'",
 				tooc.opString.c_str(), tooc.opString.c_str());
 	}
 
-	// иначе если оператор не функция, он является бинарным и должен объявляться с
-	// одним параметром
+	// РёРЅР°С‡Рµ РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅРµ С„СѓРЅРєС†РёСЏ, РѕРЅ СЏРІР»СЏРµС‚СЃСЏ Р±РёРЅР°СЂРЅС‹Рј Рё РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ
+	// РѕРґРЅРёРј РїР°СЂР°РјРµС‚СЂРѕРј
 	else if( code != OC_FUNCTION )
 	{
 		if( pcount != 1 )
 			theApp.Error( op.errPos,
-				"'%s' - оператор должен объявляться с 1 параметром",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ 1 РїР°СЂР°РјРµС‚СЂРѕРј",
 				op.name.c_str() );				
 	}
 
-	// проверяем, если оператор статический, он не может объявляться 
-	// с квалификаторами
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ СЃС‚Р°С‚РёС‡РµСЃРєРёР№, РѕРЅ РЅРµ РјРѕР¶РµС‚ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ 
+	// СЃ РєРІР°Р»РёС„РёРєР°С‚РѕСЂР°РјРё
 	if( op.ssCode == KWSTATIC && (fp.IsConst() || fp.IsVolatile()) )
 		theApp.Error( op.errPos,
-			"'%s' - статический метод не может объявляться с cv-квалификаторами",
+			"'%s' - СЃС‚Р°С‚РёС‡РµСЃРєРёР№ РјРµС‚РѕРґ РЅРµ РјРѕР¶РµС‚ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂР°РјРё",
 				op.name.c_str() ) ;
 
-	// проверить наличие параметров по умолчанию, 
+	// РїСЂРѕРІРµСЂРёС‚СЊ РЅР°Р»РёС‡РёРµ РїР°СЂР°РјРµС‚СЂРѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, 
 	if( code != OC_FUNCTION )
 	for( int i = 0; i<pcount; i++ )
 		if( fp.GetParametrList().GetFunctionParametr(i)->IsHaveDefaultValue() )
 		{
 			theApp.Error( op.errPos,
-				"'%s' - оператор не может иметь параметров по умолчанию",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РїР°СЂР°РјРµС‚СЂРѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ",
 				op.name.c_str() );			
 			break;
 		}
@@ -1209,47 +1209,47 @@ void ClassOperatorChecker::Check()
 }
 
 
-// проверка корректности объявления оператора приведения
+// РїСЂРѕРІРµСЂРєР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚Рё РѕР±СЉСЏРІР»РµРЅРёСЏ РѕРїРµСЂР°С‚РѕСЂР° РїСЂРёРІРµРґРµРЅРёСЏ
 void CastOperatorChecker::Check()
 {
 	if( cop.ssCode != -1 )		
 		theApp.Error(cop.errPos,
-			"'спецификатор хранения %s' некорректен для оператора приведения типа",
+			"'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РѕРїРµСЂР°С‚РѕСЂР° РїСЂРёРІРµРґРµРЅРёСЏ С‚РёРїР°",
 			GetKeywordName(cop.ssCode));
 	
-	// спецификатор функции не может быть explicit
+	// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ explicit
 	if( cop.fnSpecCode == KWEXPLICIT )	
 		theApp.Error( cop.errPos,
-				"'%s' - 'explicit' может использоваться только с конструкторами",
+				"'%s' - 'explicit' РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ СЃ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°РјРё",
 				cop.name.c_str() );
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	if( cop.friendSpec )
 		theApp.Error( cop.errPos,
-				"оператор приведения не может быть дружеским",
+				"РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РґСЂСѓР¶РµСЃРєРёРј",
 				cop.name.c_str() );
 
-	// у оператора не может быть cv-квалификаторов и базовых типов
+	// Сѓ РѕРїРµСЂР°С‚РѕСЂР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ Рё Р±Р°Р·РѕРІС‹С… С‚РёРїРѕРІ
 	if( cop.constQual || cop.volatileQual || cop.finalType != NULL )
 		theApp.Error( cop.errPos,
-				"оператор приведения не может содержать базовый тип",
+				"РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ РЅРµ РјРѕР¶РµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ Р±Р°Р·РѕРІС‹Р№ С‚РёРї",
 				cop.name.c_str() );
 
-	// оператор приведения должен быть функцией и не содержать других производных
-	// типов
+	// РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№ Рё РЅРµ СЃРѕРґРµСЂР¶Р°С‚СЊ РґСЂСѓРіРёС… РїСЂРѕРёР·РІРѕРґРЅС‹С…
+	// С‚РёРїРѕРІ
 	if( !cop.dtl.IsFunction() || cop.dtl.GetDerivedTypeCount() > 1 )
 	{
 		theApp.Error( cop.errPos,
-			"'%s' - оператор приведения должен быть функцией",
+			"'%s' - РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№",
 			cop.name.c_str() );
 
-		// выходим, т.к. не функцию проверять не нужно
+		// РІС‹С…РѕРґРёРј, С‚.Рє. РЅРµ С„СѓРЅРєС†РёСЋ РїСЂРѕРІРµСЂСЏС‚СЊ РЅРµ РЅСѓР¶РЅРѕ
 		incorrect = true;
 		return ;
 	}
 
-	// теперь присоединяем к временной структуре данные из типа приведения
-	// и выполняем стандартные проверки
+	// С‚РµРїРµСЂСЊ РїСЂРёСЃРѕРµРґРёРЅСЏРµРј Рє РІСЂРµРјРµРЅРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂРµ РґР°РЅРЅС‹Рµ РёР· С‚РёРїР° РїСЂРёРІРµРґРµРЅРёСЏ
+	// Рё РІС‹РїРѕР»РЅСЏРµРј СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РїСЂРѕРІРµСЂРєРё
 	{
 		cop.finalType = const_cast<BaseType*>(&tcoc.castType->GetBaseType());
 		cop.constQual = tcoc.castType->IsConst();
@@ -1260,23 +1260,23 @@ void CastOperatorChecker::Check()
 	}
 
 	
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	CheckDerivedTypeList(cop);		
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	CheckRelationOfBaseTypeToDerived(cop, true);
 
 
-	// теперь проверяем, чтобы оператор приведения не содержал параметров
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ РЅРµ СЃРѕРґРµСЂР¶Р°Р» РїР°СЂР°РјРµС‚СЂРѕРІ
 	if( static_cast<const FunctionPrototype &>(*cop.dtl.GetHeadDerivedType()).
 			GetParametrList().GetFunctionParametrCount() != 0 )
 		theApp.Error( cop.errPos,
-			"'%s' - оператор приведения должен объявляться без параметров",
+			"'%s' - РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ",
 			cop.name.c_str() );
 }
 
 
-// инициализация временной структуры
+// РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІСЂРµРјРµРЅРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹
 ConstructorChecker::ConstructorChecker( TempObjectContainer &c, const ClassType &cl )
 		: ctor(c), cls(cl), incorrect(false) 
 {
@@ -1285,57 +1285,57 @@ ConstructorChecker::ConstructorChecker( TempObjectContainer &c, const ClassType 
 }
 
 
-// инициализация временной структуры
+// РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІСЂРµРјРµРЅРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹
 void ConstructorChecker::Check()
 {
-	// если базового типа нет, присваиваем тип текущего класса
+	// РµСЃР»Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° РЅРµС‚, РїСЂРёСЃРІР°РёРІР°РµРј С‚РёРї С‚РµРєСѓС‰РµРіРѕ РєР»Р°СЃСЃР°
 	if( ctor.finalType == NULL )
 		ctor.finalType = const_cast<ClassType *>(&cls);
 
-	// 1. Если базовый тип не совпадает с классом, дальнейшие проверки не имеют смысла. 
-	//    Выводим ошибку выходим
+	// 1. Р•СЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ РєР»Р°СЃСЃРѕРј, РґР°Р»СЊРЅРµР№С€РёРµ РїСЂРѕРІРµСЂРєРё РЅРµ РёРјРµСЋС‚ СЃРјС‹СЃР»Р°. 
+	//    Р’С‹РІРѕРґРёРј РѕС€РёР±РєСѓ РІС‹С…РѕРґРёРј
 	if( static_cast<ClassType *>(ctor.finalType) != &cls )
 	{
-		theApp.Error( ctor.errPos, "в декларации члена пропущено имя");
+		theApp.Error( ctor.errPos, "РІ РґРµРєР»Р°СЂР°С†РёРё С‡Р»РµРЅР° РїСЂРѕРїСѓС‰РµРЅРѕ РёРјСЏ");
 		incorrect = true;
 		return;
 	}
 	
-	// 2. Конструктор должен быть функцией и возвращать ссылку
+	// 2. РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№ Рё РІРѕР·РІСЂР°С‰Р°С‚СЊ СЃСЃС‹Р»РєСѓ
 	if( !ctor.dtl.IsFunction() || ctor.dtl.GetDerivedTypeCount() != 1 )
 	{
 		theApp.Error( ctor.errPos, 
-			"'%s' - конструктор должен быть функцией", ctor.name.c_str());
+			"'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№", ctor.name.c_str());
 		incorrect = true;
 		return;
 	}
 
-	// 3. Конструктор не может иметь спецификаторы хранения, cv-квалификаторы, friend, virtual.
+	// 3. РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С…СЂР°РЅРµРЅРёСЏ, cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹, friend, virtual.
 	if( ctor.ssCode != -1 )
 		theApp.Error(ctor.errPos,
-			"'спецификатор хранения %s' некорректен для конструктора",
+			"'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°",
 			GetKeywordName(ctor.ssCode));
 
 	if( ctor.constQual || ctor.volatileQual || ctor.friendSpec )
 		theApp.Error(ctor.errPos,
-			"'%s' - %s некорректен в объявлении конструктора",
-			ctor.name.c_str(), ctor.friendSpec ? "friend" : "cv-квалификатор");
+			"'%s' - %s РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РІ РѕР±СЉСЏРІР»РµРЅРёРё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°",
+			ctor.name.c_str(), ctor.friendSpec ? "friend" : "cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂ");
 
 	if( ctor.fnSpecCode == KWVIRTUAL )
 		theApp.Error(ctor.errPos,
-			"'%s' - конструктор не может быть виртуальным",
+			"'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј",
 			ctor.name.c_str());
 
 	
-	// 4. Конструктор не может содержать cv-квалификаторы функции
+	// 4. РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹ С„СѓРЅРєС†РёРё
 	if( static_cast<const FunctionPrototype&>(
 			*ctor.dtl.GetHeadDerivedType()).CV_Qualified() != 0 )
 		theApp.Error( ctor.errPos, 
-			"'%s' - конструктор не может содержать cv-квалификаторы функции", ctor.name.c_str());
+			"'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹ С„СѓРЅРєС†РёРё", ctor.name.c_str());
 }
 
 
-// метод возвращающий true, если параметр является целым
+// РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°СЋС‰РёР№ true, РµСЃР»Рё РїР°СЂР°РјРµС‚СЂ СЏРІР»СЏРµС‚СЃСЏ С†РµР»С‹Рј
 bool GlobalOperatorChecker::IsInteger( const Parametr &prm ) const
 {
 	return prm.GetBaseType().GetBaseTypeCode() == BaseType::BT_INT &&
@@ -1343,8 +1343,8 @@ bool GlobalOperatorChecker::IsInteger( const Parametr &prm ) const
 }
 
 
-// проверить, чтобы параметр был классом, ссылкой на класс, перечислением,
-// ссылкой на перечисление
+// РїСЂРѕРІРµСЂРёС‚СЊ, С‡С‚РѕР±С‹ РїР°СЂР°РјРµС‚СЂ Р±С‹Р» РєР»Р°СЃСЃРѕРј, СЃСЃС‹Р»РєРѕР№ РЅР° РєР»Р°СЃСЃ, РїРµСЂРµС‡РёСЃР»РµРЅРёРµРј,
+// СЃСЃС‹Р»РєРѕР№ РЅР° РїРµСЂРµС‡РёСЃР»РµРЅРёРµ
 bool GlobalOperatorChecker::IsCompoundType( const Parametr &prm ) const
 {
 	if( prm.GetBaseType().IsClassType() || prm.GetBaseType().IsEnumType() )
@@ -1362,40 +1362,40 @@ bool GlobalOperatorChecker::IsCompoundType( const Parametr &prm ) const
 }
 
 
-// функция проверки глобального перегруженного оператора
+// С„СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
 void GlobalOperatorChecker::Check()
 {
-	// сохраняем имя
+	// СЃРѕС…СЂР°РЅСЏРµРј РёРјСЏ
 	op.name = tooc.opFullName;
 
 	if( op.ssCode != -1 && op.ssCode != KWSTATIC && op.ssCode != KWEXTERN )		
 		theApp.Error(op.errPos,
-			"'спецификатор хранения %s' некорректен для перегруженного оператора",
+			"'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°",
 			GetKeywordName(op.ssCode));
 
-	// проверяем спецификатор friend
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
 	if( op.friendSpec )
 		theApp.Error(op.errPos,
-			"'спецификатор дружбы friend' некорректен для перегруженного оператора");			
+			"'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹ friend' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°");			
 		
-	// спецификатор функции не может быть explicit
+	// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ explicit
 	if( op.fnSpecCode != -1 && op.fnSpecCode != KWINLINE )	
 		theApp.Error( op.errPos,
-				"'спецификатор функции %s' некорректен для перегруженного оператора",
+				"'СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё %s' РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РґР»СЏ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°",
 				GetKeywordName(op.fnSpecCode) );
 					
-	// стандартная проверка списка производных типов	
+	// СЃС‚Р°РЅРґР°СЂС‚РЅР°СЏ РїСЂРѕРІРµСЂРєР° СЃРїРёСЃРєР° РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ	
 	CheckDerivedTypeList(op);		
 
-	// проверка совместимости базового типа и производных
+	// РїСЂРѕРІРµСЂРєР° СЃРѕРІРјРµСЃС‚РёРјРѕСЃС‚Рё Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РїСЂРѕРёР·РІРѕРґРЅС‹С…
 	CheckRelationOfBaseTypeToDerived(op, false);
 
 
-	// перегруженный оператор обязательно должен быть функцией
+	// РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№
 	if( !op.dtl.IsFunction() )
 	{
 		theApp.Error( op.errPos,
-				"'%s' - перегруженный оператор должен быть функцией",
+				"'%s' - РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№",
 				op.name.c_str() );
 		return;
 	}
@@ -1405,30 +1405,30 @@ void GlobalOperatorChecker::Check()
 	int code = tooc.opCode,
 		pcount = fp.GetParametrList().GetFunctionParametrCount();
 
-	// Оператор присваивания, вызова функции, индексации, селектор члена
-	// не могут объявляться глобально. 
+	// РћРїРµСЂР°С‚РѕСЂ РїСЂРёСЃРІР°РёРІР°РЅРёСЏ, РІС‹Р·РѕРІР° С„СѓРЅРєС†РёРё, РёРЅРґРµРєСЃР°С†РёРё, СЃРµР»РµРєС‚РѕСЂ С‡Р»РµРЅР°
+	// РЅРµ РјРѕРіСѓС‚ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ РіР»РѕР±Р°Р»СЊРЅРѕ. 
 	if( code == '=' || code == OC_FUNCTION || code == ARROW || 
 		code == OC_ARRAY )
 	{
 		theApp.Error( op.errPos,
-				"'%s' - перегруженный оператор может быть только членом класса",
+				"'%s' - РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР°",
 				op.name.c_str() );
 		return;
 	}
 
 
-	// перегруженный оператор не может иметь cv-квалификаторов 
+	// РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ 
 	if( fp.CV_Qualified() != 0 )
 		theApp.Error( op.errPos,
-				"'%s' - перегруженный оператор не может иметь cv-квалификаторов функции",
+				"'%s' - РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ С„СѓРЅРєС†РёРё",
 				op.name.c_str() );
 	
 
-	// 1. Перегруженный оператор должен содержать как минимум 
-	// один параметр, который является классом, ссылкой на класс, перечислением, 
-	// ссылкой на перечисление.
+	// 1. РџРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ РєР°Рє РјРёРЅРёРјСѓРј 
+	// РѕРґРёРЅ РїР°СЂР°РјРµС‚СЂ, РєРѕС‚РѕСЂС‹Р№ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј, СЃСЃС‹Р»РєРѕР№ РЅР° РєР»Р°СЃСЃ, РїРµСЂРµС‡РёСЃР»РµРЅРёРµРј, 
+	// СЃСЃС‹Р»РєРѕР№ РЅР° РїРµСЂРµС‡РёСЃР»РµРЅРёРµ.
 
-	// если оператор унарный или бинарный	
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ СѓРЅР°СЂРЅС‹Р№ РёР»Рё Р±РёРЅР°СЂРЅС‹Р№	
 	if( code == '+' || code == '-' || code == '*' || code == '&' ||
 		code == INCREMENT || code == DECREMENT )
 	{
@@ -1436,8 +1436,8 @@ void GlobalOperatorChecker::Check()
 		{
 			if( !IsCompoundType( *fp.GetParametrList().GetFunctionParametr(0) ) )
 				theApp.Error( op.errPos,
-					"'%s' - параметр должен иметь тип класса или перечисления"
-					"(или ссылки на них)",
+					"'%s' - РїР°СЂР°РјРµС‚СЂ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ"
+					"(РёР»Рё СЃСЃС‹Р»РєРё РЅР° РЅРёС…)",
 					op.name.c_str() );
 		}
 
@@ -1448,8 +1448,8 @@ void GlobalOperatorChecker::Check()
 				if( !(IsCompoundType(*fp.GetParametrList().GetFunctionParametr(0)) &&
 					  IsInteger(*fp.GetParametrList().GetFunctionParametr(1)) ) )
   				theApp.Error( op.errPos,
-					"'%s' - первый параметр должен иметь тип класса или перечисления"
-					"(или ссылки на них). Второй параметр должен иметь тип int",
+					"'%s' - РїРµСЂРІС‹Р№ РїР°СЂР°РјРµС‚СЂ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ"
+					"(РёР»Рё СЃСЃС‹Р»РєРё РЅР° РЅРёС…). Р’С‚РѕСЂРѕР№ РїР°СЂР°РјРµС‚СЂ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї int",
 					op.name.c_str() );
 
 			}
@@ -1458,65 +1458,65 @@ void GlobalOperatorChecker::Check()
 			if( !(IsCompoundType( *fp.GetParametrList().GetFunctionParametr(0) ) ||
 				  IsCompoundType( *fp.GetParametrList().GetFunctionParametr(1) )) )
 				theApp.Error( op.errPos,
-					"'%s' - один из параметров должен иметь тип класса или перечисления"
-					"(или ссылки на них)",
+					"'%s' - РѕРґРёРЅ РёР· РїР°СЂР°РјРµС‚СЂРѕРІ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ"
+					"(РёР»Рё СЃСЃС‹Р»РєРё РЅР° РЅРёС…)",
 					op.name.c_str() );
 		}
 
 		else
 			theApp.Error( op.errPos,
-				"'%s' - оператор должен объявляться с 1 или 2 параметрами",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ 1 РёР»Рё 2 РїР°СЂР°РјРµС‚СЂР°РјРё",
 				op.name.c_str() );
 
 	}
 
-	// если оператор унарный
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ СѓРЅР°СЂРЅС‹Р№
 	else if( code == '!' || code == '~' )
 	{
 		if( pcount == 1 )
 		{
 			if( !IsCompoundType( *fp.GetParametrList().GetFunctionParametr(0) ) )
 				theApp.Error( op.errPos,
-					"'%s' - параметр должен иметь тип класса или перечисления"
-					"(или ссылки на них)",
+					"'%s' - РїР°СЂР°РјРµС‚СЂ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ"
+					"(РёР»Рё СЃСЃС‹Р»РєРё РЅР° РЅРёС…)",
 					op.name.c_str() );
 		}
 
 		else
 			theApp.Error( op.errPos,
-				"'%s' - оператор должен объявляться с одним параметром",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ РѕРґРЅРёРј РїР°СЂР°РјРµС‚СЂРѕРј",
 				op.name.c_str() );
 	}
 
-	// если оператор является оператором выделения или освобождения памяти
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ РѕРїРµСЂР°С‚РѕСЂРѕРј РІС‹РґРµР»РµРЅРёСЏ РёР»Рё РѕСЃРІРѕР±РѕР¶РґРµРЅРёСЏ РїР°РјСЏС‚Рё
 	else if( code == KWNEW || code == OC_NEW_ARRAY )
 	{							 	
-		// У оператора new и new[] первый параметр
-		// должен быть целым и возвращаемое значение должно быть void *. 
+		// РЈ РѕРїРµСЂР°С‚РѕСЂР° new Рё new[] РїРµСЂРІС‹Р№ РїР°СЂР°РјРµС‚СЂ
+		// РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С†РµР»С‹Рј Рё РІРѕР·РІСЂР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ void *. 
 		if( !IsInteger(*fp.GetParametrList().GetFunctionParametr(0)) )
 			theApp.Error( op.errPos,
-					"'%s' - первый параметр должен быть типа 'size_t'",
+					"'%s' - РїРµСЂРІС‹Р№ РїР°СЂР°РјРµС‚СЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С‚РёРїР° 'size_t'",
 					op.name.c_str());
 
-		// возвращаемое значение должно быть типа void*
+		// РІРѕР·РІСЂР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С‚РёРїР° void*
 		if( op.finalType->GetBaseTypeCode() != BaseType::BT_VOID ||
 			op.dtl.GetDerivedTypeCount() != 2					 ||
 			op.dtl.GetDerivedType(1)->GetDerivedTypeCode() != DerivedType::DT_POINTER )
 			theApp.Error( op.errPos,
-					"'%s' - возвращаемое значение должно быть типа 'void *'",
+					"'%s' - РІРѕР·РІСЂР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С‚РёРїР° 'void *'",
 					op.name.c_str());
 
 	}
 	
-	// если оператор освобождения-выделения для массивов
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РѕСЃРІРѕР±РѕР¶РґРµРЅРёСЏ-РІС‹РґРµР»РµРЅРёСЏ РґР»СЏ РјР°СЃСЃРёРІРѕРІ
 	else if( code == KWDELETE || code == OC_DELETE_ARRAY )
 	{
-		// декларация оператора деалокации может иметь две формы:
-		// 'void operator delete( void *, size_t)' или 'void operator delete(void*)'.	
+		// РґРµРєР»Р°СЂР°С†РёСЏ РѕРїРµСЂР°С‚РѕСЂР° РґРµР°Р»РѕРєР°С†РёРё РјРѕР¶РµС‚ РёРјРµС‚СЊ РґРІРµ С„РѕСЂРјС‹:
+		// 'void operator delete( void *, size_t)' РёР»Рё 'void operator delete(void*)'.	
 		bool correct = op.finalType->GetBaseTypeCode() == BaseType::BT_VOID && 
 			op.dtl.GetDerivedTypeCount() == 1;
 		
-		// проверяем первый параметр, он должен быть типа void *
+		// РїСЂРѕРІРµСЂСЏРµРј РїРµСЂРІС‹Р№ РїР°СЂР°РјРµС‚СЂ, РѕРЅ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С‚РёРїР° void *
 		if( pcount >= 1 )
 		{
 			const Parametr &prm = *fp.GetParametrList().GetFunctionParametr(0);
@@ -1527,7 +1527,7 @@ void GlobalOperatorChecker::Check()
 				correct = false;
 		}
 		
-		// проверяем второй параметр
+		// РїСЂРѕРІРµСЂСЏРµРј РІС‚РѕСЂРѕР№ РїР°СЂР°РјРµС‚СЂ
 		if( pcount == 2 )
 		{			
 			if( !IsInteger(*fp.GetParametrList().GetFunctionParametr(1)) )
@@ -1537,15 +1537,15 @@ void GlobalOperatorChecker::Check()
 		else if( pcount != 1 )
 			correct = false;
 
-		// теперь, если оператор объявлен не корректно, выведем ошибку
+		// С‚РµРїРµСЂСЊ, РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РѕР±СЉСЏРІР»РµРЅ РЅРµ РєРѕСЂСЂРµРєС‚РЅРѕ, РІС‹РІРµРґРµРј РѕС€РёР±РєСѓ
 		if( !correct )
 			theApp.Error( op.errPos,
-				"декларация оператора деалокации может иметь две формы: "
-				"'void operator %s(void *)' или 'void operator %s(void *, size_t)'",
+				"РґРµРєР»Р°СЂР°С†РёСЏ РѕРїРµСЂР°С‚РѕСЂР° РґРµР°Р»РѕРєР°С†РёРё РјРѕР¶РµС‚ РёРјРµС‚СЊ РґРІРµ С„РѕСЂРјС‹: "
+				"'void operator %s(void *)' РёР»Рё 'void operator %s(void *, size_t)'",
 				tooc.opString.c_str(), tooc.opString.c_str());
 	}
 	
-	// иначе оператор является бинарным
+	// РёРЅР°С‡Рµ РѕРїРµСЂР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ Р±РёРЅР°СЂРЅС‹Рј
 	else
 	{
 		if( pcount == 2 )
@@ -1553,55 +1553,55 @@ void GlobalOperatorChecker::Check()
 			if( !(IsCompoundType( *fp.GetParametrList().GetFunctionParametr(0) ) ||
 				  IsCompoundType( *fp.GetParametrList().GetFunctionParametr(1) )) )
 				theApp.Error( op.errPos,
-					"'%s' - один из параметров должен иметь тип класса или перечисления"
-					"(или ссылки на них)",
+					"'%s' - РѕРґРёРЅ РёР· РїР°СЂР°РјРµС‚СЂРѕРІ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ"
+					"(РёР»Рё СЃСЃС‹Р»РєРё РЅР° РЅРёС…)",
 					op.name.c_str() );
 		}
 
 		else
 			theApp.Error( op.errPos,
-				"'%s' - оператор должен объявляться с двумя параметрами",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ СЃ РґРІСѓРјСЏ РїР°СЂР°РјРµС‚СЂР°РјРё",
 				op.name.c_str() );
 	}
 
 
-	// проверить наличие параметров по умолчанию, 
+	// РїСЂРѕРІРµСЂРёС‚СЊ РЅР°Р»РёС‡РёРµ РїР°СЂР°РјРµС‚СЂРѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, 
 	for( int i = 0; i<pcount; i++ )
 		if( fp.GetParametrList().GetFunctionParametr(i)->IsHaveDefaultValue() )
 		{
 			theApp.Error( op.errPos,
-				"'%s' - оператор не может иметь параметров по умолчанию",
+				"'%s' - РѕРїРµСЂР°С‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РїР°СЂР°РјРµС‚СЂРѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ",
 				op.name.c_str() );			
 			break;
 		}		
 }
 
 
-// рекурсивная функция, проходит по всему дереву базовых классов и 
-// изменяет спецификатор доступа члена в зависимости от спецификатора
-// наследования по правилу:  public-(public, protected, no_access), 
+// СЂРµРєСѓСЂСЃРёРІРЅР°СЏ С„СѓРЅРєС†РёСЏ, РїСЂРѕС…РѕРґРёС‚ РїРѕ РІСЃРµРјСѓ РґРµСЂРµРІСѓ Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ Рё 
+// РёР·РјРµРЅСЏРµС‚ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° С‡Р»РµРЅР° РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР°
+// РЅР°СЃР»РµРґРѕРІР°РЅРёСЏ РїРѕ РїСЂР°РІРёР»Сѓ:  public-(public, protected, no_access), 
 // protected-(protected, protected, no_access), private-(no_access, no_access, no_access).
-// Функция анализирует всю иерархию так как возможна ситуация когда член
-// достижим по нескольким путям, в этом случае выбирается наиболее доступный член
+// Р¤СѓРЅРєС†РёСЏ Р°РЅР°Р»РёР·РёСЂСѓРµС‚ РІСЃСЋ РёРµСЂР°СЂС…РёСЋ С‚Р°Рє РєР°Рє РІРѕР·РјРѕР¶РЅР° СЃРёС‚СѓР°С†РёСЏ РєРѕРіРґР° С‡Р»РµРЅ
+// РґРѕСЃС‚РёР¶РёРј РїРѕ РЅРµСЃРєРѕР»СЊРєРёРј РїСѓС‚СЏРј, РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РІС‹Р±РёСЂР°РµС‚СЃСЏ РЅР°РёР±РѕР»РµРµ РґРѕСЃС‚СѓРїРЅС‹Р№ С‡Р»РµРЅ
 void AccessControlChecker::AnalyzeClassHierarhy( RealAccessSpecifier &ras, 
 							ClassMember::AS curAS, const ClassType &curCls, int level )
 {
 	INTERNAL_IF( level > 1000 );
 
-	// если член принадлжит текущему классу, задаем класс и спец. доступа
+	// РµСЃР»Рё С‡Р»РµРЅ РїСЂРёРЅР°РґР»Р¶РёС‚ С‚РµРєСѓС‰РµРјСѓ РєР»Р°СЃСЃСѓ, Р·Р°РґР°РµРј РєР»Р°СЃСЃ Рё СЃРїРµС†. РґРѕСЃС‚СѓРїР°
 	if( ras.pClass == &curCls )
 	{
-		// если класс уже задан, то задаем его только в случае если
-		// текущий спецификатор доступней предыдущего
+		// РµСЃР»Рё РєР»Р°СЃСЃ СѓР¶Рµ Р·Р°РґР°РЅ, С‚Рѕ Р·Р°РґР°РµРј РµРіРѕ С‚РѕР»СЊРєРѕ РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё
+		// С‚РµРєСѓС‰РёР№ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїРЅРµР№ РїСЂРµРґС‹РґСѓС‰РµРіРѕ
 		if( ras.isClassFound )
 		{
-			// спецификаторы идут в таком порядке: NOT_CLASS_MEMBER, AS_PRIVATE,
+			// СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ РёРґСѓС‚ РІ С‚Р°РєРѕРј РїРѕСЂСЏРґРєРµ: NOT_CLASS_MEMBER, AS_PRIVATE,
 			// AS_PROTECTED, AS_PUBLIC
 			if( curAS > ras.realAs )
 				ras.realAs = curAS;			
 		}
 
-		// иначе задаем как есть и выходим
+		// РёРЅР°С‡Рµ Р·Р°РґР°РµРј РєР°Рє РµСЃС‚СЊ Рё РІС‹С…РѕРґРёРј
 		else 			
 		{
 			ras.realAs = curAS;
@@ -1611,17 +1611,17 @@ void AccessControlChecker::AnalyzeClassHierarhy( RealAccessSpecifier &ras,
 		return;
 	}
 
-	// для каждого базового класса
+	// РґР»СЏ РєР°Р¶РґРѕРіРѕ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°
 	register const BaseClassList &bcl = curCls.GetBaseClassList();
 	for( int i = 0; i<bcl.GetBaseClassCount(); i++ )
 	{
 		const BaseClassCharacteristic &clh = *bcl.GetBaseClassCharacteristic(i);
 
-		// вычисляем изменение текущего спецификатора доступа на основании
-		// спецификатора доступа в наследовании
+		// РІС‹С‡РёСЃР»СЏРµРј РёР·РјРµРЅРµРЅРёРµ С‚РµРєСѓС‰РµРіРѕ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° РґРѕСЃС‚СѓРїР° РЅР° РѕСЃРЅРѕРІР°РЅРёРё
+		// СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° РґРѕСЃС‚СѓРїР° РІ РЅР°СЃР»РµРґРѕРІР°РЅРёРё
 		ClassMember::AS nxtAS, bcAS = clh.GetAccessSpecifier();
 		
-		// наследования по правилу:  public-(public, protected, no_access), 
+		// РЅР°СЃР»РµРґРѕРІР°РЅРёСЏ РїРѕ РїСЂР°РІРёР»Сѓ:  public-(public, protected, no_access), 
 		// protected-(protected, protected, no_access), 
 		// private-(private, private, no_access).
 		if( bcAS == ClassMember::AS_PUBLIC )
@@ -1637,16 +1637,16 @@ void AccessControlChecker::AnalyzeClassHierarhy( RealAccessSpecifier &ras,
 					ClassMember::AS_PRIVATE : ClassMember::NOT_CLASS_MEMBER;
 
 		else
-			INTERNAL( "'AccessControlChecker::AnalyzeClassHierarhy' некорректный "
-					  "спецификатор доступа базового класса" );
+			INTERNAL( "'AccessControlChecker::AnalyzeClassHierarhy' РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ "
+					  "СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°" );
 
-		// вызываем рекурсию
+		// РІС‹Р·С‹РІР°РµРј СЂРµРєСѓСЂСЃРёСЋ
 		AnalyzeClassHierarhy( ras, nxtAS, clh.GetPointerToClass(), level+1);
 	}
 }
 
 
-// функция возвращает true, если d является производным классом b
+// С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё d СЏРІР»СЏРµС‚СЃСЏ РїСЂРѕРёР·РІРѕРґРЅС‹Рј РєР»Р°СЃСЃРѕРј b
 bool AccessControlChecker::DerivedFrom( const ClassType &d, const ClassType &b )
 {
 	if( &d == &b )
@@ -1661,73 +1661,73 @@ bool AccessControlChecker::DerivedFrom( const ClassType &d, const ClassType &b )
 }
 
 
-// закрытая функция, которая выполняет основную работу класса
+// Р·Р°РєСЂС‹С‚Р°СЏ С„СѓРЅРєС†РёСЏ, РєРѕС‚РѕСЂР°СЏ РІС‹РїРѕР»РЅСЏРµС‚ РѕСЃРЅРѕРІРЅСѓСЋ СЂР°Р±РѕС‚Сѓ РєР»Р°СЃСЃР°
 void AccessControlChecker::Check()
 {
 	INTERNAL_IF( member.GetAccessSpecifier() == ClassMember::NOT_CLASS_MEMBER );
 
-	// текущая таблица символов не должна быть локальная
+	// С‚РµРєСѓС‰Р°СЏ С‚Р°Р±Р»РёС†Р° СЃРёРјРІРѕР»РѕРІ РЅРµ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р»РѕРєР°Р»СЊРЅР°СЏ
 	INTERNAL_IF( curST.IsLocalSymbolTable() );
 
-	// выявляем настоящий спецификатор доступа члена поднимаясь вверх по иерархии,
-	// либо сразу получая его если member принадлежит memberCls
+	// РІС‹СЏРІР»СЏРµРј РЅР°СЃС‚РѕСЏС‰РёР№ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° С‡Р»РµРЅР° РїРѕРґРЅРёРјР°СЏСЃСЊ РІРІРµСЂС… РїРѕ РёРµСЂР°СЂС…РёРё,
+	// Р»РёР±Рѕ СЃСЂР°Р·Сѓ РїРѕР»СѓС‡Р°СЏ РµРіРѕ РµСЃР»Рё member РїСЂРёРЅР°РґР»РµР¶РёС‚ memberCls
 	RealAccessSpecifier ras(member.GetAccessSpecifier(), &member) ;
 		
-	// выявляем спецификатор доступа проходя по иерархии,
-	// от класса, через который обращаемся к члену до класса в котором находится член, 
-	// изменяя при этом спецификатор доступа. Если член не принадлежит базовому классу,
-	// isClassFound будет равен 0
+	// РІС‹СЏРІР»СЏРµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° РїСЂРѕС…РѕРґСЏ РїРѕ РёРµСЂР°СЂС…РёРё,
+	// РѕС‚ РєР»Р°СЃСЃР°, С‡РµСЂРµР· РєРѕС‚РѕСЂС‹Р№ РѕР±СЂР°С‰Р°РµРјСЃСЏ Рє С‡Р»РµРЅСѓ РґРѕ РєР»Р°СЃСЃР° РІ РєРѕС‚РѕСЂРѕРј РЅР°С…РѕРґРёС‚СЃСЏ С‡Р»РµРЅ, 
+	// РёР·РјРµРЅСЏСЏ РїСЂРё СЌС‚РѕРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР°. Р•СЃР»Рё С‡Р»РµРЅ РЅРµ РїСЂРёРЅР°РґР»РµР¶РёС‚ Р±Р°Р·РѕРІРѕРјСѓ РєР»Р°СЃСЃСѓ,
+	// isClassFound Р±СѓРґРµС‚ СЂР°РІРµРЅ 0
 	AnalyzeClassHierarhy( ras, member.GetAccessSpecifier(), memberCls, 0);	
 
-	// далее следует проверка относительно текущей области видимости.
-	// Если текущая область видимости глобальная или именованная, значит
-	// спецификатор доступа должен быть public
+	// РґР°Р»РµРµ СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРєР° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё.
+	// Р•СЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РіР»РѕР±Р°Р»СЊРЅР°СЏ РёР»Рё РёРјРµРЅРѕРІР°РЅРЅР°СЏ, Р·РЅР°С‡РёС‚
+	// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ public
 	if( curST.IsGlobalSymbolTable() || curST.IsNamespaceSymbolTable() )
 		accessible = ras.realAs == ClassMember::AS_PUBLIC;
 
 
-	// если текущая область видимости является функцией
+	// РµСЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№
 	else if( curST.IsFunctionSymbolTable() )
 	{
 		const Function &fn = static_cast<const FunctionSymbolTable &>(curST).GetFunction();
 
-		// если функция член
+		// РµСЃР»Рё С„СѓРЅРєС†РёСЏ С‡Р»РµРЅ
 		if( fn.IsClassMember() )
 		{			
 			const ClassType &fnCls = static_cast<const ClassType&>(fn.GetSymbolTableEntry());
 
-			// если спецификатор не выявлен, член не является членом базового класса,
-			// значит если он private или protected, заменяем их на no_access
+			// РµСЃР»Рё СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РЅРµ РІС‹СЏРІР»РµРЅ, С‡Р»РµРЅ РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°,
+			// Р·РЅР°С‡РёС‚ РµСЃР»Рё РѕРЅ private РёР»Рё protected, Р·Р°РјРµРЅСЏРµРј РёС… РЅР° no_access
 			if( !ras.isClassFound )	
 				ras.realAs = member.GetAccessSpecifier() == ClassMember::AS_PUBLIC ?
 					ClassMember::AS_PUBLIC : ClassMember::NOT_CLASS_MEMBER;
 
-			// если это функция член класса ras.pClass, значит доступ 
-			// разрешен к члену с любым спецификатором доступа, кроме 
-			// закрытых членов базовых классов
+			// РµСЃР»Рё СЌС‚Рѕ С„СѓРЅРєС†РёСЏ С‡Р»РµРЅ РєР»Р°СЃСЃР° ras.pClass, Р·РЅР°С‡РёС‚ РґРѕСЃС‚СѓРї 
+			// СЂР°Р·СЂРµС€РµРЅ Рє С‡Р»РµРЅСѓ СЃ Р»СЋР±С‹Рј СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРј РґРѕСЃС‚СѓРїР°, РєСЂРѕРјРµ 
+			// Р·Р°РєСЂС‹С‚С‹С… С‡Р»РµРЅРѕРІ Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ
 			if( &fnCls == ras.pClass )
 				accessible = ras.realAs != ClassMember::NOT_CLASS_MEMBER;
 
-			// иначе класс к которому принадлежит функция
-			// может быть дружественным для класса ras.pClass
+			// РёРЅР°С‡Рµ РєР»Р°СЃСЃ Рє РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ С„СѓРЅРєС†РёСЏ
+			// РјРѕР¶РµС‚ Р±С‹С‚СЊ РґСЂСѓР¶РµСЃС‚РІРµРЅРЅС‹Рј РґР»СЏ РєР»Р°СЃСЃР° ras.pClass
 			else if( ras.pClass->GetFriendList().FindClassFriend( &fnCls ) >= 0 )
 				accessible = true;
 						
-			// иначе если это функция член класса производного от ras.pClass,
-			// значит доступ разрешен для открытых и защищенных членов
+			// РёРЅР°С‡Рµ РµСЃР»Рё СЌС‚Рѕ С„СѓРЅРєС†РёСЏ С‡Р»РµРЅ РєР»Р°СЃСЃР° РїСЂРѕРёР·РІРѕРґРЅРѕРіРѕ РѕС‚ ras.pClass,
+			// Р·РЅР°С‡РёС‚ РґРѕСЃС‚СѓРї СЂР°Р·СЂРµС€РµРЅ РґР»СЏ РѕС‚РєСЂС‹С‚С‹С… Рё Р·Р°С‰РёС‰РµРЅРЅС‹С… С‡Р»РµРЅРѕРІ
 			else if( DerivedFrom( fnCls, *ras.pClass ) )				
 			{
-				// если закрытый член базового класса, он недоступен
+				// РµСЃР»Рё Р·Р°РєСЂС‹С‚С‹Р№ С‡Р»РµРЅ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°, РѕРЅ РЅРµРґРѕСЃС‚СѓРїРµРЅ
 				if( ras.realAs == ClassMember::NOT_CLASS_MEMBER )				
 				{
 					accessible = false;
 					return;
 				}
 
-				// здесь есть одно исключение. Если доступ к члену произведен
-				// не напряму через this, тогда член не может быть доступным,
-				// потому что изменяется не текущий объект, а другой. Но только
-				// если этот член не является статическим				
+				// Р·РґРµСЃСЊ РµСЃС‚СЊ РѕРґРЅРѕ РёСЃРєР»СЋС‡РµРЅРёРµ. Р•СЃР»Рё РґРѕСЃС‚СѓРї Рє С‡Р»РµРЅСѓ РїСЂРѕРёР·РІРµРґРµРЅ
+				// РЅРµ РЅР°РїСЂСЏРјСѓ С‡РµСЂРµР· this, С‚РѕРіРґР° С‡Р»РµРЅ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РґРѕСЃС‚СѓРїРЅС‹Рј,
+				// РїРѕС‚РѕРјСѓ С‡С‚Рѕ РёР·РјРµРЅСЏРµС‚СЃСЏ РЅРµ С‚РµРєСѓС‰РёР№ РѕР±СЉРµРєС‚, Р° РґСЂСѓРіРѕР№. РќРѕ С‚РѕР»СЊРєРѕ
+				// РµСЃР»Рё СЌС‚РѕС‚ С‡Р»РµРЅ РЅРµ СЏРІР»СЏРµС‚СЃСЏ СЃС‚Р°С‚РёС‡РµСЃРєРёРј				
 				if( &memberCls != &fnCls )
 				{
 					if( const ::Object *ob = dynamic_cast<const ::Object *>(&member) )
@@ -1741,22 +1741,22 @@ void AccessControlChecker::Check()
 						accessible = false;
 				}
 
-				// иначе доступны все члены внутри функции-члена производного класса,
-				// т.к. закрытые члены базового, отсеились на стадии анализа иерархии
+				// РёРЅР°С‡Рµ РґРѕСЃС‚СѓРїРЅС‹ РІСЃРµ С‡Р»РµРЅС‹ РІРЅСѓС‚СЂРё С„СѓРЅРєС†РёРё-С‡Р»РµРЅР° РїСЂРѕРёР·РІРѕРґРЅРѕРіРѕ РєР»Р°СЃСЃР°,
+				// С‚.Рє. Р·Р°РєСЂС‹С‚С‹Рµ С‡Р»РµРЅС‹ Р±Р°Р·РѕРІРѕРіРѕ, РѕС‚СЃРµРёР»РёСЃСЊ РЅР° СЃС‚Р°РґРёРё Р°РЅР°Р»РёР·Р° РёРµСЂР°СЂС…РёРё
 				else
 					accessible = true;
 			}
 
-			// иначе доступ возможен только к открытым членам
+			// РёРЅР°С‡Рµ РґРѕСЃС‚СѓРї РІРѕР·РјРѕР¶РµРЅ С‚РѕР»СЊРєРѕ Рє РѕС‚РєСЂС‹С‚С‹Рј С‡Р»РµРЅР°Рј
 			else
 				accessible = ras.realAs == ClassMember::AS_PUBLIC;
 		}
 
-		// иначе имеем функцию не член
+		// РёРЅР°С‡Рµ РёРјРµРµРј С„СѓРЅРєС†РёСЋ РЅРµ С‡Р»РµРЅ
 		else
 		{
-			// если функция дружественная значит доступны все члены,
-			// иначе только открытые
+			// РµСЃР»Рё С„СѓРЅРєС†РёСЏ РґСЂСѓР¶РµСЃС‚РІРµРЅРЅР°СЏ Р·РЅР°С‡РёС‚ РґРѕСЃС‚СѓРїРЅС‹ РІСЃРµ С‡Р»РµРЅС‹,
+			// РёРЅР°С‡Рµ С‚РѕР»СЊРєРѕ РѕС‚РєСЂС‹С‚С‹Рµ
 			if( ras.pClass->GetFriendList().FindClassFriend( &fn ) >= 0 )
 				accessible = true;
 		
@@ -1765,23 +1765,23 @@ void AccessControlChecker::Check()
 		}
 	}
 
-	// иначе если внутри класса
+	// РёРЅР°С‡Рµ РµСЃР»Рё РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°
 	else if( curST.IsClassSymbolTable() )
 	{
 		const ClassType &curCls = static_cast<const ClassType &>(curST);
 
-		// если спецификатор не выявлен, член не является членом базового класса,
-		// значит если он private или protected, заменяем их на no_access
+		// РµСЃР»Рё СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РЅРµ РІС‹СЏРІР»РµРЅ, С‡Р»РµРЅ РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°,
+		// Р·РЅР°С‡РёС‚ РµСЃР»Рё РѕРЅ private РёР»Рё protected, Р·Р°РјРµРЅСЏРµРј РёС… РЅР° no_access
 		if( !ras.isClassFound )	
 			ras.realAs = member.GetAccessSpecifier() == ClassMember::AS_PUBLIC ?
 					ClassMember::AS_PUBLIC : ClassMember::NOT_CLASS_MEMBER;
 
-		// если класс является другом, то спцификатор подойдет любой,
-		// иначе только public
+		// РµСЃР»Рё РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ РґСЂСѓРіРѕРј, С‚Рѕ СЃРїС†РёС„РёРєР°С‚РѕСЂ РїРѕРґРѕР№РґРµС‚ Р»СЋР±РѕР№,
+		// РёРЅР°С‡Рµ С‚РѕР»СЊРєРѕ public
 		if( ras.pClass->GetFriendList().FindClassFriend( &curCls ) >= 0 )
 			accessible = true;
 
-		// при наследовании спецификатор должен быть protected или public
+		// РїСЂРё РЅР°СЃР»РµРґРѕРІР°РЅРёРё СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ protected РёР»Рё public
 		else if( DerivedFrom(curCls, *ras.pClass ) )
 			accessible = ras.realAs == ClassMember::AS_PUBLIC ||
 				ras.realAs == ClassMember::AS_PROTECTED ;
@@ -1790,46 +1790,46 @@ void AccessControlChecker::Check()
 			accessible = ras.realAs == ClassMember::AS_PUBLIC;
 	}
 
-	// иначе ошибка
+	// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 	else
-		INTERNAL( "'AccessControlChecker::Check' передана неизвестная область видимости" );
+		INTERNAL( "'AccessControlChecker::Check' РїРµСЂРµРґР°РЅР° РЅРµРёР·РІРµСЃС‚РЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё" );
 }
 
 
-// если сигнатуры у метода 'vm', такая же как у 'method',
-// вернуть true. При этом 'vm' должен быть виртуальным
+// РµСЃР»Рё СЃРёРіРЅР°С‚СѓСЂС‹ Сѓ РјРµС‚РѕРґР° 'vm', С‚Р°РєР°СЏ Р¶Рµ РєР°Рє Сѓ 'method',
+// РІРµСЂРЅСѓС‚СЊ true. РџСЂРё СЌС‚РѕРј 'vm' РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј
 bool VirtualMethodChecker::EqualSignature( const Method *vm )
 {
-	// vm - должен быть виртуальной функцией
+	// vm - РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ С„СѓРЅРєС†РёРµР№
 	if( !vm->IsVirtual() )
 		return false;
 
-	// проверяем чтобы прототипы функций совпадали
+	// РїСЂРѕРІРµСЂСЏРµРј С‡С‚РѕР±С‹ РїСЂРѕС‚РѕС‚РёРїС‹ С„СѓРЅРєС†РёР№ СЃРѕРІРїР°РґР°Р»Рё
 	const FunctionPrototype &fp1 = method.GetFunctionPrototype(), 
 							&fp2 = vm->GetFunctionPrototype();	
 
-	// количество параметров должно совпадать
+	// РєРѕР»РёС‡РµСЃС‚РІРѕ РїР°СЂР°РјРµС‚СЂРѕРІ РґРѕР»Р¶РЅРѕ СЃРѕРІРїР°РґР°С‚СЊ
 	const FunctionParametrList &fpl1 = fp1.GetParametrList(),
 							   &fpl2 = fp2.GetParametrList();
 
 	if( fpl1.GetFunctionParametrCount() != fpl2.GetFunctionParametrCount() )
 		return false;
 
-	// cv-квалификаторы также должны совпадать
+	// cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹ С‚Р°РєР¶Рµ РґРѕР»Р¶РЅС‹ СЃРѕРІРїР°РґР°С‚СЊ
 	if( fp1.IsConst() != fp2.IsConst() || fp1.IsVolatile() != fp2.IsVolatile() )
 		return false;
 
-	// проверяем каждый параметр в списке на соответствие	
+	// РїСЂРѕРІРµСЂСЏРµРј РєР°Р¶РґС‹Р№ РїР°СЂР°РјРµС‚СЂ РІ СЃРїРёСЃРєРµ РЅР° СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ	
 	for( int i = 0; i<fpl1.GetFunctionParametrCount(); i++ )
 		if( !RedeclaredChecker::DeclEqual(*fpl1[i], *fpl2[i]) )
 			return false;
 		
-	// если списки параметров совпали следует полностью проверить
-	// типы функций
+	// РµСЃР»Рё СЃРїРёСЃРєРё РїР°СЂР°РјРµС‚СЂРѕРІ СЃРѕРІРїР°Р»Рё СЃР»РµРґСѓРµС‚ РїРѕР»РЅРѕСЃС‚СЊСЋ РїСЂРѕРІРµСЂРёС‚СЊ
+	// С‚РёРїС‹ С„СѓРЅРєС†РёР№
 	if( !RedeclaredChecker::DeclEqual( method, *vm ) )
 	{
 		theApp.Error( errPos,
-			"'%s' - виртуальная функция отлична только типом возвращаемого значения от '%s'",
+			"'%s' - РІРёСЂС‚СѓР°Р»СЊРЅР°СЏ С„СѓРЅРєС†РёСЏ РѕС‚Р»РёС‡РЅР° С‚РѕР»СЊРєРѕ С‚РёРїРѕРј РІРѕР·РІСЂР°С‰Р°РµРјРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РѕС‚ '%s'",
 			method.GetQualifiedName().c_str(), vm->GetQualifiedName().c_str());		
 		return false;
 	}
@@ -1838,33 +1838,33 @@ bool VirtualMethodChecker::EqualSignature( const Method *vm )
 }
 
 
-// закрытый метод, выполняет наполнение списка, методами,
-// которые совпадают по сигнатуре с имеющимся методом
+// Р·Р°РєСЂС‹С‚С‹Р№ РјРµС‚РѕРґ, РІС‹РїРѕР»РЅСЏРµС‚ РЅР°РїРѕР»РЅРµРЅРёРµ СЃРїРёСЃРєР°, РјРµС‚РѕРґР°РјРё,
+// РєРѕС‚РѕСЂС‹Рµ СЃРѕРІРїР°РґР°СЋС‚ РїРѕ СЃРёРіРЅР°С‚СѓСЂРµ СЃ РёРјРµСЋС‰РёРјСЃСЏ РјРµС‚РѕРґРѕРј
 void VirtualMethodChecker::FillVML( const ClassType &curCls )
 {
-	// проходим по списку базовых классов, в поисках метода,
-	// если имя найдено, поиск прекращается и происходит сравнение
-	// сигнатур, если имя - метод
+	// РїСЂРѕС…РѕРґРёРј РїРѕ СЃРїРёСЃРєСѓ Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ, РІ РїРѕРёСЃРєР°С… РјРµС‚РѕРґР°,
+	// РµСЃР»Рё РёРјСЏ РЅР°Р№РґРµРЅРѕ, РїРѕРёСЃРє РїСЂРµРєСЂР°С‰Р°РµС‚СЃСЏ Рё РїСЂРѕРёСЃС…РѕРґРёС‚ СЃСЂР°РІРЅРµРЅРёРµ
+	// СЃРёРіРЅР°С‚СѓСЂ, РµСЃР»Рё РёРјСЏ - РјРµС‚РѕРґ
 	register const BaseClassList &bcl = curCls.GetBaseClassList();
 	for( int i = 0; i<bcl.GetBaseClassCount(); i++ )
 	{
-		// получаем класс напрямую
+		// РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ РЅР°РїСЂСЏРјСѓСЋ
 		const ClassType &baseCls = bcl.GetBaseClassCharacteristic(i)->GetPointerToClass();
 		const VirtualFunctionList &vfl = baseCls.GetVirtualFunctionList();
 		VirtualFunctionList::const_iterator pvf = 
 			find_if(vfl.begin(), vfl.end(), VMFunctor(method.GetName().c_str()) );
 
-		// если ничего не найдено, вызываем рекурсию
+		// РµСЃР»Рё РЅРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ, РІС‹Р·С‹РІР°РµРј СЂРµРєСѓСЂСЃРёСЋ
 		if( pvf == vfl.end() )
 		{
 			FillVML( baseCls );
 			continue;
 		}
 
-		// иначе из имеющегося списка выявляем виртуальные функции,
-		// которые имеют такую же сигнатуру, что и текущий метод.
-		// Если сигнатуры совпадают, добавить метод в список. Метод
-		// должен быть единственным в базовом классе.
+		// РёРЅР°С‡Рµ РёР· РёРјРµСЋС‰РµРіРѕСЃСЏ СЃРїРёСЃРєР° РІС‹СЏРІР»СЏРµРј РІРёСЂС‚СѓР°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё,
+		// РєРѕС‚РѕСЂС‹Рµ РёРјРµСЋС‚ С‚Р°РєСѓСЋ Р¶Рµ СЃРёРіРЅР°С‚СѓСЂСѓ, С‡С‚Рѕ Рё С‚РµРєСѓС‰РёР№ РјРµС‚РѕРґ.
+		// Р•СЃР»Рё СЃРёРіРЅР°С‚СѓСЂС‹ СЃРѕРІРїР°РґР°СЋС‚, РґРѕР±Р°РІРёС‚СЊ РјРµС‚РѕРґ РІ СЃРїРёСЃРѕРє. РњРµС‚РѕРґ
+		// РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РµРґРёРЅСЃС‚РІРµРЅРЅС‹Рј РІ Р±Р°Р·РѕРІРѕРј РєР»Р°СЃСЃРµ.
 		bool haveVm = false;
 		for( VirtualFunctionList::const_iterator p = pvf; p != vfl.end(); p++ )
 		{			
@@ -1879,19 +1879,19 @@ void VirtualMethodChecker::FillVML( const ClassType &curCls )
 }
 
 
-// выполнить проверку деструткоров ближайших
-// базовых классов
+// РІС‹РїРѕР»РЅРёС‚СЊ РїСЂРѕРІРµСЂРєСѓ РґРµСЃС‚СЂСѓС‚РєРѕСЂРѕРІ Р±Р»РёР¶Р°Р№С€РёС…
+// Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ
 void VirtualMethodChecker::CheckDestructor( const ClassType &curCls )
 {
 	INTERNAL_IF( !curCls.IsDerived() );
 
-	// нам следует проверять только ближайшие базовые классы,
-	// т.к. деструкторы генерируются автоматически компилятором,
-	// если он не задан явно.
+	// РЅР°Рј СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂСЏС‚СЊ С‚РѕР»СЊРєРѕ Р±Р»РёР¶Р°Р№С€РёРµ Р±Р°Р·РѕРІС‹Рµ РєР»Р°СЃСЃС‹,
+	// С‚.Рє. РґРµСЃС‚СЂСѓРєС‚РѕСЂС‹ РіРµРЅРµСЂРёСЂСѓСЋС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РєРѕРјРїРёР»СЏС‚РѕСЂРѕРј,
+	// РµСЃР»Рё РѕРЅ РЅРµ Р·Р°РґР°РЅ СЏРІРЅРѕ.
 	register const BaseClassList &bcl = curCls.GetBaseClassList();
 	for( int i = 0; i<bcl.GetBaseClassCount(); i++ )
 	{
-		// получаем класс напрямую
+		// РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ РЅР°РїСЂСЏРјСѓСЋ
 		const ClassType &baseCls = bcl.GetBaseClassCharacteristic(i)->GetPointerToClass();
 		const VirtualFunctionList &vfl = baseCls.GetVirtualFunctionList();
 		VirtualFunctionList::const_iterator pvf = 
@@ -1906,15 +1906,15 @@ void VirtualMethodChecker::CheckDestructor( const ClassType &curCls )
 			{
 				method.SetVirtual(dtor);
 
-				// записываем деструктор в список соответствий
+				// Р·Р°РїРёСЃС‹РІР°РµРј РґРµСЃС‚СЂСѓРєС‚РѕСЂ РІ СЃРїРёСЃРѕРє СЃРѕРѕС‚РІРµС‚СЃС‚РІРёР№
 				vml.push_back(dtor);
 
-				// если деструктор является абстрактным, а наш деструктор
-				// не является, уменьшить кол-во
+				// РµСЃР»Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рј, Р° РЅР°С€ РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+				// РЅРµ СЏРІР»СЏРµС‚СЃСЏ, СѓРјРµРЅСЊС€РёС‚СЊ РєРѕР»-РІРѕ
 				if( method.IsAbstract() )
 					break;
 
-				// уменьшаем кол-во абстрактных методов текущего класса
+				// СѓРјРµРЅСЊС€Р°РµРј РєРѕР»-РІРѕ Р°Р±СЃС‚СЂР°РєС‚РЅС‹С… РјРµС‚РѕРґРѕРІ С‚РµРєСѓС‰РµРіРѕ РєР»Р°СЃСЃР°
 				if( dtor->IsAbstract() )
 					const_cast<ClassType &>(curCls).DecreaseAbstractMethods();
 			}
@@ -1923,10 +1923,10 @@ void VirtualMethodChecker::CheckDestructor( const ClassType &curCls )
 }
 
 
-// закрытая ф-ция выполняет проверку
+// Р·Р°РєСЂС‹С‚Р°СЏ С„-С†РёСЏ РІС‹РїРѕР»РЅСЏРµС‚ РїСЂРѕРІРµСЂРєСѓ
 void VirtualMethodChecker::Check()
 {
-	// если метод статический или конструктор, не выполнять проверок 
+	// РµСЃР»Рё РјРµС‚РѕРґ СЃС‚Р°С‚РёС‡РµСЃРєРёР№ РёР»Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РЅРµ РІС‹РїРѕР»РЅСЏС‚СЊ РїСЂРѕРІРµСЂРѕРє 
 	if( method.GetStorageSpecifier() == Function::SS_STATIC ||
 		method.IsConstructor() )
 		return;
@@ -1934,39 +1934,39 @@ void VirtualMethodChecker::Check()
 	const ClassType *cls = dynamic_cast<const ClassType *>(&method.GetSymbolTableEntry());
 	INTERNAL_IF( cls == NULL );
 
-	// класс не является производным, проверка виртуальной функции не имеет
-	// смысла
+	// РєР»Р°СЃСЃ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РїСЂРѕРёР·РІРѕРґРЅС‹Рј, РїСЂРѕРІРµСЂРєР° РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ С„СѓРЅРєС†РёРё РЅРµ РёРјРµРµС‚
+	// СЃРјС‹СЃР»Р°
 	if( !cls->IsDerived() )
 		return;
 
-	// если метод является деструктором, выполнить для него обход только
-	// ближайших базовых классов в поисках виртуальных деструкторов,
-	// если  хотя-бы один класс имеет вирт. деструктор, значит присваиваем
-	// виртуальность нашему
+	// РµСЃР»Рё РјРµС‚РѕРґ СЏРІР»СЏРµС‚СЃСЏ РґРµСЃС‚СЂСѓРєС‚РѕСЂРѕРј, РІС‹РїРѕР»РЅРёС‚СЊ РґР»СЏ РЅРµРіРѕ РѕР±С…РѕРґ С‚РѕР»СЊРєРѕ
+	// Р±Р»РёР¶Р°Р№С€РёС… Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ РІ РїРѕРёСЃРєР°С… РІРёСЂС‚СѓР°Р»СЊРЅС‹С… РґРµСЃС‚СЂСѓРєС‚РѕСЂРѕРІ,
+	// РµСЃР»Рё  С…РѕС‚СЏ-Р±С‹ РѕРґРёРЅ РєР»Р°СЃСЃ РёРјРµРµС‚ РІРёСЂС‚. РґРµСЃС‚СЂСѓРєС‚РѕСЂ, Р·РЅР°С‡РёС‚ РїСЂРёСЃРІР°РёРІР°РµРј
+	// РІРёСЂС‚СѓР°Р»СЊРЅРѕСЃС‚СЊ РЅР°С€РµРјСѓ
 	if( method.IsDestructor() )
 	{
 		CheckDestructor( *cls );
 		return ;
 	}
 
-	// выявляем роль метода
+	// РІС‹СЏРІР»СЏРµРј СЂРѕР»СЊ РјРµС‚РѕРґР°
 	destRole = NameManager::GetIdentifierRole(&method);
 
-	// иначе заполняем список кандидатов
+	// РёРЅР°С‡Рµ Р·Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє РєР°РЅРґРёРґР°С‚РѕРІ
 	FillVML( *cls );
 
-	// если список не пустой, присваиваем виртуальность текущей функции,
-	// и проверяем
+	// РµСЃР»Рё СЃРїРёСЃРѕРє РЅРµ РїСѓСЃС‚РѕР№, РїСЂРёСЃРІР°РёРІР°РµРј РІРёСЂС‚СѓР°Р»СЊРЅРѕСЃС‚СЊ С‚РµРєСѓС‰РµР№ С„СѓРЅРєС†РёРё,
+	// Рё РїСЂРѕРІРµСЂСЏРµРј
 	if( !vml.empty() )
 	{
-		// задаем корневой метод - первый элемент в списке соотв.
-		// Для нас не имеет значения какой метод из всего списка будет
-		// корневым для декларируемого, т.к. указатель на него в V-таблице
-		// все равно задается во все места
+		// Р·Р°РґР°РµРј РєРѕСЂРЅРµРІРѕР№ РјРµС‚РѕРґ - РїРµСЂРІС‹Р№ СЌР»РµРјРµРЅС‚ РІ СЃРїРёСЃРєРµ СЃРѕРѕС‚РІ.
+		// Р”Р»СЏ РЅР°СЃ РЅРµ РёРјРµРµС‚ Р·РЅР°С‡РµРЅРёСЏ РєР°РєРѕР№ РјРµС‚РѕРґ РёР· РІСЃРµРіРѕ СЃРїРёСЃРєР° Р±СѓРґРµС‚
+		// РєРѕСЂРЅРµРІС‹Рј РґР»СЏ РґРµРєР»Р°СЂРёСЂСѓРµРјРѕРіРѕ, С‚.Рє. СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅРµРіРѕ РІ V-С‚Р°Р±Р»РёС†Рµ
+		// РІСЃРµ СЂР°РІРЅРѕ Р·Р°РґР°РµС‚СЃСЏ РІРѕ РІСЃРµ РјРµСЃС‚Р°
 		method.SetVirtual( vml.front() );
 
-		// если метод не является абстрактным, уменьшить кол-во абстрактных
-		// методов, на кол-во абстрактных методов в списке
+		// РµСЃР»Рё РјРµС‚РѕРґ РЅРµ СЏРІР»СЏРµС‚СЃСЏ Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рј, СѓРјРµРЅСЊС€РёС‚СЊ РєРѕР»-РІРѕ Р°Р±СЃС‚СЂР°РєС‚РЅС‹С…
+		// РјРµС‚РѕРґРѕРІ, РЅР° РєРѕР»-РІРѕ Р°Р±СЃС‚СЂР°РєС‚РЅС‹С… РјРµС‚РѕРґРѕРІ РІ СЃРїРёСЃРєРµ
 		if( !method.IsAbstract() )
 			for( VML::iterator p = vml.begin(); p != vml.end(); p++ )
 				if( (*p)->IsAbstract() )

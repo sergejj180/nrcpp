@@ -1,4 +1,4 @@
-// реализация строителей тела функции - BodyMaker.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ СЃС‚СЂРѕРёС‚РµР»РµР№ С‚РµР»Р° С„СѓРЅРєС†РёРё - BodyMaker.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -23,36 +23,36 @@ using namespace nrc;
 #include "BodyMaker.h"
 
 
-// создает инициализатор объекта из списка выражений и конструктор.
-// Создает инициализатор конструктором
+// СЃРѕР·РґР°РµС‚ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РѕР±СЉРµРєС‚Р° РёР· СЃРїРёСЃРєР° РІС‹СЂР°Р¶РµРЅРёР№ Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ.
+// РЎРѕР·РґР°РµС‚ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј
 PObjectInitializator BodyMakerUtils::MakeObjectInitializator( 
 		const PExpressionList &initList, const DeclarationMaker &dm )
 {
 	static PExpressionList emptyList = new ExpressionList;
 
-	// если инициализация объекта, возвращаем инициализатор, иначе вернуть NULL
+	// РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕР±СЉРµРєС‚Р°, РІРѕР·РІСЂР°С‰Р°РµРј РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ, РёРЅР°С‡Рµ РІРµСЂРЅСѓС‚СЊ NULL
 	if( const GlobalObjectMaker *gom = dynamic_cast<const GlobalObjectMaker *>(&dm) )
 		return new ConstructorInitializator( 
 			initList.IsNull() ? emptyList : initList, gom->GetConstructor() );
 
-	// если инициализация статического члена класса
+	// РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЃС‚Р°С‚РёС‡РµСЃРєРѕРіРѕ С‡Р»РµРЅР° РєР»Р°СЃСЃР°
 	else if( const MemberDefinationMaker *mdm = dynamic_cast<const MemberDefinationMaker *>(&dm) )
 		return new ConstructorInitializator( 
 			initList.IsNull() ? emptyList : initList, mdm->GetConstructor() );
-	// иначе 
+	// РёРЅР°С‡Рµ 
 	return NULL;
 }
 
 
-// создает инициализатор из списка инициализации
+// СЃРѕР·РґР°РµС‚ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РёР· СЃРїРёСЃРєР° РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 PObjectInitializator BodyMakerUtils::MakeObjectInitializator( const PListInitComponent &il )
 {
 	return new AgregatListInitializator( il );
 }
 
 
-// построить инструкцию условия для конструкций if, for, switch, while
-// на основе пакетов с декларацией и инициализатором
+// РїРѕСЃС‚СЂРѕРёС‚СЊ РёРЅСЃС‚СЂСѓРєС†РёСЋ СѓСЃР»РѕРІРёСЏ РґР»СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёР№ if, for, switch, while
+// РЅР° РѕСЃРЅРѕРІРµ РїР°РєРµС‚РѕРІ СЃ РґРµРєР»Р°СЂР°С†РёРµР№ Рё РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРј
 PInstruction BodyMakerUtils::MakeCondition( 
 		const NodePackage &rpkg, const POperand &iator, const Position &errPos )
 {
@@ -63,60 +63,60 @@ PInstruction BodyMakerUtils::MakeCondition(
 	AutoDeclarationCoordinator dcoord(tsl, const_cast<NodePackage *>(decl));
 	PDeclarationMaker dmak = dcoord.Coordinate();
 	
-	// строим декларацию
+	// СЃС‚СЂРѕРёРј РґРµРєР»Р°СЂР°С†РёСЋ
 	INTERNAL_IF( dmak.IsNull() );
 	dmak->Make();
 
-	// инициализатор объекта, задаем для генерации
+	// РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РѕР±СЉРµРєС‚Р°, Р·Р°РґР°РµРј РґР»СЏ РіРµРЅРµСЂР°С†РёРё
 	PObjectInitializator objIator = NULL;
 	PExpressionList	initList = new ExpressionList;
 	initList->push_back(iator);
 	dmak->Initialize( *initList ),
 
-	// строитель может вернуть NULL, если идентификатор не является объектом			
+	// СЃС‚СЂРѕРёС‚РµР»СЊ РјРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ NULL, РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РѕР±СЉРµРєС‚РѕРј			
 	objIator = BodyMakerUtils::MakeObjectInitializator(initList, *dmak);
 	return new DeclarationInstruction(
 		*dynamic_cast<const TypyziedEntity *>(dmak->GetIdentifier()), objIator, errPos);
 }
 
 
-// проверяет, чтобы условная конструкция преобразовывалась в тип bool.
-// Инструкцией может быть декларация, либо выражение. В случае декларации,
-// создаем временный основной операнд на основе декларатора и его проверяем
+// РїСЂРѕРІРµСЂСЏРµС‚, С‡С‚РѕР±С‹ СѓСЃР»РѕРІРЅР°СЏ РєРѕРЅСЃС‚СЂСѓРєС†РёСЏ РїСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°Р»Р°СЃСЊ РІ С‚РёРї bool.
+// РРЅСЃС‚СЂСѓРєС†РёРµР№ РјРѕР¶РµС‚ Р±С‹С‚СЊ РґРµРєР»Р°СЂР°С†РёСЏ, Р»РёР±Рѕ РІС‹СЂР°Р¶РµРЅРёРµ. Р’ СЃР»СѓС‡Р°Рµ РґРµРєР»Р°СЂР°С†РёРё,
+// СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅС‹Р№ РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ РЅР° РѕСЃРЅРѕРІРµ РґРµРєР»Р°СЂР°С‚РѕСЂР° Рё РµРіРѕ РїСЂРѕРІРµСЂСЏРµРј
 void BodyMakerUtils::ValidCondition( const PInstruction &cond, PCSTR cnam, bool toInt )
 {
 	INTERNAL_IF( cond.IsNull() || 
 		!(cond->GetInstructionID() == Instruction::IC_DECLARATION ||
 		  cond->GetInstructionID() == Instruction::IC_EXPRESSION) );
 
-	// позиция ошибки
+	// РїРѕР·РёС†РёСЏ РѕС€РёР±РєРё
 	const Position &errPos = cond->GetPosition();
 
-	// если выражение, проверяем его напрямую
+	// РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ, РїСЂРѕРІРµСЂСЏРµРј РµРіРѕ РЅР°РїСЂСЏРјСѓСЋ
 	if( cond->GetInstructionID() == Instruction::IC_EXPRESSION )
 	{
 		const POperand &exp = static_cast<const ExpressionInstruction&>(*cond).GetExpression();
-		// если операнд не является выражением, вывести ошибку
+		// РµСЃР»Рё РѕРїРµСЂР°РЅРґ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РІС‹СЂР°Р¶РµРЅРёРµРј, РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 		if( !(exp->IsExpressionOperand() || exp->IsPrimaryOperand()) )
 		{
 			if( !exp->IsErrorOperand() )				
-				theApp.Error(errPos, "'%s' - выражение должно быть типа 'bool'", cnam);
+				theApp.Error(errPos, "'%s' - РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С‚РёРїР° 'bool'", cnam);
 			return;
 		}
 
-		// проверяем, чтобы тип был склярным
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‚РёРї Р±С‹Р» СЃРєР»СЏСЂРЅС‹Рј
 		toInt
 		? ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(exp), errPos, cnam)		 
 		: ExpressionMakerUtils::ToScalarType(const_cast<POperand&>(exp), errPos, cnam);
 	}
 
-	// иначе декларация
+	// РёРЅР°С‡Рµ РґРµРєР»Р°СЂР°С†РёСЏ
 	else
 	{
 		const TypyziedEntity &declarator = 
 			static_cast<const DeclarationInstruction&>(*cond).GetDeclarator();
 
-		// строим из декларатора основной операнд и проверяем
+		// СЃС‚СЂРѕРёРј РёР· РґРµРєР»Р°СЂР°С‚РѕСЂР° РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ Рё РїСЂРѕРІРµСЂСЏРµРј
 		POperand prim = new PrimaryOperand(true, declarator);
 		toInt
 		? ExpressionMakerUtils::ToIntegerType(prim, errPos, cnam)
@@ -125,27 +125,27 @@ void BodyMakerUtils::ValidCondition( const PInstruction &cond, PCSTR cnam, bool 
 }
 
 
-// проверяет условие только для выражения
+// РїСЂРѕРІРµСЂСЏРµС‚ СѓСЃР»РѕРІРёРµ С‚РѕР»СЊРєРѕ РґР»СЏ РІС‹СЂР°Р¶РµРЅРёСЏ
 void BodyMakerUtils::ValidCondition( const POperand &exp, PCSTR cnam, const Position &ep ) 
 {
-	// если операнд не является выражением, вывести ошибку
+	// РµСЃР»Рё РѕРїРµСЂР°РЅРґ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РІС‹СЂР°Р¶РµРЅРёРµРј, РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 	if( !(exp->IsExpressionOperand() || exp->IsPrimaryOperand()) )
 	{
 		if( !exp->IsErrorOperand() )
-			theApp.Error(ep, "'%s' - выражение должно быть типа 'bool'", cnam);
+			theApp.Error(ep, "'%s' - РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С‚РёРїР° 'bool'", cnam);
 		return;
 	}
 
-	// проверяем, чтобы тип был склярным
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‚РёРї Р±С‹Р» СЃРєР»СЏСЂРЅС‹Рј
 	ExpressionMakerUtils::ToScalarType(const_cast<POperand&>(exp), ep, cnam);
 }
 
 
-// создать область видимости для новой конструкции ориентируяясь 
-// на предыдущую. 
+// СЃРѕР·РґР°С‚СЊ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ РЅРѕРІРѕР№ РєРѕРЅСЃС‚СЂСѓРєС†РёРё РѕСЂРёРµРЅС‚РёСЂСѓСЏСЏСЃСЊ 
+// РЅР° РїСЂРµРґС‹РґСѓС‰СѓСЋ. 
 bool BodyMakerUtils::MakeLocalSymbolTable( const Construction &cur )
 {
-	// если текущая switch, while, for, catch, else
+	// РµСЃР»Рё С‚РµРєСѓС‰Р°СЏ switch, while, for, catch, else
 	if( cur.GetConstructionID() == Construction::CC_IF    ||
 		cur.GetConstructionID() == Construction::CC_FOR   ||
 		cur.GetConstructionID() == Construction::CC_WHILE ||		
@@ -159,17 +159,17 @@ bool BodyMakerUtils::MakeLocalSymbolTable( const Construction &cur )
 }
 
 
-// строитель case, с проверкой
+// СЃС‚СЂРѕРёС‚РµР»СЊ case, СЃ РїСЂРѕРІРµСЂРєРѕР№
 CaseLabelBodyComponent *BodyMakerUtils::CaseLabelMaker( const POperand &exp, 
 			const BodyComponent &childBc, const Construction &cur, const Position &ep )
 {
-	// проверяем само выражение. Выражение должно быть целым константным
+	// РїСЂРѕРІРµСЂСЏРµРј СЃР°РјРѕ РІС‹СЂР°Р¶РµРЅРёРµ. Р’С‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С†РµР»С‹Рј РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Рј
 	double ival = 0;
 	if( !ExpressionMakerUtils::IsInterpretable(exp, ival)  ||
 		!ExpressionMakerUtils::IsIntegral(exp->GetType()) )
-		theApp.Error( ep, "'case' - выражение должно быть целым и константым");
+		theApp.Error( ep, "'case' - РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С†РµР»С‹Рј Рё РєРѕРЅСЃС‚Р°РЅС‚С‹Рј");
 
-	// находим switch-конструкцию в иерархии
+	// РЅР°С…РѕРґРёРј switch-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ РІ РёРµСЂР°СЂС…РёРё
 	const Construction *fnd = &cur;
 	while( fnd )
 	{
@@ -179,9 +179,9 @@ CaseLabelBodyComponent *BodyMakerUtils::CaseLabelMaker( const POperand &exp,
 	}
 
 	if( !fnd )	
-		theApp.Error( ep, "case без switch" );
+		theApp.Error( ep, "case Р±РµР· switch" );
 
-	// иначе выполняем проверку, нет ли такой метки уже
+	// РёРЅР°С‡Рµ РІС‹РїРѕР»РЅСЏРµРј РїСЂРѕРІРµСЂРєСѓ, РЅРµС‚ Р»Рё С‚Р°РєРѕР№ РјРµС‚РєРё СѓР¶Рµ
 	else
 	{
 		const SwitchConstruction &sc = static_cast<const SwitchConstruction &>(*fnd);
@@ -191,28 +191,28 @@ CaseLabelBodyComponent *BodyMakerUtils::CaseLabelMaker( const POperand &exp,
 			if( (*p)->GetLabelID() == LabelBodyComponent::LBC_CASE &&
 				static_cast<const CaseLabelBodyComponent &>(**p).GetCaseValue() == ival )
 			{
-				theApp.Error(ep, "'%d' - case-метка уже задана", (int)ival);
+				theApp.Error(ep, "'%d' - case-РјРµС‚РєР° СѓР¶Рµ Р·Р°РґР°РЅР°", (int)ival);
 				break;
 			}
 			
 		}
 
-		// задаем метку для switch
+		// Р·Р°РґР°РµРј РјРµС‚РєСѓ РґР»СЏ switch
 		CaseLabelBodyComponent *cbc = new CaseLabelBodyComponent(ival, childBc, ep);
 		const_cast<SwitchConstruction &>(sc).AddLabel(cbc);
 		return cbc;
 	}
 
-	// иначе возвращаем метку, лишб бы не NULL
+	// РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј РјРµС‚РєСѓ, Р»РёС€Р± Р±С‹ РЅРµ NULL
 	return new CaseLabelBodyComponent(ival, childBc, ep);
 }
 
 
-// строитель default, с проверкой
+// СЃС‚СЂРѕРёС‚РµР»СЊ default, СЃ РїСЂРѕРІРµСЂРєРѕР№
 DefaultLabelBodyComponent *BodyMakerUtils::DefaultLabelMaker( 
 		const BodyComponent &childBc, const Construction &cur, const Position &ep )
 {
-	// находим switch-конструкцию в иерархии
+	// РЅР°С…РѕРґРёРј switch-РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ РІ РёРµСЂР°СЂС…РёРё
 	const Construction *fnd = &cur;
 	while( fnd )
 	{
@@ -222,9 +222,9 @@ DefaultLabelBodyComponent *BodyMakerUtils::DefaultLabelMaker(
 	}
 
 	if( !fnd )	
-		theApp.Error( ep, "default без switch" );
+		theApp.Error( ep, "default Р±РµР· switch" );
 
-	// иначе выполняем проверку, нет ли такой метки уже
+	// РёРЅР°С‡Рµ РІС‹РїРѕР»РЅСЏРµРј РїСЂРѕРІРµСЂРєСѓ, РЅРµС‚ Р»Рё С‚Р°РєРѕР№ РјРµС‚РєРё СѓР¶Рµ
 	else
 	{
 		const SwitchConstruction &sc = static_cast<const SwitchConstruction &>(*fnd);
@@ -233,42 +233,42 @@ DefaultLabelBodyComponent *BodyMakerUtils::DefaultLabelMaker(
 		{
 			if( (*p)->GetLabelID() == LabelBodyComponent::LBC_DEFAULT )
 			{
-				theApp.Error(ep, "default-метка уже задана");
+				theApp.Error(ep, "default-РјРµС‚РєР° СѓР¶Рµ Р·Р°РґР°РЅР°");
 				break;
 			}
 			
 		}
 
-		// задаем метку для switch
+		// Р·Р°РґР°РµРј РјРµС‚РєСѓ РґР»СЏ switch
 		DefaultLabelBodyComponent *dlbc = new DefaultLabelBodyComponent(childBc, ep);
 		const_cast<SwitchConstruction &>(sc).AddLabel(dlbc);
 		return dlbc;
 	}
 
-	// иначе возвращаем метку, лишь не NULL
+	// РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј РјРµС‚РєСѓ, Р»РёС€СЊ РЅРµ NULL
 	return new DefaultLabelBodyComponent(childBc, ep);
 }
 
 
-// вспомагательный предикат для поиска метки
+// РІСЃРїРѕРјР°РіР°С‚РµР»СЊРЅС‹Р№ РїСЂРµРґРёРєР°С‚ РґР»СЏ РїРѕРёСЃРєР° РјРµС‚РєРё
 class LabelPredicat
 {
-	// имя метки
+	// РёРјСЏ РјРµС‚РєРё
 	const CharString &lname;
 
 public:
-	// задаем имя
+	// Р·Р°РґР°РµРј РёРјСЏ
 	LabelPredicat( const CharString &lname ) 
 		: lname(lname) {
 	}
 
-	// предикат
+	// РїСЂРµРґРёРєР°С‚
 	bool operator()( const Label &lbc ) {
 		return lbc.GetName() == lname;
 	}
 };
 
-// строитель обычной метки
+// СЃС‚СЂРѕРёС‚РµР»СЊ РѕР±С‹С‡РЅРѕР№ РјРµС‚РєРё
 SimpleLabelBodyComponent *BodyMakerUtils::SimpleLabelMaker( 
 	const Label &lab, const BodyComponent &nc, FunctionBody &fnBody, const Position &ep ) 
 {
@@ -276,26 +276,26 @@ SimpleLabelBodyComponent *BodyMakerUtils::SimpleLabelMaker(
 	SimpleLabelBodyComponent *nl = new SimpleLabelBodyComponent(lab, nc, ep);
 
 	if( find_if(pll.begin(), pll.end(), LabelPredicat(lab.GetName()) ) != pll.end() )
-		theApp.Error(ep, "'%s' - метка уже объявлена", lab.GetName().c_str());
+		theApp.Error(ep, "'%s' - РјРµС‚РєР° СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅР°", lab.GetName().c_str());
 	else
 		fnBody.AddDefinedLabel(lab);
 	return nl;
 }
 
 
-// вспомагательная функция, проверяет корректность возвращаемого значения для return
+// РІСЃРїРѕРјР°РіР°С‚РµР»СЊРЅР°СЏ С„СѓРЅРєС†РёСЏ, РїСЂРѕРІРµСЂСЏРµС‚ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РІРѕР·РІСЂР°С‰Р°РµРјРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РґР»СЏ return
 static void ValidateReturnValue( const POperand &rval, 
 				const TypyziedEntity &rtype, const Position &ep )
 {
-	// проверим, если преобразование из классового в классовый,
-	// значит к-ор копирования должен быть доступен
+	// РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РёР· РєР»Р°СЃСЃРѕРІРѕРіРѕ РІ РєР»Р°СЃСЃРѕРІС‹Р№,
+	// Р·РЅР°С‡РёС‚ Рє-РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РґРѕСЃС‚СѓРїРµРЅ
 	if( !(rtype.GetBaseType().IsClassType() && rtype.GetDerivedTypeList().IsEmpty()) )
 		return;
 		
-	// имеем классовое выражение
+	// РёРјРµРµРј РєР»Р°СЃСЃРѕРІРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 	const ClassType &cls = static_cast<const ClassType&>(rtype.GetBaseType());
 	
-	// проверяем не было ли уже преобразование
+	// РїСЂРѕРІРµСЂСЏРµРј РЅРµ Р±С‹Р»Рѕ Р»Рё СѓР¶Рµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 	const POperand &exp = rval;
 	if( exp->IsExpressionOperand() &&
 		static_cast<const Expression&>(*exp).IsFunctionCall() )
@@ -308,49 +308,49 @@ static void ValidateReturnValue( const POperand &rval,
 			return;
 	}
 	
-	// в противном случае, проверяем, чтобы у объекта был доступен к-тор копирования
-	// и деструктор
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ Сѓ РѕР±СЉРµРєС‚Р° Р±С‹Р» РґРѕСЃС‚СѓРїРµРЅ Рє-С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
+	// Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 	ExpressionMakerUtils::ObjectCreationIsAccessible(cls, ep, false, true, true);
 }
 
 
-// строитель return-операции. Конструктор не может возвращать значения, также
-// как деструктор
+// СЃС‚СЂРѕРёС‚РµР»СЊ return-РѕРїРµСЂР°С†РёРё. РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РІРѕР·РІСЂР°С‰Р°С‚СЊ Р·РЅР°С‡РµРЅРёСЏ, С‚Р°РєР¶Рµ
+// РєР°Рє РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 ReturnAdditionalOperation *BodyMakerUtils::ReturnOperationMaker( 
 		const POperand &rval, const Function &fn, const Position &ep )
 {
 	bool procedure = fn.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID &&
 		fn.GetDerivedTypeList().GetDerivedTypeCount() == 1;
 
-	// если имеем конструктор, то возвращаемого значения не должно быть
+	// РµСЃР»Рё РёРјРµРµРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРјРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ
 	if( fn.IsClassMember() && static_cast<const Method &>(fn).IsConstructor() )
 	{
 		if( !rval.IsNull() )
-			theApp.Error( ep, "конструктор не может иметь возвращаемого значения" );
+			theApp.Error( ep, "РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ РІРѕР·РІСЂР°С‰Р°РµРјРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ" );
 	}
 
-	// выражение отсутствует, функция должна возвращать void
+	// РІС‹СЂР°Р¶РµРЅРёРµ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚, С„СѓРЅРєС†РёСЏ РґРѕР»Р¶РЅР° РІРѕР·РІСЂР°С‰Р°С‚СЊ void
 	else if( rval.IsNull() )
 	{
 		if( !procedure )
-			theApp.Error( ep, "return должен возвращать значение" );
+			theApp.Error( ep, "return РґРѕР»Р¶РµРЅ РІРѕР·РІСЂР°С‰Р°С‚СЊ Р·РЅР°С‡РµРЅРёРµ" );
 	}
 
-	// иначе сравниваем тип возвращаемого значения и тип функции
+	// РёРЅР°С‡Рµ СЃСЂР°РІРЅРёРІР°РµРј С‚РёРї РІРѕР·РІСЂР°С‰Р°РµРјРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ Рё С‚РёРї С„СѓРЅРєС†РёРё
 	else if( !rval->IsErrorOperand() )
 	{
-		// получаем не функциональный ти
+		// РїРѕР»СѓС‡Р°РµРј РЅРµ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅС‹Р№ С‚РёРї
 		PTypyziedEntity rtype = new TypyziedEntity(fn);
 		const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 
-		// приводим типы
+		// РїСЂРёРІРѕРґРёРј С‚РёРїС‹
 		PCaster pc = AutoCastManager( *rtype, rval->GetType(), true ).RevealCaster();
 		pc->ClassifyCast();
 		if( !pc->IsConverted() )
 		{
 			if( pc->GetErrorMessage().empty() )
 				theApp.Error(ep, 
-					"'return' - невозможно преобразовать '%s' к '%s'",
+					"'return' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '%s' Рє '%s'",
 					rval->GetType().GetTypyziedEntityName(false).c_str(),
 					rtype->GetTypyziedEntityName(false).c_str());
 			else
@@ -363,17 +363,17 @@ ReturnAdditionalOperation *BodyMakerUtils::ReturnOperationMaker(
 			POperand fnOp = new PrimaryOperand(true, rt);
 			pc->DoCast(fnOp, const_cast<POperand&>(rval), ep);
 
-			// проверяем доступность к-ра копирования, если требуется
+			// РїСЂРѕРІРµСЂСЏРµРј РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ Рє-СЂР° РєРѕРїРёСЂРѕРІР°РЅРёСЏ, РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ
 			ValidateReturnValue(rval, rt, ep);
 		}
 	}
 	
-	// возвращаем результат
+	// РІРѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚
 	return new ReturnAdditionalOperation(rval, ep);
 }
 
 
-// строитель break-операции с семантической проверкой 
+// СЃС‚СЂРѕРёС‚РµР»СЊ break-РѕРїРµСЂР°С†РёРё СЃ СЃРµРјР°РЅС‚РёС‡РµСЃРєРѕР№ РїСЂРѕРІРµСЂРєРѕР№ 
 BreakAdditionalOperation *BodyMakerUtils::BreakOperationMaker( 
 								Construction &ppc, const Position &ep )
 {
@@ -388,12 +388,12 @@ BreakAdditionalOperation *BodyMakerUtils::BreakOperationMaker(
 	}
 
 	if( !fnd )	
-		theApp.Error( ep, "break без цикла или switch" );
+		theApp.Error( ep, "break Р±РµР· С†РёРєР»Р° РёР»Рё switch" );
 	return new BreakAdditionalOperation(ep);
 }
 
 
-// строитель continue-операции с семантической проверкой 
+// СЃС‚СЂРѕРёС‚РµР»СЊ continue-РѕРїРµСЂР°С†РёРё СЃ СЃРµРјР°РЅС‚РёС‡РµСЃРєРѕР№ РїСЂРѕРІРµСЂРєРѕР№ 
 ContinueAdditionalOperation *BodyMakerUtils::ContinueOperationMaker( 
 								Construction &ppc, const Position &ep )
 {
@@ -408,22 +408,22 @@ ContinueAdditionalOperation *BodyMakerUtils::ContinueOperationMaker(
 	}
 
 	if( !fnd )	
-		theApp.Error( ep, "continue без цикла" );
+		theApp.Error( ep, "continue Р±РµР· С†РёРєР»Р°" );
 	return new ContinueAdditionalOperation(ep);
 }
 
 
-// строитель goto-операции
+// СЃС‚СЂРѕРёС‚РµР»СЊ goto-РѕРїРµСЂР°С†РёРё
 GotoAdditionalOperation *BodyMakerUtils::GotoOperationMaker( 
 		const CharString &labName, FunctionBody &fnBody, const Position &ep )
 {
-	// задать телу функции обращение к метке
+	// Р·Р°РґР°С‚СЊ С‚РµР»Сѓ С„СѓРЅРєС†РёРё РѕР±СЂР°С‰РµРЅРёРµ Рє РјРµС‚РєРµ
 	fnBody.AddQueryLabel( labName.c_str(), ep );
 	return new GotoAdditionalOperation(labName.c_str(), ep);
 }
 
 
-// проверяет, являются ли обработчики одинаковыми
+// РїСЂРѕРІРµСЂСЏРµС‚, СЏРІР»СЏСЋС‚СЃСЏ Р»Рё РѕР±СЂР°Р±РѕС‚С‡РёРєРё РѕРґРёРЅР°РєРѕРІС‹РјРё
 bool CatchConstructionMaker::EqualCatchers( 
 					const CatchConstruction &cc1, const CatchConstruction &cc2 ) const
 {
@@ -436,18 +436,18 @@ bool CatchConstructionMaker::EqualCatchers(
 }
 
 
-// строить
+// СЃС‚СЂРѕРёС‚СЊ
 CatchConstruction *CatchConstructionMaker::Make()
 {
 	TryCatchConstruction &tcc = static_cast<TryCatchConstruction &>(parent);	
 	CatchConstruction *cc = new CatchConstruction(catchObj, &parent, ep);
 
-	// проверяем, чтобы try не содержал одинаковых обработчиков
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ try РЅРµ СЃРѕРґРµСЂР¶Р°Р» РѕРґРёРЅР°РєРѕРІС‹С… РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРІ
 	for( CatchConstructionList::const_iterator p = tcc.GetCatchList().begin(); 
 		 p != tcc.GetCatchList().end(); p++ )
 		if( EqualCatchers( **p, *cc ) )
 		{
-			theApp.Error(ep, "catch-блок с типом '%s' уже присутствует",
+			theApp.Error(ep, "catch-Р±Р»РѕРє СЃ С‚РёРїРѕРј '%s' СѓР¶Рµ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚",
 				catchObj.IsNull() ? "..." : catchObj->GetTypyziedEntityName(false).c_str());
 			break;
 		}
@@ -456,32 +456,32 @@ CatchConstruction *CatchConstructionMaker::Make()
 }
 
 
-// строитель списка инструкций. Может быть блок деклараций, либо выражение
+// СЃС‚СЂРѕРёС‚РµР»СЊ СЃРїРёСЃРєР° РёРЅСЃС‚СЂСѓРєС†РёР№. РњРѕР¶РµС‚ Р±С‹С‚СЊ Р±Р»РѕРє РґРµРєР»Р°СЂР°С†РёР№, Р»РёР±Рѕ РІС‹СЂР°Р¶РµРЅРёРµ
 Instruction *BodyMakerUtils::InstructionListMaker( 
 				const InstructionList &insList, const Position &ep )
 {
-	// если список пустой, была ошибка, но в любом случае следует вернуть
-	// не NULL, возвращаем пустую инструкцию
+	// РµСЃР»Рё СЃРїРёСЃРѕРє РїСѓСЃС‚РѕР№, Р±С‹Р»Р° РѕС€РёР±РєР°, РЅРѕ РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ СЃР»РµРґСѓРµС‚ РІРµСЂРЅСѓС‚СЊ
+	// РЅРµ NULL, РІРѕР·РІСЂР°С‰Р°РµРј РїСѓСЃС‚СѓСЋ РёРЅСЃС‚СЂСѓРєС†РёСЋ
 	if( insList.empty() )
 		return SimpleComponentMaker<EmptyInstruction>(ep);
 
-	// если инструкция одна, возвращаем ее саму
+	// РµСЃР»Рё РёРЅСЃС‚СЂСѓРєС†РёСЏ РѕРґРЅР°, РІРѕР·РІСЂР°С‰Р°РµРј РµРµ СЃР°РјСѓ
 	else if( insList.size() == 1 )
 		return const_cast<PInstruction &>(insList.front()).Release();
 
-	// иначе инструкций несколько, формируем блок деклараций
+	// РёРЅР°С‡Рµ РёРЅСЃС‚СЂСѓРєС†РёР№ РЅРµСЃРєРѕР»СЊРєРѕ, С„РѕСЂРјРёСЂСѓРµРј Р±Р»РѕРє РґРµРєР»Р°СЂР°С†РёР№
 	else
 		return new DeclarationBlockInstruction(insList, ep);
 }
 
 
-// проверим, чтобы все метки, к которым идет обращение через
-// goto, были объявлены
+// РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РІСЃРµ РјРµС‚РєРё, Рє РєРѕС‚РѕСЂС‹Рј РёРґРµС‚ РѕР±СЂР°С‰РµРЅРёРµ С‡РµСЂРµР·
+// goto, Р±С‹Р»Рё РѕР±СЉСЏРІР»РµРЅС‹
 void PostBuildingChecks::CheckLabels( const FunctionBody::DefinedLabelList &dll, 
 		const FunctionBody::QueryLabelList &qll )
 {
 	for( FunctionBody::QueryLabelList::const_iterator p = qll.begin(); p != qll.end(); p++ )
 		if( find_if(dll.begin(), dll.end(), LabelPr( (*p).first ) ) == dll.end() )
-			theApp.Error( (*p).second, "'%s' - метка не объявлена",
+			theApp.Error( (*p).second, "'%s' - РјРµС‚РєР° РЅРµ РѕР±СЉСЏРІР»РµРЅР°",
 				(*p).first.c_str() );
 }

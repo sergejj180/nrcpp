@@ -1,4 +1,4 @@
-// реализация вспомогательных классов парсера - Reader.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹С… РєР»Р°СЃСЃРѕРІ РїР°СЂСЃРµСЂР° - Reader.cpp
 
 
 #pragma warning(disable: 4786)
@@ -21,21 +21,21 @@ using namespace nrc;
 #include "Coordinator.h"
 
 
-// счетчик стека
+// СЃС‡РµС‚С‡РёРє СЃС‚РµРєР°
 int ExpressionReader::StackOverflowCatcher::stackDeep = 0;
 
 
-// получить следующую лексему, сохранить ее в контейнере
+// РїРѕР»СѓС‡РёС‚СЊ СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ, СЃРѕС…СЂР°РЅРёС‚СЊ РµРµ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ
 const Lexem &DeclaratorReader::NextLexem()
 {
-	// если контейнер отката не пуст, вернуть лексему ИЗ него
+	// РµСЃР»Рё РєРѕРЅС‚РµР№РЅРµСЂ РѕС‚РєР°С‚Р° РЅРµ РїСѓСЃС‚, РІРµСЂРЅСѓС‚СЊ Р»РµРєСЃРµРјСѓ РР— РЅРµРіРѕ
 	if( canUndo )
 	{
 		if( !undoContainer.empty() )
 		{
 			lastLxm = undoContainer.front();
 			lexemContainer.push_back(lastLxm);
-			undoContainer.pop_front();						
+			undoContainer.pop_front();
 			return lastLxm;
 		}
 
@@ -48,11 +48,11 @@ const Lexem &DeclaratorReader::NextLexem()
 }
 
 
-// вернуть предыдущую лексему в поток
+// РІРµСЂРЅСѓС‚СЊ РїСЂРµРґС‹РґСѓС‰СѓСЋ Р»РµРєСЃРµРјСѓ РІ РїРѕС‚РѕРє
 void DeclaratorReader::BackLexem()
 {
-	// если контейнер отката не пуст, вернуть лексему В него
-	if( canUndo )	
+	// РµСЃР»Рё РєРѕРЅС‚РµР№РЅРµСЂ РѕС‚РєР°С‚Р° РЅРµ РїСѓСЃС‚, РІРµСЂРЅСѓС‚СЊ Р»РµРєСЃРµРјСѓ Р’ РЅРµРіРѕ
+	if( canUndo )
 	{
 		lexemContainer.pop_back();
 		undoContainer.push_front(lastLxm);
@@ -66,17 +66,17 @@ void DeclaratorReader::BackLexem()
 }
 
 
-// получить следующую лексему, сохранить ее в контейнере
+// РїРѕР»СѓС‡РёС‚СЊ СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ, СЃРѕС…СЂР°РЅРёС‚СЊ РµРµ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ
 const Lexem &QualifiedConstructionReader::NextLexem()
 {
-	// если контейнер отката не пуст, вернуть лексему ИЗ него
+	// РµСЃР»Рё РєРѕРЅС‚РµР№РЅРµСЂ РѕС‚РєР°С‚Р° РЅРµ РїСѓСЃС‚, РІРµСЂРЅСѓС‚СЊ Р»РµРєСЃРµРјСѓ РР— РЅРµРіРѕ
 	if( canUndo )
 	{
 		if( !undoContainer->empty() )
 		{
 			lastLxm = undoContainer->front();
 			lexemContainer.push_back(lastLxm);
-			undoContainer->pop_front();						
+			undoContainer->pop_front();
 			return lastLxm;
 		}
 
@@ -89,11 +89,11 @@ const Lexem &QualifiedConstructionReader::NextLexem()
 }
 
 
-// вернуть предыдущую лексему в поток
+// РІРµСЂРЅСѓС‚СЊ РїСЂРµРґС‹РґСѓС‰СѓСЋ Р»РµРєСЃРµРјСѓ РІ РїРѕС‚РѕРє
 void QualifiedConstructionReader::BackLexem()
 {
-	// если контейнер отката не пуст, вернуть лексему В него
-	if( canUndo )	
+	// РµСЃР»Рё РєРѕРЅС‚РµР№РЅРµСЂ РѕС‚РєР°С‚Р° РЅРµ РїСѓСЃС‚, РІРµСЂРЅСѓС‚СЊ Р»РµРєСЃРµРјСѓ Р’ РЅРµРіРѕ
+	if( canUndo )
 	{
 		lexemContainer.pop_back();
 		undoContainer->push_front(lastLxm);
@@ -107,7 +107,7 @@ void QualifiedConstructionReader::BackLexem()
 }
 
 
-// считать спецификаторы типа
+// СЃС‡РёС‚Р°С‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С‚РёРїР°
 void DeclaratorReader::ReadTypeSpecifierList()
 {
 	bool hasBaseType = false;
@@ -115,29 +115,30 @@ void DeclaratorReader::ReadTypeSpecifierList()
 
 	for( ;; )
 	{
-		lxm = NextLexem();		
+		lxm = NextLexem();
 
-		// любой из спецификаторов: базовый тип, cv-квалификатор, 
-		// спецификатор хранения, модификатор размера, модификатор знака,
-		// спецификаторы функций (inline, virtual, explicit), 
-		// спецификатор friend
-		if( lxm == KWAUTO	  || lxm == KWBOOL		|| lxm == KWCHAR		||
-			lxm == KWCONST	  || lxm == KWDOUBLE	|| lxm == KWEXPLICIT	||
-			lxm == KWEXTERN   || lxm == KWFLOAT		|| lxm == KWFRIEND		||
-			lxm == KWINLINE   || lxm == KWINT		|| lxm == KWLONG		||
-			lxm == KWMUTABLE  || lxm == KWREGISTER 	|| lxm == KWSHORT		||
-			lxm == KWSIGNED   || lxm == KWSTATIC	|| lxm == KWTYPEDEF		||
-			lxm == KWUNSIGNED || lxm == KWVIRTUAL	||
-			lxm == KWVOID	  || lxm == KWVOLATILE	|| lxm == KWWCHAR_T	 )		
+		// Р»СЋР±РѕР№ РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ: Р±Р°Р·РѕРІС‹Р№ С‚РёРї, cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂ, 
+		// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ, РјРѕРґРёС„РёРєР°С‚РѕСЂ СЂР°Р·РјРµСЂР°, РјРѕРґРёС„РёРєР°С‚РѕСЂ Р·РЅР°РєР°,
+		// СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С„СѓРЅРєС†РёР№ (inline, virtual, explicit), 
+		// СЃРїРµС†РёС„РёРєР°С‚РѕСЂ friend
+		if( lxm == KWAUTO     || lxm == KWBOOL      || lxm == KWCHAR     ||
+			lxm == KWCONST    || lxm == KWDOUBLE    || lxm == KWEXPLICIT ||
+			lxm == KWEXTERN   || lxm == KWFLOAT     || lxm == KWFRIEND   ||
+			lxm == KWINLINE   || lxm == KWINT       || lxm == KWLONG     ||
+			lxm == KWMUTABLE  || lxm == KWREGISTER  || lxm == KWSHORT    ||
+			lxm == KWSIGNED   || lxm == KWSTATIC    || lxm == KWTYPEDEF  ||
+			lxm == KWUNSIGNED || lxm == KWVIRTUAL   || lxm == KWVOID     || 
+			lxm == KWVOLATILE || lxm == KWWCHAR_T   )
 		{
 			tslPkg->AddChildPackage( new LexemPackage(lxm) );
-			if(lxm == KWBOOL || lxm == KWCHAR || lxm == KWDOUBLE ||
-				lxm == KWFLOAT || lxm == KWINT || lxm == KWVOID || lxm == KWWCHAR_T ||
-				lxm == KWSHORT || lxm == KWLONG || lxm == KWUNSIGNED || lxm == KWSIGNED ) 
-				hasBaseType = true;
+			if(	lxm == KWBOOL     || lxm == KWCHAR  || lxm == KWDOUBLE || 
+				lxm == KWFLOAT    || lxm == KWINT   || lxm == KWVOID   || 
+				lxm == KWWCHAR_T  || lxm == KWSHORT || lxm == KWLONG   || 
+				lxm == KWUNSIGNED || lxm == KWSIGNED ) 
+			hasBaseType = true;
 		}
-	 
-		// спецификаторы класса, могут содержать имя после себя
+
+		// СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ РєР»Р°СЃСЃР°, РјРѕРіСѓС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РёРјСЏ РїРѕСЃР»Рµ СЃРµР±СЏ
 		else if( lxm == KWCLASS || lxm == KWSTRUCT ||
 				 lxm == KWENUM  || lxm == KWUNION )
 		{
@@ -148,25 +149,25 @@ void DeclaratorReader::ReadTypeSpecifierList()
 
 			lxm = NextLexem();
 			BackLexem();
-			if( lxm == '{' || lxm == ':' )		// имеем безимянный класс
+			if( lxm == '{' || lxm == ':' ) // РёРјРµРµРј Р±РµР·РёРјСЏРЅРЅС‹Р№ РєР»Р°СЃСЃ
 				return;
-			
+
 			QualifiedConstructionReader qcr(lexicalAnalyzer, false, true);
-			PNodePackage np = qcr.ReadQualifiedConstruction();	// считываем имя класса
+			PNodePackage np = qcr.ReadQualifiedConstruction(); // СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ РєР»Р°СЃСЃР°
 
 			if( qcr.IsPointerToMember() )
 				throw qcr.GetLexemContainer().back();
 			tslPkg->AddChildPackage( np.Release() );
 			hasBaseType = true;
-		}	
+		}
 
-		// иначе если имя, идентификатор может быть типом
+		// РёРЅР°С‡Рµ РµСЃР»Рё РёРјСЏ, РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РёРїРѕРј
 		else if( lxm == NAME || lxm == COLON_COLON )
 		{
-			// если базовый тип уже считан - значит имеем дело с идентификатором,
-			// и следует вернуть лексему и выйти
-			if( hasBaseType )			
-				break;			
+			// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї СѓР¶Рµ СЃС‡РёС‚Р°РЅ - Р·РЅР°С‡РёС‚ РёРјРµРµРј РґРµР»Рѕ СЃ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј,
+			// Рё СЃР»РµРґСѓРµС‚ РІРµСЂРЅСѓС‚СЊ Р»РµРєСЃРµРјСѓ Рё РІС‹Р№С‚Рё
+			if( hasBaseType )
+				break;
 
 			QualifiedConstructionReader qcr(lexicalAnalyzer,
 				false, false, PLexemContainer(NULL), canBeExpression);
@@ -182,25 +183,25 @@ void DeclaratorReader::ReadTypeSpecifierList()
 				BackLexem();
 			PNodePackage np = qcr.ReadQualifiedConstruction();
 
-			// если было считано выражение, сохраняем считанные лексемы
-			// в контейнере, и генерируем синтаксическую ошибку
+			// РµСЃР»Рё Р±С‹Р»Рѕ СЃС‡РёС‚Р°РЅРѕ РІС‹СЂР°Р¶РµРЅРёРµ, СЃРѕС…СЂР°РЅСЏРµРј СЃС‡РёС‚Р°РЅРЅС‹Рµ Р»РµРєСЃРµРјС‹
+			// РІ РєРѕРЅС‚РµР№РЅРµСЂРµ, Рё РіРµРЅРµСЂРёСЂСѓРµРј СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєСѓСЋ РѕС€РёР±РєСѓ
 			if( qcr.IsExpression() )
 			{
-				INTERNAL_IF( !canBeExpression );				
+				INTERNAL_IF( !canBeExpression );
 				LoadToLexemContainer(qcr.GetLexemContainer());
 				throw qcr.GetLexemContainer().back();
 			}
 
-			// был считан не тип, сохраняем все считанные лексемы 
-			// в контейнере отката, для считывания идентификатора
-			// методом ReadDeclarator
+			// Р±С‹Р» СЃС‡РёС‚Р°РЅ РЅРµ С‚РёРї, СЃРѕС…СЂР°РЅСЏРµРј РІСЃРµ СЃС‡РёС‚Р°РЅРЅС‹Рµ Р»РµРєСЃРµРјС‹ 
+			// РІ РєРѕРЅС‚РµР№РЅРµСЂРµ РѕС‚РєР°С‚Р°, РґР»СЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
+			// РјРµС‚РѕРґРѕРј ReadDeclarator
 			if( qcr.IsPointerToMember() || !qcr.IsTypeName() )
 			{
-				LoadToUndoContainer(qcr.GetLexemContainer());						
+				LoadToUndoContainer(qcr.GetLexemContainer());
 				return;
 			}
 
-			// сохраним считанные лексемы в контейнере			
+			// СЃРѕС…СЂР°РЅРёРј СЃС‡РёС‚Р°РЅРЅС‹Рµ Р»РµРєСЃРµРјС‹ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ
 			LoadToLexemContainer(qcr.GetLexemContainer());
 			LoadToUndoContainer(qcr.GetUndoContainer());
 			np->SetPackageID(PC_QUALIFIED_TYPENAME);
@@ -208,15 +209,15 @@ void DeclaratorReader::ReadTypeSpecifierList()
 			hasBaseType = true;
 		}
 
-		// может быть строковый литерал, в этом случае можно проверить,
-		// была ли предыдущая лексема extern, и если да выполнить соотв. действия
+		// РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃС‚СЂРѕРєРѕРІС‹Р№ Р»РёС‚РµСЂР°Р», РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РјРѕР¶РЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ,
+		// Р±С‹Р»Р° Р»Рё РїСЂРµРґС‹РґСѓС‰Р°СЏ Р»РµРєСЃРµРјР° extern, Рё РµСЃР»Рё РґР° РІС‹РїРѕР»РЅРёС‚СЊ СЃРѕРѕС‚РІ. РґРµР№СЃС‚РІРёСЏ
 		else if( lxm == STRING && lexicalAnalyzer.PrevLexem() == KWEXTERN )
 		{
 			if( !(::GetCurrentSymbolTable().IsGlobalSymbolTable() ||
 				  ::GetCurrentSymbolTable().IsNamespaceSymbolTable()) )
 			{
 				theApp.Error(lxm.GetPos(), 
-					"спецификация связывания может задаваться только глобально");
+					"СЃРїРµС†РёС„РёРєР°С†РёСЏ СЃРІСЏР·С‹РІР°РЅРёСЏ РјРѕР¶РµС‚ Р·Р°РґР°РІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РіР»РѕР±Р°Р»СЊРЅРѕ");
 				continue;
 			}
 
@@ -236,36 +237,36 @@ void DeclaratorReader::ReadTypeSpecifierList()
 			break;
 	}
 
-	// вернуть последнюю считанную лексему
-	BackLexem();	
+	// РІРµСЂРЅСѓС‚СЊ РїРѕСЃР»РµРґРЅСЋСЋ СЃС‡РёС‚Р°РЅРЅСѓСЋ Р»РµРєСЃРµРјСѓ
+	BackLexem();
 }
 
 
-// считать следующий декларатор, используется в случае, когда в
-// декларации может быть несколько деклараторов. Также возбуждает
-// исключительную ситуацию если была синтаксическая ошибка
+// СЃС‡РёС‚Р°С‚СЊ СЃР»РµРґСѓСЋС‰РёР№ РґРµРєР»Р°СЂР°С‚РѕСЂ, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ СЃР»СѓС‡Р°Рµ, РєРѕРіРґР° РІ
+// РґРµРєР»Р°СЂР°С†РёРё РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ РґРµРєР»Р°СЂР°С‚РѕСЂРѕРІ. РўР°РєР¶Рµ РІРѕР·Р±СѓР¶РґР°РµС‚
+// РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅСѓСЋ СЃРёС‚СѓР°С†РёСЋ РµСЃР»Рё Р±С‹Р»Р° СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°
 PNodePackage DeclaratorReader::ReadNextDeclarator()
 {
 	declPkg = new NodePackage(PC_DECLARATOR);
 	crampLevel = 0;
 	nameRead = false;
-	initializatorList = NULL;		// очищаем список инициализаторов
+	initializatorList = NULL; // РѕС‡РёС‰Р°РµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ
 	ReadDeclarator();
 	return declPkg;
 }
 
 
-// считать декларатор, закрытая функция которая выполняет всю работу
-// по считке, ReadNextDeclarator - вызывает ее. Перед вызовом
-// объект declPkg - должен создаваться заново
+// СЃС‡РёС‚Р°С‚СЊ РґРµРєР»Р°СЂР°С‚РѕСЂ, Р·Р°РєСЂС‹С‚Р°СЏ С„СѓРЅРєС†РёСЏ РєРѕС‚РѕСЂР°СЏ РІС‹РїРѕР»РЅСЏРµС‚ РІСЃСЋ СЂР°Р±РѕС‚Сѓ
+// РїРѕ СЃС‡РёС‚РєРµ, ReadNextDeclarator - РІС‹Р·С‹РІР°РµС‚ РµРµ. РџРµСЂРµРґ РІС‹Р·РѕРІРѕРј
+// РѕР±СЉРµРєС‚ declPkg - РґРѕР»Р¶РµРЅ СЃРѕР·РґР°РІР°С‚СЊСЃСЏ Р·Р°РЅРѕРІРѕ
 void DeclaratorReader::ReadDeclarator( )
 {
-	OverflowController oc(MAX_PARSER_STACK_DEEP);		// контроль переполнения	
+	OverflowController oc(MAX_PARSER_STACK_DEEP); // РєРѕРЅС‚СЂРѕР»СЊ РїРµСЂРµРїРѕР»РЅРµРЅРёСЏ
 
 	Lexem lxm = NextLexem();
 	if( lxm == '*' )
-	{	
-		PNodePackage p = new NodePackage(0);		
+	{
+		PNodePackage p = new NodePackage(0);
 		ReadCVQualifierSequence(p);
 
 		ReadDeclarator();
@@ -283,7 +284,7 @@ void DeclaratorReader::ReadDeclarator( )
 			}
 
 			else
-				declPkg->AddChildPackage( new LexemPackage(cv1) );									
+				declPkg->AddChildPackage( new LexemPackage(cv1) );
 		}
 	}
 
@@ -293,52 +294,52 @@ void DeclaratorReader::ReadDeclarator( )
 		declPkg->AddChildPackage(  new LexemPackage(lxm) );
 	}
 
-	// в этом месте расположена одна прикольная замануха. При считывании
-	// производного типа, существует неоднозначность между 'выражение в скобках'
-	// и 'прототипом функции'. Согласно стандарту, предпочтение отдается прототипу
-	// функции, но только в случае если в скобках список параметров или пустой список.
-	else if( lxm == '(' )			
-	{				
+	// РІ СЌС‚РѕРј РјРµСЃС‚Рµ СЂР°СЃРїРѕР»РѕР¶РµРЅР° РѕРґРЅР° РїСЂРёРєРѕР»СЊРЅР°СЏ Р·Р°РјР°РЅСѓС…Р°. РџСЂРё СЃС‡РёС‚С‹РІР°РЅРёРё
+	// РїСЂРѕРёР·РІРѕРґРЅРѕРіРѕ С‚РёРїР°, СЃСѓС‰РµСЃС‚РІСѓРµС‚ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ РјРµР¶РґСѓ 'РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…'
+	// Рё 'РїСЂРѕС‚РѕС‚РёРїРѕРј С„СѓРЅРєС†РёРё'. РЎРѕРіР»Р°СЃРЅРѕ СЃС‚Р°РЅРґР°СЂС‚Сѓ, РїСЂРµРґРїРѕС‡С‚РµРЅРёРµ РѕС‚РґР°РµС‚СЃСЏ РїСЂРѕС‚РѕС‚РёРїСѓ
+	// С„СѓРЅРєС†РёРё, РЅРѕ С‚РѕР»СЊРєРѕ РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РІ СЃРєРѕР±РєР°С… СЃРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ РёР»Рё РїСѓСЃС‚РѕР№ СЃРїРёСЃРѕРє.
+	else if( lxm == '(' )
+	{
 		if( declType == DV_CAST_OPERATOR_DECLARATION )
 		{
 			BackLexem();
 			return;
 		}
 
-		// контейнер должен быть пустой, чтобы мы могли с его помощью разрешить
-		// неоднозначность
-		INTERNAL_IF( !undoContainer.empty() );		
-		
+		// РєРѕРЅС‚РµР№РЅРµСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№, С‡С‚РѕР±С‹ РјС‹ РјРѕРіР»Рё СЃ РµРіРѕ РїРѕРјРѕС‰СЊСЋ СЂР°Р·СЂРµС€РёС‚СЊ
+		// РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
+		INTERNAL_IF( !undoContainer.empty() );
+
 		DeclaratorReader dr(DV_PARAMETR, lexicalAnalyzer);
 		dr.ReadTypeSpecifierList();
 		PNodePackage np = dr.GetTypeSpecPackage(); 
-				
-		// был считан тип, значит загружаем его в контейнер отката
-		// и считываем прототип функции
+
+		// Р±С‹Р» СЃС‡РёС‚Р°РЅ С‚РёРї, Р·РЅР°С‡РёС‚ Р·Р°РіСЂСѓР¶Р°РµРј РµРіРѕ РІ РєРѕРЅС‚РµР№РЅРµСЂ РѕС‚РєР°С‚Р°
+		// Рё СЃС‡РёС‚С‹РІР°РµРј РїСЂРѕС‚РѕС‚РёРї С„СѓРЅРєС†РёРё
 		if( !np->IsNoChildPackages() || dr.lastLxm == ELLIPSES )
 		{
-			// считываем последнюю лексему, чтобы предотвратить утечку
+			// СЃС‡РёС‚С‹РІР°РµРј РїРѕСЃР»РµРґРЅСЋСЋ Р»РµРєСЃРµРјСѓ, С‡С‚РѕР±С‹ РїСЂРµРґРѕС‚РІСЂР°С‚РёС‚СЊ СѓС‚РµС‡РєСѓ
 			dr.NextLexem();
-			// объединяем два контейнера
+			// РѕР±СЉРµРґРёРЅСЏРµРј РґРІР° РєРѕРЅС‚РµР№РЅРµСЂР°
 			dr.lexemContainer.insert(dr.lexemContainer.end(), dr.undoContainer.begin(),
 				dr.undoContainer.end());
-			// из undo-контейнера, теперь будет считываться параметр
-			LoadToUndoContainer(dr.GetLexemContainer());	
+			// РёР· undo-РєРѕРЅС‚РµР№РЅРµСЂР°, С‚РµРїРµСЂСЊ Р±СѓРґРµС‚ СЃС‡РёС‚С‹РІР°С‚СЊСЃСЏ РїР°СЂР°РјРµС‚СЂ
+			LoadToUndoContainer(dr.GetLexemContainer());
 			lastLxm = lxm;
 		}
 
-		// иначе если был считан ')', значит имеем дело с пустым список параметров
+		// РёРЅР°С‡Рµ РµСЃР»Рё Р±С‹Р» СЃС‡РёС‚Р°РЅ ')', Р·РЅР°С‡РёС‚ РёРјРµРµРј РґРµР»Рѕ СЃ РїСѓСЃС‚С‹Рј СЃРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ
 		else if( dr.lastLxm == ')' )
 		{
 			lastLxm = lxm;
 		}
 
-		// если ничего не считано, считываем декларатор
+		// РµСЃР»Рё РЅРёС‡РµРіРѕ РЅРµ СЃС‡РёС‚Р°РЅРѕ, СЃС‡РёС‚С‹РІР°РµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 		else
-		{		
-			// в этой точке , dr мог считать только имя параметра, либо
-			// указатель на член, все эти лексемы хранятся в undo-контейнере		
-			LoadToUndoContainer(dr.undoContainer);	
+		{
+			// РІ СЌС‚РѕР№ С‚РѕС‡РєРµ , dr РјРѕРі СЃС‡РёС‚Р°С‚СЊ С‚РѕР»СЊРєРѕ РёРјСЏ РїР°СЂР°РјРµС‚СЂР°, Р»РёР±Рѕ
+			// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ, РІСЃРµ СЌС‚Рё Р»РµРєСЃРµРјС‹ С…СЂР°РЅСЏС‚СЃСЏ РІ undo-РєРѕРЅС‚РµР№РЅРµСЂРµ
+			LoadToUndoContainer(dr.undoContainer);
 			lastLxm = lxm;
 
 			crampLevel++;
@@ -351,62 +352,62 @@ void DeclaratorReader::ReadDeclarator( )
 	}
 
 
-	// это может быть: указатель на член, или идентификатор,
-	// который мы и объявляем	
+	// СЌС‚Рѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ: СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ, РёР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ,
+	// РєРѕС‚РѕСЂС‹Р№ РјС‹ Рё РѕР±СЉСЏРІР»СЏРµРј
 	else if( lxm == NAME || lxm == COLON_COLON )
 	{
 		bool nq = false, ns = false;
 		if( declType == DV_PARAMETR || declType == DV_CAST_OPERATION )
 			nq = ns = true;
 
-		// только в локальной декларации. Для using-декларации внутри класса
-		// требуется квалифицированное имя
+		// С‚РѕР»СЊРєРѕ РІ Р»РѕРєР°Р»СЊРЅРѕР№ РґРµРєР»Р°СЂР°С†РёРё. Р”Р»СЏ using-РґРµРєР»Р°СЂР°С†РёРё РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°
+		// С‚СЂРµР±СѓРµС‚СЃСЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРµ РёРјСЏ
 		else if( declType == DV_LOCAL_DECLARATION )
 			nq = true;
-			
+
 		BackLexem();
 		QualifiedConstructionReader qcr(lexicalAnalyzer, nq, ns);
-		qcr.LoadToUndoContainer( undoContainer );	// помещаем имя в контейнер
+		qcr.LoadToUndoContainer( undoContainer ); // РїРѕРјРµС‰Р°РµРј РёРјСЏ РІ РєРѕРЅС‚РµР№РЅРµСЂ
 		undoContainer.clear();
 		PNodePackage np = qcr.ReadQualifiedConstruction();
 		LoadToLexemContainer(qcr.GetLexemContainer());
 
 
-		// если указатель на член
+		// РµСЃР»Рё СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ
 		if( qcr.IsPointerToMember() )
-		{			
-			ReadCVQualifierSequence(np);		// считываем cv-квалификаторы
+		{
+			ReadCVQualifierSequence(np); // СЃС‡РёС‚С‹РІР°РµРј cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹
 			ReadDeclarator();
-		
-			declPkg->AddChildPackage( np.Release() );		// добавляем указатель к списку произ. типов			
+
+			declPkg->AddChildPackage( np.Release() ); // РґРѕР±Р°РІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ Рє СЃРїРёСЃРєСѓ РїСЂРѕРёР·. С‚РёРїРѕРІ
 		}
 
-		// иначе имеем дело с идентификатором, добавляем его к пакетам
+		// РёРЅР°С‡Рµ РёРјРµРµРј РґРµР»Рѕ СЃ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј, РґРѕР±Р°РІР»СЏРµРј РµРіРѕ Рє РїР°РєРµС‚Р°Рј
 		else 
 		{
-			// проверяем, можно ли использовать специальные функции
-			// в заданном контексте
+			// РїСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЃРїРµС†РёР°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё
+			// РІ Р·Р°РґР°РЅРЅРѕРј РєРѕРЅС‚РµРєСЃС‚Рµ
 			if( declType != DV_GLOBAL_DECLARATION && declType != DV_LOCAL_DECLARATION && 
 				declType != DV_CLASS_MEMBER && declType != DV_PARAMETR ) 
 				throw lxm;
 
 			declPkg->AddChildPackage( np.Release() );
 
-			// считываем последнюю лексему, т.к. 
-			// ReadQualifiedConstruction ее оставил в потоке
-			NextLexem();	
-			
-			// устанавливаем, что имя считано
+			// СЃС‡РёС‚С‹РІР°РµРј РїРѕСЃР»РµРґРЅСЋСЋ Р»РµРєСЃРµРјСѓ, С‚.Рє. 
+			// ReadQualifiedConstruction РµРµ РѕСЃС‚Р°РІРёР» РІ РїРѕС‚РѕРєРµ
+			NextLexem();
+
+			// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј, С‡С‚Рѕ РёРјСЏ СЃС‡РёС‚Р°РЅРѕ
 			nameRead = true;
 		}
-	}	
+	}
 
-	// если имеем дело с глобальной декларацией, декларация члена или локальная
-	// декларация, можно считывать специальные функции члены
+	// РµСЃР»Рё РёРјРµРµРј РґРµР»Рѕ СЃ РіР»РѕР±Р°Р»СЊРЅРѕР№ РґРµРєР»Р°СЂР°С†РёРµР№, РґРµРєР»Р°СЂР°С†РёСЏ С‡Р»РµРЅР° РёР»Рё Р»РѕРєР°Р»СЊРЅР°СЏ
+	// РґРµРєР»Р°СЂР°С†РёСЏ, РјРѕР¶РЅРѕ СЃС‡РёС‚С‹РІР°С‚СЊ СЃРїРµС†РёР°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё С‡Р»РµРЅС‹
 	else if( lxm == KWOPERATOR || lxm == '~' ) 
 	{
-		// проверяем, можно ли использовать специальные функции
-		// в заданном контексте
+		// РїСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЃРїРµС†РёР°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё
+		// РІ Р·Р°РґР°РЅРЅРѕРј РєРѕРЅС‚РµРєСЃС‚Рµ
 		if( declType != DV_GLOBAL_DECLARATION &&
 			declType != DV_LOCAL_DECLARATION && 
 			declType != DV_CLASS_MEMBER ) 
@@ -417,28 +418,28 @@ void DeclaratorReader::ReadDeclarator( )
 		PNodePackage np = qcr.ReadQualifiedConstruction();
 
 		LoadToLexemContainer(qcr.GetLexemContainer());
-		declPkg->AddChildPackage( np.Release() );	// добавляем указатель к списку произ. типов			
+		declPkg->AddChildPackage( np.Release() ); // РґРѕР±Р°РІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ Рє СЃРїРёСЃРєСѓ РїСЂРѕРёР·. С‚РёРїРѕРІ
 		lastLxm = NextLexem();
 		nameRead = true;
-	}	
+	}
 
-	// в любом случае считысчитываем хвостовую часть декларатора [], ()
+	// РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ СЃС‡РёС‚С‹СЃС‡РёС‚С‹РІР°РµРј С…РІРѕСЃС‚РѕРІСѓСЋ С‡Р°СЃС‚СЊ РґРµРєР»Р°СЂР°С‚РѕСЂР° [], ()
 	ReadDeclaratorTailPart();	
 }
 
 
-// считываем хвостовую часть декларатора, если не приведение типа
+// СЃС‡РёС‚С‹РІР°РµРј С…РІРѕСЃС‚РѕРІСѓСЋ С‡Р°СЃС‚СЊ РґРµРєР»Р°СЂР°С‚РѕСЂР°, РµСЃР»Рё РЅРµ РїСЂРёРІРµРґРµРЅРёРµ С‚РёРїР°
 void DeclaratorReader::ReadDeclaratorTailPart()
 {
 	Lexem lxm = lastLxm;
 
-	// считываем постфиксные производные типы
+	// СЃС‡РёС‚С‹РІР°РµРј РїРѕСЃС‚С„РёРєСЃРЅС‹Рµ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ С‚РёРїС‹
 	bool in;
 	for( in = false; ;in++ )
-	{	
-		// требуется считать прототип функции
+	{
+		// С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚Р°С‚СЊ РїСЂРѕС‚РѕС‚РёРї С„СѓРЅРєС†РёРё
 		if( lxm == '(' )
-		{  			
+		{
 			if( declType == DV_CAST_OPERATOR_DECLARATION )
 				break;
 			
@@ -446,11 +447,11 @@ void DeclaratorReader::ReadDeclaratorTailPart()
 			if( !np.IsNull() )
 			{
 				INTERNAL_IF( np->GetPackageID() != PC_FUNCTION_PROTOTYPE || 
-							 np->IsNoChildPackages() );		
+							 np->IsNoChildPackages() );
 				declPkg->AddChildPackage(np.Release());
 			}
 
-			// иначе был считан список инициализаторов, и мы выходим
+			// РёРЅР°С‡Рµ Р±С‹Р» СЃС‡РёС‚Р°РЅ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ, Рё РјС‹ РІС‹С…РѕРґРёРј
 			else
 			{
 				INTERNAL_IF( initializatorList.IsNull() || initializatorList->empty() );
@@ -463,16 +464,16 @@ void DeclaratorReader::ReadDeclaratorTailPart()
 			Lexem tmp = NextLexem();
 			PNodePackage ar = new NodePackage(PC_ARRAY) ;
 
-			// считываем выражение
+			// СЃС‡РёС‚С‹РІР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ
 			if( tmp != ']' )
 			{
 				BackLexem();
 				ExpressionReader expReader( lexicalAnalyzer, 
 					undoContainer.empty() ? NULL : &undoContainer, true);
-				expReader.Read();				
+				expReader.Read();
 				INTERNAL_IF( expReader.GetResultOperand().IsNull() );
 
-				// создаем пакет-выражение
+				// СЃРѕР·РґР°РµРј РїР°РєРµС‚-РІС‹СЂР°Р¶РµРЅРёРµ
 				ar->AddChildPackage( new LexemPackage(lxm) );
 				ar->AddChildPackage( new ExpressionPackage( expReader.GetResultOperand()) );
 				tmp = lexicalAnalyzer.LastLexem();
@@ -482,7 +483,7 @@ void DeclaratorReader::ReadDeclaratorTailPart()
 				declPkg->AddChildPackage(ar.Release());
 			}
 
-			// иначе массив пустой, сохраняем его
+			// РёРЅР°С‡Рµ РјР°СЃСЃРёРІ РїСѓСЃС‚РѕР№, СЃРѕС…СЂР°РЅСЏРµРј РµРіРѕ
 			else
 			{
 				ar->AddChildPackage( new LexemPackage(lxm) );
@@ -492,29 +493,29 @@ void DeclaratorReader::ReadDeclaratorTailPart()
 		}
 
 		else
-			break;		
+			break;
 
 		lxm = NextLexem();
 	}
 
-	// если in установлен и 
+	// РµСЃР»Рё in СѓСЃС‚Р°РЅРѕРІР»РµРЅ Рё 
 	if( declType == DV_CAST_OPERATOR_DECLARATION && in )
 		BackLexem();
-		
+
 }
 
-// считать прототип функции
+// СЃС‡РёС‚Р°С‚СЊ РїСЂРѕС‚РѕС‚РёРї С„СѓРЅРєС†РёРё
 PNodePackage DeclaratorReader::ReadFunctionPrototype()
 {
-	PNodePackage np = new NodePackage(PC_FUNCTION_PROTOTYPE);			
-	np->AddChildPackage( new LexemPackage( lastLxm ) );	// добавить '('
+	PNodePackage np = new NodePackage(PC_FUNCTION_PROTOTYPE);
+	np->AddChildPackage( new LexemPackage( lastLxm ) ); // РґРѕР±Р°РІРёС‚СЊ '('
 	Lexem lxm;
 	
-	// получаем следующую лексему для проверки
+	// РїРѕР»СѓС‡Р°РµРј СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ РґР»СЏ РїСЂРѕРІРµСЂРєРё
 	lxm = NextLexem();
 
-	// если уровень скобок нулевой, имеем локальную или глобальную декларацию,
-	// пытаемся считать список инициализации
+	// РµСЃР»Рё СѓСЂРѕРІРµРЅСЊ СЃРєРѕР±РѕРє РЅСѓР»РµРІРѕР№, РёРјРµРµРј Р»РѕРєР°Р»СЊРЅСѓСЋ РёР»Рё РіР»РѕР±Р°Р»СЊРЅСѓСЋ РґРµРєР»Р°СЂР°С†РёСЋ,
+	// РїС‹С‚Р°РµРјСЃСЏ СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 	if( crampLevel == 0 &&
 		(declType == DV_GLOBAL_DECLARATION || declType == DV_LOCAL_DECLARATION) &&
 		(lxm != ')' && lxm != ELLIPSES) &&
@@ -525,14 +526,14 @@ PNodePackage DeclaratorReader::ReadFunctionPrototype()
 		ter.Read(true);
 		INTERNAL_IF( ter.GetResultPackage() == NULL );
 
-		// теперь проверяем, если имеем выражение, считываем все инициализаторы,
+		// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РёРјРµРµРј РІС‹СЂР°Р¶РµРЅРёРµ, СЃС‡РёС‚С‹РІР°РµРј РІСЃРµ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂС‹,
 		if( ter.GetResultPackage()->IsExpressionPackage() )
 		{
 			initializatorList = new ExpressionList;
 			initializatorList->push_back( 
 				static_cast<const ExpressionPackage &>(*ter.GetResultPackage()).GetExpression());
 
-			// считываем весь список
+			// СЃС‡РёС‚С‹РІР°РµРј РІРµСЃСЊ СЃРїРёСЃРѕРє
 			for( ;; )
 			{
 				if( lexicalAnalyzer.LastLexem() == ')' )
@@ -540,57 +541,57 @@ PNodePackage DeclaratorReader::ReadFunctionPrototype()
 				if( lexicalAnalyzer.LastLexem() != ',' )
 					throw lexicalAnalyzer.LastLexem();
 
-				// считываем очередное выражение
+				// СЃС‡РёС‚С‹РІР°РµРј РѕС‡РµСЂРµРґРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 				ExpressionReader er(lexicalAnalyzer, NULL, true);
 				er.Read();
 
-				// получаем результат
+				// РїРѕР»СѓС‡Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚
 				initializatorList->push_back( er.GetResultOperand() );
 			}
 
-			// считываем ';' для парсера и выходим
+			// СЃС‡РёС‚С‹РІР°РµРј ';' РґР»СЏ РїР°СЂСЃРµСЂР° Рё РІС‹С…РѕРґРёРј
 			lexicalAnalyzer.NextLexem();
 			return NULL;
 		}
 
-		// иначе имеем декларатор, т.е. параметр. Создаем пакет
-		// с параметром и продолжаем считывание в цикле
+		// РёРЅР°С‡Рµ РёРјРµРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ, С‚.Рµ. РїР°СЂР°РјРµС‚СЂ. РЎРѕР·РґР°РµРј РїР°РєРµС‚
+		// СЃ РїР°СЂР°РјРµС‚СЂРѕРј Рё РїСЂРѕРґРѕР»Р¶Р°РµРј СЃС‡РёС‚С‹РІР°РЅРёРµ РІ С†РёРєР»Рµ
 		else
 		{
 			INTERNAL_IF( !ter.GetResultPackage()->IsNodePackage() );
 
-			// также возможно значение по умолчанию
+			// С‚Р°РєР¶Рµ РІРѕР·РјРѕР¶РЅРѕ Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 			PNodePackage prm = new NodePackage(PC_PARAMETR);
 			const NodePackage *dcl = static_cast<const NodePackage*>(ter.GetResultPackage());
 			INTERNAL_IF( dcl->GetChildPackageCount() != 2 );
 
 			prm->AddChildPackage( const_cast<Package*>(dcl->GetChildPackage(0)) );
 			prm->AddChildPackage( const_cast<Package*>(dcl->GetChildPackage(1)) );
-	
-			// проверяем, если последняя считанная лексема '=', значит следует
-			// также считать значение параметра по умолчанию
+
+			// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РїРѕСЃР»РµРґРЅСЏСЏ СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° '=', Р·РЅР°С‡РёС‚ СЃР»РµРґСѓРµС‚
+			// С‚Р°РєР¶Рµ СЃС‡РёС‚Р°С‚СЊ Р·РЅР°С‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 			if( lexicalAnalyzer.LastLexem() == '=' )
 			{
-				// считываем очередное выражение
+				// СЃС‡РёС‚С‹РІР°РµРј РѕС‡РµСЂРµРґРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 				ExpressionReader er(lexicalAnalyzer, NULL, true);
 				er.Read();
-			
-				// добавляем пакет с выражением к параметру
+
+				// РґРѕР±Р°РІР»СЏРµРј РїР°РєРµС‚ СЃ РІС‹СЂР°Р¶РµРЅРёРµРј Рє РїР°СЂР°РјРµС‚СЂСѓ
 				prm->AddChildPackage( new ExpressionPackage(er.GetResultOperand()) );
 			}
 
-			// добавляем параметр к общему пакету
+			// РґРѕР±Р°РІР»СЏРµРј РїР°СЂР°РјРµС‚СЂ Рє РѕР±С‰РµРјСѓ РїР°РєРµС‚Сѓ
 			np->AddChildPackage( prm.Release() );
 			lxm = lexicalAnalyzer.LastLexem() == ',' ? 
 				lexicalAnalyzer.NextLexem() : lexicalAnalyzer.LastLexem();
 		}
 	}
 
-	// цикл считки параметров
+	// С†РёРєР» СЃС‡РёС‚РєРё РїР°СЂР°РјРµС‚СЂРѕРІ
 	if( lxm != ')' )
 	for( ;; )
-	{			
-		if( lxm == ELLIPSES )	// ... 
+	{
+		if( lxm == ELLIPSES ) // ... 
 		{
 			Lexem tmp = NextLexem();
 			if( tmp != ')' )
@@ -608,60 +609,60 @@ PNodePackage DeclaratorReader::ReadFunctionPrototype()
 		DeclaratorReader dr(DV_PARAMETR, lexicalAnalyzer);
 		dr.LoadToUndoContainer( undoContainer );
 		undoContainer.clear();
-		canUndo = false;		
+		canUndo = false;
 
-		dr.ReadTypeSpecifierList();						// считываем список спецификаторов типа
+		dr.ReadTypeSpecifierList(); // СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 		PNodePackage tsl = dr.GetTypeSpecPackage();
 		if( tsl->IsNoChildPackages() )
 			throw lexicalAnalyzer.LastLexem();
 
-		PNodePackage dcl = dr.ReadNextDeclarator(),			// считываем декларатор
+		PNodePackage dcl = dr.ReadNextDeclarator(), // СЃС‡РёС‚С‹РІР°РµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 					 prm = new NodePackage(PC_PARAMETR);
-		
+
 		prm->AddChildPackage(tsl.Release());
 		prm->AddChildPackage(dcl.Release());
-		
+
 		LoadToLexemContainer(dr.GetLexemContainer());
 
-		// имеется значение по умолчанию для параметра
+		// РёРјРµРµС‚СЃСЏ Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РґР»СЏ РїР°СЂР°РјРµС‚СЂР°
 		if( lexicalAnalyzer.LastLexem() == '=' )
 		{
-			// параметры по умолчанию считываем только у локальных,
-			// глобальных и декларациях членов
+			// РїР°СЂР°РјРµС‚СЂС‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ СЃС‡РёС‚С‹РІР°РµРј С‚РѕР»СЊРєРѕ Сѓ Р»РѕРєР°Р»СЊРЅС‹С…,
+			// РіР»РѕР±Р°Р»СЊРЅС‹С… Рё РґРµРєР»Р°СЂР°С†РёСЏС… С‡Р»РµРЅРѕРІ
 			if( declType != DV_GLOBAL_DECLARATION &&
 				declType != DV_LOCAL_DECLARATION  &&
 				declType != DV_CLASS_MEMBER )
 				throw lexicalAnalyzer.LastLexem();
 
-			// считываем значение параметра по умолчанию
+			// СЃС‡РёС‚С‹РІР°РµРј Р·РЅР°С‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 			ExpressionReader er(lexicalAnalyzer, NULL, true);
 			er.Read();
-			
-			// добавляем пакет с выражением к параметру
+
+			// РґРѕР±Р°РІР»СЏРµРј РїР°РєРµС‚ СЃ РІС‹СЂР°Р¶РµРЅРёРµРј Рє РїР°СЂР°РјРµС‚СЂСѓ
 			prm->AddChildPackage( new ExpressionPackage(er.GetResultOperand()) );
 		}
 		
-		np->AddChildPackage( prm.Release() );			// наконец добавляем параметр к прототипу	
+		np->AddChildPackage( prm.Release() ); // РЅР°РєРѕРЅРµС† РґРѕР±Р°РІР»СЏРµРј РїР°СЂР°РјРµС‚СЂ Рє РїСЂРѕС‚РѕС‚РёРїСѓ 
 		if( lexicalAnalyzer.LastLexem() != ',' && lexicalAnalyzer.LastLexem() != ')' )
 			throw lexicalAnalyzer.LastLexem();
 
 		if( lexicalAnalyzer.LastLexem() == ')' )
 			break;
 
-		// считываем следующую
+		// СЃС‡РёС‚С‹РІР°РµРј СЃР»РµРґСѓСЋС‰СѓСЋ
 		lxm = NextLexem();
 	}
 
 	np->AddChildPackage( new LexemPackage(lexicalAnalyzer.LastLexem()) );
 
-	// дальше может потребоваться считать список квалификаторов 
+	// РґР°Р»СЊС€Рµ РјРѕР¶РµС‚ РїРѕС‚СЂРµР±РѕРІР°С‚СЊСЃСЏ СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ 
 	Lexem c, v; 
-	ReadCVQualifierSequence(np);	
+	ReadCVQualifierSequence(np);
 
-	// далее может идти список возбуждаемых исключительных ситуаций
+	// РґР°Р»РµРµ РјРѕР¶РµС‚ РёРґС‚Рё СЃРїРёСЃРѕРє РІРѕР·Р±СѓР¶РґР°РµРјС‹С… РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅС‹С… СЃРёС‚СѓР°С†РёР№
 	lxm = NextLexem();
 
-	// считываем список исключительных ситуаций
+	// СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅС‹С… СЃРёС‚СѓР°С†РёР№
 	if( lxm == KWTHROW )
 	{
 		PNodePackage throwSpec = new NodePackage(PC_THROW_TYPE_LIST);
@@ -672,11 +673,11 @@ PNodePackage DeclaratorReader::ReadFunctionPrototype()
 		throwSpec->AddChildPackage( new LexemPackage(lxm) );
 		lxm = NextLexem();
 
-		// пустая throw-спецификация
-		if( lxm == ')' )		
+		// РїСѓСЃС‚Р°СЏ throw-СЃРїРµС†РёС„РёРєР°С†РёСЏ
+		if( lxm == ')' )
 			throwSpec->AddChildPackage( new LexemPackage(lxm) );
 
-		// иначе считываем список типов
+		// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє С‚РёРїРѕРІ
 		else
 		{
 			BackLexem();
@@ -705,29 +706,29 @@ PNodePackage DeclaratorReader::ReadFunctionPrototype()
 }
 
 
-// считать тип в throw-спецификации и вернуть его
+// СЃС‡РёС‚Р°С‚СЊ С‚РёРї РІ throw-СЃРїРµС†РёС„РёРєР°С†РёРё Рё РІРµСЂРЅСѓС‚СЊ РµРіРѕ
 PNodePackage DeclaratorReader::ReadThrowSpecType()
 {
 	DeclaratorReader dr(DV_CAST_OPERATION, lexicalAnalyzer);
 	
-	dr.ReadTypeSpecifierList();						// считываем список спецификаторов типа
+	dr.ReadTypeSpecifierList(); // СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	PNodePackage tsl = dr.GetTypeSpecPackage();
 	if( tsl->IsNoChildPackages() )
 		throw lexicalAnalyzer.LastLexem();
 
-	PNodePackage dcl = dr.ReadNextDeclarator(),			// считываем декларатор
+	PNodePackage dcl = dr.ReadNextDeclarator(), // СЃС‡РёС‚С‹РІР°РµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 				 tht = new NodePackage(PC_THROW_TYPE);
-		
+
 	tht->AddChildPackage(tsl.Release());
 	tht->AddChildPackage(dcl.Release());
-		
+
 	LoadToLexemContainer(dr.GetLexemContainer());
 	return tht;
 }
 
 
-// считать последовательность из cv-квалификаторов, и сохраняет их 
-// в пакете
+// СЃС‡РёС‚Р°С‚СЊ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РёР· cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ, Рё СЃРѕС…СЂР°РЅСЏРµС‚ РёС… 
+// РІ РїР°РєРµС‚Рµ
 void DeclaratorReader::ReadCVQualifierSequence( PNodePackage &np )
 {
 	Lexem cv;
@@ -749,31 +750,31 @@ void DeclaratorReader::ReadCVQualifierSequence( PNodePackage &np )
 }
 
 
-// если считан тип - класс, перечисление, typedef, специализированный шаблон
+// РµСЃР»Рё СЃС‡РёС‚Р°РЅ С‚РёРї - РєР»Р°СЃСЃ, РїРµСЂРµС‡РёСЃР»РµРЅРёРµ, typedef, СЃРїРµС†РёР°Р»РёР·РёСЂРѕРІР°РЅРЅС‹Р№ С€Р°Р±Р»РѕРЅ
 bool QualifiedConstructionReader::IsTypeName( ) const
 {
 	return QualifiedNameManager(&*resultPackage, NULL).IsTypeName(); 
 }
 
 
-// считать квалифицированную конструкцию
+// СЃС‡РёС‚Р°С‚СЊ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ
 PNodePackage QualifiedConstructionReader::ReadQualifiedConstruction()
 {
 	bool wasQual = false;
 	Lexem lxm = NextLexem();
 
-	// если была считана '::', запишем ее и считаем имя
-	if( lxm == COLON_COLON )		
+	// РµСЃР»Рё Р±С‹Р»Р° СЃС‡РёС‚Р°РЅР° '::', Р·Р°РїРёС€РµРј РµРµ Рё СЃС‡РёС‚Р°РµРј РёРјСЏ
+	if( lxm == COLON_COLON )
 	{
 		resultPackage->AddChildPackage( new LexemPackage(lxm) );
-		lxm = NextLexem();		
+		lxm = NextLexem();
 
-		// если разрешено выражение и следующая лексема - new или delete,
-		// синтаксической ошибки не возникает
+		// РµСЃР»Рё СЂР°Р·СЂРµС€РµРЅРѕ РІС‹СЂР°Р¶РµРЅРёРµ Рё СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° - new РёР»Рё delete,
+		// СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕР№ РѕС€РёР±РєРё РЅРµ РІРѕР·РЅРёРєР°РµС‚
 		if( noErrorOnExp && (lxm == KWNEW || lxm == KWDELETE) )
 			return readExpression = true, NULL;
 
-		// если нет имени после '::' - это синтаксическая ошибка	
+		// РµСЃР»Рё РЅРµС‚ РёРјРµРЅРё РїРѕСЃР»Рµ '::' - СЌС‚Рѕ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР° 
 		if( lxm != NAME && 
 			(!noQualified && !noSpecial && lxm != KWOPERATOR) )
 			throw lxm;
@@ -781,54 +782,54 @@ PNodePackage QualifiedConstructionReader::ReadQualifiedConstruction()
 	}
 
 
-	// здесь должно быть имя, либо сразу, либо после '::'
+	// Р·РґРµСЃСЊ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РёРјСЏ, Р»РёР±Рѕ СЃСЂР°Р·Сѓ, Р»РёР±Рѕ РїРѕСЃР»Рµ '::'
 	if( lxm == NAME )
-		resultPackage->AddChildPackage( new LexemPackage(lxm) );	
+		resultPackage->AddChildPackage( new LexemPackage(lxm) );
 
-	// пробуем считать оператор, а потом уже проверим, нужно 
+	// РїСЂРѕР±СѓРµРј СЃС‡РёС‚Р°С‚СЊ РѕРїРµСЂР°С‚РѕСЂ, Р° РїРѕС‚РѕРј СѓР¶Рµ РїСЂРѕРІРµСЂРёРј, РЅСѓР¶РЅРѕ 
 	else if( lxm == KWOPERATOR )
 	{
 read_operator:
 
-		// если мы не можем считывать операторы
+		// РµСЃР»Рё РјС‹ РЅРµ РјРѕР¶РµРј СЃС‡РёС‚С‹РІР°С‚СЊ РѕРїРµСЂР°С‚РѕСЂС‹
 		if( noSpecial || (noQualified && wasQual) )
 			throw lxm;
 
-		// пытаемся считать оператор, в случае синтаксической ошибки,
-		// весь пакет удаляется
+		// РїС‹С‚Р°РµРјСЃСЏ СЃС‡РёС‚Р°С‚СЊ РѕРїРµСЂР°С‚РѕСЂ, РІ СЃР»СѓС‡Р°Рµ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕР№ РѕС€РёР±РєРё,
+		// РІРµСЃСЊ РїР°РєРµС‚ СѓРґР°Р»СЏРµС‚СЃСЏ
 		NodePackage *op = ReadOverloadOperator().Release();
 		resultPackage->AddChildPackage( op );
-		return resultPackage;		// выходим, имя считано
+		return resultPackage; // РІС‹С…РѕРґРёРј, РёРјСЏ СЃС‡РёС‚Р°РЅРѕ
 	}
 
-	// возможно деструктор
+	// РІРѕР·РјРѕР¶РЅРѕ РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 	else if( lxm == '~' )
 	{
 read_destructor:
 
-		// не можем считывать деструткоры
+		// РЅРµ РјРѕР¶РµРј СЃС‡РёС‚С‹РІР°С‚СЊ РґРµСЃС‚СЂСѓС‚РєРѕСЂС‹
 		if( noSpecial || (noQualified && wasQual) )
 			throw lxm;
 
 		PNodePackage dtor = new NodePackage( PC_DESTRUCTOR );
 		dtor->AddChildPackage(new LexemPackage(lxm));
-		
+
 		lxm = NextLexem();
 		if( lxm != NAME )
 			throw lxm;
-		
+
 		dtor->AddChildPackage(new LexemPackage(lxm));
 		resultPackage->AddChildPackage(dtor.Release());
-		return resultPackage;		// выходим, деструктор считан
+		return resultPackage; // РІС‹С…РѕРґРёРј, РґРµСЃС‚СЂСѓРєС‚РѕСЂ СЃС‡РёС‚Р°РЅ
 	}
 
-	// иначе синтаксическая ошибка
-	else		
-		throw lxm;	
+	// РёРЅР°С‡Рµ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°
+	else 
+		throw lxm;
 
-	// цикл считывания составной части, считываем имя шаблона,
-	// только в случае если обнаружено ключевое слово template 
-	// после '::'
+	// С†РёРєР» СЃС‡РёС‚С‹РІР°РЅРёСЏ СЃРѕСЃС‚Р°РІРЅРѕР№ С‡Р°СЃС‚Рё, СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ С€Р°Р±Р»РѕРЅР°,
+	// С‚РѕР»СЊРєРѕ РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РѕР±РЅР°СЂСѓР¶РµРЅРѕ РєР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ template 
+	// РїРѕСЃР»Рµ '::'
 	for( ;; )
 	{
 		lxm = NextLexem();
@@ -844,24 +845,24 @@ read_destructor:
 		resultPackage->AddChildPackage( new LexemPackage(lxm) );
 		lxm = NextLexem();
 
-		// считываем имя шаблона
+		// СЃС‡РёС‚С‹РІР°РµРј РёРјСЏ С€Р°Р±Р»РѕРЅР°
 		if( lxm == KWTEMPLATE )
 		{
 		}
 
-		// иначе должно попастся имя
+		// РёРЅР°С‡Рµ РґРѕР»Р¶РЅРѕ РїРѕРїР°СЃС‚СЃСЏ РёРјСЏ
 		else
 		{
-			// имеем имя, добавляем его в пакет
+			// РёРјРµРµРј РёРјСЏ, РґРѕР±Р°РІР»СЏРµРј РµРіРѕ РІ РїР°РєРµС‚
 			if( lxm == NAME   )
 				resultPackage->AddChildPackage( new LexemPackage(lxm) );
 
-			// если требуется считать указатель на член
+			// РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚Р°С‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ
 			else if( lxm == '*' )
 			{
 				resultPackage->SetPackageID( PC_POINTER_TO_MEMBER );
 				resultPackage->AddChildPackage( new LexemPackage(lxm) );
-				return resultPackage;				
+				return resultPackage;
 			}
 
 			else if( lxm == KWOPERATOR && !noSpecial )
@@ -871,26 +872,26 @@ read_destructor:
 				goto read_destructor;
 
 			else
-				throw lxm;				
+				throw lxm;
 		}
 	}
 
-	BackLexem();		// возвращаем послед. считанную лексему в поток	
+	BackLexem(); // РІРѕР·РІСЂР°С‰Р°РµРј РїРѕСЃР»РµРґ. СЃС‡РёС‚Р°РЅРЅСѓСЋ Р»РµРєСЃРµРјСѓ РІ РїРѕС‚РѕРє
 	return resultPackage;
 }
 
 
-// считать перегруженный оператор
+// СЃС‡РёС‚Р°С‚СЊ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ
 PNodePackage QualifiedConstructionReader::ReadOverloadOperator( )
 {
 	PNodePackage op( new NodePackage( PC_OVERLOAD_OPERATOR ) );
-	
-	// записываем 'operator'	
+
+	// Р·Р°РїРёСЃС‹РІР°РµРј 'operator'
 	op->AddChildPackage( new LexemPackage(
 		lastLxm == KWOPERATOR ? lastLxm : lexicalAnalyzer.LastLexem()) );
 	Lexem lxm = NextLexem();
 
-	// если оператор требует считывания []
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ С‚СЂРµР±СѓРµС‚ СЃС‡РёС‚С‹РІР°РЅРёСЏ []
 	if( lxm == KWNEW || lxm == KWDELETE )
 	{
 		op->AddChildPackage( new LexemPackage(lxm) );
@@ -900,7 +901,7 @@ PNodePackage QualifiedConstructionReader::ReadOverloadOperator( )
 			BackLexem();
 			return op;
 		}
-				
+
 		op->AddChildPackage( new LexemPackage(lxm) );
 		lxm = NextLexem();
 		if( lxm != ']' )
@@ -910,7 +911,7 @@ PNodePackage QualifiedConstructionReader::ReadOverloadOperator( )
 		return op;
 	}
 
-	// если оператор '()' или '[]'
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ '()' РёР»Рё '[]'
 	else if( lxm == '(' || lxm == '[' )
 	{
 		int nop = lxm == '(' ? ')' : ']';
@@ -918,53 +919,53 @@ PNodePackage QualifiedConstructionReader::ReadOverloadOperator( )
 		lxm = NextLexem();
 		if( lxm != nop )
 			throw lxm;
-				
+
 		op->AddChildPackage( new LexemPackage(lxm) );
 		return op;
 	}
 
 
-	// иначе оператор состоит из одной лексемы
-	else if( lxm == '+' || lxm == '-'  || lxm == '*'				||
-			 lxm == '/' || lxm == '%'  || lxm == '^'				||
-			 lxm == '&' || lxm == '|'  || lxm == '~'				||
-			 lxm == '!' || lxm == '='  || lxm == '<'				||
-			 lxm == '>'												|| 
-			 lxm == PLUS_ASSIGN		   || lxm == MINUS_ASSIGN		||
-			 lxm == MUL_ASSIGN		   || lxm == DIV_ASSIGN			|| 
-			 lxm == PERCENT_ASSIGN     || lxm == LEFT_SHIFT_ASSIGN  ||
-			 lxm == RIGHT_SHIFT_ASSIGN || lxm == AND_ASSIGN			|| 
-			 lxm == XOR_ASSIGN		   || lxm == OR_ASSIGN			|| 
-			 lxm == LEFT_SHIFT		   || lxm == RIGHT_SHIFT		|| 
-			 lxm == LESS_EQU		   || lxm == GREATER_EQU		|| 
-			 lxm == EQUAL			   || lxm == NOT_EQUAL			||
-			 lxm == LOGIC_AND		   || lxm == LOGIC_OR			|| 
-			 lxm == INCREMENT		   || lxm == DECREMENT		    || 
-			 lxm == ARROW			   || lxm == ARROW_POINT		||
-			 lxm == ',' )
+	// РёРЅР°С‡Рµ РѕРїРµСЂР°С‚РѕСЂ СЃРѕСЃС‚РѕРёС‚ РёР· РѕРґРЅРѕР№ Р»РµРєСЃРµРјС‹
+	else if( lxm == '+'  || lxm == '-'  || lxm == '*'  ||
+			 lxm == '/'  || lxm == '%'  || lxm == '^'  ||
+			 lxm == '&'  || lxm == '|'  || lxm == '~'  ||
+			 lxm == '!'  || lxm == '='  || lxm == '<'  ||  lxm == '>'  || 
+
+			 lxm == PLUS_ASSIGN  || lxm == MINUS_ASSIGN  || 
+			 lxm == MUL_ASSIGN   || lxm == DIV_ASSIGN  || 
+			 lxm == PERCENT_ASSIGN  ||  lxm == LEFT_SHIFT_ASSIGN  ||
+			 lxm == RIGHT_SHIFT_ASSIGN  || 
+			 lxm == AND_ASSIGN  || lxm == XOR_ASSIGN  || 
+			 lxm == OR_ASSIGN  || lxm == LEFT_SHIFT  || 
+			 lxm == RIGHT_SHIFT  ||  lxm == LESS_EQU  || 
+			 lxm == GREATER_EQU  ||  lxm == EQUAL  || 
+			 lxm == NOT_EQUAL  ||  lxm == LOGIC_AND  || 
+			 lxm == LOGIC_OR  || lxm == INCREMENT  || 
+			 lxm == DECREMENT  ||  lxm == ARROW  || 
+			 lxm == ARROW_POINT  ||  lxm == ',' )
 	{
 		op->AddChildPackage( new LexemPackage(lxm) );
 		return op;
 	}
 
-	// иначе пытаемся считать тип, имеем оператор приведения типа
+	// РёРЅР°С‡Рµ РїС‹С‚Р°РµРјСЃСЏ СЃС‡РёС‚Р°С‚СЊ С‚РёРї, РёРјРµРµРј РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ С‚РёРїР°
 	else
 	{
 		DeclaratorReader dr(DV_CAST_OPERATOR_DECLARATION, lexicalAnalyzer);
 
-		// считываем декларацию, как будто она является операцией приведения типа
-		PNodePackage ct = new NodePackage(PC_CAST_TYPE);		
-		
-		BackLexem();				
+		// СЃС‡РёС‚С‹РІР°РµРј РґРµРєР»Р°СЂР°С†РёСЋ, РєР°Рє Р±СѓРґС‚Рѕ РѕРЅР° СЏРІР»СЏРµС‚СЃСЏ РѕРїРµСЂР°С†РёРµР№ РїСЂРёРІРµРґРµРЅРёСЏ С‚РёРїР°
+		PNodePackage ct = new NodePackage(PC_CAST_TYPE);
+
+		BackLexem();
 		dr.LoadToUndoContainer( *undoContainer ); 
 		undoContainer->clear();
-		canUndo = false;		
+		canUndo = false;
 
   		dr.ReadTypeSpecifierList();
 		if( dr.GetTypeSpecPackage()->IsNoChildPackages() )
 			throw lastLxm;
-		ct->AddChildPackage( dr.GetTypeSpecPackage().Release() );	
-		ct->AddChildPackage( dr.ReadNextDeclarator().Release() );						
+		ct->AddChildPackage( dr.GetTypeSpecPackage().Release() );
+		ct->AddChildPackage( dr.ReadNextDeclarator().Release() );
 		op->AddChildPackage(ct.Release());
 
 		lexemContainer.insert(lexemContainer.end(), 
@@ -973,19 +974,19 @@ PNodePackage QualifiedConstructionReader::ReadOverloadOperator( )
 		op->SetPackageID( PC_CAST_OPERATOR );
 		return op;
 	}
-		
+
 }
 
 
-// функция считывания конструкции от { до соотв. ей }
+// С„СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ РєРѕРЅСЃС‚СЂСѓРєС†РёРё РѕС‚ { РґРѕ СЃРѕРѕС‚РІ. РµР№ }
 void CompoundStatementReader::Read()
 {
 	int sc = 0;
 	for( ;; )
 	{
 		Lexem lxm = lexicalAnalyzer.NextLexem();
-		
-		// если не игнорируем поток, значит сохраняем лексему в контейнере
+
+		// РµСЃР»Рё РЅРµ РёРіРЅРѕСЂРёСЂСѓРµРј РїРѕС‚РѕРє, Р·РЅР°С‡РёС‚ СЃРѕС…СЂР°РЅСЏРµРј Р»РµРєСЃРµРјСѓ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ
 		if( !ignoreStream )
 			lexemContainer.push_back(lxm);
 
@@ -1001,20 +1002,20 @@ void CompoundStatementReader::Read()
 		}
 
 		else if( lxm == EOF )
-			theApp.Fatal(lxm.GetPos(), "неожиданный конец файла");
+			theApp.Fatal(lxm.GetPos(), "РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РєРѕРЅРµС† С„Р°Р№Р»Р°");
 	}
 }
 
 
-// закрытая функция, которая считывает try-блок
+// Р·Р°РєСЂС‹С‚Р°СЏ С„СѓРЅРєС†РёСЏ, РєРѕС‚РѕСЂР°СЏ СЃС‡РёС‚С‹РІР°РµС‚ try-Р±Р»РѕРє
 void FunctionBodyReader::ReadTryBlock()
 {
 	INTERNAL_IF( lexicalAnalyzer.LastLexem() != KWTRY );
 	if( !ignoreStream )
 		lexemContainer->push_back(lexicalAnalyzer.LastLexem());
 
-	// считываем следующую лексему, она может быть ':', тогда
-	// следует считать список инициализации. Иначе это должно быть '{'
+	// СЃС‡РёС‚С‹РІР°РµРј СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ, РѕРЅР° РјРѕР¶РµС‚ Р±С‹С‚СЊ ':', С‚РѕРіРґР°
+	// СЃР»РµРґСѓРµС‚ СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё. РРЅР°С‡Рµ СЌС‚Рѕ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ '{'
 	register Lexem lxm = lexicalAnalyzer.NextLexem();
 	if( lxm == ':' )
 	{
@@ -1026,7 +1027,7 @@ void FunctionBodyReader::ReadTryBlock()
 	INTERNAL_IF( lxm != '{' );
 	if( !ignoreStream )
 		lexemContainer->push_back(lxm);
-	
+
 
 	int sc = 1;
 	bool tryEnd = false;
@@ -1042,13 +1043,13 @@ void FunctionBodyReader::ReadTryBlock()
 		else if( lxm == '}' )
 		{
 			sc--;
-			if( sc )		// если это вложенная скобка, ничего не проверяем
+			if( sc ) // РµСЃР»Рё СЌС‚Рѕ РІР»РѕР¶РµРЅРЅР°СЏ СЃРєРѕР±РєР°, РЅРёС‡РµРіРѕ РЅРµ РїСЂРѕРІРµСЂСЏРµРј
 				continue;
 
 			lxm = lexicalAnalyzer.NextLexem();
 
-			// следующая лексема должна быть 'catch', если catch-блока
-			// еще не было
+			// СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ 'catch', РµСЃР»Рё catch-Р±Р»РѕРєР°
+			// РµС‰Рµ РЅРµ Р±С‹Р»Рѕ
 			if( lxm == KWCATCH )
 			{
 				tryEnd = true;
@@ -1056,25 +1057,25 @@ void FunctionBodyReader::ReadTryBlock()
 					lexemContainer->push_back(lxm);
 			}
 
-			// иначе catch-блок уже должен быть
+			// РёРЅР°С‡Рµ catch-Р±Р»РѕРє СѓР¶Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ
 			else 
 			{
 				if( !tryEnd )
-					theApp.Fatal(lxm.GetPos(), "try-блок конструктора не содержит обработчика");
+					theApp.Fatal(lxm.GetPos(), "try-Р±Р»РѕРє РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РЅРµ СЃРѕРґРµСЂР¶РёС‚ РѕР±СЂР°Р±РѕС‚С‡РёРєР°");
 
-				// иначе возвращаем лексему в поток и выходим
+				// РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј Р»РµРєСЃРµРјСѓ РІ РїРѕС‚РѕРє Рё РІС‹С…РѕРґРёРј
 				lexicalAnalyzer.BackLexem();
 				break;
 			}
 		}
 		
 		else if( lxm == EOF )
-			theApp.Fatal(lxm.GetPos(), "неожиданный конец файла");
+			theApp.Fatal(lxm.GetPos(), "РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РєРѕРЅРµС† С„Р°Р№Р»Р°");
 	}
 }
 
 
-// закрытая функция считывает список инициализации
+// Р·Р°РєСЂС‹С‚Р°СЏ С„СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РµС‚ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 void FunctionBodyReader::ReadInitList()
 {
 	INTERNAL_IF( lexicalAnalyzer.LastLexem() != ':' );
@@ -1085,10 +1086,10 @@ void FunctionBodyReader::ReadInitList()
 	{
 		register Lexem lxm = lexicalAnalyzer.NextLexem();
 		if( lxm == '{' )
-			break;		
+			break; 
 
 		else if( lxm == EOF )
-			theApp.Fatal(lxm.GetPos(), "неожиданный конец файла");
+			theApp.Fatal(lxm.GetPos(), "РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РєРѕРЅРµС† С„Р°Р№Р»Р°");
 
 		else 
 			if( !ignoreStream )
@@ -1098,17 +1099,17 @@ void FunctionBodyReader::ReadInitList()
 }
 
 
-// метод считывания тела
+// РјРµС‚РѕРґ СЃС‡РёС‚С‹РІР°РЅРёСЏ С‚РµР»Р°
 void FunctionBodyReader::Read()
 {
-	// требуется считывание try-блока
+	// С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚С‹РІР°РЅРёРµ try-Р±Р»РѕРєР°
 	if( lexicalAnalyzer.NextLexem() == KWTRY )
 	{
 		ReadTryBlock();	
 		return;
 	}
 
-	// если требуется считать список инициализации
+	// РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 	else if( lexicalAnalyzer.LastLexem() == ':' )
 		ReadInitList();
 
@@ -1122,8 +1123,8 @@ void FunctionBodyReader::Read()
 	for( ;; )
 	{
 		lxm = lexicalAnalyzer.NextLexem();
-		
-		// если не игнорируем поток, значит сохраняем лексему в контейнере
+
+		// РµСЃР»Рё РЅРµ РёРіРЅРѕСЂРёСЂСѓРµРј РїРѕС‚РѕРє, Р·РЅР°С‡РёС‚ СЃРѕС…СЂР°РЅСЏРµРј Р»РµРєСЃРµРјСѓ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ
 		if( !ignoreStream )
 			lexemContainer->push_back(lxm);
 
@@ -1139,18 +1140,18 @@ void FunctionBodyReader::Read()
 		}
 
 		else if( lxm == EOF )
-			theApp.Fatal(lxm.GetPos(), "неожиданный конец файла");
+			theApp.Fatal(lxm.GetPos(), "РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РєРѕРЅРµС† С„Р°Р№Р»Р°");
 	}
 }
 
 
-// считывает список, возвращает указатель на сформированный.
-// Рекурсивная ф-ция
+// СЃС‡РёС‚С‹РІР°РµС‚ СЃРїРёСЃРѕРє, РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅС‹Р№.
+// Р РµРєСѓСЂСЃРёРІРЅР°СЏ С„-С†РёСЏ
 void InitializationListReader::ReadList( ListInitComponent *lic )
 {
-	// '{' - считано, считываем до '}'. Если появляется '{',
-	// тогда создаем новый список и считываем в него, затем сохраняем
-	// его в текущем
+	// '{' - СЃС‡РёС‚Р°РЅРѕ, СЃС‡РёС‚С‹РІР°РµРј РґРѕ '}'. Р•СЃР»Рё РїРѕСЏРІР»СЏРµС‚СЃСЏ '{',
+	// С‚РѕРіРґР° СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЃРїРёСЃРѕРє Рё СЃС‡РёС‚С‹РІР°РµРј РІ РЅРµРіРѕ, Р·Р°С‚РµРј СЃРѕС…СЂР°РЅСЏРµРј
+	// РµРіРѕ РІ С‚РµРєСѓС‰РµРј
 	INTERNAL_IF( lic == NULL );
 	for( ;; )
 	{
@@ -1165,62 +1166,62 @@ void InitializationListReader::ReadList( ListInitComponent *lic )
 			lic->AddInitComponent(subLic);
 		}
 
-		// иначе считываем выражение
+		// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ
 		else
 		{
 			lexicalAnalyzer.BackLexem();
 			ExpressionReader er(lexicalAnalyzer, NULL, true);
 			er.Read();
 
-			// сохраняем выражение			
+			// СЃРѕС…СЂР°РЅСЏРµРј РІС‹СЂР°Р¶РµРЅРёРµ
 			lic->AddInitComponent( new AtomInitComponent(
 				er.GetResultOperand(), lexicalAnalyzer.LastLexem().GetPos()) );
 		}
 
-		// если '}', выходим
+		// РµСЃР»Рё '}', РІС‹С…РѕРґРёРј
 		if( lexicalAnalyzer.LastLexem() == '}' )
 			break;
 
-		// проверяем, если следующая лексема не ',', значит ошибка
+		// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РЅРµ ',', Р·РЅР°С‡РёС‚ РѕС€РёР±РєР°
 		if( lexicalAnalyzer.LastLexem() != ',' )
 			throw lexicalAnalyzer.LastLexem();
 	}
 
-	// завершаем формирование списка
+	// Р·Р°РІРµСЂС€Р°РµРј С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃРїРёСЃРєР°
 	lic->Done();
 
-	// считыванием следующую лексему для вызывающей функции
+	// СЃС‡РёС‚С‹РІР°РЅРёРµРј СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ РґР»СЏ РІС‹Р·С‹РІР°СЋС‰РµР№ С„СѓРЅРєС†РёРё
 	lexicalAnalyzer.NextLexem();
 }
 
 
-// считать список инициализации
+// СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 void InitializationListReader::Read()
-{		
+{
 	listInitComponent = new ListInitComponent(lexicalAnalyzer.LastLexem().GetPos());
-	ReadList( listInitComponent );	
+	ReadList( listInitComponent );
 	listInitComponent->Done();
 }
 
 
-// считать декларацию, если декларация некорректно сформирована,
-// считать выражение
+// СЃС‡РёС‚Р°С‚СЊ РґРµРєР»Р°СЂР°С†РёСЋ, РµСЃР»Рё РґРµРєР»Р°СЂР°С†РёСЏ РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ СЃС„РѕСЂРјРёСЂРѕРІР°РЅР°,
+// СЃС‡РёС‚Р°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ
 void TypeExpressionReader::Read( bool fnParam, bool readTypeDecl )
 {
 	bool canReadExpr = true;
 	DeclaratorReader dr( DV_LOCAL_DECLARATION, lexicalAnalyzer, true );
 
 	try {
-		dr.ReadTypeSpecifierList();		
+		dr.ReadTypeSpecifierList();
 		PNodePackage typeLst = dr.GetTypeSpecPackage();
 		int llc = typeLst->IsNoChildPackages() ? 0 : 
 			typeLst->GetLastChildPackage()->GetPackageID();
-			
-		// если не было считано типа, считываем выражение
+
+		// РµСЃР»Рё РЅРµ Р±С‹Р»Рѕ СЃС‡РёС‚Р°РЅРѕ С‚РёРїР°, СЃС‡РёС‚С‹РІР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ
 		if( typeLst->IsNoChildPackages() )
 		{
-			// проверим, если было считано две лексемы - имя и ':',
-			// значит имеем метку, генерируем синтаксическую ошибку сразу
+			// РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё Р±С‹Р»Рѕ СЃС‡РёС‚Р°РЅРѕ РґРІРµ Р»РµРєСЃРµРјС‹ - РёРјСЏ Рё ':',
+			// Р·РЅР°С‡РёС‚ РёРјРµРµРј РјРµС‚РєСѓ, РіРµРЅРµСЂРёСЂСѓРµРј СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєСѓСЋ РѕС€РёР±РєСѓ СЃСЂР°Р·Сѓ
 			if( lexicalAnalyzer.LastLexem() == ':' && lexicalAnalyzer.PrevLexem() == NAME )
 			{
 				Lexem prv = lexicalAnalyzer.PrevLexem();
@@ -1228,20 +1229,20 @@ void TypeExpressionReader::Read( bool fnParam, bool readTypeDecl )
 				throw LabelLexem( prv );
 			}
 
-			// иначе переходим к считке выражения
+			// РёРЅР°С‡Рµ РїРµСЂРµС…РѕРґРёРј Рє СЃС‡РёС‚РєРµ РІС‹СЂР°Р¶РµРЅРёСЏ
 			goto read_expression;
 		}
 
-		// считано больше одного пакета, либо считаны ключи составных
-		// типов выражение не получится
+		// СЃС‡РёС‚Р°РЅРѕ Р±РѕР»СЊС€Рµ РѕРґРЅРѕРіРѕ РїР°РєРµС‚Р°, Р»РёР±Рѕ СЃС‡РёС‚Р°РЅС‹ РєР»СЋС‡Рё СЃРѕСЃС‚Р°РІРЅС‹С…
+		// С‚РёРїРѕРІ РІС‹СЂР°Р¶РµРЅРёРµ РЅРµ РїРѕР»СѓС‡РёС‚СЃСЏ
 		else if( typeLst->GetChildPackageCount() > 1 ||
 			(llc == KWCLASS || llc == KWSTRUCT || llc == KWUNION || llc == KWENUM) )
 		{
-			// базовый тип, который возможно был считан
+			// Р±Р°Р·РѕРІС‹Р№ С‚РёРї, РєРѕС‚РѕСЂС‹Р№ РІРѕР·РјРѕР¶РЅРѕ Р±С‹Р» СЃС‡РёС‚Р°РЅ
 			const BaseType *rbt = NULL;
 
-			// возвращает true, если дальнейшие считывания деклараций не нужны,
-			// т.к. идет объявление типа заканчивающееся ';'
+			// РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РґР°Р»СЊРЅРµР№С€РёРµ СЃС‡РёС‚С‹РІР°РЅРёСЏ РґРµРєР»Р°СЂР°С†РёР№ РЅРµ РЅСѓР¶РЅС‹,
+			// С‚.Рє. РёРґРµС‚ РѕР±СЉСЏРІР»РµРЅРёРµ С‚РёРїР° Р·Р°РєР°РЅС‡РёРІР°СЋС‰РµРµСЃСЏ ';'
 			if( !fnParam && readTypeDecl && 
 				ParserUtils::LocalTypeDeclaration( lexicalAnalyzer, &*typeLst, rbt) )
 			{
@@ -1250,7 +1251,7 @@ void TypeExpressionReader::Read( bool fnParam, bool readTypeDecl )
 				np->AddChildPackage( typeLst.Release() );
 				resultPkg = np;
 
-				// если был считан класс, сохраняем его, перечисление не сохраняем
+				// РµСЃР»Рё Р±С‹Р» СЃС‡РёС‚Р°РЅ РєР»Р°СЃСЃ, СЃРѕС…СЂР°РЅСЏРµРј РµРіРѕ, РїРµСЂРµС‡РёСЃР»РµРЅРёРµ РЅРµ СЃРѕС…СЂР°РЅСЏРµРј
 				if( rbt->IsClassType() )
 					redClass = static_cast<const ClassType *>(rbt);
 				return ;
@@ -1260,22 +1261,22 @@ void TypeExpressionReader::Read( bool fnParam, bool readTypeDecl )
 		}
 	
 
-		// считываем декларатор
+		// СЃС‡РёС‚С‹РІР°РµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 		PNodePackage decl = dr.ReadNextDeclarator();
 
-		// если имя отстутствует, это считается синтаксической ошибкой,
-		// но только если не считываем параметр функции
+		// РµСЃР»Рё РёРјСЏ РѕС‚СЃС‚СѓС‚СЃС‚РІСѓРµС‚, СЌС‚Рѕ СЃС‡РёС‚Р°РµС‚СЃСЏ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕР№ РѕС€РёР±РєРѕР№,
+		// РЅРѕ С‚РѕР»СЊРєРѕ РµСЃР»Рё РЅРµ СЃС‡РёС‚С‹РІР°РµРј РїР°СЂР°РјРµС‚СЂ С„СѓРЅРєС†РёРё
 		if( decl->FindPackage(PC_QUALIFIED_NAME) < 0 && !fnParam)
 		{
-			// если количество производных типов больше 1,
-			// считывать выражение не имеет смысла
+			// РµСЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ Р±РѕР»СЊС€Рµ 1,
+			// СЃС‡РёС‚С‹РІР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ РЅРµ РёРјРµРµС‚ СЃРјС‹СЃР»Р°
 			if( decl->GetChildPackageCount() > 1 )
-				canReadExpr = false;			
+				canReadExpr = false;
 			throw lexicalAnalyzer.LastLexem();
 		}
 
-		// в этой точке может быть только декларация,
-		// поэтому сохраняем пакеты и выходим
+		// РІ СЌС‚РѕР№ С‚РѕС‡РєРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ РґРµРєР»Р°СЂР°С†РёСЏ,
+		// РїРѕСЌС‚РѕРјСѓ СЃРѕС…СЂР°РЅСЏРµРј РїР°РєРµС‚С‹ Рё РІС‹С…РѕРґРёРј
 		NodePackage *np= new NodePackage(PC_DECLARATION);
 		np->AddChildPackage( typeLst.Release() );
 		np->AddChildPackage( decl.Release() );
@@ -1284,18 +1285,18 @@ void TypeExpressionReader::Read( bool fnParam, bool readTypeDecl )
 		if( !ignore )
 			lexemContainer = new LexemContainer(dr.GetLexemContainer());
 
-		// сохраняем список инициализаторов, в случае успешной считки
+		// СЃРѕС…СЂР°РЅСЏРµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ, РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС€РЅРѕР№ СЃС‡РёС‚РєРё
 		initializatorList = dr.GetInitializatorList();
 		return;
 	
 	} catch( const LabelLexem & ) {
-		// перехватываем считанную лексему, передаем дальше
-		throw;	
+		// РїРµСЂРµС…РІР°С‚С‹РІР°РµРј СЃС‡РёС‚Р°РЅРЅСѓСЋ Р»РµРєСЃРµРјСѓ, РїРµСЂРµРґР°РµРј РґР°Р»СЊС€Рµ
+		throw;
 	} catch( const Lexem &lxm ) {
 
-		// произошла синтаксическая ошибка, например 'int (3)'
-		// вызовет такую ошибку. Тогда мы загружаем контейнер в 
-		// ридер выражения и считываем выражение
+		// РїСЂРѕРёР·РѕС€Р»Р° СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°, РЅР°РїСЂРёРјРµСЂ 'int (3)'
+		// РІС‹Р·РѕРІРµС‚ С‚Р°РєСѓСЋ РѕС€РёР±РєСѓ. РўРѕРіРґР° РјС‹ Р·Р°РіСЂСѓР¶Р°РµРј РєРѕРЅС‚РµР№РЅРµСЂ РІ 
+		// СЂРёРґРµСЂ РІС‹СЂР°Р¶РµРЅРёСЏ Рё СЃС‡РёС‚С‹РІР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ
 		if( canReadExpr )
 			goto read_expression;
 		else
@@ -1304,30 +1305,30 @@ void TypeExpressionReader::Read( bool fnParam, bool readTypeDecl )
 
 read_expression: 
 	LexemContainer *lc = const_cast<LexemContainer*>(&dr.GetLexemContainer());
-	lc->insert(lc->end(), dr.GetUndoContainer().begin(), dr.GetUndoContainer().end());	
+	lc->insert(lc->end(), dr.GetUndoContainer().begin(), dr.GetUndoContainer().end());
 	ExpressionReader er(lexicalAnalyzer, lc, noComa, noGT, ignore);	
 	er.Read();
-	
-	// создаем пакет с выражением в качестве результирующего	
+
+	// СЃРѕР·РґР°РµРј РїР°РєРµС‚ СЃ РІС‹СЂР°Р¶РµРЅРёРµРј РІ РєР°С‡РµСЃС‚РІРµ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РµРіРѕ	
 	resultPkg = new ExpressionPackage(er.GetResultOperand());
 	if( !ignore )
 		lexemContainer = er.GetLexemContainer();
 }
 
 
-// возвращает следующую лексему из потока, либо из контейнера, если тот не пуст
+// РІРѕР·РІСЂР°С‰Р°РµС‚ СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ РёР· РїРѕС‚РѕРєР°, Р»РёР±Рѕ РёР· РєРѕРЅС‚РµР№РЅРµСЂР°, РµСЃР»Рё С‚РѕС‚ РЅРµ РїСѓСЃС‚
 Lexem ExpressionReader::NextLexem()
 {
-	// если контейнер отката не пуст, вернуть лексему ИЗ него
+	// РµСЃР»Рё РєРѕРЅС‚РµР№РЅРµСЂ РѕС‚РєР°С‚Р° РЅРµ РїСѓСЃС‚, РІРµСЂРЅСѓС‚СЊ Р»РµРєСЃРµРјСѓ РР— РЅРµРіРѕ
 	if( canUndo )
 	{
 		INTERNAL_IF( undoContainer == NULL );
 		if( !undoContainer->empty() )
 		{
-			lastLxm = undoContainer->front();			
-			undoContainer->pop_front();						
+			lastLxm = undoContainer->front();
+			undoContainer->pop_front();
 
-			// сохраняем лексему в контейнере при необходимости
+			// СЃРѕС…СЂР°РЅСЏРµРј Р»РµРєСЃРµРјСѓ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё
 			if( !ignore)
 				lexemContainer->push_back(lastLxm);
 			return lastLxm;
@@ -1344,14 +1345,14 @@ Lexem ExpressionReader::NextLexem()
 }
 
 
-// возвращает в поток или в контейнер последнюю считанную лексему
+// РІРѕР·РІСЂР°С‰Р°РµС‚ РІ РїРѕС‚РѕРє РёР»Рё РІ РєРѕРЅС‚РµР№РЅРµСЂ РїРѕСЃР»РµРґРЅСЋСЋ СЃС‡РёС‚Р°РЅРЅСѓСЋ Р»РµРєСЃРµРјСѓ
 void ExpressionReader::BackLexem()
 {
-	// нельзя возвратить в поток пустую лексему
+	// РЅРµР»СЊР·СЏ РІРѕР·РІСЂР°С‚РёС‚СЊ РІ РїРѕС‚РѕРє РїСѓСЃС‚СѓСЋ Р»РµРєСЃРµРјСѓ
 	INTERNAL_IF( lastLxm.GetCode() == 0 );
 
-	// если контейнер отката не пуст, вернуть лексему В него
-	if( canUndo )	
+	// РµСЃР»Рё РєРѕРЅС‚РµР№РЅРµСЂ РѕС‚РєР°С‚Р° РЅРµ РїСѓСЃС‚, РІРµСЂРЅСѓС‚СЊ Р»РµРєСЃРµРјСѓ Р’ РЅРµРіРѕ
+	if( canUndo )
 	{
 		INTERNAL_IF( undoContainer == NULL );
 
@@ -1368,12 +1369,12 @@ void ExpressionReader::BackLexem()
 			lexemContainer->pop_back();
 	}
 
-	lastLxm = Lexem();		// очищаем лексему для того чтобы легче определять ошибки
+	lastLxm = Lexem(); // РѕС‡РёС‰Р°РµРј Р»РµРєСЃРµРјСѓ РґР»СЏ С‚РѕРіРѕ С‡С‚РѕР±С‹ Р»РµРіС‡Рµ РѕРїСЂРµРґРµР»СЏС‚СЊ РѕС€РёР±РєРё
 }
 
 
-// вернуть в undoContainer лексему. При этом если режим восстановления
-// не включен, он включается
+// РІРµСЂРЅСѓС‚СЊ РІ undoContainer Р»РµРєСЃРµРјСѓ. РџСЂРё СЌС‚РѕРј РµСЃР»Рё СЂРµР¶РёРј РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ
+// РЅРµ РІРєР»СЋС‡РµРЅ, РѕРЅ РІРєР»СЋС‡Р°РµС‚СЃСЏ
 void ExpressionReader::UndoLexem( const Lexem &lxm ) 
 {
 	if( !ignore )
@@ -1384,22 +1385,22 @@ void ExpressionReader::UndoLexem( const Lexem &lxm )
 }
 
 
-// проверить результирующий операнд, он не должен быть типом, 
-// перегруженной функцией, а также основным операндом, который
-// является нестатическим членом класса
+// РїСЂРѕРІРµСЂРёС‚СЊ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ РѕРїРµСЂР°РЅРґ, РѕРЅ РЅРµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С‚РёРїРѕРј, 
+// РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕР№ С„СѓРЅРєС†РёРµР№, Р° С‚Р°РєР¶Рµ РѕСЃРЅРѕРІРЅС‹Рј РѕРїРµСЂР°РЅРґРѕРј, РєРѕС‚РѕСЂС‹Р№
+// СЏРІР»СЏРµС‚СЃСЏ РЅРµСЃС‚Р°С‚РёС‡РµСЃРєРёРј С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР°
 void ExpressionReader::CheckResultOperand( POperand &pop )
 {
 	const Position &errPos = lexicalAnalyzer.LastLexem().GetPos();
 
-	// если тип или перегруженная ф-ция
-	if( pop->IsTypeOperand() || pop->IsOverloadOperand() )	
-	{	
-		theApp.Error(errPos, "%s не может быть выражением",
-			pop->IsTypeOperand() ? "тип" : "перегруженная функция");					
+	// РµСЃР»Рё С‚РёРї РёР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ С„-С†РёСЏ
+	if( pop->IsTypeOperand() || pop->IsOverloadOperand() )
+	{
+		theApp.Error(errPos, "%s РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµРј",
+			pop->IsTypeOperand() ? "С‚РёРї" : "РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ");
 		pop = ErrorOperand::GetInstance();
 	}
 
-	// если основной операнд, проверим доступен ли 'this' в данном месте
+	// РµСЃР»Рё РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ, РїСЂРѕРІРµСЂРёРј РґРѕСЃС‚СѓРїРµРЅ Р»Рё 'this' РІ РґР°РЅРЅРѕРј РјРµСЃС‚Рµ
 	else if( pop->IsPrimaryOperand() )
 	{
 		if( ExpressionMakerUtils::CheckMemberThisVisibility(pop, errPos) < 0 )
@@ -1408,23 +1409,23 @@ void ExpressionReader::CheckResultOperand( POperand &pop )
 }
 
 
-// считать выражение
+// СЃС‡РёС‚Р°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ
 void ExpressionReader::Read()
 {
-	// внимание! метод может генерировать исключительные ситуации,
-	// вызывающая функция должна их перехватывать
+	// РІРЅРёРјР°РЅРёРµ! РјРµС‚РѕРґ РјРѕР¶РµС‚ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅС‹Рµ СЃРёС‚СѓР°С†РёРё,
+	// РІС‹Р·С‹РІР°СЋС‰Р°СЏ С„СѓРЅРєС†РёСЏ РґРѕР»Р¶РЅР° РёС… РїРµСЂРµС…РІР°С‚С‹РІР°С‚СЊ
 	NextLexem();
 	EvalExpr1(resultOperand);
 
-	// проверим, чтобы результирующий операнд не был типом, 
-	// перегруженной функцией, а также основным операндом, который
-	// является нестатическим членом класса
+	// РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ РѕРїРµСЂР°РЅРґ РЅРµ Р±С‹Р» С‚РёРїРѕРј, 
+	// РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕР№ С„СѓРЅРєС†РёРµР№, Р° С‚Р°РєР¶Рµ РѕСЃРЅРѕРІРЅС‹Рј РѕРїРµСЂР°РЅРґРѕРј, РєРѕС‚РѕСЂС‹Р№
+	// СЏРІР»СЏРµС‚СЃСЏ РЅРµСЃС‚Р°С‚РёС‡РµСЃРєРёРј С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР°
 	CheckResultOperand(resultOperand);
 }
 
 
-// считать абстрактный декларатор, вернуть пакет с типом. Если 
-// noError - true, значит считанные лексемы загружаются в undoContainer
+// СЃС‡РёС‚Р°С‚СЊ Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РґРµРєР»Р°СЂР°С‚РѕСЂ, РІРµСЂРЅСѓС‚СЊ РїР°РєРµС‚ СЃ С‚РёРїРѕРј. Р•СЃР»Рё 
+// noError - true, Р·РЅР°С‡РёС‚ СЃС‡РёС‚Р°РЅРЅС‹Рµ Р»РµРєСЃРµРјС‹ Р·Р°РіСЂСѓР¶Р°СЋС‚СЃСЏ РІ undoContainer
 PNodePackage ExpressionReader::ReadAbstractDeclarator( bool noError, DeclarationVariant dv )
 {
 	bool canReadExpr = true;
@@ -1434,10 +1435,10 @@ PNodePackage ExpressionReader::ReadAbstractDeclarator( bool noError, Declaration
 		dr.ReadTypeSpecifierList();
 		PNodePackage typeLst = dr.GetTypeSpecPackage();
 
-		// если не было считано типа, загружаем считанные лексемы в undoContainer
-		// и выходим
+		// РµСЃР»Рё РЅРµ Р±С‹Р»Рѕ СЃС‡РёС‚Р°РЅРѕ С‚РёРїР°, Р·Р°РіСЂСѓР¶Р°РµРј СЃС‡РёС‚Р°РЅРЅС‹Рµ Р»РµРєСЃРµРјС‹ РІ undoContainer
+		// Рё РІС‹С…РѕРґРёРј
 		if( typeLst->IsNoChildPackages() )
-		{		
+		{
 			UndoLexemS(dr.GetLexemContainer());
 			UndoLexemS(dr.GetUndoContainer());
 			if( noError )
@@ -1446,24 +1447,24 @@ PNodePackage ExpressionReader::ReadAbstractDeclarator( bool noError, Declaration
 				throw lexicalAnalyzer.LastLexem();
 		}
 
-		// считано больше одного пакета, выражение не получится
+		// СЃС‡РёС‚Р°РЅРѕ Р±РѕР»СЊС€Рµ РѕРґРЅРѕРіРѕ РїР°РєРµС‚Р°, РІС‹СЂР°Р¶РµРЅРёРµ РЅРµ РїРѕР»СѓС‡РёС‚СЃСЏ
 		else if( typeLst->GetChildPackageCount() > 1 )
 			canReadExpr = false;
 
-		// считываем декларатор	
+		// СЃС‡РёС‚С‹РІР°РµРј РґРµРєР»Р°СЂР°С‚РѕСЂ	
 		PNodePackage decl = dr.ReadNextDeclarator();
 
-		// в этой точке может быть только декларация,
-		// поэтому сохраняем пакеты и выходим
+		// РІ СЌС‚РѕР№ С‚РѕС‡РєРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ РґРµРєР»Р°СЂР°С†РёСЏ,
+		// РїРѕСЌС‚РѕРјСѓ СЃРѕС…СЂР°РЅСЏРµРј РїР°РєРµС‚С‹ Рё РІС‹С…РѕРґРёРј
 		NodePackage *np= new NodePackage(PC_DECLARATION);
 		np->AddChildPackage( typeLst.Release() );
 		np->AddChildPackage( decl.Release() );
-		
-		// если необходимо сохранить считанные лексемы в контейнере,
-		// сохраняем их в конец
+
+		// РµСЃР»Рё РЅРµРѕР±С…РѕРґРёРјРѕ СЃРѕС…СЂР°РЅРёС‚СЊ СЃС‡РёС‚Р°РЅРЅС‹Рµ Р»РµРєСЃРµРјС‹ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ,
+		// СЃРѕС…СЂР°РЅСЏРµРј РёС… РІ РєРѕРЅРµС†
 		if( !ignore )
 			lexemContainer->insert(lexemContainer->end(),
-				dr.GetLexemContainer().begin(), dr.GetLexemContainer().end());		
+				dr.GetLexemContainer().begin(), dr.GetLexemContainer().end());
 		return np;
 
 	} catch( const Lexem & ) {
@@ -1477,9 +1478,9 @@ PNodePackage ExpressionReader::ReadAbstractDeclarator( bool noError, Declaration
 }
 
 
-// считать список выражений, вернуть список в упакованном виде,
-// Условием завершения считывания является лексема ')'. 
-// Результирующий список может быть пустым
+// СЃС‡РёС‚Р°С‚СЊ СЃРїРёСЃРѕРє РІС‹СЂР°Р¶РµРЅРёР№, РІРµСЂРЅСѓС‚СЊ СЃРїРёСЃРѕРє РІ СѓРїР°РєРѕРІР°РЅРЅРѕРј РІРёРґРµ,
+// РЈСЃР»РѕРІРёРµРј Р·Р°РІРµСЂС€РµРЅРёСЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ СЏРІР»СЏРµС‚СЃСЏ Р»РµРєСЃРµРјР° ')'. 
+// Р РµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ СЃРїРёСЃРѕРє РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј
 PExpressionList ExpressionReader::ReadExpressionList( )
 {
 	PExpressionList expList = new ExpressionList ;	
@@ -1491,17 +1492,17 @@ PExpressionList ExpressionReader::ReadExpressionList( )
 		POperand exp = NULL;
 		EvalExpr2( exp );
 
-		// проверяем считанное выражение на корректность
+		// РїСЂРѕРІРµСЂСЏРµРј СЃС‡РёС‚Р°РЅРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РЅР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ
 		CheckResultOperand( exp );
 
-		// сохраняем считанное выражение в списке
+		// СЃРѕС…СЂР°РЅСЏРµРј СЃС‡РёС‚Р°РЅРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРїРёСЃРєРµ
 		expList->push_back( exp );
-		
-		// если последняя лексема - ')', завершаем считывание
+
+		// РµСЃР»Рё РїРѕСЃР»РµРґРЅСЏСЏ Р»РµРєСЃРµРјР° - ')', Р·Р°РІРµСЂС€Р°РµРј СЃС‡РёС‚С‹РІР°РЅРёРµ
 		if( lastLxm == ')' )
 			break;
 
-		// значит следующая лексема должна быть ','
+		// Р·РЅР°С‡РёС‚ СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ ','
 		if( lastLxm != ',' )
 			throw lastLxm;
 
@@ -1513,15 +1514,15 @@ PExpressionList ExpressionReader::ReadExpressionList( )
 }
 
 
-// далее идут методы разбора выражений.
+// РґР°Р»РµРµ РёРґСѓС‚ РјРµС‚РѕРґС‹ СЂР°Р·Р±РѕСЂР° РІС‹СЂР°Р¶РµРЅРёР№.
 //
-// оператор ','
+// РѕРїРµСЂР°С‚РѕСЂ ','
 void ExpressionReader::EvalExpr1( POperand &result )
 {
 	POperand temp(NULL);
 
-	// при создании объекта контролируется переполнение стека
-	StackOverflowCatcher soc;	
+	// РїСЂРё СЃРѕР·РґР°РЅРёРё РѕР±СЉРµРєС‚Р° РєРѕРЅС‚СЂРѕР»РёСЂСѓРµС‚СЃСЏ РїРµСЂРµРїРѕР»РЅРµРЅРёРµ СЃС‚РµРєР°
+	StackOverflowCatcher soc;
 
 	EvalExpr2( result );
 	while( lastLxm == ',' && (!noComa || level) )
@@ -1529,39 +1530,39 @@ void ExpressionReader::EvalExpr1( POperand &result )
 		NextLexem();
 		EvalExpr2(temp);
 
-		// строим выражение из двух запятых
+		// СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ РёР· РґРІСѓС… Р·Р°РїСЏС‚С‹С…
 		result = BinaryExpressionCoordinator<ComaBinaryMaker>(result, temp, 
 			',', lastLxm.GetPos()).Coordinate();
 	}
 }
 
 
-// операторы присвоения '=', '+=','-=','*=','/=','%=','>>=','<<=','|=','&=','^=',
+// РѕРїРµСЂР°С‚РѕСЂС‹ РїСЂРёСЃРІРѕРµРЅРёСЏ '=', '+=','-=','*=','/=','%=','>>=','<<=','|=','&=','^=',
 // throw
 void ExpressionReader::EvalExpr2( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;	
-	int op;	
+	StackOverflowCatcher soc;
+	int op;
 
 	if( lastLxm == KWTHROW )
 	{
 		NextLexem();
 
-		// проверяем, если знак пунктуации, значит throw пустой,
-		// и выражение считывать не нужно
+		// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё Р·РЅР°Рє РїСѓРЅРєС‚СѓР°С†РёРё, Р·РЅР°С‡РёС‚ throw РїСѓСЃС‚РѕР№,
+		// Рё РІС‹СЂР°Р¶РµРЅРёРµ СЃС‡РёС‚С‹РІР°С‚СЊ РЅРµ РЅСѓР¶РЅРѕ
 		if( lastLxm != ';' && lastLxm != ',' && lastLxm != ':' )
-			EvalExpr2(temp);	
+			EvalExpr2(temp);
 
-		// иначе создаем операнд с типом void, как знак того,
-		// что throw вызывается без параметра
-		else		
+		// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РѕРїРµСЂР°РЅРґ СЃ С‚РёРїРѕРј void, РєР°Рє Р·РЅР°Рє С‚РѕРіРѕ,
+		// С‡С‚Рѕ throw РІС‹Р·С‹РІР°РµС‚СЃСЏ Р±РµР· РїР°СЂР°РјРµС‚СЂР°
+		else
 			temp = new PrimaryOperand( false, *new TypyziedEntity(
 				(BaseType*)&ImplicitTypeManager(KWVOID).GetImplicitType(), 
 				false, false, DerivedTypeList()) );
-				
-		// постройка выражения и выход
-		result = UnaryExpressionCoordinator(temp, KWTHROW, lastLxm.GetPos()).Coordinate();	
+
+		// РїРѕСЃС‚СЂРѕР№РєР° РІС‹СЂР°Р¶РµРЅРёСЏ Рё РІС‹С…РѕРґ
+		result = UnaryExpressionCoordinator(temp, KWTHROW, lastLxm.GetPos()).Coordinate();
 	}
 
 	else
@@ -1570,24 +1571,25 @@ void ExpressionReader::EvalExpr2( POperand &result )
 	EvalExpr3( result );
 	if( (op = lastLxm) == '=' || 
 		 op == PLUS_ASSIGN  || op == MINUS_ASSIGN ||
-		 op == MUL_ASSIGN   || op == DIV_ASSIGN   || op == PERCENT_ASSIGN || 
-		 op == LEFT_SHIFT_ASSIGN || op == RIGHT_SHIFT_ASSIGN ||
-		 op == AND_ASSIGN || op == XOR_ASSIGN || op == OR_ASSIGN )
-	
+		 op == MUL_ASSIGN  || op == DIV_ASSIGN  || 
+		 op == PERCENT_ASSIGN ||  op == LEFT_SHIFT_ASSIGN || 
+		 op == RIGHT_SHIFT_ASSIGN  ||  op == AND_ASSIGN || 
+		 op == XOR_ASSIGN  || op == OR_ASSIGN )
+
 	{
 		NextLexem();
-		EvalExpr2(temp);		
+		EvalExpr2(temp);
 
 		result = BinaryExpressionCoordinator<AssignBinaryMaker>(result, temp, 
 			op, lastLxm.GetPos()).Coordinate();
 	}
 
-	}	// else
+	} // else
 
 }
 
 
-// оператор '?:'
+// РѕРїРµСЂР°С‚РѕСЂ '?:'
 void ExpressionReader::EvalExpr3( POperand &result )
 {
 	POperand temp1(NULL), temp2(NULL);
@@ -1597,29 +1599,29 @@ void ExpressionReader::EvalExpr3( POperand &result )
 	if( lastLxm == '?' )
 	{
 		NextLexem();
-		
+
 		level++;
-		EvalExpr1(temp1);			
+		EvalExpr1(temp1);
 		level--;
-		
-		if( lastLxm != ':' )	
+
+		if( lastLxm != ':' )
 			throw lastLxm;
 
-		NextLexem();		
+		NextLexem();
 		EvalExpr4(temp2);
-		
-		// строим тернарное выражение
+
+		// СЃС‚СЂРѕРёРј С‚РµСЂРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 		result = TernaryExpressionCoordinator(result, temp1, temp2,
 			'?', lastLxm.GetPos()).Coordinate();
 	}
 }
 
 
-// оператор ||
+// РѕРїРµСЂР°С‚РѕСЂ ||
 void ExpressionReader::EvalExpr4( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;	
+	StackOverflowCatcher soc;
 
 	EvalExpr5( result );
 	while( lastLxm == LOGIC_OR )
@@ -1633,11 +1635,11 @@ void ExpressionReader::EvalExpr4( POperand &result )
 }
 
 
-// оператор &&
+// РѕРїРµСЂР°С‚РѕСЂ &&
 void ExpressionReader::EvalExpr5( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;	
+	StackOverflowCatcher soc;
 
 	EvalExpr6( result );
 	while( lastLxm == LOGIC_AND )
@@ -1651,11 +1653,11 @@ void ExpressionReader::EvalExpr5( POperand &result )
 }
 
 
-// оператор |
+// РѕРїРµСЂР°С‚РѕСЂ |
 void ExpressionReader::EvalExpr6( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;	
+	StackOverflowCatcher soc;
 
 	EvalExpr7( result );
 	while( lastLxm == '|' )
@@ -1669,7 +1671,7 @@ void ExpressionReader::EvalExpr6( POperand &result )
 }
 
 
-// оператор '^'
+// РѕРїРµСЂР°С‚РѕСЂ '^'
 void ExpressionReader::EvalExpr7( POperand &result )
 {
 	POperand temp(NULL);
@@ -1679,7 +1681,7 @@ void ExpressionReader::EvalExpr7( POperand &result )
 	while( lastLxm == '^' )
 	{
 		NextLexem();
-		EvalExpr8( temp );		
+		EvalExpr8( temp );
 
 		result = BinaryExpressionCoordinator<IntegralBinaryMaker>(result, temp, 
 				'^', lastLxm.GetPos()).Coordinate();
@@ -1687,7 +1689,7 @@ void ExpressionReader::EvalExpr7( POperand &result )
 }
 
 
-// оператор '&'
+// РѕРїРµСЂР°С‚РѕСЂ '&'
 void ExpressionReader::EvalExpr8( POperand &result )
 {
 	POperand temp(NULL);
@@ -1697,39 +1699,39 @@ void ExpressionReader::EvalExpr8( POperand &result )
 	while( lastLxm == '&' )
 	{
 		NextLexem();
-		EvalExpr9( temp );		
+		EvalExpr9( temp );
 
 		result = BinaryExpressionCoordinator<IntegralBinaryMaker>(result, temp, 
 					'&', lastLxm.GetPos()).Coordinate();
 	}
 }
 
-	
-// операторы ==, !=
+
+// РѕРїРµСЂР°С‚РѕСЂС‹ ==, !=
 void ExpressionReader::EvalExpr9( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;		
+	StackOverflowCatcher soc;
 
 	EvalExpr10( result );
 	while( lastLxm == EQUAL || lastLxm == NOT_EQUAL )
 	{
 		register int op = lastLxm;
 		NextLexem();
-		EvalExpr10( temp );		
-			
-		// строим операции сравнения
+		EvalExpr10( temp );
+
+		// СЃС‚СЂРѕРёРј РѕРїРµСЂР°С†РёРё СЃСЂР°РІРЅРµРЅРёСЏ
 		result = BinaryExpressionCoordinator<ConditionBinaryMaker>(result, temp, 
 				op, lastLxm.GetPos()).Coordinate();
-	}	
+	}
 }
 
 
-// операторы <=, <, >, >=
+// РѕРїРµСЂР°С‚РѕСЂС‹ <=, <, >, >=
 void ExpressionReader::EvalExpr10( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;			
+	StackOverflowCatcher soc;
 	register int op;
 
 	EvalExpr11( result );
@@ -1737,40 +1739,40 @@ void ExpressionReader::EvalExpr10( POperand &result )
 			op == '<' || op == '>' )
 	{
 		NextLexem();
-		EvalExpr11( temp );		
+		EvalExpr11( temp );
 
-		// строим операции сравнения
+		// СЃС‚СЂРѕРёРј РѕРїРµСЂР°С†РёРё СЃСЂР°РІРЅРµРЅРёСЏ
 		result = BinaryExpressionCoordinator<ConditionBinaryMaker>(result, temp, 
 				op, lastLxm.GetPos()).Coordinate();
-	}			
+	}
 }
 
 
-// операторы <<, >>
+// РѕРїРµСЂР°С‚РѕСЂС‹ <<, >>
 void ExpressionReader::EvalExpr11( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;			
+	StackOverflowCatcher soc;
 
 	EvalExpr12( result );
 	while( lastLxm == RIGHT_SHIFT || lastLxm == LEFT_SHIFT )
 	{
 		register int op = lastLxm;
 		NextLexem();
-		EvalExpr12( temp );		
+		EvalExpr12( temp );
 
-		// бинарные операции сдвига
+		// Р±РёРЅР°СЂРЅС‹Рµ РѕРїРµСЂР°С†РёРё СЃРґРІРёРіР°
 		result = BinaryExpressionCoordinator<IntegralBinaryMaker>(result, temp, 
 					op, lastLxm.GetPos()).Coordinate();
 	}
 }
 
 
-// операторы +, -
+// РѕРїРµСЂР°С‚РѕСЂС‹ +, -
 void ExpressionReader::EvalExpr12( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;			
+	StackOverflowCatcher soc;
 
 	EvalExpr13( result );
 	while( lastLxm == '+' || lastLxm == '-' )
@@ -1779,7 +1781,7 @@ void ExpressionReader::EvalExpr12( POperand &result )
 		NextLexem();
 		EvalExpr13( temp );	
 		
-		// строим бинарные операции сложения или вычитания
+		// СЃС‚СЂРѕРёРј Р±РёРЅР°СЂРЅС‹Рµ РѕРїРµСЂР°С†РёРё СЃР»РѕР¶РµРЅРёСЏ РёР»Рё РІС‹С‡РёС‚Р°РЅРёСЏ
 		result = op == '+' 
 			? 	BinaryExpressionCoordinator<PlusBinaryMaker>(result, temp, 
 					op, lastLxm.GetPos()).Coordinate()
@@ -1789,11 +1791,11 @@ void ExpressionReader::EvalExpr12( POperand &result )
 }
 
 
-// операторы *, /, %
+// РѕРїРµСЂР°С‚РѕСЂС‹ *, /, %
 void ExpressionReader::EvalExpr13( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;		
+	StackOverflowCatcher soc;
 
 	EvalExpr14( result );
 	while( lastLxm == '*' || lastLxm == '/' || lastLxm == '%' )
@@ -1801,24 +1803,24 @@ void ExpressionReader::EvalExpr13( POperand &result )
 		register int op = lastLxm;
 
 		NextLexem();
-		EvalExpr14( temp );	
+		EvalExpr14( temp );
 		
-		// конструируем либо интегральное выражение с оператором '%',
-		// либо арифметическое с '*' или '/'
+		// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј Р»РёР±Рѕ РёРЅС‚РµРіСЂР°Р»СЊРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ СЃ РѕРїРµСЂР°С‚РѕСЂРѕРј '%',
+		// Р»РёР±Рѕ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРѕРµ СЃ '*' РёР»Рё '/'
 		result = op == '%' 
 			?	BinaryExpressionCoordinator<IntegralBinaryMaker>(result, temp, 
 					op, lastLxm.GetPos()).Coordinate()
 			:	BinaryExpressionCoordinator<MulDivBinaryMaker>(result, temp, 
-					op, lastLxm.GetPos()).Coordinate();		
+					op, lastLxm.GetPos()).Coordinate();
 	}
 }
 
 
-// операторы .*, ->*
+// РѕРїРµСЂР°С‚РѕСЂС‹ .*, ->*
 void ExpressionReader::EvalExpr14( POperand &result )
 {
 	POperand temp(NULL);
-	StackOverflowCatcher soc;			
+	StackOverflowCatcher soc;
 
 	EvalExpr15( result );
 	while( lastLxm == DOT_POINT || lastLxm == ARROW_POINT )
@@ -1827,31 +1829,31 @@ void ExpressionReader::EvalExpr14( POperand &result )
 		NextLexem();
 		EvalExpr15( temp );	
 
-		// конструируем обращение к указателю на член		
+		// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј РѕР±СЂР°С‰РµРЅРёРµ Рє СѓРєР°Р·Р°С‚РµР»СЋ РЅР° С‡Р»РµРЅ
 		result = BinaryExpressionCoordinator<PointerToMemberBinaryMaker>(result, temp, 
 			op, lastLxm.GetPos()).Coordinate();
 	}
 }
 
 
-// операторы приведения типа '(тип)'
+// РѕРїРµСЂР°С‚РѕСЂС‹ РїСЂРёРІРµРґРµРЅРёСЏ С‚РёРїР° '(С‚РёРї)'
 void ExpressionReader::EvalExpr15( POperand &result )
 {
 	POperand temp(NULL);
 	StackOverflowCatcher soc;
 
-	// возможно имеем приведение типа
+	// РІРѕР·РјРѕР¶РЅРѕ РёРјРµРµРј РїСЂРёРІРµРґРµРЅРёРµ С‚РёРїР°
 	if( lastLxm == '(' )
 	{
-		// если имеем тип, считываем его. Иначе если имеем выражение
+		// РµСЃР»Рё РёРјРµРµРј С‚РёРї, СЃС‡РёС‚С‹РІР°РµРј РµРіРѕ. РРЅР°С‡Рµ РµСЃР»Рё РёРјРµРµРј РІС‹СЂР°Р¶РµРЅРёРµ
   		PNodePackage np = ReadAbstractDeclarator( true );
 
-		// если тип не считан, значит имеем выражение в скобках,
-		// и следует считатывать далее. lastLxm при этом не изменилась
+		// РµСЃР»Рё С‚РёРї РЅРµ СЃС‡РёС‚Р°РЅ, Р·РЅР°С‡РёС‚ РёРјРµРµРј РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…,
+		// Рё СЃР»РµРґСѓРµС‚ СЃС‡РёС‚Р°С‚С‹РІР°С‚СЊ РґР°Р»РµРµ. lastLxm РїСЂРё СЌС‚РѕРј РЅРµ РёР·РјРµРЅРёР»Р°СЃСЊ
 		if( np.IsNull() )
 			EvalExpr16(result);
 
-		// иначе следующая лексема должна быть ')' и опять вызываем рекурсию
+		// РёРЅР°С‡Рµ СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ ')' Рё РѕРїСЏС‚СЊ РІС‹Р·С‹РІР°РµРј СЂРµРєСѓСЂСЃРёСЋ
 		else
 		{
 			lastLxm = !ignore ? lexemContainer->back() : lexicalAnalyzer.LastLexem();
@@ -1860,11 +1862,11 @@ void ExpressionReader::EvalExpr15( POperand &result )
 
 			NextLexem();
 
-			// строим операнд
+			// СЃС‚СЂРѕРёРј РѕРїРµСЂР°РЅРґ
 			result = ExpressionMakerUtils::MakeTypeOperand(*np);
 			EvalExpr15( temp );
 
-			// конструируем явное приведение типа
+			// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј СЏРІРЅРѕРµ РїСЂРёРІРµРґРµРЅРёРµ С‚РёРїР°
 			result = BinaryExpressionCoordinator<TypeCastBinaryMaker>(result, temp, 
 				OC_CAST, lastLxm.GetPos()).Coordinate();
 		}
@@ -1875,17 +1877,17 @@ void ExpressionReader::EvalExpr15( POperand &result )
 }
 
 
-// унарные операторы !, ~, +, -, *, &. size, ++, --, new, delete
+// СѓРЅР°СЂРЅС‹Рµ РѕРїРµСЂР°С‚РѕСЂС‹ !, ~, +, -, *, &. size, ++, --, new, delete
 void ExpressionReader::EvalExpr16( POperand &result )
 {
 	POperand temp(NULL);
 	StackOverflowCatcher soc;
-	register int op;	
+	register int op;
 
 	if( (op = lastLxm) == '!' || op == '~' ||
-		 op == '+'			  || op == '-' || 
-		 op == '*'			  || op == '&' ||
-		 op == INCREMENT	  || op == DECREMENT )
+		 op == '+'  || op == '-' || 
+		 op == '*'  || op == '&' ||
+		 op == INCREMENT  || op == DECREMENT )
 		 
 	{
 		NextLexem();
@@ -1896,48 +1898,48 @@ void ExpressionReader::EvalExpr16( POperand &result )
 
 	else if( op == KWSIZEOF )
 	{
-		// здесь возникает неоднозначность, считывать тип, или
-		// выражение.
+		// Р·РґРµСЃСЊ РІРѕР·РЅРёРєР°РµС‚ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ, СЃС‡РёС‚С‹РІР°С‚СЊ С‚РёРї, РёР»Рё
+		// РІС‹СЂР°Р¶РµРЅРёРµ.
 		NextLexem();
 
-		// если имеем '(', вероятно это может быть тип
+		// РµСЃР»Рё РёРјРµРµРј '(', РІРµСЂРѕСЏС‚РЅРѕ СЌС‚Рѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РёРї
 		if( lastLxm == '(' )
 		{
-			// если имеем тип, считываем его. Иначе если имеем выражение
+			// РµСЃР»Рё РёРјРµРµРј С‚РёРї, СЃС‡РёС‚С‹РІР°РµРј РµРіРѕ. РРЅР°С‡Рµ РµСЃР»Рё РёРјРµРµРј РІС‹СЂР°Р¶РµРЅРёРµ
 			PNodePackage np = ReadAbstractDeclarator( true );
 
-			// если тип не считан, значит имеем выражение в скобках,
-			// и следует считатывать далее. lastLxm при этом не изменилась
+			// РµСЃР»Рё С‚РёРї РЅРµ СЃС‡РёС‚Р°РЅ, Р·РЅР°С‡РёС‚ РёРјРµРµРј РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…,
+			// Рё СЃР»РµРґСѓРµС‚ СЃС‡РёС‚Р°С‚С‹РІР°С‚СЊ РґР°Р»РµРµ. lastLxm РїСЂРё СЌС‚РѕРј РЅРµ РёР·РјРµРЅРёР»Р°СЃСЊ
 			if( np.IsNull() )
-				level--,				// уменьшаем уровень, т.к. далее его увеличат
+				level--, // СѓРјРµРЅСЊС€Р°РµРј СѓСЂРѕРІРµРЅСЊ, С‚.Рє. РґР°Р»РµРµ РµРіРѕ СѓРІРµР»РёС‡Р°С‚
 				EvalExpr17(result);
 
-			// иначе следующая лексема должна быть ')' и строим типовой операнд
+			// РёРЅР°С‡Рµ СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ ')' Рё СЃС‚СЂРѕРёРј С‚РёРїРѕРІРѕР№ РѕРїРµСЂР°РЅРґ
 			else
-			{				
+			{
 				lastLxm = !ignore ? lexemContainer->back() : lexicalAnalyzer.LastLexem();
 				if( lastLxm != ')' )
 					throw lastLxm;
-				
-				NextLexem();								
-				// строим операнд
+
+				NextLexem();
+				// СЃС‚СЂРѕРёРј РѕРїРµСЂР°РЅРґ
 				result = ExpressionMakerUtils::MakeTypeOperand(*np);
-			}			
+			}
 		}
-		
-		// иначе неоднозначности нет и мы считываем унарное выражение
+
+		// РёРЅР°С‡Рµ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё РЅРµС‚ Рё РјС‹ СЃС‡РёС‚С‹РІР°РµРј СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 		else
 			EvalExpr15( result );
 
-		// конструируем выражение sizeof
+		// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј РІС‹СЂР°Р¶РµРЅРёРµ sizeof
 		result = UnaryExpressionCoordinator(result, KWSIZEOF, lastLxm.GetPos()).Coordinate();
 	}
 
-	// операторы выделения памяти и освобождения. Также проверяется конструкция
-	// которая начинается с '::', т.к. это может быть '::new' или '::delete'
+	// РѕРїРµСЂР°С‚РѕСЂС‹ РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё Рё РѕСЃРІРѕР±РѕР¶РґРµРЅРёСЏ. РўР°РєР¶Рµ РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РєРѕРЅСЃС‚СЂСѓРєС†РёСЏ
+	// РєРѕС‚РѕСЂР°СЏ РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ '::', С‚.Рє. СЌС‚Рѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ '::new' РёР»Рё '::delete'
 	else if( op == KWNEW || op == KWDELETE || op == COLON_COLON )
 	{
-		// проверяем следующую лексему
+		// РїСЂРѕРІРµСЂСЏРµРј СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ
 		bool globalOp = false;
 		if( op == COLON_COLON )
 		{
@@ -1946,9 +1948,9 @@ void ExpressionReader::EvalExpr16( POperand &result )
 			Lexem temp = lastLxm;
 			NextLexem();
 			if( lastLxm != KWNEW && lastLxm != KWDELETE )
-			{				
+			{
 				UndoLexem(lastLxm);
-				UndoLexem(temp);				
+				UndoLexem(temp);
 				NextLexem();
 				EvalExpr17( result );
 				return;
@@ -1958,48 +1960,48 @@ void ExpressionReader::EvalExpr16( POperand &result )
 				op = lastLxm;
 		}
 
-		// считываем полную конструкцию 'new'
+		// СЃС‡РёС‚С‹РІР°РµРј РїРѕР»РЅСѓСЋ РєРѕРЅСЃС‚СЂСѓРєС†РёСЋ 'new'
 		bool arrayOp = false;
 		if( op == KWNEW )
 		{
-			// в самом развернутом виде, выражение 'new', содержит:
-			// список выражений-размещений, тип выделяемой памяти,
-			// список инициализаторов. В первом случае, возникает
-			// неоднозначность, т.к. и размещение и тип, могут быть в 
-			// скобках.
+			// РІ СЃР°РјРѕРј СЂР°Р·РІРµСЂРЅСѓС‚РѕРј РІРёРґРµ, РІС‹СЂР°Р¶РµРЅРёРµ 'new', СЃРѕРґРµСЂР¶РёС‚:
+			// СЃРїРёСЃРѕРє РІС‹СЂР°Р¶РµРЅРёР№-СЂР°Р·РјРµС‰РµРЅРёР№, С‚РёРї РІС‹РґРµР»СЏРµРјРѕР№ РїР°РјСЏС‚Рё,
+			// СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ. Р’ РїРµСЂРІРѕРј СЃР»СѓС‡Р°Рµ, РІРѕР·РЅРёРєР°РµС‚
+			// РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ, С‚.Рє. Рё СЂР°Р·РјРµС‰РµРЅРёРµ Рё С‚РёРї, РјРѕРіСѓС‚ Р±С‹С‚СЊ РІ 
+			// СЃРєРѕР±РєР°С….
 			NextLexem();
 
-			// параметры для new-с размещением
+			// РїР°СЂР°РјРµС‚СЂС‹ РґР»СЏ new-СЃ СЂР°Р·РјРµС‰РµРЅРёРµРј
 			PExpressionList placementList = new ExpressionList;
 
-			// тип выделяемой памяти			
+			// С‚РёРї РІС‹РґРµР»СЏРµРјРѕР№ РїР°РјСЏС‚Рё
 			PNodePackage allocType = NULL;
 
-			// список инициализаторов 
+			// СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ 
 			PExpressionList initList = new ExpressionList;
 
-			// пробуем считать сначала декларатор, а уже потом выражение
+			// РїСЂРѕР±СѓРµРј СЃС‡РёС‚Р°С‚СЊ СЃРЅР°С‡Р°Р»Р° РґРµРєР»Р°СЂР°С‚РѕСЂ, Р° СѓР¶Рµ РїРѕС‚РѕРј РІС‹СЂР°Р¶РµРЅРёРµ
 			if( lastLxm == '(' )
-			{				
-				// пытаемся считать декларатор				
-  				allocType = ReadAbstractDeclarator( true );				
+			{
+				// РїС‹С‚Р°РµРјСЃСЏ СЃС‡РёС‚Р°С‚СЊ РґРµРєР»Р°СЂР°С‚РѕСЂ
+				allocType = ReadAbstractDeclarator( true );
 
-				// если тип не считан, значит имеем, список выражений в скобках,
-				// которые представляют параметры для new-с размещением
+				// РµСЃР»Рё С‚РёРї РЅРµ СЃС‡РёС‚Р°РЅ, Р·РЅР°С‡РёС‚ РёРјРµРµРј, СЃРїРёСЃРѕРє РІС‹СЂР°Р¶РµРЅРёР№ РІ СЃРєРѕР±РєР°С…,
+				// РєРѕС‚РѕСЂС‹Рµ РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‚ РїР°СЂР°РјРµС‚СЂС‹ РґР»СЏ new-СЃ СЂР°Р·РјРµС‰РµРЅРёРµРј
 				if( allocType.IsNull() )
 				{
-					NextLexem();					
-					placementList = ReadExpressionList();						
 					NextLexem();
-		
-					// список выражений не может быть пустой
+					placementList = ReadExpressionList();
+					NextLexem();
+
+					// СЃРїРёСЃРѕРє РІС‹СЂР°Р¶РµРЅРёР№ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№
 					if( placementList->empty() )
 						throw lastLxm;
 				}
-				
-				// иначе декларатор должен оканчиваться ')'
+
+				// РёРЅР°С‡Рµ РґРµРєР»Р°СЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ РѕРєР°РЅС‡РёРІР°С‚СЊСЃСЏ ')'
 				else
-				{					
+				{
 					if( lexicalAnalyzer.LastLexem() != ')' )
 						throw lastLxm;
 					NextLexem();
@@ -2007,11 +2009,11 @@ void ExpressionReader::EvalExpr16( POperand &result )
 				}
 			}
 
-			// тип может быть в скобках, только после списка выражений с размещением,
-			// поэтому лексему возвращать не следует
+			// С‚РёРї РјРѕР¶РµС‚ Р±С‹С‚СЊ РІ СЃРєРѕР±РєР°С…, С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ СЃРїРёСЃРєР° РІС‹СЂР°Р¶РµРЅРёР№ СЃ СЂР°Р·РјРµС‰РµРЅРёРµРј,
+			// РїРѕСЌС‚РѕРјСѓ Р»РµРєСЃРµРјСѓ РІРѕР·РІСЂР°С‰Р°С‚СЊ РЅРµ СЃР»РµРґСѓРµС‚
 			if( lastLxm == '(' )
 			{
-				allocType = ReadAbstractDeclarator( false );	
+				allocType = ReadAbstractDeclarator( false );
 				if( lexicalAnalyzer.LastLexem() != ')' )
 					throw lastLxm;
 				NextLexem();
@@ -2022,14 +2024,14 @@ void ExpressionReader::EvalExpr16( POperand &result )
 				BackLexem();
 				allocType = ReadAbstractDeclarator( false, DV_NEW_EXPRESSION );	
 
-				// получаем следующую лексему. Если лексема является оператором
-				// и не является производным типом или '(', 
+				// РїРѕР»СѓС‡Р°РµРј СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ. Р•СЃР»Рё Р»РµРєСЃРµРјР° СЏРІР»СЏРµС‚СЃСЏ РѕРїРµСЂР°С‚РѕСЂРѕРј
+				// Рё РЅРµ СЏРІР»СЏРµС‚СЃСЏ РїСЂРѕРёР·РІРѕРґРЅС‹Рј С‚РёРїРѕРј РёР»Рё '(', 
 				Lexem temp = lexicalAnalyzer.LastLexem();
 				if( NextLexem() != '(' )
 				{
-					// если последняя считанная лексема была лексема после ']',
-					// она остается в буфере и равна lastLxm, поэтому не следует
-					// ее возвращать анализатору
+					// РµСЃР»Рё РїРѕСЃР»РµРґРЅСЏСЏ СЃС‡РёС‚Р°РЅРЅР°СЏ Р»РµРєСЃРµРјР° Р±С‹Р»Р° Р»РµРєСЃРµРјР° РїРѕСЃР»Рµ ']',
+					// РѕРЅР° РѕСЃС‚Р°РµС‚СЃСЏ РІ Р±СѓС„РµСЂРµ Рё СЂР°РІРЅР° lastLxm, РїРѕСЌС‚РѕРјСѓ РЅРµ СЃР»РµРґСѓРµС‚
+					// РµРµ РІРѕР·РІСЂР°С‰Р°С‚СЊ Р°РЅР°Р»РёР·Р°С‚РѕСЂСѓ
 					if( !(temp.GetPos().col == lastLxm.GetPos().col &&
 						  temp.GetPos().line == lastLxm.GetPos().line) )
 						BackLexem() ;
@@ -2037,32 +2039,32 @@ void ExpressionReader::EvalExpr16( POperand &result )
 					lexicalAnalyzer.SetLastLexem( temp );
 				}
 			}
-			
+
 		read_init_list:
-			
-			// считываем список инициализаторов если требуется
+
+			// СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ
 			if( lastLxm == '(' )
 			{
 				NextLexem();
-				initList = ReadExpressionList();	
+				initList = ReadExpressionList();
 				NextLexem();
 			}
 
-			// в самом конце строим выражение. Следует учесть, что
-			// строитель new, также как и строитель вызова функции, должен
-			// сам позаботиться о входных параметрах, а также о поиске
-			// перегруженного оператора			
+			// РІ СЃР°РјРѕРј РєРѕРЅС†Рµ СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ. РЎР»РµРґСѓРµС‚ СѓС‡РµСЃС‚СЊ, С‡С‚Рѕ
+			// СЃС‚СЂРѕРёС‚РµР»СЊ new, С‚Р°РєР¶Рµ РєР°Рє Рё СЃС‚СЂРѕРёС‚РµР»СЊ РІС‹Р·РѕРІР° С„СѓРЅРєС†РёРё, РґРѕР»Р¶РµРЅ
+			// СЃР°Рј РїРѕР·Р°Р±РѕС‚РёС‚СЊСЃСЏ Рѕ РІС…РѕРґРЅС‹С… РїР°СЂР°РјРµС‚СЂР°С…, Р° С‚Р°РєР¶Рµ Рѕ РїРѕРёСЃРєРµ
+			// РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
 			result = NewTernaryMaker( 
 				(*allocType), placementList, initList,
 				globalOp, lastLxm.GetPos()).Make();
 		}
 
-		// иначе считываем 'delete'
+		// РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј 'delete'
 		else
 		{
 			NextLexem();
 
-			// может быть освобождение массива			
+			// РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕСЃРІРѕР±РѕР¶РґРµРЅРёРµ РјР°СЃСЃРёРІР°
 			if( lastLxm == '[' )
 				if( NextLexem() != ']' )
 					throw lastLxm;
@@ -2072,67 +2074,67 @@ void ExpressionReader::EvalExpr16( POperand &result )
 					NextLexem();
 				}
 
-			// считываем выражение приведения
+			// СЃС‡РёС‚С‹РІР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ РїСЂРёРІРµРґРµРЅРёСЏ
 			EvalExpr15(result);
 
-			// конструируем операцию освобождения памяти. Если вызывается глобальный
-			// оператор, коды операторов отрицательны
+			// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј РѕРїРµСЂР°С†РёСЋ РѕСЃРІРѕР±РѕР¶РґРµРЅРёСЏ РїР°РјСЏС‚Рё. Р•СЃР»Рё РІС‹Р·С‹РІР°РµС‚СЃСЏ РіР»РѕР±Р°Р»СЊРЅС‹Р№
+			// РѕРїРµСЂР°С‚РѕСЂ, РєРѕРґС‹ РѕРїРµСЂР°С‚РѕСЂРѕРІ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹
 			int opc = (arrayOp ? OC_DELETE_ARRAY : KWDELETE);
 			result = UnaryExpressionCoordinator(result, globalOp ? -opc : opc,
 				lastLxm.GetPos()).Coordinate();
 		}
 	}
-	
-	else	
-		EvalExpr17( result );		
+
+	else
+		EvalExpr17( result );
 }
 
 
-// операторы '()', '[]', '->', '.', постфиксные ++, --,
+// РѕРїРµСЂР°С‚РѕСЂС‹ '()', '[]', '->', '.', РїРѕСЃС‚С„РёРєСЃРЅС‹Рµ ++, --,
 // dynamic_cast, static_cast, const_cast, reinterpret_cast, typeid
 void ExpressionReader::EvalExpr17( POperand &result )
-{		
+{
 	POperand temp(NULL);
 	StackOverflowCatcher soc;
 	int op;
 
-	// явное приведение типа
+	// СЏРІРЅРѕРµ РїСЂРёРІРµРґРµРЅРёРµ С‚РёРїР°
 	if( lastLxm == KWDYNAMIC_CAST || lastLxm == KWSTATIC_CAST ||
 		lastLxm == KWREINTERPRET_CAST || lastLxm == KWCONST_CAST )
 	{
 		op = lastLxm;
 
-		// далее должно идти '<' тип '>'
+		// РґР°Р»РµРµ РґРѕР»Р¶РЅРѕ РёРґС‚Рё '<' С‚РёРї '>'
 		if( NextLexem() != '<' )
 			throw lastLxm;
 
-		// считываем тип		
+		// СЃС‡РёС‚С‹РІР°РµРј С‚РёРї
 		PNodePackage np = ReadAbstractDeclarator( false );
 		lastLxm = !ignore ? lexemContainer->back() : lexicalAnalyzer.LastLexem();
-		
-		// тип должен заканчиваться на '>', следом должно идти 
-		// выражение в скобках
+
+		// С‚РёРї РґРѕР»Р¶РµРЅ Р·Р°РєР°РЅС‡РёРІР°С‚СЊСЃСЏ РЅР° '>', СЃР»РµРґРѕРј РґРѕР»Р¶РЅРѕ РёРґС‚Рё 
+		// РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…
 		if( lastLxm != '>' )
 			throw lastLxm;
 
 		if( NextLexem() != '(' )
 			throw lastLxm;
 
-		// считываем выражение
+		// СЃС‡РёС‚С‹РІР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ
 		level++;
 		NextLexem();
-		EvalExpr1( temp );	
+		EvalExpr1( temp );
 		level--;
 
-		// должна скобка
+		// РґРѕР»Р¶РЅР° СЃРєРѕР±РєР°
 		if( lastLxm != ')' )
 			throw lastLxm;
 
-		// создаем типовой операнд, на основе считанного пакета
+		// СЃРѕР·РґР°РµРј С‚РёРїРѕРІРѕР№ РѕРїРµСЂР°РЅРґ, РЅР° РѕСЃРЅРѕРІРµ СЃС‡РёС‚Р°РЅРЅРѕРіРѕ РїР°РєРµС‚Р°
 		INTERNAL_IF( np.IsNull());
 		result = ExpressionMakerUtils::MakeTypeOperand(*np);
 
-		// конструируем приведение типа
+		// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј РїСЂРёРІРµРґРµРЅРёРµ С‚РёРїР°
 		switch(op)
 		{
 		case KWDYNAMIC_CAST: 
@@ -2152,43 +2154,43 @@ void ExpressionReader::EvalExpr17( POperand &result )
 
 		case KWCONST_CAST:
 			result = BinaryExpressionCoordinator<ConstCastBinaryMaker>(
-								result, temp, op, lastLxm.GetPos()).Coordinate();		
+								result, temp, op, lastLxm.GetPos()).Coordinate();
 			break;
 		default:
-			INTERNAL( "неизвестный код оператора" );
+			INTERNAL( "РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ РѕРїРµСЂР°С‚РѕСЂР°" );
 		}
 
 		NextLexem();
 	}
 
-	// операция typeid
+	// РѕРїРµСЂР°С†РёСЏ typeid
 	else if( lastLxm == KWTYPEID )
 	{
-		// typeid ( <тип или выражение> )
+		// typeid ( <С‚РёРї РёР»Рё РІС‹СЂР°Р¶РµРЅРёРµ> )
 		if( NextLexem() != '(' )
 			throw lastLxm;
 
-		// пытаемся сначала считать тип
-  		PNodePackage np = ReadAbstractDeclarator( true );
+		// РїС‹С‚Р°РµРјСЃСЏ СЃРЅР°С‡Р°Р»Р° СЃС‡РёС‚Р°С‚СЊ С‚РёРї
+		PNodePackage np = ReadAbstractDeclarator( true );
 
-		// если тип не считан, значит имеем выражение в скобках,
-		// и следует считатывать далее. lastLxm при этом не изменилась
-		if( np.IsNull() )					
-			EvalExpr18(result);		
+		// РµСЃР»Рё С‚РёРї РЅРµ СЃС‡РёС‚Р°РЅ, Р·РЅР°С‡РёС‚ РёРјРµРµРј РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…,
+		// Рё СЃР»РµРґСѓРµС‚ СЃС‡РёС‚Р°С‚С‹РІР°С‚СЊ РґР°Р»РµРµ. lastLxm РїСЂРё СЌС‚РѕРј РЅРµ РёР·РјРµРЅРёР»Р°СЃСЊ
+		if( np.IsNull() )
+			EvalExpr18(result);
 
-		// иначе следующая лексема должна быть ')' и опять вызываем рекурсию
+		// РёРЅР°С‡Рµ СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ ')' Рё РѕРїСЏС‚СЊ РІС‹Р·С‹РІР°РµРј СЂРµРєСѓСЂСЃРёСЋ
 		else
 		{
 			lastLxm = !ignore ? lexemContainer->back() : lexicalAnalyzer.LastLexem();
 			if( lastLxm != ')' )
 				throw lastLxm;
 			NextLexem();
-			// строим типовой операнд
-			result = ExpressionMakerUtils::MakeTypeOperand(*np);		
+			// СЃС‚СЂРѕРёРј С‚РёРїРѕРІРѕР№ РѕРїРµСЂР°РЅРґ
+			result = ExpressionMakerUtils::MakeTypeOperand(*np);
 		}
-		
-		// конструируем операцию typeid
-		result = UnaryExpressionCoordinator(result, KWTYPEID, lastLxm.GetPos()).Coordinate();		
+
+		// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј РѕРїРµСЂР°С†РёСЋ typeid
+		result = UnaryExpressionCoordinator(result, KWTYPEID, lastLxm.GetPos()).Coordinate();
 	}
 
 	else
@@ -2205,12 +2207,12 @@ void ExpressionReader::EvalExpr17( POperand &result )
 
 			if( op == '(' )
 			{
-				// Считыаваем список параметров функции, который может быть
-				// пустой, сохраняем его 
+				// РЎС‡РёС‚С‹Р°РІР°РµРј СЃРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ С„СѓРЅРєС†РёРё, РєРѕС‚РѕСЂС‹Р№ РјРѕР¶РµС‚ Р±С‹С‚СЊ
+				// РїСѓСЃС‚РѕР№, СЃРѕС…СЂР°РЅСЏРµРј РµРіРѕ 
 				PExpressionList parametrList = ReadExpressionList();
 				INTERNAL_IF( lastLxm != ')' );
 
-				// конструируем вызов функции
+				// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё
 				result = FunctionCallBinaryMaker(result, 
 					parametrList, OC_FUNCTION, lastLxm.GetPos()).Make(); 
 			}
@@ -2222,55 +2224,55 @@ void ExpressionReader::EvalExpr17( POperand &result )
 				else
 				{
 					level++;
-					EvalExpr1( temp );		// вычисляем выражение-индекс
+					EvalExpr1( temp ); // РІС‹С‡РёСЃР»СЏРµРј РІС‹СЂР°Р¶РµРЅРёРµ-РёРЅРґРµРєСЃ
 					level--;
 
 					if( lastLxm != ']' )
-						throw lastLxm;					
+						throw lastLxm;
 				}
 
-				// конструируем обращение к элементу массива
+				// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј РѕР±СЂР°С‰РµРЅРёРµ Рє СЌР»РµРјРµРЅС‚Сѓ РјР°СЃСЃРёРІР°
 				result = BinaryExpressionCoordinator<ArrayBinaryMaker>(
 					result, temp, OC_ARRAY, lastLxm.GetPos()).Coordinate();
 			}
 		}
 
-		// селектор члена класса
+		// СЃРµР»РµРєС‚РѕСЂ С‡Р»РµРЅР° РєР»Р°СЃСЃР°
 		else if( lastLxm == '.' || lastLxm == ARROW )
 		{
 			op = lastLxm;
 
-			// считываем поле
+			// СЃС‡РёС‚С‹РІР°РµРј РїРѕР»Рµ
 			INTERNAL_IF( !undoContainer->empty() );
 			QualifiedConstructionReader qcr(lexicalAnalyzer, false, false);
 			PNodePackage id = qcr.ReadQualifiedConstruction();
-		
-			// не может быть указателя на член
+
+			// РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С‡Р»РµРЅ
 			if( qcr.IsPointerToMember() )
 				throw qcr.GetLexemContainer().back();
-			
-			// сохраняем считанные лексемы в контейнере, если требуется
+
+			// СЃРѕС…СЂР°РЅСЏРµРј СЃС‡РёС‚Р°РЅРЅС‹Рµ Р»РµРєСЃРµРјС‹ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ, РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ
 			if( !ignore )
 				lexemContainer->insert(lexemContainer->end(), 
 					qcr.GetLexemContainer().begin(), qcr.GetLexemContainer().end());
 
-			// строим результат
+			// СЃС‚СЂРѕРёРј СЂРµР·СѓР»СЊС‚Р°С‚
 			result = SelectorBinaryMaker(result, *id, op, lastLxm.GetPos()).Make();
-			
-			// если считан оператор приведения, и он взят в скобки, скобка
-			// теряется, поэтому следует ее восстановить
+
+			// РµСЃР»Рё СЃС‡РёС‚Р°РЅ РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ, Рё РѕРЅ РІР·СЏС‚ РІ СЃРєРѕР±РєРё, СЃРєРѕР±РєР°
+			// С‚РµСЂСЏРµС‚СЃСЏ, РїРѕСЌС‚РѕРјСѓ СЃР»РµРґСѓРµС‚ РµРµ РІРѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ
 			if( id->GetLastChildPackage()->GetPackageID() == PC_CAST_OPERATOR && 
 				qcr.GetLexemContainer().back() == ')' )
 			{
 				lastLxm = qcr.GetLexemContainer().back();
 				continue;
-			}			
+			}
 		}
 
-		// постфиксный инкремент, декремент
+		// РїРѕСЃС‚С„РёРєСЃРЅС‹Р№ РёРЅРєСЂРµРјРµРЅС‚, РґРµРєСЂРµРјРµРЅС‚
 		else if( lastLxm == INCREMENT || lastLxm == DECREMENT )
 		{
-			// конструируем постфиксный кремент
+			// РєРѕРЅСЃС‚СЂСѓРёСЂСѓРµРј РїРѕСЃС‚С„РёРєСЃРЅС‹Р№ РєСЂРµРјРµРЅС‚
 			result = UnaryExpressionCoordinator(result, lastLxm, lastLxm.GetPos()).Coordinate();
 		}
 
@@ -2281,51 +2283,51 @@ void ExpressionReader::EvalExpr17( POperand &result )
 }
 
 
-// литерал, true, false, this,
-// идентификатор (перегруженный оператор, деструктор, оператор приведения)
-// или выражение в скобках
+// Р»РёС‚РµСЂР°Р», true, false, this,
+// РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ (РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ, РґРµСЃС‚СЂСѓРєС‚РѕСЂ, РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ)
+// РёР»Рё РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…
 void ExpressionReader::EvalExpr18( POperand &result )
 {
 	register int tokcode = lastLxm;
 
-	// если выражение в скобках
+	// РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…
 	if( tokcode == '(' )
 	{
 		NextLexem();
 		level++;
 		EvalExpr1(result);
 		level--;
-		if( lastLxm != ')' )		
-			throw lastLxm;				
+		if( lastLxm != ')' )
+			throw lastLxm;
 
-		// задаем, что выражение в скобках
+		// Р·Р°РґР°РµРј, С‡С‚Рѕ РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…
 		if( !result.IsNull() && result->IsExpressionOperand() )
 			static_cast<Expression &>(*result).SetCramps();
 		NextLexem();
 	}
 
-	// если идентификатор
+	// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
 	else if( tokcode == NAME || tokcode == COLON_COLON || tokcode == KWOPERATOR )
 	{		
-		BackLexem();		// возвращаем лексему в поток
+		BackLexem(); // РІРѕР·РІСЂР°С‰Р°РµРј Р»РµРєСЃРµРјСѓ РІ РїРѕС‚РѕРє
 
-		// undoContainer может быть NULL, нас это устраивает
-		PLexemContainer uc( undoContainer );	
+		// undoContainer РјРѕР¶РµС‚ Р±С‹С‚СЊ NULL, РЅР°СЃ СЌС‚Рѕ СѓСЃС‚СЂР°РёРІР°РµС‚
+		PLexemContainer uc( undoContainer );
 		QualifiedConstructionReader qcr(lexicalAnalyzer, false, false, uc);
 		PNodePackage id = qcr.ReadQualifiedConstruction();
-		uc.Release();	
+		uc.Release();
 
-		// не может быть указателя на член
+		// РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С‡Р»РµРЅ
 		if( qcr.IsPointerToMember() )
 			throw qcr.GetLexemContainer().back();
-			
-		// сохраняем считанные лексемы в контейнере, если требуется
+
+		// СЃРѕС…СЂР°РЅСЏРµРј СЃС‡РёС‚Р°РЅРЅС‹Рµ Р»РµРєСЃРµРјС‹ РІ РєРѕРЅС‚РµР№РЅРµСЂРµ, РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ
 		if( !ignore )
 			lexemContainer->insert(lexemContainer->end(), qcr.GetLexemContainer().begin(),
 				qcr.GetLexemContainer().end());
 
-		// если считан оператор приведения, и он взят в скобки, скобка
-		// теряется, поэтому следует ее восстановить
+		// РµСЃР»Рё СЃС‡РёС‚Р°РЅ РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ, Рё РѕРЅ РІР·СЏС‚ РІ СЃРєРѕР±РєРё, СЃРєРѕР±РєР°
+		// С‚РµСЂСЏРµС‚СЃСЏ, РїРѕСЌС‚РѕРјСѓ СЃР»РµРґСѓРµС‚ РµРµ РІРѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ
 		if( id->GetLastChildPackage()->GetPackageID() == PC_CAST_OPERATOR &&
 			lexicalAnalyzer.LastLexem() != '(' )
 			lastLxm = qcr.GetLexemContainer().back();
@@ -2333,47 +2335,47 @@ void ExpressionReader::EvalExpr18( POperand &result )
 		else
 			NextLexem();
 
-		// создаем идентификатор
+		// СЃРѕР·РґР°РµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
 		result = IdentifierOperandMaker(*id).Make();
 	}
 
 
-	// если литерал
+	// РµСЃР»Рё Р»РёС‚РµСЂР°Р»
 	else if( IS_LITERAL(tokcode) || tokcode == KWTRUE || tokcode == KWFALSE )
 	{
-		// создаем литерал
+		// СЃРѕР·РґР°РµРј Р»РёС‚РµСЂР°Р»
 		result = LiteralMaker(lastLxm).Make();
 		NextLexem();
 	}
-	
-	// если указатель this
+
+	// РµСЃР»Рё СѓРєР°Р·Р°С‚РµР»СЊ this
 	else if( tokcode == KWTHIS )
 	{
-		// создаем указатель this с проверками
+		// СЃРѕР·РґР°РµРј СѓРєР°Р·Р°С‚РµР»СЊ this СЃ РїСЂРѕРІРµСЂРєР°РјРё
 		result = ThisMaker( lastLxm.GetPos() ).Make();
 		NextLexem();
 	}
 
-	// иначе если 'простой спецификатор типа', необходимо считать явный вызов
-	// конструктора, который эквивалентен приведению типа
+	// РёРЅР°С‡Рµ РµСЃР»Рё 'РїСЂРѕСЃС‚РѕР№ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С‚РёРїР°', РЅРµРѕР±С…РѕРґРёРјРѕ СЃС‡РёС‚Р°С‚СЊ СЏРІРЅС‹Р№ РІС‹Р·РѕРІ
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°, РєРѕС‚РѕСЂС‹Р№ СЌРєРІРёРІР°Р»РµРЅС‚РµРЅ РїСЂРёРІРµРґРµРЅРёСЋ С‚РёРїР°
 	else if( IS_SIMPLE_TYPE_SPEC(tokcode) )
 	{
-		// следующая лексема должна быть '(', т.к. должен идти вызов конструктора
+		// СЃР»РµРґСѓСЋС‰Р°СЏ Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ '(', С‚.Рє. РґРѕР»Р¶РµРЅ РёРґС‚Рё РІС‹Р·РѕРІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 		if( NextLexem() != '(' )
 			throw lastLxm;
 
-		// считываем список параметров в приведении типа и сохраняем его
+		// СЃС‡РёС‚С‹РІР°РµРј СЃРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ РІ РїСЂРёРІРµРґРµРЅРёРё С‚РёРїР° Рё СЃРѕС…СЂР°РЅСЏРµРј РµРіРѕ
 		NextLexem();
 		PExpressionList parametrList = ReadExpressionList();
 		INTERNAL_IF( lastLxm != ')' );
 
-		// создаем вызов функции через тип
+		// СЃРѕР·РґР°РµРј РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё С‡РµСЂРµР· С‚РёРї
 		result = FunctionCallBinaryMaker(ExpressionMakerUtils::MakeSimpleTypeOperand(tokcode),
 			parametrList, OC_FUNCTION, lastLxm.GetPos()).Make();
 		NextLexem();
 	}
 
 	else
-		throw lastLxm;	// обычная синтаксическая ошибка
+		throw lastLxm; // РѕР±С‹С‡РЅР°СЏ СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР°
 }
 

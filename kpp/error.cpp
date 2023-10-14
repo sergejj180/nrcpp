@@ -1,4 +1,4 @@
-// модуль вывода ошибок - error.cpp
+// РјРѕРґСѓР»СЊ РІС‹РІРѕРґР° РѕС€РёР±РѕРє - error.cpp
 
 #include <cstdio>
 #include <cstdlib>
@@ -15,30 +15,30 @@ using namespace std;
 #define ERRBUFSIZE	512
 
 
-// счетчик ошибок
+// СЃС‡РµС‚С‡РёРє РѕС€РёР±РѕРє
 int errcount;
 
 
-// счетчик предупреждений
+// СЃС‡РµС‚С‡РёРє РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёР№
 int warncount;
 
 
-// кодировка, в которой выводяться сообщения (1251, 866)
+// РєРѕРґРёСЂРѕРІРєР°, РІ РєРѕС‚РѕСЂРѕР№ РІС‹РІРѕРґСЏС‚СЊСЃСЏ СЃРѕРѕР±С‰РµРЅРёСЏ (1251, 866)
 int code_page;
 
 
-// запрещает вывод предупреждений
+// Р·Р°РїСЂРµС‰Р°РµС‚ РІС‹РІРѕРґ РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёР№
 bool no_warnings = false;
 
 
-// имя входного файла
+// РёРјСЏ РІС…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°
 extern string inname;
 
 
-// вывод ошибки
+// РІС‹РІРѕРґ РѕС€РёР±РєРё
 static inline void ErrorMessage( const char *pred, const char *fmt, va_list lst )
 {
-	char errbuf[ERRBUFSIZE];	// буфер для формирования сообщения об ошибке
+	char errbuf[ERRBUFSIZE];	// Р±СѓС„РµСЂ РґР»СЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РѕС€РёР±РєРµ
 
 	_vsnprintf( errbuf, ERRBUFSIZE, fmt, lst );
 	
@@ -52,7 +52,7 @@ static inline void ErrorMessage( const char *pred, const char *fmt, va_list lst 
 			fprintf(stderr, "%s: ", temp2);
 		}
 
-		if(linecount == -1)	// фатальная ошибка может быть на стадии проверки опций
+		if(linecount == -1)	// С„Р°С‚Р°Р»СЊРЅР°СЏ РѕС€РёР±РєР° РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅР° СЃС‚Р°РґРёРё РїСЂРѕРІРµСЂРєРё РѕРїС†РёР№
 			_snprintf(temp, ERRBUFSIZE, "%s\n", errbuf);
 		else
 			_snprintf(temp, ERRBUFSIZE, "%s: %d: %s\n", inname.c_str(), 
@@ -68,29 +68,28 @@ static inline void ErrorMessage( const char *pred, const char *fmt, va_list lst 
 			fprintf( stderr, "%s: ", pred );
 
 		if( linecount == -1 )
-			fprintf( stderr, "Фатальная ошибка: %s\n", errbuf );
+			fprintf( stderr, "Р¤Р°С‚Р°Р»СЊРЅР°СЏ РѕС€РёР±РєР°: %s\n", errbuf );
 
 		else
-			fprintf( stderr, "Фатальная ошибка: %s: %d: %s\n", inname, 
-				linecount, errbuf );
+			fprintf( stderr, "Р¤Р°С‚Р°Р»СЊРЅР°СЏ РѕС€РёР±РєР°: %s: %d: %s\n", inname, linecount, errbuf );
 	}	
 }
 
 
 
-// фатальная ошибка, выводит ошибку и выходит
+// С„Р°С‚Р°Р»СЊРЅР°СЏ РѕС€РёР±РєР°, РІС‹РІРѕРґРёС‚ РѕС€РёР±РєСѓ Рё РІС‹С…РѕРґРёС‚
 void Fatal( const char *fmt, ... )
 {
 	va_list vlst;	
 
 	va_start( vlst, fmt );
-	ErrorMessage( "Фатальная ошибка", fmt, vlst );
+	ErrorMessage( "Р¤Р°С‚Р°Р»СЊРЅР°СЏ РѕС€РёР±РєР°", fmt, vlst );
 	va_end( vlst );
 	exit(ERROR_EXIT_CODE);	
 }
 
 
-// ошибка компиляции
+// РѕС€РёР±РєР° РєРѕРјРїРёР»СЏС†РёРё
 void Error( const char *fmt, ... )
 {
 	va_list vlst;	
@@ -102,7 +101,7 @@ void Error( const char *fmt, ... )
 }
 
 
-// предупреждение
+// РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ
 void Warning( const char *fmt, ... )
 {
 	va_list vlst;	
@@ -112,7 +111,7 @@ void Warning( const char *fmt, ... )
 		return;
 
 	va_start( vlst, fmt );
-	ErrorMessage( "Предупреждение", fmt, vlst );
+	ErrorMessage( "РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ", fmt, vlst );
 	va_end( vlst );	
 }
 
