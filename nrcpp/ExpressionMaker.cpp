@@ -1,4 +1,4 @@
-// реализация интрефейса постройки выражения - ExpressionMaker.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚СЂРµС„РµР№СЃР° РїРѕСЃС‚СЂРѕР№РєРё РІС‹СЂР°Р¶РµРЅРёСЏ - ExpressionMaker.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -19,31 +19,31 @@ using namespace nrc;
 #include "ExpressionMaker.h"
 
 
-// статический член, который представляет собой 0
-// используется для передачи постфиксному оператору 
+// СЃС‚Р°С‚РёС‡РµСЃРєРёР№ С‡Р»РµРЅ, РєРѕС‚РѕСЂС‹Р№ РїСЂРµРґСЃС‚Р°РІР»СЏРµС‚ СЃРѕР±РѕР№ 0
+// РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РїРµСЂРµРґР°С‡Рё РїРѕСЃС‚С„РёРєСЃРЅРѕРјСѓ РѕРїРµСЂР°С‚РѕСЂСѓ 
 POperand UnaryOverloadOperatorCaller::null = new PrimaryOperand(false,
 		*new Literal((BaseType *)&ImplicitTypeManager(KWINT).GetImplicitType(), true, false,
 					DerivedTypeList(), 0) );
 
 
-// строитель простого типа, используется в выражениях вида 'int ()',
-// в приведении типа вызовом функции	
+// СЃС‚СЂРѕРёС‚РµР»СЊ РїСЂРѕСЃС‚РѕРіРѕ С‚РёРїР°, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ РІС‹СЂР°Р¶РµРЅРёСЏС… РІРёРґР° 'int ()',
+// РІ РїСЂРёРІРµРґРµРЅРёРё С‚РёРїР° РІС‹Р·РѕРІРѕРј С„СѓРЅРєС†РёРё 
 POperand ExpressionMakerUtils::MakeSimpleTypeOperand( int tokcode )
 {
-	// лексема должна быть типом
+	// Р»РµРєСЃРµРјР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ С‚РёРїРѕРј
 	INTERNAL_IF( !IS_SIMPLE_TYPE_SPEC(tokcode) );
 
 	TypyziedEntity *te = new TypyziedEntity(
 		&const_cast<BaseType &>(ImplicitTypeManager(tokcode).GetImplicitType()), 
 		false, false, DerivedTypeList());
 
-	// создаем типовой операнд
+	// СЃРѕР·РґР°РµРј С‚РёРїРѕРІРѕР№ РѕРїРµСЂР°РЅРґ
 	return new TypeOperand( *te );
 }
 
 
-// создать типовой операнд в выражении, исп. в приведении типа,
-// typeid, new. Динамическое определение типов невозможно
+// СЃРѕР·РґР°С‚СЊ С‚РёРїРѕРІРѕР№ РѕРїРµСЂР°РЅРґ РІ РІС‹СЂР°Р¶РµРЅРёРё, РёСЃРї. РІ РїСЂРёРІРµРґРµРЅРёРё С‚РёРїР°,
+// typeid, new. Р”РёРЅР°РјРёС‡РµСЃРєРѕРµ РѕРїСЂРµРґРµР»РµРЅРёРµ С‚РёРїРѕРІ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand ExpressionMakerUtils::MakeTypeOperand( const NodePackage &np )
 {
 	INTERNAL_IF( np.GetPackageID() != PC_DECLARATION || 
@@ -51,45 +51,45 @@ POperand ExpressionMakerUtils::MakeTypeOperand( const NodePackage &np )
 		np.GetChildPackage(0)->GetPackageID() != PC_TYPE_SPECIFIER_LIST ||
 		np.GetChildPackage(1)->GetPackageID() != PC_DECLARATOR );	
 
-	// создаем временную структуру
+	// СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ
 	Position ep = ParserUtils::GetPackagePosition(&np);
-	TempObjectContainer toc( ep, "<тип>");
+	TempObjectContainer toc( ep, "<С‚РёРї>");
 
-	// начинаем анализ спецификаторов типа
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	MakerUtils::AnalyzeTypeSpecifierPkg( ((NodePackage *)np.GetChildPackage(0)), &toc, false );
 
-	// проверим, если базовый тип не задан, можно возвращать errorOperand
+	// РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅРµ Р·Р°РґР°РЅ, РјРѕР¶РЅРѕ РІРѕР·РІСЂР°С‰Р°С‚СЊ errorOperand
 	if( toc.baseType == NULL )
 	{
-		theApp.Error(ep, "не задан базовый тип");
+		theApp.Error(ep, "РЅРµ Р·Р°РґР°РЅ Р±Р°Р·РѕРІС‹Р№ С‚РёРї");
 		return ErrorOperand::GetInstance();
 	}
 
-	// далее, если есть декларатор, анализируем и его
+	// РґР°Р»РµРµ, РµСЃР»Рё РµСЃС‚СЊ РґРµРєР»Р°СЂР°С‚РѕСЂ, Р°РЅР°Р»РёР·РёСЂСѓРµРј Рё РµРіРѕ
 	MakerUtils::AnalyzeDeclaratorPkg( ((NodePackage *)np.GetChildPackage(1)), &toc );
 	
-	// уточняем базовый тип
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 	MakerUtils::SpecifyBaseType( &toc );
 
-	// теперь проверяем, чтобы в структуре не было лишних квалификаторов и 
-	// модификаторов
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РІ СЃС‚СЂСѓРєС‚СѓСЂРµ РЅРµ Р±С‹Р»Рѕ Р»РёС€РЅРёС… РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ Рё 
+	// РјРѕРґРёС„РёРєР°С‚РѕСЂРѕРІ
 	if( toc.ssCode != -1 ||	toc.fnSpecCode != -1 || toc.friendSpec )
-		theApp.Error(ep, "'%s' - некорректен в данном контексте", 
+		theApp.Error(ep, "'%s' - РЅРµРєРѕСЂСЂРµРєС‚РµРЅ РІ РґР°РЅРЅРѕРј РєРѕРЅС‚РµРєСЃС‚Рµ", 
 			toc.friendSpec ? "friend" : 
 			GetKeywordName(toc.ssCode != -1 ? toc.ssCode : toc.fnSpecCode));
 
-	// проверяем сформированный тип	
-	if( !CheckerUtils::CheckDerivedTypeList(toc)				||
+	// РїСЂРѕРІРµСЂСЏРµРј СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅС‹Р№ С‚РёРї	
+	if( !CheckerUtils::CheckDerivedTypeList(toc)  ||
 		!CheckerUtils::CheckRelationOfBaseTypeToDerived(toc, true, true) )
 		return ErrorOperand::GetInstance();
 
-	// создаем типизированную сущность на основе структуры и возвращаем операнд тип
+	// СЃРѕР·РґР°РµРј С‚РёРїРёР·РёСЂРѕРІР°РЅРЅСѓСЋ СЃСѓС‰РЅРѕСЃС‚СЊ РЅР° РѕСЃРЅРѕРІРµ СЃС‚СЂСѓРєС‚СѓСЂС‹ Рё РІРѕР·РІСЂР°С‰Р°РµРј РѕРїРµСЂР°РЅРґ С‚РёРї
 	return  new TypeOperand(
 		*new TypyziedEntity(toc.finalType, toc.constQual, toc.volatileQual, toc.dtl));
 }
 
 
-// проверка, является ли тип целым
+// РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё С‚РёРї С†РµР»С‹Рј
 bool ExpressionMakerUtils::IsIntegral( const TypyziedEntity &op )
 {
 	BaseType::BT bt = op.GetBaseType().GetBaseTypeCode();
@@ -103,7 +103,7 @@ bool ExpressionMakerUtils::IsIntegral( const TypyziedEntity &op )
 }
 
 
-// проверка, является ли тип арифметическим
+// РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё С‚РёРї Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРј
 bool ExpressionMakerUtils::IsArithmetic( const TypyziedEntity &op )
 {
 	BaseType::BT bt = op.GetBaseType().GetBaseTypeCode();
@@ -112,17 +112,17 @@ bool ExpressionMakerUtils::IsArithmetic( const TypyziedEntity &op )
 		   op.GetDerivedTypeList().IsReference()) ) )
 		return false;
 
-	// любой из целых типов, либо перечислымый, либо float или double
+	// Р»СЋР±РѕР№ РёР· С†РµР»С‹С… С‚РёРїРѕРІ, Р»РёР±Рѕ РїРµСЂРµС‡РёСЃР»С‹РјС‹Р№, Р»РёР±Рѕ float РёР»Рё double
 	return bt == BaseType::BT_INT || bt == BaseType::BT_CHAR || bt == BaseType::BT_FLOAT ||
 		bt == BaseType::BT_DOUBLE ||
 		bt == BaseType::BT_BOOL || bt == BaseType::BT_ENUM || bt == BaseType::BT_WCHAR_T;
 }
 
 
-// проверяка, если тип является указателем rvalue
+// РїСЂРѕРІРµСЂСЏРєР°, РµСЃР»Рё С‚РёРї СЏРІР»СЏРµС‚СЃСЏ СѓРєР°Р·Р°С‚РµР»РµРј rvalue
 bool ExpressionMakerUtils::IsRvaluePointer( const TypyziedEntity &op )
 {
-	// либо указатель, либо массив, либо ссылка на них
+	// Р»РёР±Рѕ СѓРєР°Р·Р°С‚РµР»СЊ, Р»РёР±Рѕ РјР°СЃСЃРёРІ, Р»РёР±Рѕ СЃСЃС‹Р»РєР° РЅР° РЅРёС…
 	const DerivedTypeList &dtl = op.GetDerivedTypeList();
 	if( dtl.IsPointer() || dtl.IsArray() )
 		return true;
@@ -137,8 +137,8 @@ bool ExpressionMakerUtils::IsRvaluePointer( const TypyziedEntity &op )
 }
 
 
-// вернуть true, если тип является функцией, ссылкой на функцию, указателем
-// на функцию или указателем на член-функцию
+// РІРµСЂРЅСѓС‚СЊ true, РµСЃР»Рё С‚РёРї СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№, СЃСЃС‹Р»РєРѕР№ РЅР° С„СѓРЅРєС†РёСЋ, СѓРєР°Р·Р°С‚РµР»РµРј
+// РЅР° С„СѓРЅРєС†РёСЋ РёР»Рё СѓРєР°Р·Р°С‚РµР»РµРј РЅР° С‡Р»РµРЅ-С„СѓРЅРєС†РёСЋ
 bool ExpressionMakerUtils::IsFunctionType( const TypyziedEntity &type )
 {
 	const DerivedTypeList &dtl = type.GetDerivedTypeList();
@@ -150,10 +150,10 @@ bool ExpressionMakerUtils::IsFunctionType( const TypyziedEntity &type )
 }
 
 
-// проверка, является ли операнд интерпретируемым. В rval записывается значение операнда
+// РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РѕРїРµСЂР°РЅРґ РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјС‹Рј. Р’ rval Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ Р·РЅР°С‡РµРЅРёРµ РѕРїРµСЂР°РЅРґР°
 bool ExpressionMakerUtils::IsInterpretable( const POperand &op, double &rval )
 {
-	// основной операнд
+	// РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ
 	if( !op->IsPrimaryOperand() )
 		return false;
 
@@ -161,8 +161,8 @@ bool ExpressionMakerUtils::IsInterpretable( const POperand &op, double &rval )
 	if( !IsArithmetic(te) )
 		return false;
 
-	// теперь операнд должен быть литералом или константой перечисления,
-	// или константным объектом, который инициализирован константным значением
+	// С‚РµРїРµСЂСЊ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р»РёС‚РµСЂР°Р»РѕРј РёР»Рё РєРѕРЅСЃС‚Р°РЅС‚РѕР№ РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ,
+	// РёР»Рё РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Рј РѕР±СЉРµРєС‚РѕРј, РєРѕС‚РѕСЂС‹Р№ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅ РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Рј Р·РЅР°С‡РµРЅРёРµРј
 	if( te.IsLiteral() )
 	{
 		rval = atof( static_cast<const Literal &>(te).GetLiteralValue().c_str() );
@@ -175,7 +175,7 @@ bool ExpressionMakerUtils::IsInterpretable( const POperand &op, double &rval )
 		return true;
 	}
 
-	// если объект, следует проверить каким значением он инициализирован
+	// РµСЃР»Рё РѕР±СЉРµРєС‚, СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ РєР°РєРёРј Р·РЅР°С‡РµРЅРёРµРј РѕРЅ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅ
 	else if( te.IsObject() && te.IsConst() )
 	{
 		const double *obi = static_cast<const ::Object &>(te).GetObjectInitializer();
@@ -185,12 +185,12 @@ bool ExpressionMakerUtils::IsInterpretable( const POperand &op, double &rval )
 		return true;
 	}
 
-	// иначе вернуть false; операнд не является интерпретируемым
+	// РёРЅР°С‡Рµ РІРµСЂРЅСѓС‚СЊ false; РѕРїРµСЂР°РЅРґ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјС‹Рј
 	return false;
 }
 
 
-// проверка, является ли операнд lvalue
+// РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РѕРїРµСЂР°РЅРґ lvalue
 bool ExpressionMakerUtils::IsLValue( const POperand &op )
 {
 	if( op->IsPrimaryOperand() )
@@ -204,28 +204,28 @@ bool ExpressionMakerUtils::IsLValue( const POperand &op )
 }
 
 
-// проверяет, является ли операнд, модифицируемым lvalue, 
-// если нет выводит ошибку и возвращает false
+// РїСЂРѕРІРµСЂСЏРµС‚, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РѕРїРµСЂР°РЅРґ, РјРѕРґРёС„РёС†РёСЂСѓРµРјС‹Рј lvalue, 
+// РµСЃР»Рё РЅРµС‚ РІС‹РІРѕРґРёС‚ РѕС€РёР±РєСѓ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ false
 bool ExpressionMakerUtils::IsModifiableLValue( 
 				const POperand &op, const Position &errPos, PCSTR opName )
 {
 	try {
-		// сначала проверяем, является ли операнд lvalue вообщ.
+		// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏРµРј, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РѕРїРµСЂР°РЅРґ lvalue РІРѕРѕР±С‰.
 		if( !IsLValue(op) )
 			throw op;
 		
-		// теперь проверяем сам тип		
-		const TypyziedEntity &type = op->GetType();		
+		// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј СЃР°Рј С‚РёРї 
+		const TypyziedEntity &type = op->GetType(); 
 
-		// тип должен быть, либо указателем, либо арифметическим типом
+		// С‚РёРї РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ, Р»РёР±Рѕ СѓРєР°Р·Р°С‚РµР»РµРј, Р»РёР±Рѕ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРј С‚РёРїРѕРј
 		if( IsArithmetic(type) )
 		{
 			if( type.IsConst() )
 				throw type;
 		}
 		
-		// иначе если только ссылка или вообще нет типа, проверяем константность
-		else if( type.GetDerivedTypeList().IsEmpty()			 ||
+		// РёРЅР°С‡Рµ РµСЃР»Рё С‚РѕР»СЊРєРѕ СЃСЃС‹Р»РєР° РёР»Рё РІРѕРѕР±С‰Рµ РЅРµС‚ С‚РёРїР°, РїСЂРѕРІРµСЂСЏРµРј РєРѕРЅСЃС‚Р°РЅС‚РЅРѕСЃС‚СЊ
+		else if( type.GetDerivedTypeList().IsEmpty()  ||
 			(type.GetDerivedTypeList().GetDerivedTypeCount() == 1 &&
 			 type.GetDerivedTypeList().IsReference()) )
 		{
@@ -233,51 +233,51 @@ bool ExpressionMakerUtils::IsModifiableLValue(
 				throw type;
 		}
 
-		// иначе тип должен быть указателем
+		// РёРЅР°С‡Рµ С‚РёРї РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»РµРј
 		else if( IsRvaluePointer(type) )
 		{
 			bool ref = type.GetDerivedTypeList().IsReference();
 			int dtcnt = type.GetDerivedTypeList().GetDerivedTypeCount();
 
-			// если не указатель, выйти
+			// РµСЃР»Рё РЅРµ СѓРєР°Р·Р°С‚РµР»СЊ, РІС‹Р№С‚Рё
 			if( (type.GetDerivedTypeList().GetDerivedType(ref ? 1 : 0))->
 				GetDerivedTypeCode() != DerivedType::DT_POINTER )
 				throw type;
 
-			// иначе проверяем константность указателя
+			// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РєРѕРЅСЃС‚Р°РЅС‚РЅРѕСЃС‚СЊ СѓРєР°Р·Р°С‚РµР»СЏ
 			if( static_cast<const Pointer&>(
 				*type.GetDerivedTypeList().GetDerivedType(ref ? 1 : 0)).IsConst() )
 				throw type;
 		}
 
-		// если тип указатель на член
+		// РµСЃР»Рё С‚РёРї СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ
 		else if( type.GetDerivedTypeList().IsPointerToMember() ||
-			(type.GetDerivedTypeList().IsReference()				&&
-			 type.GetDerivedTypeList().GetDerivedTypeCount() > 1	&&
+			(type.GetDerivedTypeList().IsReference()  &&
+			 type.GetDerivedTypeList().GetDerivedTypeCount() > 1 &&
 			 type.GetDerivedTypeList().GetDerivedType(1)->GetDerivedTypeCode() ==
 			 DerivedType::DT_POINTER_TO_MEMBER) )
 		{
-			// проверяем константность указателя на член
+			// РїСЂРѕРІРµСЂСЏРµРј РєРѕРЅСЃС‚Р°РЅС‚РЅРѕСЃС‚СЊ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С‡Р»РµРЅ
 			if( static_cast<const PointerToMember &>(
 			 		*type.GetDerivedTypeList().GetDerivedType(
 					type.GetDerivedTypeList().IsReference() ? 1 : 0) ).IsConst() )
-				throw type;			
+				throw type; 
 		}
 
-		// иначе ошибка. Мы не проверяем тип на ссылку, т.к. он может быть
-		// либо указателем, либо арифметическим, и это проверяется при проверке типа
+		// РёРЅР°С‡Рµ РѕС€РёР±РєР°. РњС‹ РЅРµ РїСЂРѕРІРµСЂСЏРµРј С‚РёРї РЅР° СЃСЃС‹Р»РєСѓ, С‚.Рє. РѕРЅ РјРѕР¶РµС‚ Р±С‹С‚СЊ
+		// Р»РёР±Рѕ СѓРєР°Р·Р°С‚РµР»РµРј, Р»РёР±Рѕ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРј, Рё СЌС‚Рѕ РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РїСЂРё РїСЂРѕРІРµСЂРєРµ С‚РёРїР°
 		else
 			throw type;
 	
 	} catch( const POperand &op ) {
-		theApp.Error(errPos, "'%s' - операнд не является lvalue", 
+		theApp.Error(errPos, "'%s' - РѕРїРµСЂР°РЅРґ РЅРµ СЏРІР»СЏРµС‚СЃСЏ lvalue", 
 			op->IsPrimaryOperand() ? ExpressionPrinter(op).GetExpressionString().c_str() :
 			opName );
 		return false;
 
 	} catch( const TypyziedEntity &type ) {
 		theApp.Error(errPos, 
-			"'%s' - тип не является модифицируемым lvalue; '%s' - оператор требует lvalue", 
+			"'%s' - С‚РёРї РЅРµ СЏРІР»СЏРµС‚СЃСЏ РјРѕРґРёС„РёС†РёСЂСѓРµРјС‹Рј lvalue; '%s' - РѕРїРµСЂР°С‚РѕСЂ С‚СЂРµР±СѓРµС‚ lvalue", 
 			type.GetTypyziedEntityName(false).c_str(), opName );
 		return false;
 	}
@@ -286,12 +286,12 @@ bool ExpressionMakerUtils::IsModifiableLValue(
 }
 
 
-// создает наибольший тип из двух, при условии что оба арифметические и
-// возвращает результат в виде вновь созданной сущности
+// СЃРѕР·РґР°РµС‚ РЅР°РёР±РѕР»СЊС€РёР№ С‚РёРї РёР· РґРІСѓС…, РїСЂРё СѓСЃР»РѕРІРёРё С‡С‚Рѕ РѕР±Р° Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРµ Рё
+// РІРѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ РІ РІРёРґРµ РІРЅРѕРІСЊ СЃРѕР·РґР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚Рё
 TypyziedEntity *ExpressionMakerUtils::DoResultArithmeticOperand( const TypyziedEntity &op1,
 		const TypyziedEntity &op2 )
 {
-		// далее оба операнда следует преобразовать к наибольшему типу
+		// РґР°Р»РµРµ РѕР±Р° РѕРїРµСЂР°РЅРґР° СЃР»РµРґСѓРµС‚ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ Рє РЅР°РёР±РѕР»СЊС€РµРјСѓ С‚РёРїСѓ
 	const BaseType &bt1 = op1.GetBaseType(), 
 				   &bt2 = op2.GetBaseType();
 	BaseType::BT btc1 = bt1.GetBaseTypeCode(),
@@ -302,25 +302,25 @@ TypyziedEntity *ExpressionMakerUtils::DoResultArithmeticOperand( const TypyziedE
 	if( tbtc == KWINT && (bt1.IsUnsigned() || bt2.IsUnsigned()) )
 		sign = KWUNSIGNED;
 		
-	// устанавливаем размер
+	// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂР°Р·РјРµСЂ
 	if( tbtc == KWINT && (bt1.IsLong() || bt2.IsLong()) )
 		size = KWLONG;
 
-	// иначе если результирующий тип double, long будет только в том
-	// случае, если он у double
+	// РёРЅР°С‡Рµ РµСЃР»Рё СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї double, long Р±СѓРґРµС‚ С‚РѕР»СЊРєРѕ РІ С‚РѕРј
+	// СЃР»СѓС‡Р°Рµ, РµСЃР»Рё РѕРЅ Сѓ double
 	else if( tbtc == KWDOUBLE && 
 		((btc1 == BaseType::BT_DOUBLE && bt1.IsLong()) ||
 		 (btc2 == BaseType::BT_DOUBLE && bt2.IsLong())) )
 		size = KWLONG;
 
-	// создаем сущность
+	// СЃРѕР·РґР°РµРј СЃСѓС‰РЅРѕСЃС‚СЊ
 	return new TypyziedEntity( 
 		(BaseType*)&ImplicitTypeManager(tbtc, sign, size).GetImplicitType(),
 		false, false, DerivedTypeList() );
 }
 
 
-// возвратить копию типа, если тип является ссылочным, убрать ссылку
+// РІРѕР·РІСЂР°С‚РёС‚СЊ РєРѕРїРёСЋ С‚РёРїР°, РµСЃР»Рё С‚РёРї СЏРІР»СЏРµС‚СЃСЏ СЃСЃС‹Р»РѕС‡РЅС‹Рј, СѓР±СЂР°С‚СЊ СЃСЃС‹Р»РєСѓ
 TypyziedEntity *ExpressionMakerUtils::DoCopyWithIndirection( const TypyziedEntity &type )
 {
 	TypyziedEntity *rval = new TypyziedEntity(type);
@@ -330,9 +330,9 @@ TypyziedEntity *ExpressionMakerUtils::DoCopyWithIndirection( const TypyziedEntit
 }
 
 
-// проверяет доступность конструктора по умолчанию, конструктора копирования, 
-// деструктора по требованию. Используется при сооздании или инициализации
-// объекта
+// РїСЂРѕРІРµСЂСЏРµС‚ РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РєРѕРїРёСЂРѕРІР°РЅРёСЏ, 
+// РґРµСЃС‚СЂСѓРєС‚РѕСЂР° РїРѕ С‚СЂРµР±РѕРІР°РЅРёСЋ. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё СЃРѕРѕР·РґР°РЅРёРё РёР»Рё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
+// РѕР±СЉРµРєС‚Р°
 bool ExpressionMakerUtils::ObjectCreationIsAccessible( const ClassType &cls, 
 		const Position &errPos, bool ctor, bool copyCtor, bool dtor )
 {
@@ -343,26 +343,26 @@ bool ExpressionMakerUtils::ObjectCreationIsAccessible( const ClassType &cls,
 		if( !flgs[i] )
 			continue;
 
-		// проверяем деструктор
+		// РїСЂРѕРІРµСЂСЏРµРј РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 		if( i == 2 )
 		{		
 			if( cls.GetDestructor() == NULL )
 			{
 				theApp.Error( errPos, 
-					"'~%s()' - деструктор не объявлен; удаление объекта невозможно",
+					"'~%s()' - РґРµСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РѕР±СЉСЏРІР»РµРЅ; СѓРґР°Р»РµРЅРёРµ РѕР±СЉРµРєС‚Р° РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 					cls.GetName().c_str());
 				return false;
 			}
 
-			meth = cls.GetDestructor();		
+			meth = cls.GetDestructor(); 
 		}
 
 		else
 		{
 			const ConstructorList &ctorLst = cls.GetConstructorList();
 		
-			// ищем конструктор либо без параметров. либо с копированием
-			// Должен быть доступен и однозначен
+			// РёС‰РµРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р»РёР±Рѕ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ. Р»РёР±Рѕ СЃ РєРѕРїРёСЂРѕРІР°РЅРёРµРј
+			// Р”РѕР»Р¶РµРЅ Р±С‹С‚СЊ РґРѕСЃС‚СѓРїРµРЅ Рё РѕРґРЅРѕР·РЅР°С‡РµРЅ
 			for( ConstructorList::const_iterator p = ctorLst.begin(); 
 					 p != ctorLst.end(); p++ )
 			{
@@ -375,11 +375,11 @@ bool ExpressionMakerUtils::ObjectCreationIsAccessible( const ClassType &cls,
 						 GetFunctionParametr(0)->IsHaveDefaultValue() )
 						continue;
 					
-					// не может быть неоднозначности
+					// РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё
 					if( meth )
 					{
 						theApp.Error( errPos,
-							"неоднозначность между '%s' и '%s'; создание объекта невозможно",
+							"РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ РјРµР¶РґСѓ '%s' Рё '%s'; СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 							meth->GetTypyziedEntityName().c_str(), 
 							cm.GetTypyziedEntityName().c_str() );
 						return false;
@@ -390,11 +390,11 @@ bool ExpressionMakerUtils::ObjectCreationIsAccessible( const ClassType &cls,
 
 				else if( copyCtor )
 				{
-					// к-тор должен принимать один параметр
+					// Рє-С‚РѕСЂ РґРѕР»Р¶РµРЅ РїСЂРёРЅРёРјР°С‚СЊ РѕРґРёРЅ РїР°СЂР°РјРµС‚СЂ
 					int cnt = cm.GetFunctionPrototype().GetParametrList().
 							  GetFunctionParametrCount() ;
 					const ConstructorMethod *temp = NULL;
-					if( (cnt == 1)												||						
+					if( (cnt == 1)  || 
 						(cnt > 1 && cm.GetFunctionPrototype().GetParametrList().
 									GetFunctionParametr(1)->IsHaveDefaultValue()) )
 					{
@@ -412,14 +412,14 @@ bool ExpressionMakerUtils::ObjectCreationIsAccessible( const ClassType &cls,
 					else
 						continue;
 
-					// проверяем, если имеем конструктор копирования, нужно проверить,
-					// чтобы не было неоднозначности
+					// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РёРјРµРµРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ, РЅСѓР¶РЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ,
+					// С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё
 					if( temp )
 					{
 						if( meth )
 						{
 							theApp.Error( errPos,
-								"неоднозначность между '%s' и '%s'; создание объекта невозможно",
+								"РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ РјРµР¶РґСѓ '%s' Рё '%s'; СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 								meth->GetTypyziedEntityName().c_str(), 
 								temp->GetTypyziedEntityName().c_str() );
 
@@ -427,31 +427,31 @@ bool ExpressionMakerUtils::ObjectCreationIsAccessible( const ClassType &cls,
 						}
 						else
 							meth = temp;
-					}					
+					} 
 				}
 			}
 
-			// если конструктор не найден, вывести ошибку
+			// РµСЃР»Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РЅР°Р№РґРµРЅ, РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 			if( meth == NULL )
 			{
 				theApp.Error( errPos, 
-					"'%s' - %s не объявлен; создание объекта невозможно",
+					"'%s' - %s РЅРµ РѕР±СЉСЏРІР»РµРЅ; СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 					(string(cls.GetName().c_str()) + 
 					(ctor ? "()" : "(const " + string(cls.GetName().c_str()) + "&)")).c_str() , 
-					ctor ? "конструктор по умолчанию" : "конструктор копирования");
+					ctor ? "РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ" : "РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ");
 				return false;
 			}		
 			
-			// иначе, если конструктор, проверяем возможно ли создание объекта
-			// абстрактного класса
+			// РёРЅР°С‡Рµ, РµСЃР»Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РїСЂРѕРІРµСЂСЏРµРј РІРѕР·РјРѕР¶РЅРѕ Р»Рё СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р°
+			// Р°Р±СЃС‚СЂР°РєС‚РЅРѕРіРѕ РєР»Р°СЃСЃР°
 			else if( meth->IsConstructor() && 
 				static_cast<const ClassType&>(meth->GetSymbolTableEntry()).IsAbstract() )
 			{
 				theApp.Error( errPos, 
-					"создание объекта класса '%s' невозможно; класс является абстрактным",
+					"СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РєР»Р°СЃСЃР° '%s' РЅРµРІРѕР·РјРѕР¶РЅРѕ; РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рј",
 					static_cast<const ClassType&>(meth->GetSymbolTableEntry()).
 					GetQualifiedName().c_str());
-				return false;			
+				return false; 
 			}
 		}
 
@@ -462,7 +462,7 @@ bool ExpressionMakerUtils::ObjectCreationIsAccessible( const ClassType &cls,
 		if( !acc.IsAccessible() )
 		{
 			theApp.Error( errPos, (string("\'") + meth->GetTypyziedEntityName().c_str() + 
-				"\' - недоступен; создание и удаление объекта невозможно").c_str());
+				"\' - РЅРµРґРѕСЃС‚СѓРїРµРЅ; СЃРѕР·РґР°РЅРёРµ Рё СѓРґР°Р»РµРЅРёРµ РѕР±СЉРµРєС‚Р° РЅРµРІРѕР·РјРѕР¶РЅРѕ").c_str());
 			return false;
 		}
 	}
@@ -471,55 +471,55 @@ bool ExpressionMakerUtils::ObjectCreationIsAccessible( const ClassType &cls,
 }
 
 
-// преобразование к rvalue, необходимо, чтобы тип был полностью объявлен 
-// и не void. Также проверяет, чтобы операнд был Primary или Expression
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ Рє rvalue, РЅРµРѕР±С…РѕРґРёРјРѕ, С‡С‚РѕР±С‹ С‚РёРї Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ 
+// Рё РЅРµ void. РўР°РєР¶Рµ РїСЂРѕРІРµСЂСЏРµС‚, С‡С‚РѕР±С‹ РѕРїРµСЂР°РЅРґ Р±С‹Р» Primary РёР»Рё Expression
 bool ExpressionMakerUtils::ToRValue( const POperand &val, const Position &errPos )
 {
 	if( val->IsErrorOperand() )
 		return true;
 
-	// эти операнды не подходят
+	// СЌС‚Рё РѕРїРµСЂР°РЅРґС‹ РЅРµ РїРѕРґС…РѕРґСЏС‚
 	if( val->IsOverloadOperand() || val->IsTypeOperand() )
 	{
-		theApp.Error(errPos, "невозможно получить 'rvalue' из '%s'",
-			val->IsTypeOperand() ? "типа" : "перегруженной функции" );
+		theApp.Error(errPos, "РЅРµРІРѕР·РјРѕР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ 'rvalue' РёР· '%s'",
+			val->IsTypeOperand() ? "С‚РёРїР°" : "РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕР№ С„СѓРЅРєС†РёРё" );
 		return false;
 	}
 
-	// иначе получаем тип и проверяем
+	// РёРЅР°С‡Рµ РїРѕР»СѓС‡Р°РµРј С‚РёРї Рё РїСЂРѕРІРµСЂСЏРµРј
 	const BaseType &bt = val->GetType().GetBaseType();
 	if( bt.GetBaseTypeCode() == BaseType::BT_VOID ||
 		(bt.IsClassType() && static_cast<const ClassType&>(bt).IsUncomplete()) )
 	{
-		theApp.Error(errPos, "невозможно получить 'rvalue' из '%s'",
+		theApp.Error(errPos, "РЅРµРІРѕР·РјРѕР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ 'rvalue' РёР· '%s'",
 			bt.GetBaseTypeCode() == BaseType::BT_VOID ? "void" : 
-			"незавершенного класса" );
+			"РЅРµР·Р°РІРµСЂС€РµРЅРЅРѕРіРѕ РєР»Р°СЃСЃР°" );
 		return false;
 	}
 
 	return true;
 }
 
-// преобразование к rvalue при копировании. Допускается необъявленный класс,
-// если производный тип ссылка или указатель
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ Рє rvalue РїСЂРё РєРѕРїРёСЂРѕРІР°РЅРёРё. Р”РѕРїСѓСЃРєР°РµС‚СЃСЏ РЅРµРѕР±СЉСЏРІР»РµРЅРЅС‹Р№ РєР»Р°СЃСЃ,
+// РµСЃР»Рё РїСЂРѕРёР·РІРѕРґРЅС‹Р№ С‚РёРї СЃСЃС‹Р»РєР° РёР»Рё СѓРєР°Р·Р°С‚РµР»СЊ
 bool ExpressionMakerUtils::ToRvalueCopy( const POperand &val, const Position &errPos )
 {
 	if( val->IsErrorOperand() )
 		return true;
 
-	// эти операнды не подходят
+	// СЌС‚Рё РѕРїРµСЂР°РЅРґС‹ РЅРµ РїРѕРґС…РѕРґСЏС‚
 	if( val->IsOverloadOperand() || val->IsTypeOperand() )
 	{
-		theApp.Error(errPos, "невозможно получить 'rvalue' из '%s'",
-			val->IsTypeOperand() ? "типа" : "перегруженной функции" );
+		theApp.Error(errPos, "РЅРµРІРѕР·РјРѕР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ 'rvalue' РёР· '%s'",
+			val->IsTypeOperand() ? "С‚РёРїР°" : "РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕР№ С„СѓРЅРєС†РёРё" );
 		return false;
 	}
 
-	// иначе получаем тип и проверяем
+	// РёРЅР°С‡Рµ РїРѕР»СѓС‡Р°РµРј С‚РёРї Рё РїСЂРѕРІРµСЂСЏРµРј
 	const BaseType &bt = val->GetType().GetBaseType();
 	if( bt.GetBaseTypeCode() == BaseType::BT_VOID )
 	{
-		theApp.Error(errPos, "невозможно получить 'rvalue' из 'void'");
+		theApp.Error(errPos, "РЅРµРІРѕР·РјРѕР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ 'rvalue' РёР· 'void'");
 		return false;
 	}
 
@@ -530,7 +530,7 @@ bool ExpressionMakerUtils::ToRvalueCopy( const POperand &val, const Position &er
 			;
 		else
 		{
-			theApp.Error(errPos, "невозможно получить 'rvalue' из 'незавершенного класса'");			
+			theApp.Error(errPos, "РЅРµРІРѕР·РјРѕР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ 'rvalue' РёР· 'РЅРµР·Р°РІРµСЂС€РµРЅРЅРѕРіРѕ РєР»Р°СЃСЃР°'"); 
 			return false;
 		}
 	}
@@ -539,143 +539,143 @@ bool ExpressionMakerUtils::ToRvalueCopy( const POperand &val, const Position &er
 }
 
 
-// общая функция преобразования и проверки типа в определенную категорию
+// РѕР±С‰Р°СЏ С„СѓРЅРєС†РёСЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ Рё РїСЂРѕРІРµСЂРєРё С‚РёРїР° РІ РѕРїСЂРµРґРµР»РµРЅРЅСѓСЋ РєР°С‚РµРіРѕСЂРёСЋ
 static bool ToCastTypeConverter( POperand &op, const Position &errPos, 
 	const string &opName, OperatorCaster::ACC castCategory, PCSTR tname, 
 	bool categoryChecker(const TypyziedEntity &) )
 {
-	// входные данные должны обеспечивать получение типа, это условие
-	// проверяется перед вызовом этой функции (в координаторе)
+	// РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ РґРѕР»Р¶РЅС‹ РѕР±РµСЃРїРµС‡РёРІР°С‚СЊ РїРѕР»СѓС‡РµРЅРёРµ С‚РёРїР°, СЌС‚Рѕ СѓСЃР»РѕРІРёРµ
+	// РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РїРµСЂРµРґ РІС‹Р·РѕРІРѕРј СЌС‚РѕР№ С„СѓРЅРєС†РёРё (РІ РєРѕРѕСЂРґРёРЅР°С‚РѕСЂРµ)
 	INTERNAL_IF( !(op->IsExpressionOperand() || op->IsPrimaryOperand()) );
 	register const TypyziedEntity &type = op->GetType();
 
-	// если тип классовый, пытаемся преобразовать с помощью оператора приведения
+	// РµСЃР»Рё С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№, РїС‹С‚Р°РµРјСЃСЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ СЃ РїРѕРјРѕС‰СЊСЋ РѕРїРµСЂР°С‚РѕСЂР° РїСЂРёРІРµРґРµРЅРёСЏ
 	if( ExpressionMakerUtils::IsClassType(type) )
 	{
 		OperatorCaster opCaster( castCategory, type );
 		opCaster.ClassifyCast();
 
-		// если преобразование невозможно выводим ошибку
+		// РµСЃР»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
 		if( !opCaster.IsConverted() )
 		{
 			if( !opCaster.GetErrorMessage().empty() )
 				theApp.Error( errPos, opCaster.GetErrorMessage().c_str() );
 			else
 				theApp.Error( errPos, 
-					"'%s' - класс не содержит оператора преобразования в '%s тип'",
+					"'%s' - РєР»Р°СЃСЃ РЅРµ СЃРѕРґРµСЂР¶РёС‚ РѕРїРµСЂР°С‚РѕСЂР° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РІ '%s С‚РёРї'",
 				static_cast<const ClassType&>(type.GetBaseType()).GetQualifiedName().c_str(),
 				tname);
 			return false;
 		}
 
-		// иначе выполняем физическое преобразование, 
-		opCaster.DoCast(op, op, errPos);	
-		return true;		// преобразование успешно выполнено
+		// РёРЅР°С‡Рµ РІС‹РїРѕР»РЅСЏРµРј С„РёР·РёС‡РµСЃРєРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ, 
+		opCaster.DoCast(op, op, errPos); 
+		return true; // РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ СѓСЃРїРµС€РЅРѕ РІС‹РїРѕР»РЅРµРЅРѕ
 	}
 
-	// иначе проверяем только, является ли тип верным
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј С‚РѕР»СЊРєРѕ, СЏРІР»СЏРµС‚СЃСЏ Р»Рё С‚РёРї РІРµСЂРЅС‹Рј
 	if( !categoryChecker(type) )
 	{
 		theApp.Error( errPos,
-			"'%s' - не %s тип; '%s' - оператор требует %s тип",
+			"'%s' - РЅРµ %s С‚РёРї; '%s' - РѕРїРµСЂР°С‚РѕСЂ С‚СЂРµР±СѓРµС‚ %s С‚РёРї",
 			type.GetTypyziedEntityName(false).c_str(), tname, opName.c_str(), tname );
 		return false;
 	}
 
-	// тип является верным, возвращаем его
+	// С‚РёРї СЏРІР»СЏРµС‚СЃСЏ РІРµСЂРЅС‹Рј, РІРѕР·РІСЂР°С‰Р°РµРј РµРіРѕ
 	return true;
 }
 
 
-// преобразование типа к целому или перечислимому типу. В случае
-// если преобазование возможно, возвращает операнд, иначе выводим ошибку
-// и возвращает NULL. Используется при проверке выражений. Также
-// проверяет возможность преобразования операнда к rvalue
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ С‚РёРїР° Рє С†РµР»РѕРјСѓ РёР»Рё РїРµСЂРµС‡РёСЃР»РёРјРѕРјСѓ С‚РёРїСѓ. Р’ СЃР»СѓС‡Р°Рµ
+// РµСЃР»Рё РїСЂРµРѕР±Р°Р·РѕРІР°РЅРёРµ РІРѕР·РјРѕР¶РЅРѕ, РІРѕР·РІСЂР°С‰Р°РµС‚ РѕРїРµСЂР°РЅРґ, РёРЅР°С‡Рµ РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
+// Рё РІРѕР·РІСЂР°С‰Р°РµС‚ NULL. РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё РїСЂРѕРІРµСЂРєРµ РІС‹СЂР°Р¶РµРЅРёР№. РўР°РєР¶Рµ
+// РїСЂРѕРІРµСЂСЏРµС‚ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РѕРїРµСЂР°РЅРґР° Рє rvalue
 bool ExpressionMakerUtils::ToIntegerType( 
 		POperand &op, const Position &errPos, const string &opName )
 {
 	return ToCastTypeConverter(op, errPos, opName, OperatorCaster::ACC_TO_INTEGER, 
-		"целый", ExpressionMakerUtils::IsIntegral );
+		"С†РµР»С‹Р№", ExpressionMakerUtils::IsIntegral );
 }
 
 
-// преобразование типа к арифметическому типу
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ С‚РёРїР° Рє Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРѕРјСѓ С‚РёРїСѓ
 bool ExpressionMakerUtils::ToArithmeticType(
 		POperand &op, const Position &errPos,  const string &opName )
 {
 	return ToCastTypeConverter(op, errPos, opName, OperatorCaster::ACC_TO_ARITHMETIC, 
-		"арифметический", ExpressionMakerUtils::IsArithmetic );
+		"Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёР№", ExpressionMakerUtils::IsArithmetic );
 }
 
 
-// преобразование типа к типу указателя
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ С‚РёРїР° Рє С‚РёРїСѓ СѓРєР°Р·Р°С‚РµР»СЏ
 bool ExpressionMakerUtils::ToPointerType( 
 		POperand &op, const Position &errPos,  const string &opName )
 {
 	return ToCastTypeConverter(op, errPos, opName, OperatorCaster::ACC_TO_POINTER, 
-		"адресный", ExpressionMakerUtils::IsRvaluePointer );
+		"Р°РґСЂРµСЃРЅС‹Р№", ExpressionMakerUtils::IsRvaluePointer );
 }
 
 
-// преобразование типа к склярному типу 
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ С‚РёРїР° Рє СЃРєР»СЏСЂРЅРѕРјСѓ С‚РёРїСѓ 
 bool ExpressionMakerUtils::ToScalarType( 
 		POperand &op, const Position &errPos,  const string &opName )
 {
 	return ToCastTypeConverter(op, errPos, opName, OperatorCaster::ACC_TO_SCALAR, 
-		"склярный", ExpressionMakerUtils::IsScalarType);
+		"СЃРєР»СЏСЂРЅС‹Р№", ExpressionMakerUtils::IsScalarType);
 }
 
-// преобразование к арифметическому типу или указателю
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ Рє Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРѕРјСѓ С‚РёРїСѓ РёР»Рё СѓРєР°Р·Р°С‚РµР»СЋ
 bool ExpressionMakerUtils::ToArithmeticOrPointerType( POperand &op, 
 		const Position &errPos, const string &opName )
 {
 	return ToCastTypeConverter(op, errPos, opName, OperatorCaster::ACC_TO_ARITHMETIC_OR_POINTER, 
-		"арифметический или адресный", ExpressionMakerUtils::IsArithmeticOrPointer);
+		"Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёР№ РёР»Рё Р°РґСЂРµСЃРЅС‹Р№", ExpressionMakerUtils::IsArithmeticOrPointer);
 }
 
 
-// проверить, если нестатический данное-член класса, 
-// используется без this, тогда вывести ошибку и вернуть false
+// РїСЂРѕРІРµСЂРёС‚СЊ, РµСЃР»Рё РЅРµСЃС‚Р°С‚РёС‡РµСЃРєРёР№ РґР°РЅРЅРѕРµ-С‡Р»РµРЅ РєР»Р°СЃСЃР°, 
+// РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ Р±РµР· this, С‚РѕРіРґР° РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ Рё РІРµСЂРЅСѓС‚СЊ false
 int ExpressionMakerUtils::CheckMemberThisVisibility( 
 		const POperand &oper, const Position &errPos, bool printError )
 {
-	// операнд должен быть данным-членом
-	const TypyziedEntity &te = oper->GetType().IsDynamicTypyziedEntity()		 ?
+	// РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РґР°РЅРЅС‹Рј-С‡Р»РµРЅРѕРј
+	const TypyziedEntity &te = oper->GetType().IsDynamicTypyziedEntity()  ?
 		static_cast<const DynamicTypyziedEntity&>(oper->GetType()).GetOriginal() :
 		oper->GetType();
 	const Identifier *member = NULL;
 
-	// если функция
+	// РµСЃР»Рё С„СѓРЅРєС†РёСЏ
 	if( te.IsFunction() &&
 		static_cast<const Function&>(te).IsClassMember() &&
 		static_cast<const Function&>(te).GetStorageSpecifier() != Function::SS_STATIC)
 		member = &static_cast<const Function &>(te);
 
-	// если объект
+	// РµСЃР»Рё РѕР±СЉРµРєС‚
 	else if( te.IsObject() &&
 		static_cast<const ::Object &>(te).IsClassMember() &&
 		static_cast<const ::Object &>(te).GetStorageSpecifier() != ::Object::SS_STATIC)
 		member = &static_cast<const ::Object &>(te);
 
-	// иначе не член. Соотв. операнду this не нужен, возвр. 1
+	// РёРЅР°С‡Рµ РЅРµ С‡Р»РµРЅ. РЎРѕРѕС‚РІ. РѕРїРµСЂР°РЅРґСѓ this РЅРµ РЅСѓР¶РµРЅ, РІРѕР·РІСЂ. 1
 	else
 		return 1;
 
-	// получаем класс члена и проверяем какое отношение имеет 
-	// текущая область видимости к этому классу
+	// РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ С‡Р»РµРЅР° Рё РїСЂРѕРІРµСЂСЏРµРј РєР°РєРѕРµ РѕС‚РЅРѕС€РµРЅРёРµ РёРјРµРµС‚ 
+	// С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё Рє СЌС‚РѕРјСѓ РєР»Р°СЃСЃСѓ
 	const ClassType &mcls = static_cast<const ClassType&>(member->GetSymbolTableEntry());
 	const SymbolTable &st = GetCurrentSymbolTable().IsLocalSymbolTable() ?
 		GetScopeSystem().GetFunctionalSymbolTable() : GetCurrentSymbolTable();
 
-	// проверяем, если функциональная, то можно продолжать проверку
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ, С‚Рѕ РјРѕР¶РЅРѕ РїСЂРѕРґРѕР»Р¶Р°С‚СЊ РїСЂРѕРІРµСЂРєСѓ
 	if( st.IsFunctionSymbolTable() &&
 		static_cast<const FunctionSymbolTable&>(st).GetFunction().IsClassMember() &&
 		static_cast<const FunctionSymbolTable&>(st).GetFunction().GetStorageSpecifier() !=
 		 Function::SS_STATIC )
 	{
-		// получаем класс, к которому принадлежит метод в котором мы находимся,
-		// класс должен либо совпадать с классом члена, либо
-		// быть производным для него
+		// РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ, Рє РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ РјРµС‚РѕРґ РІ РєРѕС‚РѕСЂРѕРј РјС‹ РЅР°С…РѕРґРёРјСЃСЏ,
+		// РєР»Р°СЃСЃ РґРѕР»Р¶РµРЅ Р»РёР±Рѕ СЃРѕРІРїР°РґР°С‚СЊ СЃ РєР»Р°СЃСЃРѕРј С‡Р»РµРЅР°, Р»РёР±Рѕ
+		// Р±С‹С‚СЊ РїСЂРѕРёР·РІРѕРґРЅС‹Рј РґР»СЏ РЅРµРіРѕ
 		const Method &curMeth = static_cast<const Method &>(
 			static_cast<const FunctionSymbolTable&>(st).GetFunction());
 		const ClassType &cc = static_cast<const ClassType &>(curMeth.GetSymbolTableEntry());
@@ -684,27 +684,27 @@ int ExpressionMakerUtils::CheckMemberThisVisibility(
 			return 0;
 	}
 
-	// если доходим до сюда, значит выводим ошибку, и возвращаем -1,
-	// как признак ошибки
+	// РµСЃР»Рё РґРѕС…РѕРґРёРј РґРѕ СЃСЋРґР°, Р·РЅР°С‡РёС‚ РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ, Рё РІРѕР·РІСЂР°С‰Р°РµРј -1,
+	// РєР°Рє РїСЂРёР·РЅР°Рє РѕС€РёР±РєРё
 	if( printError )
 		theApp.Error(errPos, 
-		"'%s' - член не может использоваться в текущей области видимости; отсутствует 'this'",
+		"'%s' - С‡Р»РµРЅ РЅРµ РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё; РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ 'this'",
 		member->GetQualifiedName().c_str());
 	return -1;
 }
 
 
-// проверить корректность инициализации объекта. Сравнивается только
-// тип и список инициализаторов. Не инициализируемые элементы, такие как
-// функция не учитываются. 
+// РїСЂРѕРІРµСЂРёС‚СЊ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚Р°. РЎСЂР°РІРЅРёРІР°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ
+// С‚РёРї Рё СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ. РќРµ РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРјС‹Рµ СЌР»РµРјРµРЅС‚С‹, С‚Р°РєРёРµ РєР°Рє
+// С„СѓРЅРєС†РёСЏ РЅРµ СѓС‡РёС‚С‹РІР°СЋС‚СЃСЏ. 
 ExpressionMakerUtils::InitAnswer ExpressionMakerUtils::CorrectObjectInitialization( 
 	const TypyziedEntity &obj, const PExpressionList &initList, bool checkDtor, 
 	const Position &errPos )
 {
 	INTERNAL_IF( initList.IsNull() );
 
-	// сначала проверим, если тип классовый, значит требуется вызов к-ра.
-	// Если имеем массив классовых объектов, значит требуется к-ор по умолчанию
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№, Р·РЅР°С‡РёС‚ С‚СЂРµР±СѓРµС‚СЃСЏ РІС‹Р·РѕРІ Рє-СЂР°.
+	// Р•СЃР»Рё РёРјРµРµРј РјР°СЃСЃРёРІ РєР»Р°СЃСЃРѕРІС‹С… РѕР±СЉРµРєС‚РѕРІ, Р·РЅР°С‡РёС‚ С‚СЂРµР±СѓРµС‚СЃСЏ Рє-РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	bool clsType = obj.GetBaseType().IsClassType(), array = false;int i;
 	for( int i = 0; i<obj.GetDerivedTypeList().GetDerivedTypeCount(); i++ )
 	{
@@ -719,8 +719,8 @@ ExpressionMakerUtils::InitAnswer ExpressionMakerUtils::CorrectObjectInitializati
 			array = true;
 	}
 
-	// проверяем список инициализаторов, чтобы в нем не было типов, перегруженных
-	// функций, error operand'ов, членов класса без this
+	// РїСЂРѕРІРµСЂСЏРµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ, С‡С‚РѕР±С‹ РІ РЅРµРј РЅРµ Р±С‹Р»Рѕ С‚РёРїРѕРІ, РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹С…
+	// С„СѓРЅРєС†РёР№, error operand'РѕРІ, С‡Р»РµРЅРѕРІ РєР»Р°СЃСЃР° Р±РµР· this
 	for( i = 0; i<initList->size(); i++ )
 	{
 		const POperand &op = initList->at(i);
@@ -728,112 +728,112 @@ ExpressionMakerUtils::InitAnswer ExpressionMakerUtils::CorrectObjectInitializati
 			return false;
 	}
 
-	// сначала проверим, если имеем массив, значит список инициализации должен быть пустой
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РёРјРµРµРј РјР°СЃСЃРёРІ, Р·РЅР°С‡РёС‚ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№
 	if( array && !initList->empty() )
 	{
-		theApp.Error(errPos, "список инициализаторов должен быть пустой для массива");
+		theApp.Error(errPos, "СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№ РґР»СЏ РјР°СЃСЃРёРІР°");
 		return false;
 	}
 
-	// далее проверяем, если тип классовый, значит следует проверить наличие конструктора
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№, Р·РЅР°С‡РёС‚ СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ РЅР°Р»РёС‡РёРµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 	if( clsType )
 	{	
-		// проверяем наличие конструкторов
+		// РїСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ
 		const ClassType &cls = static_cast<const ClassType&>(obj.GetBaseType());
 		const ConstructorList &ctorLst = cls.GetConstructorList();
 		if( ctorLst.empty() )
 		{
-			// если имеем объект, и он имеет внешнее связывание,
-			// то наличие конструкторов не обязательно
+			// РµСЃР»Рё РёРјРµРµРј РѕР±СЉРµРєС‚, Рё РѕРЅ РёРјРµРµС‚ РІРЅРµС€РЅРµРµ СЃРІСЏР·С‹РІР°РЅРёРµ,
+			// С‚Рѕ РЅР°Р»РёС‡РёРµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ РЅРµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ
 			if( obj.IsObject() && static_cast<const ::Object &>(obj).
 				GetStorageSpecifier() == ::Object::SS_EXTERN && initList->empty() )
 				return true;
 
-			// иначе ошибка
+			// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 			theApp.Error(errPos, 
-				"'%s' - в классе отсутствуют конструкторы; инициализация невозможна",
+				"'%s' - РІ РєР»Р°СЃСЃРµ РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‚ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹; РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР°",
 				cls.GetQualifiedName().c_str());
 			return false;
 		}
 
-		OverloadFunctionList ofl(ctorLst.size());			
+		OverloadFunctionList ofl(ctorLst.size()); 
 		copy(ctorLst.begin(), ctorLst.end(), ofl.begin());
 				
-		// проверяем наличие соотв. конструктора
+		// РїСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ СЃРѕРѕС‚РІ. РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 		OverloadResolutor or(ofl, *initList, NULL);
 		const Function *fn = or.GetCallableFunction();
 	
-		// если конструктор не найден, выведем ошибку
+		// РµСЃР»Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РЅР°Р№РґРµРЅ, РІС‹РІРµРґРµРј РѕС€РёР±РєСѓ
 		if( fn == NULL )
 		{
-			theApp.Error(errPos, "%s; инициализация невозможна",
+			theApp.Error(errPos, "%s; РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР°",
 				or.GetErrorMessage().c_str());
 			return false;
 		}
 		
-		// выполняем преобразование каждого параметр в целевой тип
-		or.DoParametrListCast(errPos);			
+		// РІС‹РїРѕР»РЅСЏРµРј РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РєР°Р¶РґРѕРіРѕ РїР°СЂР°РјРµС‚СЂ РІ С†РµР»РµРІРѕР№ С‚РёРї
+		or.DoParametrListCast(errPos); 
 
-		// проверим возможность копирования параметров,				
+		// РїСЂРѕРІРµСЂРёРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РєРѕРїРёСЂРѕРІР°РЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ, 
 		FunctionCallBinaryMaker::CheckParametrInitialization( initList,
 			fn->GetFunctionPrototype().GetParametrList(), errPos);
 
-		// иначе проверяем доступность этой функции
+		// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ СЌС‚РѕР№ С„СѓРЅРєС†РёРё
 		AccessControlChecker acc( 
 			GetCurrentSymbolTable().IsLocalSymbolTable() ? 
 			GetScopeSystem().GetFunctionalSymbolTable() : GetCurrentSymbolTable(),
 			cls, *fn);
 		if( !acc.IsAccessible() )
 			theApp.Error( errPos, (string("\'") + fn->GetTypyziedEntityName().c_str() + 
-				"\' - конструктор недоступен; инициализация невозможна").c_str());		
+				"\' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµРґРѕСЃС‚СѓРїРµРЅ; РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР°").c_str()); 
 
-		// проверяем , чтобы класс не был абстарктым. Создание объекта
-		// абстрактного класса невозможно
+		// РїСЂРѕРІРµСЂСЏРµРј , С‡С‚РѕР±С‹ РєР»Р°СЃСЃ РЅРµ Р±С‹Р» Р°Р±СЃС‚Р°СЂРєС‚С‹Рј. РЎРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р°
+		// Р°Р±СЃС‚СЂР°РєС‚РЅРѕРіРѕ РєР»Р°СЃСЃР° РЅРµРІРѕР·РјРѕР¶РЅРѕ
 		if( cls.IsAbstract() || cls.IsUncomplete() )
 		{
 			theApp.Error( errPos,
-				"создание объекта класса '%s' невозможно; класс является %s",
+				"СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РєР»Р°СЃСЃР° '%s' РЅРµРІРѕР·РјРѕР¶РЅРѕ; РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ %s",
 				cls.GetQualifiedName().c_str(), cls.IsAbstract() ? 
-				"абстрактным" : "неполным" );			
+				"Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рј" : "РЅРµРїРѕР»РЅС‹Рј" ); 
 			return false;
 		}
 		
-		// если требуется проверить наличие деструткора
+		// РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ РїСЂРѕРІРµСЂРёС‚СЊ РЅР°Р»РёС‡РёРµ РґРµСЃС‚СЂСѓС‚РєРѕСЂР°
 		if( checkDtor )
 			ExpressionMakerUtils::ObjectCreationIsAccessible( cls, errPos, false, false, true);
 
-		// была произведена инициализация конструктором, вернуть ответ с конструктором		
+		// Р±С‹Р»Р° РїСЂРѕРёР·РІРµРґРµРЅР° РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј, РІРµСЂРЅСѓС‚СЊ РѕС‚РІРµС‚ СЃ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј 
 		return InitAnswer( static_cast<const ConstructorMethod &>(*fn) );
 	}
 
-	// иначе проверяем инициализацию склярного типа не-конструктором
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ СЃРєР»СЏСЂРЅРѕРіРѕ С‚РёРїР° РЅРµ-РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј
 	else
 	{
-		// если инициализаторов несколько, инициализация невозможна
+		// РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂРѕРІ РЅРµСЃРєРѕР»СЊРєРѕ, РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР°
 		if( initList->size() > 1 )
 		{
 			theApp.Error(errPos, 
-				"склярный тип '%s' не может инициализироваться несколькими значениями",
+				"СЃРєР»СЏСЂРЅС‹Р№ С‚РёРї '%s' РЅРµ РјРѕР¶РµС‚ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊСЃСЏ РЅРµСЃРєРѕР»СЊРєРёРјРё Р·РЅР°С‡РµРЅРёСЏРјРё",
 				obj.GetTypyziedEntityName(false).c_str());	
 			return false;
 		}
 
-		// инициализация по умолчанию
+		// РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 		if( initList->size() == 0 )
 			return true;
 
-		// иначе инициализатор один и следует проверить типы
+		// РёРЅР°С‡Рµ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РѕРґРёРЅ Рё СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ С‚РёРїС‹
 		PCaster pc = AutoCastManager( obj, initList->at(0)->GetType(), true ).RevealCaster();
 		pc->ClassifyCast();
 		if( !pc->IsConverted() )
 		{
 			if( pc->GetErrorMessage().empty() )
 				theApp.Error(errPos, 
-					"невозможно привести '%s' к '%s'; инициализация невозможна",
+					"РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРёРІРµСЃС‚Рё '%s' Рє '%s'; РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР°",
 					obj.GetTypyziedEntityName(false).c_str(), 
 					initList->at(0)->GetType().GetTypyziedEntityName(false).c_str());
 			else
-				theApp.Error(errPos, "'инициализация' - %s", pc->GetErrorMessage().c_str());
+				theApp.Error(errPos, "'РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ' - %s", pc->GetErrorMessage().c_str());
 			return false;
 		}
 
@@ -843,15 +843,15 @@ ExpressionMakerUtils::InitAnswer ExpressionMakerUtils::CorrectObjectInitializati
 }
 
 
-// вернуть построенный вызов, либо NULL, если перегруженный оператор вызвать
-// невозможно
+// РІРµСЂРЅСѓС‚СЊ РїРѕСЃС‚СЂРѕРµРЅРЅС‹Р№ РІС‹Р·РѕРІ, Р»РёР±Рѕ NULL, РµСЃР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РІС‹Р·РІР°С‚СЊ
+// РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand UnaryOverloadOperatorCaller::Call() const
 {
-	// операнд должен иметь тип
+	// РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї
 	if( !(right->IsPrimaryOperand() || right->IsExpressionOperand()) ) 
 		return NULL;
 
-	// оператор должен быть перегружаемым
+	// РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїРµСЂРµРіСЂСѓР¶Р°РµРјС‹Рј
 	if( opCode == KWSIZEOF || opCode == KWTYPEID || opCode == KWTHROW ||
 		abs(opCode) == KWDELETE || abs(opCode) == OC_DELETE_ARRAY )
 		return NULL;
@@ -861,31 +861,31 @@ POperand UnaryOverloadOperatorCaller::Call() const
 		(type.GetDerivedTypeList().IsEmpty()  || 
 		 (type.GetDerivedTypeList().GetDerivedTypeCount() == 1 && 
 		  type.GetDerivedTypeList().IsReference()) );
-	// тип также должен быть перегружаемым
+	// С‚РёРї С‚Р°РєР¶Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїРµСЂРµРіСЂСѓР¶Р°РµРјС‹Рј
 	if( !cor )
 		return NULL;
 	const ClassType *cls = type.GetBaseType().IsClassType() ? 
 		&static_cast<const ClassType &>(type.GetBaseType()) : NULL;
 
-	// проверяем, необходим ли поиск оператора в глобальной области видимости	
+	// РїСЂРѕРІРµСЂСЏРµРј, РЅРµРѕР±С…РѕРґРёРј Р»Рё РїРѕРёСЃРє РѕРїРµСЂР°С‚РѕСЂР° РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё 
 	OverloadOperatorFounder oof(abs(opCode), opCode != ARROW, cls, errPos);
 
-	// если не найден, вернуть NULL
+	// РµСЃР»Рё РЅРµ РЅР°Р№РґРµРЅ, РІРµСЂРЅСѓС‚СЊ NULL
 	if( !oof.IsFound() )
 		return NULL;
 
-	// если оператор неоднозначен, вернуть ErrorOperand
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅРµРѕРґРЅРѕР·РЅР°С‡РµРЅ, РІРµСЂРЅСѓС‚СЊ ErrorOperand
 	else if( oof.IsAmbigous() )
 		return ErrorOperand::GetInstance();
 
-	// иначе оператор однозначен, строим вызов
-	// сначала проверим, если оба списка не пусты, выявим в каком из них находится
-	// необходимая функция. Если в обоих - неоднозначность
+	// РёРЅР°С‡Рµ РѕРїРµСЂР°С‚РѕСЂ РѕРґРЅРѕР·РЅР°С‡РµРЅ, СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РѕР±Р° СЃРїРёСЃРєР° РЅРµ РїСѓСЃС‚С‹, РІС‹СЏРІРёРј РІ РєР°РєРѕРј РёР· РЅРёС… РЅР°С…РѕРґРёС‚СЃСЏ
+	// РЅРµРѕР±С…РѕРґРёРјР°СЏ С„СѓРЅРєС†РёСЏ. Р•СЃР»Рё РІ РѕР±РѕРёС… - РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
 	if( !oof.GetClassOperatorList().empty() && !oof.GetGlobalOperatorList().empty() )
 	{
-		PExpressionList plist = new ExpressionList;				
+		PExpressionList plist = new ExpressionList; 
 
-		// если оператор постфиксного -кремента, задаем первый параметр как '0'
+		// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РїРѕСЃС‚С„РёРєСЃРЅРѕРіРѕ -РєСЂРµРјРµРЅС‚Р°, Р·Р°РґР°РµРј РїРµСЂРІС‹Р№ РїР°СЂР°РјРµС‚СЂ РєР°Рє '0'
 		if( opCode == INCREMENT || opCode == DECREMENT )
 			plist->push_back( null );
 
@@ -894,101 +894,101 @@ POperand UnaryOverloadOperatorCaller::Call() const
 			oof.GetClassOperatorList()), &gofl = const_cast<OverloadFunctionList &>(
 			oof.GetGlobalOperatorList());
 
-		// если в классе нет подходящего оператора, выбираем только из
-		// глобальных
+		// РµСЃР»Рё РІ РєР»Р°СЃСЃРµ РЅРµС‚ РїРѕРґС…РѕРґСЏС‰РµРіРѕ РѕРїРµСЂР°С‚РѕСЂР°, РІС‹Р±РёСЂР°РµРј С‚РѕР»СЊРєРѕ РёР·
+		// РіР»РѕР±Р°Р»СЊРЅС‹С…
 		if( (fn1 = OverloadResolutor(cofl, 
-					*plist, &right->GetType()).GetCallableFunction() ) == NULL )					
+					*plist, &right->GetType()).GetCallableFunction() ) == NULL ) 
 			cofl.clear();
 
-		// иначе проверяем глобальные
+		// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РіР»РѕР±Р°Р»СЊРЅС‹Рµ
 		else
 		{
 			plist->clear();
-			plist->push_back(right);			
+			plist->push_back(right); 
 			if( opCode == INCREMENT || opCode == DECREMENT )
 				plist->push_back( null );
 
-			// если среди глобальных нет подходящего, выбираем только из
-			// классовых
+			// РµСЃР»Рё СЃСЂРµРґРё РіР»РѕР±Р°Р»СЊРЅС‹С… РЅРµС‚ РїРѕРґС…РѕРґСЏС‰РµРіРѕ, РІС‹Р±РёСЂР°РµРј С‚РѕР»СЊРєРѕ РёР·
+			// РєР»Р°СЃСЃРѕРІС‹С…
 			if( (fn2 = OverloadResolutor(gofl, *plist).GetCallableFunction()) == NULL )
 			{
 				gofl.clear();
-				// в другом списке оставляем только одну функцию
+				// РІ РґСЂСѓРіРѕРј СЃРїРёСЃРєРµ РѕСЃС‚Р°РІР»СЏРµРј С‚РѕР»СЊРєРѕ РѕРґРЅСѓ С„СѓРЅРєС†РёСЋ
 				cofl.clear();
 				cofl.push_back(fn1);
 			}
 
 
-			// в противном случае неоднозначность
+			// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
 			else
 			{
 				theApp.Error(errPos,
-					"неоднозначность между '%s' и '%s'",
+					"РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ РјРµР¶РґСѓ '%s' Рё '%s'",
 					fn1->GetTypyziedEntityName().c_str(), fn2->GetTypyziedEntityName().c_str());
 				return ErrorOperand::GetInstance();
 			}
-		}					
+		} 
 	}
 
-	// если классовый список пуст, строим вызов обычной функции с одним параметром
+	// РµСЃР»Рё РєР»Р°СЃСЃРѕРІС‹Р№ СЃРїРёСЃРѕРє РїСѓСЃС‚, СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ РѕР±С‹С‡РЅРѕР№ С„СѓРЅРєС†РёРё СЃ РѕРґРЅРёРј РїР°СЂР°РјРµС‚СЂРѕРј
 	if( oof.GetClassOperatorList().empty() )
 	{
 		INTERNAL_IF( oof.GetGlobalOperatorList().empty() );
 		POperand pol = new OverloadOperand( oof.GetGlobalOperatorList() );
 
-		// передаем два параметра и список функций, строителю вызовов
-		PExpressionList plist = new ExpressionList;		
+		// РїРµСЂРµРґР°РµРј РґРІР° РїР°СЂР°РјРµС‚СЂР° Рё СЃРїРёСЃРѕРє С„СѓРЅРєС†РёР№, СЃС‚СЂРѕРёС‚РµР»СЋ РІС‹Р·РѕРІРѕРІ
+		PExpressionList plist = new ExpressionList; 
 		plist->push_back(right);
 		if( opCode == INCREMENT || opCode == DECREMENT )
 			plist->push_back( null );
 
-		// строим вызов, последний параметр означает что вызов неявный,
-		// если функция не подходит для вызова, вернет NULL
+		// СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ, РїРѕСЃР»РµРґРЅРёР№ РїР°СЂР°РјРµС‚СЂ РѕР·РЅР°С‡Р°РµС‚ С‡С‚Рѕ РІС‹Р·РѕРІ РЅРµСЏРІРЅС‹Р№,
+		// РµСЃР»Рё С„СѓРЅРєС†РёСЏ РЅРµ РїРѕРґС…РѕРґРёС‚ РґР»СЏ РІС‹Р·РѕРІР°, РІРµСЂРЅРµС‚ NULL
 		return FunctionCallBinaryMaker(pol, plist, OC_FUNCTION, errPos, true).Make();
 	}
 
-	// иначе если список глобальных операторов пуст, построить вызов метода
+	// РёРЅР°С‡Рµ РµСЃР»Рё СЃРїРёСЃРѕРє РіР»РѕР±Р°Р»СЊРЅС‹С… РѕРїРµСЂР°С‚РѕСЂРѕРІ РїСѓСЃС‚, РїРѕСЃС‚СЂРѕРёС‚СЊ РІС‹Р·РѕРІ РјРµС‚РѕРґР°
 	else if( oof.GetGlobalOperatorList().empty() )
 	{
 		INTERNAL_IF( oof.GetClassOperatorList().empty() );
 		POperand pol = new OverloadOperand( oof.GetClassOperatorList() );
 		 
-		// создаем сначала обращение к члену, следует заметить, что 
-		// тип операнда неизвестен, т.к. имеем список функций
+		// СЃРѕР·РґР°РµРј СЃРЅР°С‡Р°Р»Р° РѕР±СЂР°С‰РµРЅРёРµ Рє С‡Р»РµРЅСѓ, СЃР»РµРґСѓРµС‚ Р·Р°РјРµС‚РёС‚СЊ, С‡С‚Рѕ 
+		// С‚РёРї РѕРїРµСЂР°РЅРґР° РЅРµРёР·РІРµСЃС‚РµРЅ, С‚.Рє. РёРјРµРµРј СЃРїРёСЃРѕРє С„СѓРЅРєС†РёР№
 		POperand select = new BinaryExpression( '.', false, right, pol, NULL );
-		PExpressionList plist = new ExpressionList;		
+		PExpressionList plist = new ExpressionList; 
 		if( opCode == INCREMENT || opCode == DECREMENT )
 			plist->push_back( null );
 
-		// строим вызов 
+		// СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ 
 		return FunctionCallBinaryMaker(select, plist, OC_FUNCTION, errPos, true).Make();
 	}
 
 	else
 	{
-		INTERNAL( "'BinaryOverloadOperatorCaller::Call' - оба списка не пусты");
-		return NULL;	// kill warning
+		INTERNAL( "'BinaryOverloadOperatorCaller::Call' - РѕР±Р° СЃРїРёСЃРєР° РЅРµ РїСѓСЃС‚С‹");
+		return NULL; // kill warning
 	}
 }
 
 
-// вернуть построенный вызов, либо NULL, если перегруженный оператор вызвать
-// невозможно
+// РІРµСЂРЅСѓС‚СЊ РїРѕСЃС‚СЂРѕРµРЅРЅС‹Р№ РІС‹Р·РѕРІ, Р»РёР±Рѕ NULL, РµСЃР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РІС‹Р·РІР°С‚СЊ
+// РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand BinaryOverloadOperatorCaller::Call() const
 {
-	// в первую очередь оба операнда должны быть выражением или основным
+	// РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ РѕР±Р° РѕРїРµСЂР°РЅРґР° РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµРј РёР»Рё РѕСЃРЅРѕРІРЅС‹Рј
 	if( !( (left->IsPrimaryOperand()  || left->IsExpressionOperand()) &&
 		   (right->IsPrimaryOperand() || right->IsExpressionOperand()) ) )
 		return NULL;
 
-	// далее проверяем, если это оператор, который не может быть перегружен,
-	// выходим
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё СЌС‚Рѕ РѕРїРµСЂР°С‚РѕСЂ, РєРѕС‚РѕСЂС‹Р№ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїРµСЂРµРіСЂСѓР¶РµРЅ,
+	// РІС‹С…РѕРґРёРј
 	if( opCode == '.' || opCode == DOT_POINT || opCode == OC_CAST ||
 		opCode == KWDYNAMIC_CAST || opCode == KWSTATIC_CAST || 
 		opCode == KWREINTERPRET_CAST || opCode == KWCONST_CAST )
 		return NULL;
 	
-	// далее один из операндов иметь классовый тип или перечисления
+	// РґР°Р»РµРµ РѕРґРёРЅ РёР· РѕРїРµСЂР°РЅРґРѕРІ РёРјРµС‚СЊ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 	const TypyziedEntity &te1 = left->GetType(), &te2 = right->GetType();
 	bool cor1 = (te1.GetBaseType().IsClassType() || te1.GetBaseType().IsEnumType()) &&
 		(te1.GetDerivedTypeList().IsEmpty() || (te1.GetDerivedTypeList().
@@ -997,35 +997,35 @@ POperand BinaryOverloadOperatorCaller::Call() const
 		(te2.GetDerivedTypeList().IsEmpty() || (te2.GetDerivedTypeList().
 		 GetDerivedTypeCount() == 1 && te2.GetDerivedTypeList().IsReference()) );
 
-	// если оба типа склярные, выйти
+	// РµСЃР»Рё РѕР±Р° С‚РёРїР° СЃРєР»СЏСЂРЅС‹Рµ, РІС‹Р№С‚Рё
 	if( !cor1 && !cor2 )
 		return NULL;
 
-	// иначе если первый тип классовый, задаем класс
+	// РёРЅР°С‡Рµ РµСЃР»Рё РїРµСЂРІС‹Р№ С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№, Р·Р°РґР°РµРј РєР»Р°СЃСЃ
 	const ClassType *cls = cor1 && te1.GetBaseType().IsClassType() ? 
 		&static_cast<const ClassType &>(te1.GetBaseType()) : NULL;
 	bool evrywhere = !(opCode == '=' || opCode == OC_FUNCTION || opCode == ARROW || 
 					   opCode == OC_ARRAY);
 
-	// проверяем, необходим ли поиск оператора в глобальной области видимости	
+	// РїСЂРѕРІРµСЂСЏРµРј, РЅРµРѕР±С…РѕРґРёРј Р»Рё РїРѕРёСЃРє РѕРїРµСЂР°С‚РѕСЂР° РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё 
 	OverloadOperatorFounder oof(opCode, evrywhere, cls, errPos);
 
-	// если не найден, вернуть NULL
+	// РµСЃР»Рё РЅРµ РЅР°Р№РґРµРЅ, РІРµСЂРЅСѓС‚СЊ NULL
 	if( !oof.IsFound() )
 		return NULL;
 
-	// если оператор неоднозначен, вернуть ErrorOperand
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅРµРѕРґРЅРѕР·РЅР°С‡РµРЅ, РІРµСЂРЅСѓС‚СЊ ErrorOperand
 	else if( oof.IsAmbigous() )
 		return ErrorOperand::GetInstance();
 
-	// если один из списков пуст, тогда вызов можно строить с
-	// помощью FunctionCallBinaryMaker.
+	// РµСЃР»Рё РѕРґРёРЅ РёР· СЃРїРёСЃРєРѕРІ РїСѓСЃС‚, С‚РѕРіРґР° РІС‹Р·РѕРІ РјРѕР¶РЅРѕ СЃС‚СЂРѕРёС‚СЊ СЃ
+	// РїРѕРјРѕС‰СЊСЋ FunctionCallBinaryMaker.
 
-	// сначала проверим, если оба списка не пусты, выявим в каком из них находится
-	// необходимая функция. Если в обоих - неоднозначность
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РѕР±Р° СЃРїРёСЃРєР° РЅРµ РїСѓСЃС‚С‹, РІС‹СЏРІРёРј РІ РєР°РєРѕРј РёР· РЅРёС… РЅР°С…РѕРґРёС‚СЃСЏ
+	// РЅРµРѕР±С…РѕРґРёРјР°СЏ С„СѓРЅРєС†РёСЏ. Р•СЃР»Рё РІ РѕР±РѕРёС… - РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
 	if( !oof.GetClassOperatorList().empty() && !oof.GetGlobalOperatorList().empty() )
 	{
-		PExpressionList plist = new ExpressionList;				
+		PExpressionList plist = new ExpressionList; 
 		plist->push_back(right);
 
 		const Function *fn1, *fn2;
@@ -1033,80 +1033,80 @@ POperand BinaryOverloadOperatorCaller::Call() const
 			oof.GetClassOperatorList()), &gofl = const_cast<OverloadFunctionList &>(
 			oof.GetGlobalOperatorList());
 
-		// если в классе нет подходящего оператора, выбираем только из
-		// глобальных
+		// РµСЃР»Рё РІ РєР»Р°СЃСЃРµ РЅРµС‚ РїРѕРґС…РѕРґСЏС‰РµРіРѕ РѕРїРµСЂР°С‚РѕСЂР°, РІС‹Р±РёСЂР°РµРј С‚РѕР»СЊРєРѕ РёР·
+		// РіР»РѕР±Р°Р»СЊРЅС‹С…
 		if( (fn1 = OverloadResolutor(cofl, 
-					*plist, &left->GetType()).GetCallableFunction() ) == NULL )					
+					*plist, &left->GetType()).GetCallableFunction() ) == NULL ) 
 			cofl.clear();
 
-		// иначе проверяем глобальные
+		// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РіР»РѕР±Р°Р»СЊРЅС‹Рµ
 		else
 		{
 			plist->front() = left;
-			plist->push_back(right);			
+			plist->push_back(right); 
 
-			// если среди глобальных нет подходящего, выбираем только из
-			// классовых
+			// РµСЃР»Рё СЃСЂРµРґРё РіР»РѕР±Р°Р»СЊРЅС‹С… РЅРµС‚ РїРѕРґС…РѕРґСЏС‰РµРіРѕ, РІС‹Р±РёСЂР°РµРј С‚РѕР»СЊРєРѕ РёР·
+			// РєР»Р°СЃСЃРѕРІС‹С…
 			if( (fn2 = OverloadResolutor(gofl, *plist).GetCallableFunction()) == NULL )
 			{
 				gofl.clear();
-				// в другом списке оставляем только одну функцию
+				// РІ РґСЂСѓРіРѕРј СЃРїРёСЃРєРµ РѕСЃС‚Р°РІР»СЏРµРј С‚РѕР»СЊРєРѕ РѕРґРЅСѓ С„СѓРЅРєС†РёСЋ
 				cofl.clear();
 				cofl.push_back(fn1);
 			}
 
 
-			// в противном случае неоднозначность
+			// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
 			else
 			{
 				theApp.Error(errPos,
-					"неоднозначность между '%s' и '%s'",
+					"РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ РјРµР¶РґСѓ '%s' Рё '%s'",
 					fn1->GetTypyziedEntityName().c_str(), fn2->GetTypyziedEntityName().c_str());
 				return ErrorOperand::GetInstance();
 			}
-		}					
+		} 
 	}
 
-	// если классовый список пуст, строим вызов обычной функции с двумя параметрами
+	// РµСЃР»Рё РєР»Р°СЃСЃРѕРІС‹Р№ СЃРїРёСЃРѕРє РїСѓСЃС‚, СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ РѕР±С‹С‡РЅРѕР№ С„СѓРЅРєС†РёРё СЃ РґРІСѓРјСЏ РїР°СЂР°РјРµС‚СЂР°РјРё
 	if( oof.GetClassOperatorList().empty() )
 	{
 		INTERNAL_IF( oof.GetGlobalOperatorList().empty() );
 		POperand pol = new OverloadOperand( oof.GetGlobalOperatorList() );
 
-		// передаем два параметра и список функций, строителю вызовов
+		// РїРµСЂРµРґР°РµРј РґРІР° РїР°СЂР°РјРµС‚СЂР° Рё СЃРїРёСЃРѕРє С„СѓРЅРєС†РёР№, СЃС‚СЂРѕРёС‚РµР»СЋ РІС‹Р·РѕРІРѕРІ
 		PExpressionList plist = new ExpressionList;
 		plist->push_back(left);
 		plist->push_back(right);
 
-		// строим вызов 
+		// СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ 
 		return FunctionCallBinaryMaker(pol, plist, OC_FUNCTION, errPos, true).Make();
 	}
 
-	// иначе если список глобальных операторов пуст, построить вызов метода
+	// РёРЅР°С‡Рµ РµСЃР»Рё СЃРїРёСЃРѕРє РіР»РѕР±Р°Р»СЊРЅС‹С… РѕРїРµСЂР°С‚РѕСЂРѕРІ РїСѓСЃС‚, РїРѕСЃС‚СЂРѕРёС‚СЊ РІС‹Р·РѕРІ РјРµС‚РѕРґР°
 	else if( oof.GetGlobalOperatorList().empty() )
 	{
 		INTERNAL_IF( oof.GetClassOperatorList().empty() );
 		POperand pol = new OverloadOperand( oof.GetClassOperatorList() );
 		 
-		// создаем сначала обращение к члену, следует заметить, что 
-		// тип операнда неизвестен, т.к. имеем список функций
+		// СЃРѕР·РґР°РµРј СЃРЅР°С‡Р°Р»Р° РѕР±СЂР°С‰РµРЅРёРµ Рє С‡Р»РµРЅСѓ, СЃР»РµРґСѓРµС‚ Р·Р°РјРµС‚РёС‚СЊ, С‡С‚Рѕ 
+		// С‚РёРї РѕРїРµСЂР°РЅРґР° РЅРµРёР·РІРµСЃС‚РµРЅ, С‚.Рє. РёРјРµРµРј СЃРїРёСЃРѕРє С„СѓРЅРєС†РёР№
 		POperand select = new BinaryExpression( '.', false, left, pol, NULL );
-		PExpressionList plist = new ExpressionList;		
+		PExpressionList plist = new ExpressionList; 
 		plist->push_back(right);
 
-		// строим вызов 
+		// СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ 
 		return FunctionCallBinaryMaker(select, plist, OC_FUNCTION, errPos, true).Make();
 	}
 
 	else
 	{
-		INTERNAL( "'BinaryOverloadOperatorCaller::Call' - оба списка не пусты");
-		return NULL;	// kill warning
+		INTERNAL( "'BinaryOverloadOperatorCaller::Call' - РѕР±Р° СЃРїРёСЃРєР° РЅРµ РїСѓСЃС‚С‹");
+		return NULL; // kill warning
 	}
 }
 
 
-// возвращает размер базового типа
+// РІРѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР°
 int SizeofEvaluator::GetBaseTypeSize( const BaseType &bt ) const
 {
 	BaseType::BT btc = bt.GetBaseTypeCode();
@@ -1114,46 +1114,46 @@ int SizeofEvaluator::GetBaseTypeSize( const BaseType &bt ) const
 		btc == BaseType::BT_UNION )
 		return EvalClassSize( static_cast<const ClassType &>(bt) );
 
-	// для перечислимого типа, также возвращается константа
+	// РґР»СЏ РїРµСЂРµС‡РёСЃР»РёРјРѕРіРѕ С‚РёРїР°, С‚Р°РєР¶Рµ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РєРѕРЅСЃС‚Р°РЅС‚Р°
 	else if( btc == BaseType::BT_ENUM )
 		return ENUM_TYPE_SIZE;
 
-	// размер типа void неизвестен
+	// СЂР°Р·РјРµСЂ С‚РёРїР° void РЅРµРёР·РІРµСЃС‚РµРЅ
 	else if( btc == BaseType::BT_VOID )
 	{
-		errMsg = "размер типа void неизвестен";
+		errMsg = "СЂР°Р·РјРµСЂ С‚РёРїР° void РЅРµРёР·РІРµСЃС‚РµРЅ";
 		return -1;
 	}
 
-	// иначе возвращаем размер с помощью менеджера
+	// РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј СЂР°Р·РјРµСЂ СЃ РїРѕРјРѕС‰СЊСЋ РјРµРЅРµРґР¶РµСЂР°
 	else
 		return ImplicitTypeManager( bt ).GetImplicitTypeSize();
 }
 
 
-// возвращает размер структуры, класса или перечисления
+// РІРѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ СЃС‚СЂСѓРєС‚СѓСЂС‹, РєР»Р°СЃСЃР° РёР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 int SizeofEvaluator::EvalClassSize( const ClassType &cls ) const
 {
 	bool ucls = cls.GetBaseTypeCode() == BaseType::BT_UNION;
 	int sz = 0;
 
-	// если класс не полностью объявлен, это ошибка
+	// РµСЃР»Рё РєР»Р°СЃСЃ РЅРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ, СЌС‚Рѕ РѕС€РёР±РєР°
 	if( cls.IsUncomplete() )
 	{
-		errMsg = "класс не полностью объявлен";
+		errMsg = "РєР»Р°СЃСЃ РЅРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ";
 		return -1;
 	}
 
-	// вычисляем размер каждого члена, и после размеры базовых классов
+	// РІС‹С‡РёСЃР»СЏРµРј СЂР°Р·РјРµСЂ РєР°Р¶РґРѕРіРѕ С‡Р»РµРЅР°, Рё РїРѕСЃР»Рµ СЂР°Р·РјРµСЂС‹ Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ
 	const ClassMemberList &cml = cls.GetMemberList();
 	for( int i = 0; i<cml.GetClassMemberCount(); i++ )
 	{
 		const ClassMember &cm = *cml.GetClassMember(i);
 
-		// вычисление размера возможно только если имеем данное-член
+		// РІС‹С‡РёСЃР»РµРЅРёРµ СЂР°Р·РјРµСЂР° РІРѕР·РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РµСЃР»Рё РёРјРµРµРј РґР°РЅРЅРѕРµ-С‡Р»РµРЅ
 		if( const DataMember *dm = dynamic_cast<const DataMember *>(&cm) )
 		{
-			// статические члены и типы не учитываются при подсчете размера
+			// СЃС‚Р°С‚РёС‡РµСЃРєРёРµ С‡Р»РµРЅС‹ Рё С‚РёРїС‹ РЅРµ СѓС‡РёС‚С‹РІР°СЋС‚СЃСЏ РїСЂРё РїРѕРґСЃС‡РµС‚Рµ СЂР°Р·РјРµСЂР°
 			if( dm->IsStaticMember() || dm->GetStorageSpecifier() == ::Object::SS_TYPEDEF )
 				continue;
 
@@ -1161,42 +1161,42 @@ int SizeofEvaluator::EvalClassSize( const ClassType &cls ) const
 			int msz = se.Evaluate();
 			if( msz < 0 )
 			{
-				errMsg = "один из членов класса имеет некорректный тип"; 
+				errMsg = "РѕРґРёРЅ РёР· С‡Р»РµРЅРѕРІ РєР»Р°СЃСЃР° РёРјРµРµС‚ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С‚РёРї"; 
 				return -1;
 			}
 
-			// иначе увеличиваем общий размер если это класс или выбираем
-			// наибольший, если это объединение
+			// РёРЅР°С‡Рµ СѓРІРµР»РёС‡РёРІР°РµРј РѕР±С‰РёР№ СЂР°Р·РјРµСЂ РµСЃР»Рё СЌС‚Рѕ РєР»Р°СЃСЃ РёР»Рё РІС‹Р±РёСЂР°РµРј
+			// РЅР°РёР±РѕР»СЊС€РёР№, РµСЃР»Рё СЌС‚Рѕ РѕР±СЉРµРґРёРЅРµРЅРёРµ
 			sz = ucls ? (msz > sz ? msz : sz) : (sz + msz);
 		}
 	}
 
-	// если имеем объединение, то вычислять размеры базовых классов не нужно
+	// РµСЃР»Рё РёРјРµРµРј РѕР±СЉРµРґРёРЅРµРЅРёРµ, С‚Рѕ РІС‹С‡РёСЃР»СЏС‚СЊ СЂР°Р·РјРµСЂС‹ Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ РЅРµ РЅСѓР¶РЅРѕ
 	INTERNAL_IF( sz < 0 );
 	if( ucls )
-		return sz > 0 ? sz : EMPTY_CLASS_SIZE;	
+		return sz > 0 ? sz : EMPTY_CLASS_SIZE; 
 
-	// вычисляем размер базовых классов
+	// РІС‹С‡РёСЃР»СЏРµРј СЂР°Р·РјРµСЂ Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ
 	const BaseClassList &bcl = cls.GetBaseClassList();
 	int i;
 	for( i = 0; i<bcl.GetBaseClassCount(); i++ )
 	{
 		const BaseClassCharacteristic &bcc = *bcl.GetBaseClassCharacteristic(i);
 
-		// виртуальные классы находятся не в самом классе, а за его пределами. 
-		// Внутри самого класса хранится только указатель на этот объект. 
-		// Поэтому при наследовании виртуального базового класса, производный
-		// класс увеличивается на размер указателя, а не на размер самого класса.
+		// РІРёСЂС‚СѓР°Р»СЊРЅС‹Рµ РєР»Р°СЃСЃС‹ РЅР°С…РѕРґСЏС‚СЃСЏ РЅРµ РІ СЃР°РјРѕРј РєР»Р°СЃСЃРµ, Р° Р·Р° РµРіРѕ РїСЂРµРґРµР»Р°РјРё. 
+		// Р’РЅСѓС‚СЂРё СЃР°РјРѕРіРѕ РєР»Р°СЃСЃР° С…СЂР°РЅРёС‚СЃСЏ С‚РѕР»СЊРєРѕ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЌС‚РѕС‚ РѕР±СЉРµРєС‚. 
+		// РџРѕСЌС‚РѕРјСѓ РїСЂРё РЅР°СЃР»РµРґРѕРІР°РЅРёРё РІРёСЂС‚СѓР°Р»СЊРЅРѕРіРѕ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°, РїСЂРѕРёР·РІРѕРґРЅС‹Р№
+		// РєР»Р°СЃСЃ СѓРІРµР»РёС‡РёРІР°РµС‚СЃСЏ РЅР° СЂР°Р·РјРµСЂ СѓРєР°Р·Р°С‚РµР»СЏ, Р° РЅРµ РЅР° СЂР°Р·РјРµСЂ СЃР°РјРѕРіРѕ РєР»Р°СЃСЃР°.
 		if( bcc.IsVirtualDerivation() )
 			sz += DEFAULT_POINTER_SIZE;
 
-		// иначе высчитываем размер всего базового класса
+		// РёРЅР°С‡Рµ РІС‹СЃС‡РёС‚С‹РІР°РµРј СЂР°Р·РјРµСЂ РІСЃРµРіРѕ Р±Р°Р·РѕРІРѕРіРѕ РєР»Р°СЃСЃР°
 		else
-			sz += EvalClassSize( bcc.GetPointerToClass() );		
+			sz += EvalClassSize( bcc.GetPointerToClass() ); 
 	}
 
-	// если класс создал собственную vm-таблицу, следоват. его размер 
-	// увеличился на 4
+	// РµСЃР»Рё РєР»Р°СЃСЃ СЃРѕР·РґР°Р» СЃРѕР±СЃС‚РІРµРЅРЅСѓСЋ vm-С‚Р°Р±Р»РёС†Сѓ, СЃР»РµРґРѕРІР°С‚. РµРіРѕ СЂР°Р·РјРµСЂ 
+	// СѓРІРµР»РёС‡РёР»СЃСЏ РЅР° 4
 	if( cls.IsMadeVmTable() )
 		sz += DEFAULT_POINTER_SIZE;
 
@@ -1204,15 +1204,15 @@ int SizeofEvaluator::EvalClassSize( const ClassType &cls ) const
 }
 
 
-// вычислить размер типа, если тип некорректен, вернуть -1
+// РІС‹С‡РёСЃР»РёС‚СЊ СЂР°Р·РјРµСЂ С‚РёРїР°, РµСЃР»Рё С‚РёРї РЅРµРєРѕСЂСЂРµРєС‚РµРЅ, РІРµСЂРЅСѓС‚СЊ -1
 int SizeofEvaluator::Evaluate() const
 {
-	// если нет производных типов, вернем размер базового типа и все
+	// РµСЃР»Рё РЅРµС‚ РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ, РІРµСЂРЅРµРј СЂР°Р·РјРµСЂ Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° Рё РІСЃРµ
 	const DerivedTypeList &dtl = type.GetDerivedTypeList();
 	if( dtl.IsEmpty() )
 		return GetBaseTypeSize(type.GetBaseType());
 
-	// иначе проверяем, с каким типом имеем дело
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј, СЃ РєР°РєРёРј С‚РёРїРѕРј РёРјРµРµРј РґРµР»Рѕ
 	const DerivedType &dt =  *dtl.GetDerivedType(0);
 	DerivedType::DT dc = dt.GetDerivedTypeCode();
 			
@@ -1227,19 +1227,19 @@ int SizeofEvaluator::Evaluate() const
 
 	else if( dc == DerivedType::DT_FUNCTION_PROTOTYPE )
 	{
-		errMsg = "функция не имеет размера";
+		errMsg = "С„СѓРЅРєС†РёСЏ РЅРµ РёРјРµРµС‚ СЂР°Р·РјРµСЂР°";
 		return -1;
 	}
 
-	// если битовое поле
+	// РµСЃР»Рё Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ
 	else if( type.IsObject() && 
 		static_cast<const ::Object &>(type).GetStorageSpecifier() == ::Object::SS_BITFIELD )
 	{
-		errMsg = "битовое поле не имеет размера";
-		return -1;		
+		errMsg = "Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ РЅРµ РёРјРµРµС‚ СЂР°Р·РјРµСЂР°";
+		return -1; 
 	}
 
-	// иначе массив
+	// РёРЅР°С‡Рµ РјР°СЃСЃРёРІ
 	int sz = 1;
 	for( int i = 0; i<dtl.GetDerivedTypeCount(); i++ )
 	{
@@ -1248,10 +1248,10 @@ int SizeofEvaluator::Evaluate() const
 
 		if( dc == DerivedType::DT_ARRAY )
 		{	
-			int arsz = static_cast<const Array&>(dt).GetArraySize();			
+			int arsz = static_cast<const Array&>(dt).GetArraySize(); 
 			if( arsz <= 0 )
 			{
-				errMsg = "массив неизвестного размера";
+				errMsg = "РјР°СЃСЃРёРІ РЅРµРёР·РІРµСЃС‚РЅРѕРіРѕ СЂР°Р·РјРµСЂР°";
 				return -1;
 			}
 
@@ -1264,22 +1264,22 @@ int SizeofEvaluator::Evaluate() const
 			return sz * DEFAULT_POINTER_SIZE;
 
 		else
-			INTERNAL("'SizeofEvaluator::Evaluate()' - некорректный производный тип");
+			INTERNAL("'SizeofEvaluator::Evaluate()' - РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РїСЂРѕРёР·РІРѕРґРЅС‹Р№ С‚РёРї");
 	}
 
-	// был тип только массивы, вернуть размер типа * размер массива
+	// Р±С‹Р» С‚РёРї С‚РѕР»СЊРєРѕ РјР°СЃСЃРёРІС‹, РІРµСЂРЅСѓС‚СЊ СЂР°Р·РјРµСЂ С‚РёРїР° * СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР°
 	return sz * GetBaseTypeSize(type.GetBaseType());
 }
 
 
-// интерпретировать. Если интерпретация невозможна вернуть NULL,
-// иначе указатель на новый операнд
+// РёРЅС‚РµСЂРїСЂРµС‚РёСЂРѕРІР°С‚СЊ. Р•СЃР»Рё РёРЅС‚РµСЂРїСЂРµС‚Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР° РІРµСЂРЅСѓС‚СЊ NULL,
+// РёРЅР°С‡Рµ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅРѕРІС‹Р№ РѕРїРµСЂР°РЅРґ
 POperand UnaryInterpretator::Interpretate() const
 {
-	// получаем значение операнда
+	// РїРѕР»СѓС‡Р°РµРј Р·РЅР°С‡РµРЅРёРµ РѕРїРµСЂР°РЅРґР°
 	double opval = 0;
 
-	// в первую очередь проверяем на sizeof
+	// РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ РїСЂРѕРІРµСЂСЏРµРј РЅР° sizeof
 	if( op == KWSIZEOF )
 	{
 		const TypyziedEntity &te = static_cast<const PrimaryOperand &>(*cnst).GetType();
@@ -1287,33 +1287,33 @@ POperand UnaryInterpretator::Interpretate() const
 		opval = se.Evaluate();
 		if( opval < 0 )
 			theApp.Error( errPos,
-				"'sizeof' не вычислил размер выражения; %s", se.GetErrorMessage());
+				"'sizeof' РЅРµ РІС‹С‡РёСЃР»РёР» СЂР°Р·РјРµСЂ РІС‹СЂР°Р¶РµРЅРёСЏ; %s", se.GetErrorMessage());
 
-		// формируем литерал типа 'unsigned int' в качестве результата
+		// С„РѕСЂРјРёСЂСѓРµРј Р»РёС‚РµСЂР°Р» С‚РёРїР° 'unsigned int' РІ РєР°С‡РµСЃС‚РІРµ СЂРµР·СѓР»СЊС‚Р°С‚Р°
 		Literal *res = new Literal( 
 			(BaseType *)&ImplicitTypeManager(KWINT, KWUNSIGNED).GetImplicitType(),
 			true, false, DerivedTypeList(), CharString( int(opval) ) );
 				
-		return new PrimaryOperand( false, *res );		
+		return new PrimaryOperand( false, *res ); 
 	}
 
 
-	// далее если не sizeof, проверяем операнд на интерпретируемость
+	// РґР°Р»РµРµ РµСЃР»Рё РЅРµ sizeof, РїСЂРѕРІРµСЂСЏРµРј РѕРїРµСЂР°РЅРґ РЅР° РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјРѕСЃС‚СЊ
 	if( !ExpressionMakerUtils::IsInterpretable( cnst, opval ) )
 		return NULL;
 
-	// после получения значения, вычисляем. Причем в случае с нектороыми
-	// операторами, следует проверять, чтобы тип был целым
+	// РїРѕСЃР»Рµ РїРѕР»СѓС‡РµРЅРёСЏ Р·РЅР°С‡РµРЅРёСЏ, РІС‹С‡РёСЃР»СЏРµРј. РџСЂРёС‡РµРј РІ СЃР»СѓС‡Р°Рµ СЃ РЅРµРєС‚РѕСЂРѕС‹РјРё
+	// РѕРїРµСЂР°С‚РѕСЂР°РјРё, СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂСЏС‚СЊ, С‡С‚РѕР±С‹ С‚РёРї Р±С‹Р» С†РµР»С‹Рј
 	if( op == '!' )
 		opval = !opval;
 
-	// для этого операнда, оператор должен быть целым
+	// РґР»СЏ СЌС‚РѕРіРѕ РѕРїРµСЂР°РЅРґР°, РѕРїРµСЂР°С‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С†РµР»С‹Рј
 	else if( op == '~' )
 	{
 		if( !ExpressionMakerUtils::IsIntegral( 
 			static_cast<const PrimaryOperand &>(*cnst).GetType()) )
 		{
-			theApp.Error( errPos, "оператор '~' применим только к целым типам" );
+			theApp.Error( errPos, "РѕРїРµСЂР°С‚РѕСЂ '~' РїСЂРёРјРµРЅРёРј С‚РѕР»СЊРєРѕ Рє С†РµР»С‹Рј С‚РёРїР°Рј" );
 			opval = 0;
 		}
 
@@ -1324,12 +1324,12 @@ POperand UnaryInterpretator::Interpretate() const
 	else if( op ==  '-' )
 		opval = -opval;
 	
-	// интерпретация данного оператора невозможна
+	// РёРЅС‚РµСЂРїСЂРµС‚Р°С†РёСЏ РґР°РЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР° РЅРµРІРѕР·РјРѕР¶РЅР°
 	else
 		return NULL;
 
-	// после всех вычислений, создаем новый PrimaryOperand, с параметром
-	// литерала
+	// РїРѕСЃР»Рµ РІСЃРµС… РІС‹С‡РёСЃР»РµРЅРёР№, СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ PrimaryOperand, СЃ РїР°СЂР°РјРµС‚СЂРѕРј
+	// Р»РёС‚РµСЂР°Р»Р°
 	CharString sval;
 	const PrimaryOperand &pop = static_cast<const PrimaryOperand &>(*cnst);
 	BaseType::BT bt = pop.GetType().GetBaseType().GetBaseTypeCode();
@@ -1338,34 +1338,34 @@ POperand UnaryInterpretator::Interpretate() const
 	else
 		sval = (int)opval;
 
-	// создаем новый операнд
+	// СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ РѕРїРµСЂР°РЅРґ
 	const TypyziedEntity &te = pop.GetType();
 	return new PrimaryOperand( false, *new Literal( 
 		const_cast<BaseType *>(&te.GetBaseType()), te.IsConst(), te.IsVolatile(), 
 			te.GetDerivedTypeList(), sval) );
-			
+
 }
 
 
-// закрытый метод, создает результат
+// Р·Р°РєСЂС‹С‚С‹Р№ РјРµС‚РѕРґ, СЃРѕР·РґР°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚
 POperand BinaryInterpretator::MakeResult( const BaseType &bt1, const BaseType & bt2, double res )
 {
-	// выбираем из двух типов наибольший
+	// РІС‹Р±РёСЂР°РµРј РёР· РґРІСѓС… С‚РёРїРѕРІ РЅР°РёР±РѕР»СЊС€РёР№
 	BaseType::BT btc1 = bt1.GetBaseTypeCode(), btc2 = bt2.GetBaseTypeCode();
 	const BaseType *rbt = NULL;
 
-	// если один из типов double, значит и другой double
+	// РµСЃР»Рё РѕРґРёРЅ РёР· С‚РёРїРѕРІ double, Р·РЅР°С‡РёС‚ Рё РґСЂСѓРіРѕР№ double
 	if( btc1 == BaseType::BT_DOUBLE || btc2 == BaseType::BT_DOUBLE )
 	{
 		bool lng = bt1.IsLong() || bt2.IsLong();
 		rbt = &ImplicitTypeManager(KWDOUBLE, -1, lng ? KWLONG : -1).GetImplicitType();
 	}
 
-	// если один из типов float, значит и другой
+	// РµСЃР»Рё РѕРґРёРЅ РёР· С‚РёРїРѕРІ float, Р·РЅР°С‡РёС‚ Рё РґСЂСѓРіРѕР№
 	else if( btc1 == BaseType::BT_FLOAT || btc2 == BaseType::BT_FLOAT )
 		rbt = &ImplicitTypeManager(KWFLOAT).GetImplicitType();
 
-	// иначе int
+	// РёРЅР°С‡Рµ int
 	else
 	{
 		bool uns = bt1.IsUnsigned() || bt2.IsUnsigned(),
@@ -1374,7 +1374,7 @@ POperand BinaryInterpretator::MakeResult( const BaseType &bt1, const BaseType & 
 			lng ? KWLONG : -1).GetImplicitType();
 	}
 
-	// возвращаем литерал
+	// РІРѕР·РІСЂР°С‰Р°РµРј Р»РёС‚РµСЂР°Р»
 	CharString sval;
 	if( rbt->GetBaseTypeCode() == BaseType::BT_INT )
 		sval = (int)res;
@@ -1382,18 +1382,18 @@ POperand BinaryInterpretator::MakeResult( const BaseType &bt1, const BaseType & 
 		sval = res;
 
 	return new PrimaryOperand( false, *new Literal( 
-		const_cast<BaseType *>(rbt), true, false, DerivedTypeList(), sval) );			
+		const_cast<BaseType *>(rbt), true, false, DerivedTypeList(), sval) ); 
 }
 
 
-// интерпретировать. Если интерпретация невозможна вернуть NULL,
-// иначе указатель на новый операнд
+// РёРЅС‚РµСЂРїСЂРµС‚РёСЂРѕРІР°С‚СЊ. Р•СЃР»Рё РёРЅС‚РµСЂРїСЂРµС‚Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР° РІРµСЂРЅСѓС‚СЊ NULL,
+// РёРЅР°С‡Рµ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅРѕРІС‹Р№ РѕРїРµСЂР°РЅРґ
 POperand BinaryInterpretator::Interpretate() const
 {
 	double val1, val2, res;
 	val1 = val2 = res = 0;
 
-	// проверяем операнды на интерпретируемость
+	// РїСЂРѕРІРµСЂСЏРµРј РѕРїРµСЂР°РЅРґС‹ РЅР° РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјРѕСЃС‚СЊ
 	if( !ExpressionMakerUtils::IsInterpretable( cnst1, val1 ) ||
 		!ExpressionMakerUtils::IsInterpretable( cnst2, val2 ) )
 		return NULL;
@@ -1401,14 +1401,14 @@ POperand BinaryInterpretator::Interpretate() const
 	const PrimaryOperand &pop1 = static_cast<const PrimaryOperand &>(*cnst1), 
 			&pop2 = static_cast<const PrimaryOperand &>(*cnst2);
 
-	// выполняем семантические проверки
+	// РІС‹РїРѕР»РЅСЏРµРј СЃРµРјР°РЅС‚РёС‡РµСЃРєРёРµ РїСЂРѕРІРµСЂРєРё
 	if( (op == '%' || op == '/') && val2 == 0 )
 	{
-		theApp.Error(errPos, op == '/' ? "деление на ноль" : "остаток от нуля");
+		theApp.Error(errPos, op == '/' ? "РґРµР»РµРЅРёРµ РЅР° РЅРѕР»СЊ" : "РѕСЃС‚Р°С‚РѕРє РѕС‚ РЅСѓР»СЏ");
 		return cnst1;
 	}
 
-	// в этих случаях операнды должны быть целыми
+	// РІ СЌС‚РёС… СЃР»СѓС‡Р°СЏС… РѕРїРµСЂР°РЅРґС‹ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ С†РµР»С‹РјРё
 	else if( op == '%' || op == '^' || op == '|' || op == '&' || 
 		     op == LEFT_SHIFT || op == RIGHT_SHIFT )
 	{
@@ -1418,12 +1418,12 @@ POperand BinaryInterpretator::Interpretate() const
 		if( bt1 == BaseType::BT_DOUBLE || bt2 == BaseType::BT_DOUBLE || 
 			bt1 == BaseType::BT_FLOAT  || bt2 == BaseType::BT_FLOAT )
 		{
-			theApp.Error(errPos, "операнды должны быть целого типа");
+			theApp.Error(errPos, "РѕРїРµСЂР°РЅРґС‹ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ С†РµР»РѕРіРѕ С‚РёРїР°");
 			return cnst1;
 		}
 	}
 
-	// теперь проверяем, какой имеем оператор и интерпретируем	
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј, РєР°РєРѕР№ РёРјРµРµРј РѕРїРµСЂР°С‚РѕСЂ Рё РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРј	
 	switch( op )
 	{
 	case '+': res = val1 + val2; break;
@@ -1454,41 +1454,41 @@ POperand BinaryInterpretator::Interpretate() const
 }
 
 
-// интерпретировать. Если интерпретация невозможна вернуть NULL,
-// иначе указатель на новый операнд
+// РёРЅС‚РµСЂРїСЂРµС‚РёСЂРѕРІР°С‚СЊ. Р•СЃР»Рё РёРЅС‚РµСЂРїСЂРµС‚Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР° РІРµСЂРЅСѓС‚СЊ NULL,
+// РёРЅР°С‡Рµ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅРѕРІС‹Р№ РѕРїРµСЂР°РЅРґ
 POperand TernaryInterpretator::Interpretate() const
 {
 	double val1, val2, val3, res;
 	val1 = val2 = val3 = res = 0;
 
-	// проверяем операнды на интерпретируемость
+	// РїСЂРѕРІРµСЂСЏРµРј РѕРїРµСЂР°РЅРґС‹ РЅР° РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјРѕСЃС‚СЊ
 	if( !ExpressionMakerUtils::IsInterpretable( cnst1, val1 ) ||
 		!ExpressionMakerUtils::IsInterpretable( cnst2, val2 ) ||
 		!ExpressionMakerUtils::IsInterpretable( cnst3, val3 ) )
 		return NULL;
 
-	// получаем операнды из которых будет строится результирующий тип
+	// РїРѕР»СѓС‡Р°РµРј РѕРїРµСЂР°РЅРґС‹ РёР· РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ СЃС‚СЂРѕРёС‚СЃСЏ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї
 	const PrimaryOperand &pop1 = static_cast<const PrimaryOperand &>(*cnst2), 
 			&pop2 = static_cast<const PrimaryOperand &>(*cnst3);
 
-	// вычисляем результат
+	// РІС‹С‡РёСЃР»СЏРµРј СЂРµР·СѓР»СЊС‚Р°С‚
 	res = val1 ? val2 : val3;
 
-	// возвращаем его
+	// РІРѕР·РІСЂР°С‰Р°РµРј РµРіРѕ
 	return BinaryInterpretator::MakeResult(pop1.GetType().GetBaseType(),
 		pop2.GetType().GetBaseType(), res);
 }
 
 
-// создаеть указатель 'this', если возможно.
+// СЃРѕР·РґР°РµС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ 'this', РµСЃР»Рё РІРѕР·РјРѕР¶РЅРѕ.
 POperand ThisMaker::Make()
 {
-	// если текущая область видимости не локальная и не функциональная,
-	// вывести ошибку, вернуть 'errorOperand'
+	// РµСЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ Р»РѕРєР°Р»СЊРЅР°СЏ Рё РЅРµ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ,
+	// РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ, РІРµСЂРЅСѓС‚СЊ 'errorOperand'
 	if( !GetCurrentSymbolTable().IsFunctionSymbolTable() &&
 		!GetCurrentSymbolTable().IsLocalSymbolTable() )
 	{
-		theApp.Error(errPos, "'this' в '%s'", 
+		theApp.Error(errPos, "'this' РІ '%s'", 
 			ManagerUtils::GetSymbolTableName(GetCurrentSymbolTable()).c_str());
 		return ErrorOperand::GetInstance();
 	}
@@ -1496,58 +1496,58 @@ POperand ThisMaker::Make()
 	const SymbolTable &fst = GetScopeSystem().GetFunctionalSymbolTable();
 	const Function &fn = static_cast<const FunctionSymbolTable &>(fst).GetFunction();
 
-	// если функция не является методом или является статическим методом,
-	// использование 'this' некорректно
+	// РµСЃР»Рё С„СѓРЅРєС†РёСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РјРµС‚РѕРґРѕРј РёР»Рё СЏРІР»СЏРµС‚СЃСЏ СЃС‚Р°С‚РёС‡РµСЃРєРёРј РјРµС‚РѕРґРѕРј,
+	// РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ 'this' РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ
 	if( !fn.IsClassMember() )
 	{
-		theApp.Error(errPos, "'this' в 'функции-не члене'");
+		theApp.Error(errPos, "'this' РІ 'С„СѓРЅРєС†РёРё-РЅРµ С‡Р»РµРЅРµ'");
 		return ErrorOperand::GetInstance();
 	}
 
-	// статический метод
+	// СЃС‚Р°С‚РёС‡РµСЃРєРёР№ РјРµС‚РѕРґ
 	if( fn.GetStorageSpecifier() == Function::SS_STATIC )
 	{
-		theApp.Error(errPos, "'this' в 'статическом методе'");
+		theApp.Error(errPos, "'this' РІ 'СЃС‚Р°С‚РёС‡РµСЃРєРѕРј РјРµС‚РѕРґРµ'");
 		return ErrorOperand::GetInstance();
 	}
 		
-	// создаем основной операнд. this не является lvalue, а типизированную сущность
-	// создадим
+	// СЃРѕР·РґР°РµРј РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ. this РЅРµ СЏРІР»СЏРµС‚СЃСЏ lvalue, Р° С‚РёРїРёР·РёСЂРѕРІР°РЅРЅСѓСЋ СЃСѓС‰РЅРѕСЃС‚СЊ
+	// СЃРѕР·РґР°РґРёРј
 	return new PrimaryOperand(false, 
 		*MakeThis( static_cast<const Method &>(fn) ) );
 }
 
 
-// выдляет память для 'this'
+// РІС‹РґР»СЏРµС‚ РїР°РјСЏС‚СЊ РґР»СЏ 'this'
 const TypyziedEntity *ThisMaker::MakeThis( const Method &meth ) const
 {
-	// получим прототип
+	// РїРѕР»СѓС‡РёРј РїСЂРѕС‚РѕС‚РёРї
 	const FunctionPrototype &fp = meth.GetFunctionPrototype();
 	
-	// получим класс к которому принадлежит метод
+	// РїРѕР»СѓС‡РёРј РєР»Р°СЃСЃ Рє РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ РјРµС‚РѕРґ
 	const ClassType &cls = static_cast<const ClassType &>(meth.GetSymbolTableEntry());
 
-	// создадим константный указатель и вставим его в список произв. типов
+	// СЃРѕР·РґР°РґРёРј РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ Рё РІСЃС‚Р°РІРёРј РµРіРѕ РІ СЃРїРёСЃРѕРє РїСЂРѕРёР·РІ. С‚РёРїРѕРІ
 	DerivedTypeList dtl;
 	dtl.AddDerivedType( new Pointer(true, false) );
 
-	// теперь получаем cv-квалификаторы метода
+	// С‚РµРїРµСЂСЊ РїРѕР»СѓС‡Р°РµРј cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹ РјРµС‚РѕРґР°
 	bool c = fp.IsConst(), v = fp.IsVolatile();
 
-	// создаем
+	// СЃРѕР·РґР°РµРј
 	return new TypyziedEntity( const_cast<ClassType *>(&cls), c, v, dtl );
 }
 
 
-// переводит символьный литерал в целое число
+// РїРµСЂРµРІРѕРґРёС‚ СЃРёРјРІРѕР»СЊРЅС‹Р№ Р»РёС‚РµСЂР°Р» РІ С†РµР»РѕРµ С‡РёСЃР»Рѕ
 int LiteralMaker::CharToInt( PCSTR chr, bool wide ) const
 {
 	register PCSTR p;
 	extern int isdigit8( int c );
 	int r;
-	PCSTR end;	// конец константы, должен указывать на '\''
+	PCSTR end; // РєРѕРЅРµС† РєРѕРЅСЃС‚Р°РЅС‚С‹, РґРѕР»Р¶РµРЅ СѓРєР°Р·С‹РІР°С‚СЊ РЅР° '\''
 
-	p = wide ? chr+2 : chr + 1;	// после '\''
+	p = wide ? chr+2 : chr + 1; // РїРѕСЃР»Рµ '\''
 	end = p + 1;
 	r = *p;
 
@@ -1557,7 +1557,7 @@ int LiteralMaker::CharToInt( PCSTR chr, bool wide ) const
 		if( *(p+1) == 'x' && *(p+2) == '\'')
 		{
 			theApp.Error(  literalLxm.GetPos(),
-					"отсутствует 16-ричная последовательность после '\\x'");
+					"РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ 16-СЂРёС‡РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РїРѕСЃР»Рµ '\\x'");
 			return 'x';
 		}
 
@@ -1569,12 +1569,12 @@ int LiteralMaker::CharToInt( PCSTR chr, bool wide ) const
 
 			r = strtol( start, &stop, base );
 
-			// произошло переполнение
+			// РїСЂРѕРёР·РѕС€Р»Рѕ РїРµСЂРµРїРѕР»РЅРµРЅРёРµ
 			if( (errno == ERANGE) || 
 				(wide ? r > MAX_WCHAR_T_VALUE : r > MAX_CHAR_VALUE) )
 			{
 				theApp.Warning( literalLxm.GetPos(),
-					"'0x%x' - значение слишком велико для типа '%s'",
+					"'0x%x' - Р·РЅР°С‡РµРЅРёРµ СЃР»РёС€РєРѕРј РІРµР»РёРєРѕ РґР»СЏ С‚РёРїР° '%s'",
 					r, wide ? "wchar_t" : "char");
 				return r;
 			}
@@ -1582,7 +1582,7 @@ int LiteralMaker::CharToInt( PCSTR chr, bool wide ) const
 			if( *stop != '\'' )
 			{
 				theApp.Error(  literalLxm.GetPos(),
-					"'%x' - неизвестный символ в %d-ричной последовательности", 
+					"'%x' - РЅРµРёР·РІРµСЃС‚РЅС‹Р№ СЃРёРјРІРѕР» РІ %d-СЂРёС‡РЅРѕР№ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё", 
 					*stop, base );
 				
 				return *(p+1);
@@ -1608,7 +1608,7 @@ int LiteralMaker::CharToInt( PCSTR chr, bool wide ) const
 		case '\"': r = '\"'; break;
 		default:
 			theApp.Error(  literalLxm.GetPos(),
-				"'\\%c' - некорректная символная последовательность", *(p+1));
+				"'\\%c' - РЅРµРєРѕСЂСЂРµРєС‚РЅР°СЏ СЃРёРјРІРѕР»РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ", *(p+1));
 			return *(p+1);
 		}
 	}
@@ -1621,32 +1621,32 @@ int LiteralMaker::CharToInt( PCSTR chr, bool wide ) const
 		if( wide )
 		{
 			theApp.Warning( literalLxm.GetPos(),
-				"символы кроме первого игнорируются в константе 'wchar_t'" ); 
+				"СЃРёРјРІРѕР»С‹ РєСЂРѕРјРµ РїРµСЂРІРѕРіРѕ РёРіРЅРѕСЂРёСЂСѓСЋС‚СЃСЏ РІ РєРѕРЅСЃС‚Р°РЅС‚Рµ 'wchar_t'" ); 
 			return r;
 		}
 
 		else
 		{
 			theApp.Error( literalLxm.GetPos(),
-				"%s - некорректная символная последовательность", chr);		
+				"%s - РЅРµРєРѕСЂСЂРµРєС‚РЅР°СЏ СЃРёРјРІРѕР»РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ", chr);		
 			return 0;
 		}
 	}	
 }
 
 
-// создать PrimaryOperand с типизированной сущностью созданной
-// на основе лексемы
+// СЃРѕР·РґР°С‚СЊ PrimaryOperand СЃ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚СЊСЋ СЃРѕР·РґР°РЅРЅРѕР№
+// РЅР° РѕСЃРЅРѕРІРµ Р»РµРєСЃРµРјС‹
 POperand LiteralMaker::Make()
 {
-	// анализируем тип лексемы
+	// Р°РЅР°Р»РёР·РёСЂСѓРµРј С‚РёРї Р»РµРєСЃРµРјС‹
 	register int lc = literalLxm;
-				  			   
-	// резулбтирующий литерал
+
+	// СЂРµР·СѓР»Р±С‚РёСЂСѓСЋС‰РёР№ Р»РёС‚РµСЂР°Р»
 	const Literal *literal = NULL;
 	DerivedTypeList dtl;
 
-	// создаем int, float, double литералы, которые не требуют преобразование
+	// СЃРѕР·РґР°РµРј int, float, double Р»РёС‚РµСЂР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РЅРµ С‚СЂРµР±СѓСЋС‚ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 	if( lc == INTEGER10 || lc == UINTEGER10 || lc == LFLOAT || lc == LDOUBLE )
 	{
 		int btype = lc == LFLOAT ? KWFLOAT : (lc == LDOUBLE ? KWDOUBLE : KWINT) ;
@@ -1656,7 +1656,7 @@ POperand LiteralMaker::Make()
 			true, false, dtl, literalLxm.GetBuf());
 	}
 
-	// создаем строку, с типом const char [N]
+	// СЃРѕР·РґР°РµРј СЃС‚СЂРѕРєСѓ, СЃ С‚РёРїРѕРј const char [N]
 	else if( lc == STRING )
 	{		
 		dtl.AddDerivedType( new Array( literalLxm.GetBuf().length()-1 ) );
@@ -1665,7 +1665,7 @@ POperand LiteralMaker::Make()
 			false, false, dtl, literalLxm.GetBuf());
 	}
 
-	// создаем строку с типом const wchar_t [N]
+	// СЃРѕР·РґР°РµРј СЃС‚СЂРѕРєСѓ СЃ С‚РёРїРѕРј const wchar_t [N]
 	else if( lc == WSTRING )
 	{
 		INTERNAL_IF( literalLxm.GetBuf()[0] != 'L' );
@@ -1676,7 +1676,7 @@ POperand LiteralMaker::Make()
 			false, false, dtl, literalLxm.GetBuf());
 	}
 	
-	// 16-ричные и восьмиричные константы
+	// 16-СЂРёС‡РЅС‹Рµ Рё РІРѕСЃСЊРјРёСЂРёС‡РЅС‹Рµ РєРѕРЅСЃС‚Р°РЅС‚С‹
 	else if( lc == INTEGER16 || lc == UINTEGER16 ||	lc == INTEGER8 || lc == UINTEGER8 )
 	{
 		int unsign = lc == INTEGER16 || lc == UINTEGER8 ? KWUNSIGNED : -1;
@@ -1688,7 +1688,7 @@ POperand LiteralMaker::Make()
 			&ImplicitTypeManager(KWINT, unsign).GetImplicitType()), true, false, dtl, val );
 	}
 
-	// символьные литералы
+	// СЃРёРјРІРѕР»СЊРЅС‹Рµ Р»РёС‚РµСЂР°Р»С‹
 	else if( lc == CHARACTER || lc == WCHARACTER )
 	{
 		CharString val( CharToInt(literalLxm.GetBuf().c_str(), lc == WCHARACTER) );
@@ -1699,7 +1699,7 @@ POperand LiteralMaker::Make()
 
 	}
 
-	// булевые константы
+	// Р±СѓР»РµРІС‹Рµ РєРѕРЅСЃС‚Р°РЅС‚С‹
 	else if( lc == KWTRUE || lc == KWFALSE )
 	{
 		CharString val( lc == KWTRUE ? "1" : "0" );
@@ -1708,16 +1708,16 @@ POperand LiteralMaker::Make()
 			true, false, dtl, val );
 	}
 
-	// иначе ошибка
+	// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 	else
-		INTERNAL( "'LiteralMaker::Make' принимает лексему с неизвестным кодом");
+		INTERNAL( "'LiteralMaker::Make' РїСЂРёРЅРёРјР°РµС‚ Р»РµРєСЃРµРјСѓ СЃ РЅРµРёР·РІРµСЃС‚РЅС‹Рј РєРѕРґРѕРј");
 	
-	INTERNAL_IF( literal == NULL );		
+	INTERNAL_IF( literal == NULL ); 
 	return new PrimaryOperand( false, *literal );
 }
 
 
-// получить пакет с идентификатором
+// РїРѕР»СѓС‡РёС‚СЊ РїР°РєРµС‚ СЃ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј
 IdentifierOperandMaker::IdentifierOperandMaker( const NodePackage &ip,const TypyziedEntity *obj ) 
 	: idPkg(ip), errPos( ParserUtils::GetPackagePosition(&ip) ), 
 		object(obj), noErrorIfNotFound(false), notFound(false)
@@ -1725,20 +1725,20 @@ IdentifierOperandMaker::IdentifierOperandMaker( const NodePackage &ip,const Typy
 
 	INTERNAL_IF( idPkg.GetPackageID() != PC_QUALIFIED_NAME || obj == NULL );
 
-	// если задан объект, его тип должен быть классовым. В противном случае он обнуляется
-	INTERNAL_IF( !obj->GetBaseType().IsClassType() );		
+	// РµСЃР»Рё Р·Р°РґР°РЅ РѕР±СЉРµРєС‚, РµРіРѕ С‚РёРї РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РєР»Р°СЃСЃРѕРІС‹Рј. Р’ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РѕРЅ РѕР±РЅСѓР»СЏРµС‚СЃСЏ
+	INTERNAL_IF( !obj->GetBaseType().IsClassType() ); 
 	
-	// задаем текущую область видимости, только если имя одиночное,
-	// иначе производим поиск начиная от текущей области видимости и
-	// далее проверяем принадлежность имени к объекту	
+	// Р·Р°РґР°РµРј С‚РµРєСѓС‰СѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, С‚РѕР»СЊРєРѕ РµСЃР»Рё РёРјСЏ РѕРґРёРЅРѕС‡РЅРѕРµ,
+	// РёРЅР°С‡Рµ РїСЂРѕРёР·РІРѕРґРёРј РїРѕРёСЃРє РЅР°С‡РёРЅР°СЏ РѕС‚ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рё
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј РїСЂРёРЅР°РґР»РµР¶РЅРѕСЃС‚СЊ РёРјРµРЅРё Рє РѕР±СЉРµРєС‚Сѓ 
 	curST = idPkg.GetChildPackageCount() == 1 ?
-			&static_cast<const ClassType&>(obj->GetBaseType()) : NULL;		
+			&static_cast<const ClassType&>(obj->GetBaseType()) : NULL; 
 
 	name = ParserUtils::PrintPackageTree( &idPkg );	
 }
 
 
-// задается только область видимости, без объекта
+// Р·Р°РґР°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, Р±РµР· РѕР±СЉРµРєС‚Р°
 IdentifierOperandMaker::IdentifierOperandMaker( const NodePackage &ip, 
 		const SymbolTable *cst, bool neinf ) 
 	: idPkg(ip), errPos( ParserUtils::GetPackagePosition(&ip) ), 
@@ -1749,38 +1749,38 @@ IdentifierOperandMaker::IdentifierOperandMaker( const NodePackage &ip,
 }
 
 
-// создать переменную, для предотвращения вывода ошибок в дальнейшем.
-// В случае если имя квалифицированное или является оператором,
-// имя не создается
+// СЃРѕР·РґР°С‚СЊ РїРµСЂРµРјРµРЅРЅСѓСЋ, РґР»СЏ РїСЂРµРґРѕС‚РІСЂР°С‰РµРЅРёСЏ РІС‹РІРѕРґР° РѕС€РёР±РѕРє РІ РґР°Р»СЊРЅРµР№С€РµРј.
+// Р’ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РёРјСЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРµ РёР»Рё СЏРІР»СЏРµС‚СЃСЏ РѕРїРµСЂР°С‚РѕСЂРѕРј,
+// РёРјСЏ РЅРµ СЃРѕР·РґР°РµС‚СЃСЏ
 void IdentifierOperandMaker::MakeTempName( const CharString &nam ) const
 {
-	// это условие не предохраняет от создания операторов приведения,
-	// но это не смертельно
+	// СЌС‚Рѕ СѓСЃР»РѕРІРёРµ РЅРµ РїСЂРµРґРѕС…СЂР°РЅСЏРµС‚ РѕС‚ СЃРѕР·РґР°РЅРёСЏ РѕРїРµСЂР°С‚РѕСЂРѕРІ РїСЂРёРІРµРґРµРЅРёСЏ,
+	// РЅРѕ СЌС‚Рѕ РЅРµ СЃРјРµСЂС‚РµР»СЊРЅРѕ
 	if( !isalpha(nam[nam.size()-1]) && !isdigit(nam[nam.size()-1]) &&
 		(nam[nam.size()-1]) != '_' )
 		return;
 
-	// если текущая область видимости классовая, не создаем
-	// член, т.к. это повлечет много ошибок
+	// РµСЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РєР»Р°СЃСЃРѕРІР°СЏ, РЅРµ СЃРѕР·РґР°РµРј
+	// С‡Р»РµРЅ, С‚.Рє. СЌС‚Рѕ РїРѕРІР»РµС‡РµС‚ РјРЅРѕРіРѕ РѕС€РёР±РѕРє
 	if( GetCurrentSymbolTable().IsClassSymbolTable() )
 		return;
 
-	// создаем идентификатор
+	// СЃРѕР·РґР°РµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
 	::Object *obj = new ::Object(nam, &GetCurrentSymbolTable(),
 		(BaseType *)&ImplicitTypeManager(KWINT).GetImplicitType(), 
 		false, false, DerivedTypeList(), ::Object::SS_NONE);
 
-	// вставляем в таблицу
+	// РІСЃС‚Р°РІР»СЏРµРј РІ С‚Р°Р±Р»РёС†Сѓ
 	INTERNAL_IF( !GetCurrentSymbolTable().InsertSymbol( obj ) ); 
 
 }
 
 
-// проверить, перекрывает ли 'srcId' идентификатор 'destId'
-// из другого класс иерархии. Если destId принадлежит классу
-// 'V', который является виртуальным по отношению к curST,
-// а srcId принадлежит к классу 'B' базовому классу 'curST',
-// и 'B' наследует 'V', то возвращается true
+// РїСЂРѕРІРµСЂРёС‚СЊ, РїРµСЂРµРєСЂС‹РІР°РµС‚ Р»Рё 'srcId' РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ 'destId'
+// РёР· РґСЂСѓРіРѕРіРѕ РєР»Р°СЃСЃ РёРµСЂР°СЂС…РёРё. Р•СЃР»Рё destId РїСЂРёРЅР°РґР»РµР¶РёС‚ РєР»Р°СЃСЃСѓ
+// 'V', РєРѕС‚РѕСЂС‹Р№ СЏРІР»СЏРµС‚СЃСЏ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ Рє curST,
+// Р° srcId РїСЂРёРЅР°РґР»РµР¶РёС‚ Рє РєР»Р°СЃСЃСѓ 'B' Р±Р°Р·РѕРІРѕРјСѓ РєР»Р°СЃСЃСѓ 'curST',
+// Рё 'B' РЅР°СЃР»РµРґСѓРµС‚ 'V', С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ true
 bool IdentifierOperandMaker::HideVirtual( const Identifier *destId, 
 										 const Identifier *srcId ) const
 {
@@ -1793,17 +1793,17 @@ bool IdentifierOperandMaker::HideVirtual( const Identifier *destId,
 					&clsV = static_cast<const ClassType &>(destId->GetSymbolTableEntry()),
 					&clsB = static_cast<const ClassType &>(srcId->GetSymbolTableEntry());
 
-	// проверяем, чтобы 'V' виртуальным по отнощению к 'D'
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ 'V' РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј РїРѕ РѕС‚РЅРѕС‰РµРЅРёСЋ Рє 'D'
 	if( DerivationManager(clsV, clsD).IsVirtual() )
 	{
-		// проверяем, чтобы 'B' был базовым по отношению к 'D' и
-		// 'V' был виртуальным по отношению к 'B'
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ 'B' Р±С‹Р» Р±Р°Р·РѕРІС‹Рј РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ Рє 'D' Рё
+		// 'V' Р±С‹Р» РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ Рє 'B'
 		DerivationManager dm(clsB, clsD);
 
 		if( !dm.IsBase() || !dm.IsUnambigous() )
 			return false;
 
-		// класс 'V' является виртуальным по отношению к 'B'
+		// РєР»Р°СЃСЃ 'V' СЏРІР»СЏРµС‚СЃСЏ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ Рє 'B'
 		if( DerivationManager(clsV, clsB).IsVirtual() )
 			return true;
 	}
@@ -1812,148 +1812,148 @@ bool IdentifierOperandMaker::HideVirtual( const Identifier *destId,
 }
 
 
-// ислючает дубликаты из списка, согласно правилам языка. В случае если
-// в списке произошла ошибка, неоднозначность или некорректный идентификатор,
-// возвращает false
+// РёСЃР»СЋС‡Р°РµС‚ РґСѓР±Р»РёРєР°С‚С‹ РёР· СЃРїРёСЃРєР°, СЃРѕРіР»Р°СЃРЅРѕ РїСЂР°РІРёР»Р°Рј СЏР·С‹РєР°. Р’ СЃР»СѓС‡Р°Рµ РµСЃР»Рё
+// РІ СЃРїРёСЃРєРµ РїСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°, РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ РёР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ,
+// РІРѕР·РІСЂР°С‰Р°РµС‚ false
 bool IdentifierOperandMaker::ExcludeDuplicates( RoleList &idList ) const
 {	
-	// проверим, чтобы первый идентификатор не был областью видимостью
+	// РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РїРµСЂРІС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ Р±С‹Р» РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚СЊСЋ
 	if( idList.front().second == R_NAMESPACE || 
 		idList.front().second == R_NAMESPACE_ALIAS )
 	{
 		theApp.Error( errPos, 
-			"'%s' - область видимости не может использваться в выражении",
+			"'%s' - РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РІР°С‚СЊСЃСЏ РІ РІС‹СЂР°Р¶РµРЅРёРё",
 			name.c_str() );
 		return false;
 	}
 
-	// если идентификатор один, выходим
+	// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РѕРґРёРЅ, РІС‹С…РѕРґРёРј
 	if( idList.size() == 1 )
-		return true;	
+		return true; 
 	
 
-	// проходим по списку, проверяем, идентификаторы которые можно исключить
-	// задаем первый идентификатор, на основе которого будут проводиться 
-	// остальные проверки
+	// РїСЂРѕС…РѕРґРёРј РїРѕ СЃРїРёСЃРєСѓ, РїСЂРѕРІРµСЂСЏРµРј, РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ РєРѕС‚РѕСЂС‹Рµ РјРѕР¶РЅРѕ РёСЃРєР»СЋС‡РёС‚СЊ
+	// Р·Р°РґР°РµРј РїРµСЂРІС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ, РЅР° РѕСЃРЅРѕРІРµ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґСѓС‚ РїСЂРѕРІРѕРґРёС‚СЊСЃСЏ 
+	// РѕСЃС‚Р°Р»СЊРЅС‹Рµ РїСЂРѕРІРµСЂРєРё
 	Identifier *first = idList.front().first;
 	register RoleList::iterator p = idList.begin();
-	// роль идентификатора
+	// СЂРѕР»СЊ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
 	register Role fr = idList.front().second;
 
-	// перехватываем исключения с типом 'Identifier *'. Они
-	// возникают при неоднозначности
+	// РїРµСЂРµС…РІР°С‚С‹РІР°РµРј РёСЃРєР»СЋС‡РµРЅРёСЏ СЃ С‚РёРїРѕРј 'Identifier *'. РћРЅРё
+	// РІРѕР·РЅРёРєР°СЋС‚ РїСЂРё РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё
 	try {
 
-	// начинаем обход списка
+	// РЅР°С‡РёРЅР°РµРј РѕР±С…РѕРґ СЃРїРёСЃРєР°
 	p++;
-	while( p != idList.end() )	
+	while( p != idList.end() ) 
 	{
-		// получаем следующий идентификатор и сравниваем его с первым
+		// РїРѕР»СѓС‡Р°РµРј СЃР»РµРґСѓСЋС‰РёР№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Рё СЃСЂР°РІРЅРёРІР°РµРј РµРіРѕ СЃ РїРµСЂРІС‹Рј
 		Identifier *next = (*p).first;
 		
-		// если указатели равны, следует проверить, возможно ли удаление
-		// 'p' из списка согласно правилам языка
+		// РµСЃР»Рё СѓРєР°Р·Р°С‚РµР»Рё СЂР°РІРЅС‹, СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ, РІРѕР·РјРѕР¶РЅРѕ Р»Рё СѓРґР°Р»РµРЅРёРµ
+		// 'p' РёР· СЃРїРёСЃРєР° СЃРѕРіР»Р°СЃРЅРѕ РїСЂР°РІРёР»Р°Рј СЏР·С‹РєР°
 		if( first == next )
 		{
-			// если оба идентификатора относятся к не классовой
-			// области видимости, исключим next из списка и продолжим
+			// РµСЃР»Рё РѕР±Р° РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° РѕС‚РЅРѕСЃСЏС‚СЃСЏ Рє РЅРµ РєР»Р°СЃСЃРѕРІРѕР№
+			// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, РёСЃРєР»СЋС‡РёРј next РёР· СЃРїРёСЃРєР° Рё РїСЂРѕРґРѕР»Р¶РёРј
 			if( !first->GetSymbolTableEntry().IsClassSymbolTable() )
 			{
 				p = idList.erase(p);
 				continue;
 			}
 
-			// иначе оба идентификатора являются членами. Если
-			// идентификатор 'first' является статическим, константой
-			// перечисления или типом, то next можно исключить из
-			// списка
+			// РёРЅР°С‡Рµ РѕР±Р° РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° СЏРІР»СЏСЋС‚СЃСЏ С‡Р»РµРЅР°РјРё. Р•СЃР»Рё
+			// РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ 'first' СЏРІР»СЏРµС‚СЃСЏ СЃС‚Р°С‚РёС‡РµСЃРєРёРј, РєРѕРЅСЃС‚Р°РЅС‚РѕР№
+			// РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ РёР»Рё С‚РёРїРѕРј, С‚Рѕ next РјРѕР¶РЅРѕ РёСЃРєР»СЋС‡РёС‚СЊ РёР·
+			// СЃРїРёСЃРєР°
 			if( fr == R_DATAMEMBER )
-			{				
-				// спецификаторы хранения могут быть 'typedef' или 'static'				
+			{
+				// СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С…СЂР°РЅРµРЅРёСЏ РјРѕРіСѓС‚ Р±С‹С‚СЊ 'typedef' РёР»Рё 'static' 
 				const ::Object &dm = static_cast<const ::Object &>(*first);
 				if( dm.GetStorageSpecifier() == ::Object::SS_TYPEDEF ||
 					dm.GetStorageSpecifier() == ::Object::SS_STATIC )
 					p = idList.erase(p);
 
-				// иначе проверяем, принадлежит ли член классу 'V',
-				// который является виртуальным базовым классом, относительно 
-				// текущей области видимости, которая должна быть классом
+				// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј, РїСЂРёРЅР°РґР»РµР¶РёС‚ Р»Рё С‡Р»РµРЅ РєР»Р°СЃСЃСѓ 'V',
+				// РєРѕС‚РѕСЂС‹Р№ СЏРІР»СЏРµС‚СЃСЏ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј Р±Р°Р·РѕРІС‹Рј РєР»Р°СЃСЃРѕРј, РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ 
+				// С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, РєРѕС‚РѕСЂР°СЏ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РєР»Р°СЃСЃРѕРј
 				else if( curST && 
 					DerivationManager( 
 						static_cast<const ClassType &>(first->GetSymbolTableEntry()),
 						static_cast<const ClassType &>(*curST)).IsVirtual() )
 					p = idList.erase(p);
 
-				// иначе имеем ошибку
+				// РёРЅР°С‡Рµ РёРјРµРµРј РѕС€РёР±РєСѓ
 				else
 					throw next;
 			}
 
-			// если имеем метод
+			// РµСЃР»Рё РёРјРµРµРј РјРµС‚РѕРґ
 			else if( fr == R_METHOD || fr == R_CLASS_OVERLOAD_OPERATOR )
 			{
 				const Method &mt = static_cast<const Method &>(*first);
 				if( mt.GetStorageSpecifier() == Function::SS_STATIC )
 					p = idList.erase(p);
 
-				// если метод принадлежит виртуальному классу
+				// РµСЃР»Рё РјРµС‚РѕРґ РїСЂРёРЅР°РґР»РµР¶РёС‚ РІРёСЂС‚СѓР°Р»СЊРЅРѕРјСѓ РєР»Р°СЃСЃСѓ
 				else if( curST && 
 					DerivationManager( 
 						static_cast<const ClassType &>(first->GetSymbolTableEntry()),
 						static_cast<const ClassType &>(*curST)).IsVirtual() )
 					p = idList.erase(p);
 
-				// иначе ошибка
+				// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 				else
 					throw next;
 
 			}
 
-			// константа перечисления не вызывает неоднозначности
-			// тип также не вызывает неоднозначности
+			// РєРѕРЅСЃС‚Р°РЅС‚Р° РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ РЅРµ РІС‹Р·С‹РІР°РµС‚ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё
+			// С‚РёРї С‚Р°РєР¶Рµ РЅРµ РІС‹Р·С‹РІР°РµС‚ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё
 			else if( fr == R_CLASS_TYPE || fr == R_ENUM_TYPE ||
 					 fr == R_UNION_CLASS_TYPE || fr == R_CLASS_ENUM_CONSTANT )
 				p = idList.erase(p);
 
 	
-			// иначе два объекта, либо два метода наследуются производным
-			// классом от нескольких базовых
+			// РёРЅР°С‡Рµ РґРІР° РѕР±СЉРµРєС‚Р°, Р»РёР±Рѕ РґРІР° РјРµС‚РѕРґР° РЅР°СЃР»РµРґСѓСЋС‚СЃСЏ РїСЂРѕРёР·РІРѕРґРЅС‹Рј
+			// РєР»Р°СЃСЃРѕРј РѕС‚ РЅРµСЃРєРѕР»СЊРєРёС… Р±Р°Р·РѕРІС‹С…
 			else 
-				throw next;			
+				throw next; 
 		}
 
-		// иначе указатели не равны, и следует проверить может ли
-		// один из идентификаторов перекрывать другой
+		// РёРЅР°С‡Рµ СѓРєР°Р·Р°С‚РµР»Рё РЅРµ СЂР°РІРЅС‹, Рё СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ РјРѕР¶РµС‚ Р»Рё
+		// РѕРґРёРЅ РёР· РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРІ РїРµСЂРµРєСЂС‹РІР°С‚СЊ РґСЂСѓРіРѕР№
 		else
 		{
-			// если идентификатор является именованной ОВ, выйти с ошибкой
+			// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ РёРјРµРЅРѕРІР°РЅРЅРѕР№ РћР’, РІС‹Р№С‚Рё СЃ РѕС€РёР±РєРѕР№
 			if( idList.front().second == R_NAMESPACE || 
 				idList.front().second == R_NAMESPACE_ALIAS )
 			{
 				theApp.Error( errPos, 
-					"'%s' - область видимости не может использваться в выражении",
+					"'%s' - РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РІР°С‚СЊСЃСЏ РІ РІС‹СЂР°Р¶РµРЅРёРё",
 					next->GetQualifiedName().c_str() );
 				return false;
 			}
 
 
-			// если иденты. относятся к классовой области видимости,
-			// проверим их на перекрытие
+			// РµСЃР»Рё РёРґРµРЅС‚С‹. РѕС‚РЅРѕСЃСЏС‚СЃСЏ Рє РєР»Р°СЃСЃРѕРІРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё,
+			// РїСЂРѕРІРµСЂРёРј РёС… РЅР° РїРµСЂРµРєСЂС‹С‚РёРµ
 			const SymbolTable &st1 = first->GetSymbolTableEntry(),
 							  &st2 = next->GetSymbolTableEntry();
 
-			// получить роль идентификатора 'next'
+			// РїРѕР»СѓС‡РёС‚СЊ СЂРѕР»СЊ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° 'next'
 			register Role nr = (*p).second;
 
-			// если идентификаторы 'next' и 'first' из одной области видимости
+			// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂС‹ 'next' Рё 'first' РёР· РѕРґРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 			bool stEq = &st1 == &st2;
 
 
-			// оба классовые и разные, проверим виртуальное перекрытие
+			// РѕР±Р° РєР»Р°СЃСЃРѕРІС‹Рµ Рё СЂР°Р·РЅС‹Рµ, РїСЂРѕРІРµСЂРёРј РІРёСЂС‚СѓР°Р»СЊРЅРѕРµ РїРµСЂРµРєСЂС‹С‚РёРµ
 			if( st1.IsClassSymbolTable() && st2.IsClassSymbolTable() && !stEq )
 			{
-				// если 'next' перекрывает 'first', который принадлежит виртуальному
-				// классу, то erase(first), first=next, 
+				// РµСЃР»Рё 'next' РїРµСЂРµРєСЂС‹РІР°РµС‚ 'first', РєРѕС‚РѕСЂС‹Р№ РїСЂРёРЅР°РґР»РµР¶РёС‚ РІРёСЂС‚СѓР°Р»СЊРЅРѕРјСѓ
+				// РєР»Р°СЃСЃСѓ, С‚Рѕ erase(first), first=next, 
 				if( HideVirtual( first, next ) )
 				{
 					idList.erase(idList.begin());
@@ -1963,48 +1963,48 @@ bool IdentifierOperandMaker::ExcludeDuplicates( RoleList &idList ) const
 					continue;
 				}
 
-				// иначе проверим, если first, перекрывает 'next', тогда next
-				// удаляется
-				else if( HideVirtual( next, first ) )				
+				// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё first, РїРµСЂРµРєСЂС‹РІР°РµС‚ 'next', С‚РѕРіРґР° next
+				// СѓРґР°Р»СЏРµС‚СЃСЏ
+				else if( HideVirtual( next, first ) ) 
 				{
-					p = idList.erase(p);				
+					p = idList.erase(p); 
 					continue;
 				}
 			}
 
-			// перекрытия не было проверяем, если next является типом
+			// РїРµСЂРµРєСЂС‹С‚РёСЏ РЅРµ Р±С‹Р»Рѕ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё next СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРѕРј
 			if( nr == R_CLASS_TYPE || nr == R_ENUM_TYPE || nr == R_UNION_CLASS_TYPE )
 			{
-				// если разные области видимости, это неоднозначность
+				// РµСЃР»Рё СЂР°Р·РЅС‹Рµ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, СЌС‚Рѕ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
 				if( !stEq )
 					throw next;
 
-				// иначе fr, должна быть типизированной сущностью
+				// РёРЅР°С‡Рµ fr, РґРѕР»Р¶РЅР° Р±С‹С‚СЊ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚СЊСЋ
 				INTERNAL_IF( !dynamic_cast<const TypyziedEntity *>(first) );
 				p = idList.erase(p);
 			}
 
-			// если 'next' является ф-ей (методом, оператором)
-			else if( nr == R_FUNCTION		   || nr == R_METHOD ||
+			// РµСЃР»Рё 'next' СЏРІР»СЏРµС‚СЃСЏ С„-РµР№ (РјРµС‚РѕРґРѕРј, РѕРїРµСЂР°С‚РѕСЂРѕРј)
+			else if( nr == R_FUNCTION   || nr == R_METHOD ||
 					 nr == R_OVERLOAD_OPERATOR || nr == R_CLASS_OVERLOAD_OPERATOR ||
 					 nr == R_CONSTRUCTOR )
 			{
-				// если разные области видимости, то приемлимо только если
-				// fr будет перегруженной функцией и область видимости не класс
+				// РµСЃР»Рё СЂР°Р·РЅС‹Рµ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, С‚Рѕ РїСЂРёРµРјР»РёРјРѕ С‚РѕР»СЊРєРѕ РµСЃР»Рё
+				// fr Р±СѓРґРµС‚ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕР№ С„СѓРЅРєС†РёРµР№ Рё РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РєР»Р°СЃСЃ
 				if( !stEq )
 				{
 					if( nr != fr || next->GetSymbolTableEntry().IsClassSymbolTable() )
-						throw next;					
+						throw next; 
 				}
 
 				else
 				{
-					// области видимости одинаковые, если 'fr' является типом,
-					// перекрываем его функцией
+					// РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РѕРґРёРЅР°РєРѕРІС‹Рµ, РµСЃР»Рё 'fr' СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРѕРј,
+					// РїРµСЂРµРєСЂС‹РІР°РµРј РµРіРѕ С„СѓРЅРєС†РёРµР№
 					if( fr == R_CLASS_TYPE || fr == R_ENUM_TYPE || fr == R_UNION_CLASS_TYPE )
 						idList.erase(idList.begin()), first = next, fr = nr;
 
-					// иначе возможна только перегруженная функция
+					// РёРЅР°С‡Рµ РІРѕР·РјРѕР¶РЅР° С‚РѕР»СЊРєРѕ РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ
 					else if( fr != nr )
 						throw next;
 				}
@@ -2012,13 +2012,13 @@ bool IdentifierOperandMaker::ExcludeDuplicates( RoleList &idList ) const
 				p++;
 			}
 
-			// если 'next' является объектом (константой)
+			// РµСЃР»Рё 'next' СЏРІР»СЏРµС‚СЃСЏ РѕР±СЉРµРєС‚РѕРј (РєРѕРЅСЃС‚Р°РЅС‚РѕР№)
 			else if( nr == R_OBJECT    || nr == R_DATAMEMBER    ||
 					 nr == R_PARAMETR  || nr == R_ENUM_CONSTANT ||
 					 nr == R_CLASS_ENUM_CONSTANT )
 			{
-				// если область видимости одинаковая, то возможно
-				// перекрытие только типа
+				// РµСЃР»Рё РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РѕРґРёРЅР°РєРѕРІР°СЏ, С‚Рѕ РІРѕР·РјРѕР¶РЅРѕ
+				// РїРµСЂРµРєСЂС‹С‚РёРµ С‚РѕР»СЊРєРѕ С‚РёРїР°
 				if( stEq )
 				{
 					if( fr == R_CLASS_TYPE || fr == R_ENUM_TYPE || fr == R_UNION_CLASS_TYPE )
@@ -2027,25 +2027,25 @@ bool IdentifierOperandMaker::ExcludeDuplicates( RoleList &idList ) const
 						throw next;
 				}
 
-				// иначе неоднозначность
+				// РёРЅР°С‡Рµ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
 				else
 					throw next;
 			}
 
-			// иначе внутренняя ошибка, т.к. семантическое значение неизвестно
+			// РёРЅР°С‡Рµ РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР°, С‚.Рє. СЃРµРјР°РЅС‚РёС‡РµСЃРєРѕРµ Р·РЅР°С‡РµРЅРёРµ РЅРµРёР·РІРµСЃС‚РЅРѕ
 			else
-				INTERNAL( "'IdentifierOperandMaker::ExcludeDuplicates' принимает"
-					" идентификатор неизвестного типа" );
+				INTERNAL( "'IdentifierOperandMaker::ExcludeDuplicates' РїСЂРёРЅРёРјР°РµС‚"
+					" РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµРёР·РІРµСЃС‚РЅРѕРіРѕ С‚РёРїР°" );
 
 		}	// else
 
 	}	// for 
 	
-	// перехватываем исключение сгенерированное при неоднозначности
+	// РїРµСЂРµС…РІР°С‚С‹РІР°РµРј РёСЃРєР»СЋС‡РµРЅРёРµ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅРѕРµ РїСЂРё РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё
 	} catch( const Identifier *id ) {
 		
-		// выводим ошибку и выходим
-		theApp.Error( errPos, "неоднозначность между '%s' и '%s'",
+		// РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ Рё РІС‹С…РѕРґРёРј
+		theApp.Error( errPos, "РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ РјРµР¶РґСѓ '%s' Рё '%s'",
 			first->GetQualifiedName().c_str(), id->GetQualifiedName().c_str());
 		return false;
 	}
@@ -2054,22 +2054,22 @@ bool IdentifierOperandMaker::ExcludeDuplicates( RoleList &idList ) const
 }
 
 
-// создать операнд на основании преобразованного списка
+// СЃРѕР·РґР°С‚СЊ РѕРїРµСЂР°РЅРґ РЅР° РѕСЃРЅРѕРІР°РЅРёРё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°
 POperand IdentifierOperandMaker::MakeOperand( const QualifiedNameManager &qnm ) const
 {
 	const RoleList &idList = qnm.GetRoleList();
-	
+
 	INTERNAL_IF( idList.empty() );
 	Role fr = idList.front().second;
 	POperand rval = NULL;
 
-	// в этом случае создаем объект или тип
+	// РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ РёР»Рё С‚РёРї
 	if( idList.size() == 1 )
 	{
 		Identifier *id = idList.front().first;
 
-		// если идентификатор является типом, создаем TypeOperand,
-		// иначе PrimaryOperand
+		// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРѕРј, СЃРѕР·РґР°РµРј TypeOperand,
+		// РёРЅР°С‡Рµ PrimaryOperand
 		if( fr == R_CLASS_TYPE || fr == R_ENUM_TYPE || fr == R_UNION_CLASS_TYPE )
 		{
 			TypyziedEntity *te = new TypyziedEntity(dynamic_cast<BaseType *>(id),
@@ -2078,36 +2078,36 @@ POperand IdentifierOperandMaker::MakeOperand( const QualifiedNameManager &qnm ) 
 			rval = new TypeOperand(*te);
 		}
 
-		// иначе идентификатор является типизированной сущностью
+		// РёРЅР°С‡Рµ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚СЊСЋ
 		else
 		{
-			// если идентификатор не является типизированной сущностью,
-			// это не предусмотренное поведение (класс, ИОВ)
+			// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚СЊСЋ,
+			// СЌС‚Рѕ РЅРµ РїСЂРµРґСѓСЃРјРѕС‚СЂРµРЅРЅРѕРµ РїРѕРІРµРґРµРЅРёРµ (РєР»Р°СЃСЃ, РРћР’)
 			TypyziedEntity *te = dynamic_cast<TypyziedEntity *>(id);
 			INTERNAL_IF( te == NULL );
 
-			// если идентификатор является объектом и у объекта спецификатор
-			// хранения - typedef, создаем операнд тип. 
+			// РµСЃР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ РѕР±СЉРµРєС‚РѕРј Рё Сѓ РѕР±СЉРµРєС‚Р° СЃРїРµС†РёС„РёРєР°С‚РѕСЂ
+			// С…СЂР°РЅРµРЅРёСЏ - typedef, СЃРѕР·РґР°РµРј РѕРїРµСЂР°РЅРґ С‚РёРї. 
 			if( te->IsObject() )
 			{
 				const Object &member = static_cast<const ::Object&>(*te);
-				
-				// если имеем typedef, создаем типовой операнд
+
+				// РµСЃР»Рё РёРјРµРµРј typedef, СЃРѕР·РґР°РµРј С‚РёРїРѕРІРѕР№ РѕРїРµСЂР°РЅРґ
 				if( member.GetStorageSpecifier() == ::Object::SS_TYPEDEF )
 					rval = new TypeOperand(*new TypyziedEntity(member));
-				
-				// иначе если не статический и не mutable, присваиваем квалификаицю
+
+				// РёРЅР°С‡Рµ РµСЃР»Рё РЅРµ СЃС‚Р°С‚РёС‡РµСЃРєРёР№ Рё РЅРµ mutable, РїСЂРёСЃРІР°РёРІР°РµРј РєРІР°Р»РёС„РёРєР°РёС†СЋ
 				else if( !( member.GetStorageSpecifier() == ::Object::SS_STATIC ||
 					member.GetStorageSpecifier() == ::Object::SS_MUTABLE) )
 				{
 					bool c = false, v = false;
 
-					// если задан объект, передаем квалификацию объекта члену
+					// РµСЃР»Рё Р·Р°РґР°РЅ РѕР±СЉРµРєС‚, РїРµСЂРµРґР°РµРј РєРІР°Р»РёС„РёРєР°С†РёСЋ РѕР±СЉРµРєС‚Р° С‡Р»РµРЅСѓ
 					if( object != NULL )
 						c = object->IsConst(), v = object->IsVolatile();
 
-					// иначе если имеем член и идет обращение через this,
-					// передаем квалификацию this
+					// РёРЅР°С‡Рµ РµСЃР»Рё РёРјРµРµРј С‡Р»РµРЅ Рё РёРґРµС‚ РѕР±СЂР°С‰РµРЅРёРµ С‡РµСЂРµР· this,
+					// РїРµСЂРµРґР°РµРј РєРІР°Р»РёС„РёРєР°С†РёСЋ this
 					else if( member.IsClassMember() &&
 						(GetScopeSystem().GetCurrentSymbolTable()->IsFunctionSymbolTable() ||
 						 GetScopeSystem().GetCurrentSymbolTable()->IsLocalSymbolTable()) )
@@ -2121,30 +2121,30 @@ POperand IdentifierOperandMaker::MakeOperand( const QualifiedNameManager &qnm ) 
 							v = curFn.GetFunctionPrototype().IsVolatile();
 					}
 
-					// создаем более квалифицированный объект
+					// СЃРѕР·РґР°РµРј Р±РѕР»РµРµ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚
 					if( c > member.IsConst() || v > member.IsVolatile() )
 						rval = new PrimaryOperand(true, 
 							*new DynamicTypyziedEntity(te->GetBaseType(),
-								c, v, te->GetDerivedTypeList(), *te));					
+								c, v, te->GetDerivedTypeList(), *te)); 
 				}
 			}
-			
-			// иначе создаем обычный идентификатор			
+
+			// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РѕР±С‹С‡РЅС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ 
 			if( rval.IsNull() )	
 			{
-				// если имеем метод, он должен быть доступен
+				// РµСЃР»Рё РёРјРµРµРј РјРµС‚РѕРґ, РѕРЅ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РґРѕСЃС‚СѓРїРµРЅ
 				if( te->IsFunction() && static_cast<const Function *>(te)->IsClassMember() &&
 					static_cast<const Method *>(te)->IsUnavaible() )
 					theApp.Error(errPos, 
-						"'%s' - метод сгенерирован некорректно", 
+						"'%s' - РјРµС‚РѕРґ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ", 
 						te->GetTypyziedEntityName().c_str());
 				rval = new PrimaryOperand(true, *te);
 			}
 		}
 
-		// проверяем доступность
+		// РїСЂРѕРІРµСЂСЏРµРј РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
 		if( object )
-		{		
+		{
 			const ClassMember *cm = dynamic_cast<const ClassMember *>(id);
 			if( cm && cm->GetAccessSpecifier() != ClassMember::NOT_CLASS_MEMBER )
 			{
@@ -2154,9 +2154,9 @@ POperand IdentifierOperandMaker::MakeOperand( const QualifiedNameManager &qnm ) 
 					static_cast<const ClassType&>(object->GetBaseType()), *cm);
 
 				if( !acc.IsAccessible() )
-					theApp.Error( errPos, "'%s' - член недоступен в '%s'",
+					theApp.Error( errPos, "'%s' - С‡Р»РµРЅ РЅРµРґРѕСЃС‚СѓРїРµРЅ РІ '%s'",
 						id->GetQualifiedName().c_str(), 
-						ManagerUtils::GetSymbolTableName(GetCurrentSymbolTable()).c_str());			
+						ManagerUtils::GetSymbolTableName(GetCurrentSymbolTable()).c_str()); 
 			}
 		}
 
@@ -2165,94 +2165,94 @@ POperand IdentifierOperandMaker::MakeOperand( const QualifiedNameManager &qnm ) 
 				curST  ? *curST : GetCurrentSymbolTable());
 	}
 
-	// иначе идентификаторов несколько, это должен быть список
-	// перегруженных функций, проверим это еще раз
+	// РёРЅР°С‡Рµ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРІ РЅРµСЃРєРѕР»СЊРєРѕ, СЌС‚Рѕ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЃРїРёСЃРѕРє
+	// РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹С… С„СѓРЅРєС†РёР№, РїСЂРѕРІРµСЂРёРј СЌС‚Рѕ РµС‰Рµ СЂР°Р·
 	else
 	{
 		//
 		Identifier *id = idList.front().first;
 
-		// проверяем, чтобы роль была функцией
-		if( fr == R_FUNCTION		  || fr == R_METHOD ||
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СЂРѕР»СЊ Р±С‹Р»Р° С„СѓРЅРєС†РёРµР№
+		if( fr == R_FUNCTION  || fr == R_METHOD ||
 			fr == R_OVERLOAD_OPERATOR || fr == R_CLASS_OVERLOAD_OPERATOR ||
 			fr == R_CONSTRUCTOR )
 		{
 			OverloadFunctionList ofl;
 
-			// загружаем в список функции, предварительно проверив
-			// что роли совпадают
+			// Р·Р°РіСЂСѓР¶Р°РµРј РІ СЃРїРёСЃРѕРє С„СѓРЅРєС†РёРё, РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ РїСЂРѕРІРµСЂРёРІ
+			// С‡С‚Рѕ СЂРѕР»Рё СЃРѕРІРїР°РґР°СЋС‚
 			for( RoleList::const_iterator p = idList.begin(); p != idList.end(); p++ )
 			{
-				// роли должны совпадать
+				// СЂРѕР»Рё РґРѕР»Р¶РЅС‹ СЃРѕРІРїР°РґР°С‚СЊ
 				if( (*p).second != fr )
 					goto err;
 				ofl.push_back( static_cast<Function *>((*p).first) );
 			}
 
-			// создаем операнд - список перегруженных функций
+			// СЃРѕР·РґР°РµРј РѕРїРµСЂР°РЅРґ - СЃРїРёСЃРѕРє РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹С… С„СѓРЅРєС†РёР№
 			rval = new OverloadOperand( ofl );
 		}
 
-		// иначе неоднозначность
+		// РёРЅР°С‡Рµ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
 		else
 		{
 		err:
-			theApp.Error( errPos, "неоднозначность между '%s' и '%s'",
+			theApp.Error( errPos, "РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ РјРµР¶РґСѓ '%s' Рё '%s'",
 				id->GetQualifiedName().c_str(),
-				idList.front().first->GetQualifiedName().c_str());					
+				idList.front().first->GetQualifiedName().c_str()); 
 
 			return ErrorOperand::GetInstance();
-		}		
+		} 
 	}
 
 	return rval;
 }
 
 
-// создать операнд. Предварительно проверив идентификатор
-// на существование, доступность и однозначность.
+// СЃРѕР·РґР°С‚СЊ РѕРїРµСЂР°РЅРґ. РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕ РїСЂРѕРІРµСЂРёРІ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
+// РЅР° СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёРµ, РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ Рё РѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ.
 POperand IdentifierOperandMaker::Make()
 {
-	// в первую очередь ищем имя, третий параметр задает флаг не-декларации
+	// РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ РёС‰РµРј РёРјСЏ, С‚СЂРµС‚РёР№ РїР°СЂР°РјРµС‚СЂ Р·Р°РґР°РµС‚ С„Р»Р°Рі РЅРµ-РґРµРєР»Р°СЂР°С†РёРё
 	QualifiedNameManager qnm( &idPkg, curST );
 
-	// если ничего не найдено, выводим ошибку и возвращаем ErrorOperand.
-	// есть смысл создания идентификатора для предотвращения
-	// вывода ошибок в последующем 
+	// РµСЃР»Рё РЅРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ, РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ Рё РІРѕР·РІСЂР°С‰Р°РµРј ErrorOperand.
+	// РµСЃС‚СЊ СЃРјС‹СЃР» СЃРѕР·РґР°РЅРёСЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° РґР»СЏ РїСЂРµРґРѕС‚РІСЂР°С‰РµРЅРёСЏ
+	// РІС‹РІРѕРґР° РѕС€РёР±РѕРє РІ РїРѕСЃР»РµРґСѓСЋС‰РµРј 
 	if( qnm.GetRoleCount() == 0 )
 	{
-		// при поиске перегруженного оператора, ошибку выводить не следует
+		// РїСЂРё РїРѕРёСЃРєРµ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°, РѕС€РёР±РєСѓ РІС‹РІРѕРґРёС‚СЊ РЅРµ СЃР»РµРґСѓРµС‚
 		if( !noErrorIfNotFound )
 		{
 			if( object != NULL )
 				theApp.Error(errPos, 
-					"'%s' - не является членом класса '%s'",
+					"'%s' - РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР° '%s'",
 					name.c_str(),
 				static_cast<const ClassType&>(object->GetBaseType()).GetQualifiedName().c_str());
 			else
-				theApp.Error( errPos, "'%s' - не объявлен", name.c_str());
+				theApp.Error( errPos, "'%s' - РЅРµ РѕР±СЉСЏРІР»РµРЅ", name.c_str());
 
-			// если имя не является квалифицированным, создаем
-			// временную переменную типа int, для предотвращения
-			// вывоа ошибок в дальнейшем
+			// РµСЃР»Рё РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅС‹Рј, СЃРѕР·РґР°РµРј
+			// РІСЂРµРјРµРЅРЅСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ С‚РёРїР° int, РґР»СЏ РїСЂРµРґРѕС‚РІСЂР°С‰РµРЅРёСЏ
+			// РІС‹РІРѕР° РѕС€РёР±РѕРє РІ РґР°Р»СЊРЅРµР№С€РµРј
 			if( name.find(':') == string::npos )
 				MakeTempName(name);
 		}
 
-		// задаем флаг, что ничего не найдено
+		// Р·Р°РґР°РµРј С„Р»Р°Рі, С‡С‚Рѕ РЅРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ
 		notFound = true;
 		return ErrorOperand::GetInstance();
 	}
 
 
-	// перед преобразованием списка, следует задать классовую
-	// область видимости, т.к. это имеет смысл при преобразовании.
-	// Если текущая область видимости не метод и не классовая,
-	// curST так и остается равен нулю
+	// РїРµСЂРµРґ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµРј СЃРїРёСЃРєР°, СЃР»РµРґСѓРµС‚ Р·Р°РґР°С‚СЊ РєР»Р°СЃСЃРѕРІСѓСЋ
+	// РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, С‚.Рє. СЌС‚Рѕ РёРјРµРµС‚ СЃРјС‹СЃР» РїСЂРё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРё.
+	// Р•СЃР»Рё С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РЅРµ РјРµС‚РѕРґ Рё РЅРµ РєР»Р°СЃСЃРѕРІР°СЏ,
+	// curST С‚Р°Рє Рё РѕСЃС‚Р°РµС‚СЃСЏ СЂР°РІРµРЅ РЅСѓР»СЋ
 	const SymbolTable *st = curST;
 	if( curST == NULL )
 	{		
-		// локальную может содержать метод, который содержит класс
+		// Р»РѕРєР°Р»СЊРЅСѓСЋ РјРѕР¶РµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РјРµС‚РѕРґ, РєРѕС‚РѕСЂС‹Р№ СЃРѕРґРµСЂР¶РёС‚ РєР»Р°СЃСЃ
 		const SymbolTable &ct = GetCurrentSymbolTable();
 		if( ct.IsLocalSymbolTable() )
 		{
@@ -2262,7 +2262,7 @@ POperand IdentifierOperandMaker::Make()
 				curST = &static_cast<const ClassType &>(fn->GetSymbolTableEntry());
 		}
 
-		// если функция, может быть метод
+		// РµСЃР»Рё С„СѓРЅРєС†РёСЏ, РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµС‚РѕРґ
 		else if( ct.IsFunctionSymbolTable() )
 		{
 			const Function *fn = &static_cast<FunctionSymbolTable &>(
@@ -2272,104 +2272,104 @@ POperand IdentifierOperandMaker::Make()
 				curST = &static_cast<const ClassType &>(fn->GetSymbolTableEntry());	
 		}
 
-		// если класс
+		// РµСЃР»Рё РєР»Р°СЃСЃ
 		else if( ct.IsClassSymbolTable() )
 			curST = &GetCurrentSymbolTable();
 	}
 
 
-	// преобразуем список исключая из него повторяющиеся элементы,
-	// которые согласно правилам языка не могут быть однозначными
+	// РїСЂРµРѕР±СЂР°Р·СѓРµРј СЃРїРёСЃРѕРє РёСЃРєР»СЋС‡Р°СЏ РёР· РЅРµРіРѕ РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ СЌР»РµРјРµРЅС‚С‹,
+	// РєРѕС‚РѕСЂС‹Рµ СЃРѕРіР»Р°СЃРЅРѕ РїСЂР°РІРёР»Р°Рј СЏР·С‹РєР° РЅРµ РјРѕРіСѓС‚ Р±С‹С‚СЊ РѕРґРЅРѕР·РЅР°С‡РЅС‹РјРё
 	if( !ExcludeDuplicates( const_cast<RoleList &>(qnm.GetRoleList()) ) )
 		return ErrorOperand::GetInstance();
 
-	// восстанавливаем значение текущей области видимости
+	// РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј Р·РЅР°С‡РµРЅРёРµ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	curST = st;
 
-	// после того как список преобразован и из него исключены дубликаты,
-	// следует создать операнд. 
+	// РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє СЃРїРёСЃРѕРє РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅ Рё РёР· РЅРµРіРѕ РёСЃРєР»СЋС‡РµРЅС‹ РґСѓР±Р»РёРєР°С‚С‹,
+	// СЃР»РµРґСѓРµС‚ СЃРѕР·РґР°С‚СЊ РѕРїРµСЂР°РЅРґ. 
 	return MakeOperand( qnm );
 }
 
 
-// процедура сбрасывает квалификацию у выражения и возвращает новый тип
+// РїСЂРѕС†РµРґСѓСЂР° СЃР±СЂР°СЃС‹РІР°РµС‚ РєРІР°Р»РёС„РёРєР°С†РёСЋ Сѓ РІС‹СЂР°Р¶РµРЅРёСЏ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ РЅРѕРІС‹Р№ С‚РёРї
 PTypyziedEntity TypeCastBinaryMaker::UnsetQualification()
 {
 	const TypyziedEntity &et = right->GetType();
 	DerivedTypeList rdtl;
 
-	// копируем список производных типов
+	// РєРѕРїРёСЂСѓРµРј СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ
 	for( int i = 0; i<et.GetDerivedTypeList().GetDerivedTypeCount(); i++ )
 	{
 		const DerivedType &dt = *et.GetDerivedTypeList().GetDerivedType(i);
 
-		// если указатель, копируем без квалиф.
+		// РµСЃР»Рё СѓРєР°Р·Р°С‚РµР»СЊ, РєРѕРїРёСЂСѓРµРј Р±РµР· РєРІР°Р»РёС„.
 		if( dt.GetDerivedTypeCode() == DerivedType::DT_POINTER )
 			rdtl.AddDerivedType( new Pointer(false,false) );
 
-		// также с ук-лем на член
+		// С‚Р°РєР¶Рµ СЃ СѓРє-Р»РµРј РЅР° С‡Р»РµРЅ
 		else if( dt.GetDerivedTypeCode() == DerivedType::DT_POINTER_TO_MEMBER )
 			rdtl.AddDerivedType( new PointerToMember( 
 				&static_cast<const PointerToMember&>(dt).GetMemberClassType(),
 				false,false) );
 
-		// иначе копируем как есть
+		// РёРЅР°С‡Рµ РєРѕРїРёСЂСѓРµРј РєР°Рє РµСЃС‚СЊ
 		else
 			rdtl.AddDerivedType(et.GetDerivedTypeList().GetDerivedType(i));
 	}
 
-	// создаем тип
+	// СЃРѕР·РґР°РµРј С‚РёРї
 	return new TypyziedEntity( (BaseType*)&et.GetBaseType(), false, false, rdtl );
 }
 
 
-// проверить приведение с помощью static_cast. Вернуть 0 в случае успеха,
-// вернуть 1 в случае успеха и физическое преобразование не требуется, 
-// -1 - в случае неудачи, -2 в случае если приведение нужно прекратить,
-// вернуть 
+// РїСЂРѕРІРµСЂРёС‚СЊ РїСЂРёРІРµРґРµРЅРёРµ СЃ РїРѕРјРѕС‰СЊСЋ static_cast. Р’РµСЂРЅСѓС‚СЊ 0 РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°,
+// РІРµСЂРЅСѓС‚СЊ 1 РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р° Рё С„РёР·РёС‡РµСЃРєРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ, 
+// -1 - РІ СЃР»СѓС‡Р°Рµ РЅРµСѓРґР°С‡Рё, -2 РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅСѓР¶РЅРѕ РїСЂРµРєСЂР°С‚РёС‚СЊ,
+// РІРµСЂРЅСѓС‚СЊ 
 int TypeCastBinaryMaker::CheckStaticCastConversion( const TypyziedEntity &expType )
 {
-	// с самого начала проверяем, если оба операнда указатели на класс 
-	// выполняем преобразование, т.к. менеджер проверяет,
-	// чтобы класс был доступным, а нам это не нужно
+	// СЃ СЃР°РјРѕРіРѕ РЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РѕР±Р° РѕРїРµСЂР°РЅРґР° СѓРєР°Р·Р°С‚РµР»Рё РЅР° РєР»Р°СЃСЃ 
+	// РІС‹РїРѕР»РЅСЏРµРј РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ, С‚.Рє. РјРµРЅРµРґР¶РµСЂ РїСЂРѕРІРµСЂСЏРµС‚,
+	// С‡С‚РѕР±С‹ РєР»Р°СЃСЃ Р±С‹Р» РґРѕСЃС‚СѓРїРЅС‹Рј, Р° РЅР°Рј СЌС‚Рѕ РЅРµ РЅСѓР¶РЅРѕ
 	const TypyziedEntity &toType = left->GetType(), &fromType = expType;
 
-	// нельзя приводить к типу массива или функции
+	// РЅРµР»СЊР·СЏ РїСЂРёРІРѕРґРёС‚СЊ Рє С‚РёРїСѓ РјР°СЃСЃРёРІР° РёР»Рё С„СѓРЅРєС†РёРё
 	if( toType.GetDerivedTypeList().IsArray() || toType.GetDerivedTypeList().IsFunction() ) 
 		return -2;
 	
-	if( toType.GetBaseType().IsClassType()						&&
-		toType.GetDerivedTypeList().IsPointer()					&& 
+	if( toType.GetBaseType().IsClassType()  &&
+		toType.GetDerivedTypeList().IsPointer()  && 
 		toType.GetDerivedTypeList().GetDerivedTypeCount() == 1 )
 	{
-		// проверяем, чтобы и второй тип был указателем на класс
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ Рё РІС‚РѕСЂРѕР№ С‚РёРї Р±С‹Р» СѓРєР°Р·Р°С‚РµР»РµРј РЅР° РєР»Р°СЃСЃ
 		if( fromType.GetBaseType().IsClassType() &&
-			((fromType.GetDerivedTypeList().IsPointer()					&& 
-			  fromType.GetDerivedTypeList().GetDerivedTypeCount() == 1)     ||
-			 (fromType.GetDerivedTypeList().GetDerivedTypeCount() == 2	&&
-			  fromType.GetDerivedTypeList().IsReference()				&&
+			((fromType.GetDerivedTypeList().IsPointer()  && 
+			  fromType.GetDerivedTypeList().GetDerivedTypeCount() == 1)  ||
+			 (fromType.GetDerivedTypeList().GetDerivedTypeCount() == 2 &&
+			  fromType.GetDerivedTypeList().IsReference()  &&
 			  fromType.GetDerivedTypeList().GetDerivedType(1)->GetDerivedTypeCode() ==
 			  DerivedType::DT_POINTER))
 		   )
 		{
-			// проверяем, является ли один из классом базовым или производным
+			// РїСЂРѕРІРµСЂСЏРµРј, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РѕРґРёРЅ РёР· РєР»Р°СЃСЃРѕРј Р±Р°Р·РѕРІС‹Рј РёР»Рё РїСЂРѕРёР·РІРѕРґРЅС‹Рј
 			const ClassType &toCls = static_cast<const ClassType&>(toType.GetBaseType()),
 				&fromCls = static_cast<const ClassType&>(fromType.GetBaseType());
 
-			// сначала пробуем преобразовать из производного в базовый
-			DerivationManager dtbm(toCls, fromCls);			
+			// СЃРЅР°С‡Р°Р»Р° РїСЂРѕР±СѓРµРј РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РёР· РїСЂРѕРёР·РІРѕРґРЅРѕРіРѕ РІ Р±Р°Р·РѕРІС‹Р№
+			DerivationManager dtbm(toCls, fromCls); 
 			if( dtbm.IsBase() )
 			{
-				// проверим только, чтобы класс был однозначным
+				// РїСЂРѕРІРµСЂРёРј С‚РѕР»СЊРєРѕ, С‡С‚РѕР±С‹ РєР»Р°СЃСЃ Р±С‹Р» РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј
 				if( !dtbm.IsUnambigous() )
 				{
-					theApp.Error(errPos, "'(тип)' - базовый класс '%s' неоднозначен",
+					theApp.Error(errPos, "'(С‚РёРї)' - Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ '%s' РЅРµРѕРґРЅРѕР·РЅР°С‡РµРЅ",
 						toCls.GetQualifiedName().c_str());
 					const_cast<POperand&>(right) = ErrorOperand::GetInstance();
-					return 1;		// возвращаем 1, чтобы не выводить доп. ошибок
+					return 1; // РІРѕР·РІСЂР°С‰Р°РµРј 1, С‡С‚РѕР±С‹ РЅРµ РІС‹РІРѕРґРёС‚СЊ РґРѕРї. РѕС€РёР±РѕРє
 				}
 
-				// иначе строим преобразование
+				// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 				const_cast<POperand&>(right) = 
 					new BinaryExpression( GOC_DERIVED_TO_BASE_CONVERSION, 
 						false, left, right, new TypyziedEntity(left->GetType()) );
@@ -2377,52 +2377,52 @@ int TypeCastBinaryMaker::CheckStaticCastConversion( const TypyziedEntity &expTyp
 
 			}
 
-			// иначе пытаемся из базового в производный
+			// РёРЅР°С‡Рµ РїС‹С‚Р°РµРјСЃСЏ РёР· Р±Р°Р·РѕРІРѕРіРѕ РІ РїСЂРѕРёР·РІРѕРґРЅС‹Р№
 			DerivationManager btdm(fromCls, toCls);
 			if( btdm.IsBase() )
 			{
-				// проверим только, чтобы класс был однозначным
+				// РїСЂРѕРІРµСЂРёРј С‚РѕР»СЊРєРѕ, С‡С‚РѕР±С‹ РєР»Р°СЃСЃ Р±С‹Р» РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј
 				if( !btdm.IsUnambigous() || btdm.IsVirtual() )
 				{
 					theApp.Error(errPos, 
-						"'(тип)' - базовый класс '%s' %s",
+						"'(С‚РёРї)' - Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ '%s' %s",
 						fromCls.GetQualifiedName().c_str(), 
-						btdm.IsVirtual() ? "является виртуальным" : "неоднозначен" );
+						btdm.IsVirtual() ? "СЏРІР»СЏРµС‚СЃСЏ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј" : "РЅРµРѕРґРЅРѕР·РЅР°С‡РµРЅ" );
 					const_cast<POperand&>(right) = ErrorOperand::GetInstance();
-					return 1;		// возвращаем 1, чтобы не выводить доп. ошибок
+					return 1; // РІРѕР·РІСЂР°С‰Р°РµРј 1, С‡С‚РѕР±С‹ РЅРµ РІС‹РІРѕРґРёС‚СЊ РґРѕРї. РѕС€РёР±РѕРє
 				}
 
-				// иначе строим преобразование
+				// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 				const_cast<POperand&>(right) = 
 					new BinaryExpression( GOC_BASE_TO_DERIVED_CONVERSION, 
 						false, left, right, new TypyziedEntity(left->GetType()) );
 				return 1;
 			}
-		}		
+		}
 	}
 
-	// сначала пробуем, преобразовать с помощью автоматического преобразования,
-	// вида "T t(e)"
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕР±СѓРµРј, РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ СЃ РїРѕРјРѕС‰СЊСЋ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРіРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ,
+	// РІРёРґР° "T t(e)"
 	PCaster pCaster= 
 		AutoCastManager(left->GetType(), expType, true, true).RevealCaster();
 	Caster &caster = *pCaster;
 	caster.ClassifyCast();
 
-	// если преобразование возможно, преобразуем операнды физически и
-	// возвращаем 1
+	// РµСЃР»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІРѕР·РјРѕР¶РЅРѕ, РїСЂРµРѕР±СЂР°Р·СѓРµРј РѕРїРµСЂР°РЅРґС‹ С„РёР·РёС‡РµСЃРєРё Рё
+	// РІРѕР·РІСЂР°С‰Р°РµРј 1
 	if( caster.IsConverted() )
 	{
 		caster.DoCast(left, const_cast<POperand&>(right), errPos);
 		return 1;
 	}
 
-	// иначе пытаемся преобразовать согласно другим правилам
-	// возможно преобразование в void	
+	// РёРЅР°С‡Рµ РїС‹С‚Р°РµРјСЃСЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ СЃРѕРіР»Р°СЃРЅРѕ РґСЂСѓРіРёРј РїСЂР°РІРёР»Р°Рј
+	// РІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІ void 
 	if( toType.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID &&
 		toType.GetDerivedTypeList().IsEmpty() )
 		return 0;
 
-	// из lvalue 'B', в 'cv D &'
+	// РёР· lvalue 'B', РІ 'cv D &'
 	if( ExpressionMakerUtils::IsClassType(toType) && 
 		ExpressionMakerUtils::IsClassType(fromType) &&
 		toType.GetDerivedTypeList().IsReference()   &&
@@ -2431,28 +2431,28 @@ int TypeCastBinaryMaker::CheckStaticCastConversion( const TypyziedEntity &expTyp
 		if( !ExpressionMakerUtils::IsLValue(right) )
 			return -2;
 
-		// проверяем, чтобы 'B' был однозначным не виртуальным базовым классом 'D'
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ 'B' Р±С‹Р» РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј РЅРµ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј Р±Р°Р·РѕРІС‹Рј РєР»Р°СЃСЃРѕРј 'D'
 		DerivationManager dm( static_cast<const ClassType &>(fromType.GetBaseType()),
 			static_cast<const ClassType &>(toType.GetBaseType()) );
 		
-		// проверяем, чтобы был базовым, не виртуальным, однозначным,
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ Р±С‹Р» Р±Р°Р·РѕРІС‹Рј, РЅРµ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј, РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј,
 		if( !dm.IsBase() || dm.IsVirtual() || !dm.IsUnambigous() )
 			return -2;
 
-		// сразу строим выражение, преобразование в производный класс
+		// СЃСЂР°Р·Сѓ СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ, РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІ РїСЂРѕРёР·РІРѕРґРЅС‹Р№ РєР»Р°СЃСЃ
 		const_cast<POperand&>(right) = 
 			new BinaryExpression( GOC_BASE_TO_DERIVED_CONVERSION, 
 				false, left, right, new TypyziedEntity(left->GetType()) );
 			
-		// иначе возвращаем 1, т.к. выражение уже построено
+		// РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј 1, С‚.Рє. РІС‹СЂР°Р¶РµРЅРёРµ СѓР¶Рµ РїРѕСЃС‚СЂРѕРµРЅРѕ
 		return 1;
 	}
 
-	// если оба типа целых, целый тип можно преобразовать в перечислимый
+	// РµСЃР»Рё РѕР±Р° С‚РёРїР° С†РµР»С‹С…, С†РµР»С‹Р№ С‚РёРї РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РІ РїРµСЂРµС‡РёСЃР»РёРјС‹Р№
 	if( ExpressionMakerUtils::IsIntegral(toType) && ExpressionMakerUtils::IsIntegral(fromType) )
 		return 0;
 
-	// указатель на void, можно преобразовать в указатель на др. тип
+	// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° void, РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РІ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РґСЂ. С‚РёРї
 	if( fromType.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID &&
 		fromType.GetDerivedTypeList().GetDerivedTypeCount() == 1 &&
 		fromType.GetDerivedTypeList().IsPointer() ) 
@@ -2462,34 +2462,34 @@ int TypeCastBinaryMaker::CheckStaticCastConversion( const TypyziedEntity &expTyp
 			return 0;
 	}
 
-	// иначе неудача, но будем пытаться через reinterpret_cast
+	// РёРЅР°С‡Рµ РЅРµСѓРґР°С‡Р°, РЅРѕ Р±СѓРґРµРј РїС‹С‚Р°С‚СЊСЃСЏ С‡РµСЂРµР· reinterpret_cast
 	return -1;
 }
 
  
-// проверить приведение с помощью reinterpret_cast. Вернуть true в случае успеха	
+// РїСЂРѕРІРµСЂРёС‚СЊ РїСЂРёРІРµРґРµРЅРёРµ СЃ РїРѕРјРѕС‰СЊСЋ reinterpret_cast. Р’РµСЂРЅСѓС‚СЊ true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р° 
 bool TypeCastBinaryMaker::CheckReinterpretCastConversion( const TypyziedEntity &expType )
 {
 	const TypyziedEntity &fromType = expType, &toType = left->GetType();
 	const DerivedTypeList &fromDtl = fromType.GetDerivedTypeList(), 
 						  &toDtl = toType.GetDerivedTypeList();
 	
-	// нельзя приводить к типу массива или функции
+	// РЅРµР»СЊР·СЏ РїСЂРёРІРѕРґРёС‚СЊ Рє С‚РёРїСѓ РјР°СЃСЃРёРІР° РёР»Рё С„СѓРЅРєС†РёРё
 	if( toDtl.IsArray() || toDtl.IsFunction() ) 
 		return false;
 	
-	// Если один тип целый, а второй указатель или наоборот, либо
-	// оба указатели
+	// Р•СЃР»Рё РѕРґРёРЅ С‚РёРї С†РµР»С‹Р№, Р° РІС‚РѕСЂРѕР№ СѓРєР°Р·Р°С‚РµР»СЊ РёР»Рё РЅР°РѕР±РѕСЂРѕС‚, Р»РёР±Рѕ
+	// РѕР±Р° СѓРєР°Р·Р°С‚РµР»Рё
 	if( (ExpressionMakerUtils::IsIntegral(fromType) &&
-		 ExpressionMakerUtils::IsRvaluePointer(toType))     ||
+		 ExpressionMakerUtils::IsRvaluePointer(toType))  ||
 		(ExpressionMakerUtils::IsIntegral(toType) &&
-		 ExpressionMakerUtils::IsRvaluePointer(fromType))   ||
+		 ExpressionMakerUtils::IsRvaluePointer(fromType))  ||
 		(ExpressionMakerUtils::IsRvaluePointer(fromType) &&
 		 ExpressionMakerUtils::IsRvaluePointer(toType))	)
 		 ;
 
-	// иначе если оба указатели на член, проверяем, чтобы оба были
-	// объекты или функции
+	// РёРЅР°С‡Рµ РµСЃР»Рё РѕР±Р° СѓРєР°Р·Р°С‚РµР»Рё РЅР° С‡Р»РµРЅ, РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РѕР±Р° Р±С‹Р»Рё
+	// РѕР±СЉРµРєС‚С‹ РёР»Рё С„СѓРЅРєС†РёРё
 	else if( toDtl.IsPointerToMember() && fromDtl.IsPointerToMember() &&
 			 ((toDtl.GetDerivedTypeCount() > 1 && toDtl.GetDerivedType(1)->
 			   GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE) +
@@ -2497,8 +2497,8 @@ bool TypeCastBinaryMaker::CheckReinterpretCastConversion( const TypyziedEntity &
 			   GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE)) != 1 )
 		;
 
-	// Если правый операнд lvalue, а конечный тип - ссылка,
-	// преобразование возможно.
+	// Р•СЃР»Рё РїСЂР°РІС‹Р№ РѕРїРµСЂР°РЅРґ lvalue, Р° РєРѕРЅРµС‡РЅС‹Р№ С‚РёРї - СЃСЃС‹Р»РєР°,
+	// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІРѕР·РјРѕР¶РЅРѕ.
 	else if( toType.GetDerivedTypeList().IsReference() &&
 		((right->IsExpressionOperand() && static_cast<const Expression&>(*right).IsLvalue()) ||
 		 (right->IsPrimaryOperand() && static_cast<const PrimaryOperand&>(*right).IsLvalue())) )
@@ -2511,54 +2511,54 @@ bool TypeCastBinaryMaker::CheckReinterpretCastConversion( const TypyziedEntity &
 }
 
 
-// создать выражение (тип)
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ (С‚РёРї)
 POperand TypeCastBinaryMaker::Make()
 {
-	// сначала снимаем квалификацию с типа
+	// СЃРЅР°С‡Р°Р»Р° СЃРЅРёРјР°РµРј РєРІР°Р»РёС„РёРєР°С†РёСЋ СЃ С‚РёРїР°
 	PTypyziedEntity unqual = UnsetQualification();
 	
-	// далее пытаемся преобразовать с помощью static_cast
+	// РґР°Р»РµРµ РїС‹С‚Р°РµРјСЃСЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ СЃ РїРѕРјРѕС‰СЊСЋ static_cast
 	int r = CheckStaticCastConversion(*unqual);
 	if( r == 1 )
 		return right;
 
-	// если 0, строим выражение
-	else if( r == 0 || ( r == -1 && CheckReinterpretCastConversion(*unqual)) )		
+	// РµСЃР»Рё 0, СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ
+	else if( r == 0 || ( r == -1 && CheckReinterpretCastConversion(*unqual)) ) 
 		return new BinaryExpression( OC_CAST, left->GetType().GetDerivedTypeList().IsReference(),
 			left, right, new TypyziedEntity(left->GetType()));
-	
-	// в случае, если оба преобразования невозможны, выводим ошибку
-	theApp.Error(errPos, "'(тип)' - невозможно преобразовать '%s' к '%s'",
+
+	// РІ СЃР»СѓС‡Р°Рµ, РµСЃР»Рё РѕР±Р° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РЅРµРІРѕР·РјРѕР¶РЅС‹, РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
+	theApp.Error(errPos, "'(С‚РёРї)' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '%s' Рє '%s'",
 		right->GetType().GetTypyziedEntityName(false).c_str(),
 		left->GetType().GetTypyziedEntityName(false).c_str());
 	return ErrorOperand::GetInstance();
 }
 
 
-// метод, выявляет наилучшую функцию из списка и проверяет ее доступность.
-// Если функция неоднозначна или не найдена, вернуть NULL
+// РјРµС‚РѕРґ, РІС‹СЏРІР»СЏРµС‚ РЅР°РёР»СѓС‡С€СѓСЋ С„СѓРЅРєС†РёСЋ РёР· СЃРїРёСЃРєР° Рё РїСЂРѕРІРµСЂСЏРµС‚ РµРµ РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ.
+// Р•СЃР»Рё С„СѓРЅРєС†РёСЏ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅР° РёР»Рё РЅРµ РЅР°Р№РґРµРЅР°, РІРµСЂРЅСѓС‚СЊ NULL
 const Function *FunctionCallBinaryMaker::CheckBestViableFunction( 
 	const OverloadFunctionList &ofl, const ExpressionList &pl, const TypyziedEntity *obj ) const
 {
 	OverloadResolutor or(ofl, pl, obj);
 	const Function *fn = or.GetCallableFunction();
-	
-	// если функция не найдена, выведем ошибку, если вызов неявный.
+
+	// РµСЃР»Рё С„СѓРЅРєС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°, РІС‹РІРµРґРµРј РѕС€РёР±РєСѓ, РµСЃР»Рё РІС‹Р·РѕРІ РЅРµСЏРІРЅС‹Р№.
 	if( fn == NULL )
-	{		
-		// если функция не неоднозначна, значит ее не существует
+	{
+		// РµСЃР»Рё С„СѓРЅРєС†РёСЏ РЅРµ РЅРµРѕРґРЅРѕР·РЅР°С‡РЅР°, Р·РЅР°С‡РёС‚ РµРµ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
 		if( !or.IsAmbigous() )
 			noFunction = true;
 
-		// если вызов явный или неоднозначность, вывести ошибку
+		// РµСЃР»Рё РІС‹Р·РѕРІ СЏРІРЅС‹Р№ РёР»Рё РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ, РІС‹РІРµСЃС‚Рё РѕС€РёР±РєСѓ
 		if( !implicit || !noFunction )
 			theApp.Error(errPos, or.GetErrorMessage().c_str());
 
-		// выходим
+		// РІС‹С…РѕРґРёРј
 		return NULL;
 	}
 
-	// иначе проверяем доступность этой функции
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ СЌС‚РѕР№ С„СѓРЅРєС†РёРё
 	if( fn->IsClassMember() )
 	{
 		AccessControlChecker acc( 
@@ -2569,53 +2569,53 @@ const Function *FunctionCallBinaryMaker::CheckBestViableFunction(
 
 		if( !acc.IsAccessible() )
 			theApp.Error( errPos, 
-				"'%s' - метод недоступен; вызов невозможен", 
-				fn->GetTypyziedEntityName().c_str() );		
+				"'%s' - РјРµС‚РѕРґ РЅРµРґРѕСЃС‚СѓРїРµРЅ; РІС‹Р·РѕРІ РЅРµРІРѕР·РјРѕР¶РµРЅ", 
+				fn->GetTypyziedEntityName().c_str() ); 
 	}
 
-	// в конце выполняем преобразование каждого параметр в целевой тип
+	// РІ РєРѕРЅС†Рµ РІС‹РїРѕР»РЅСЏРµРј РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РєР°Р¶РґРѕРіРѕ РїР°СЂР°РјРµС‚СЂ РІ С†РµР»РµРІРѕР№ С‚РёРї
 	or.DoParametrListCast(errPos); 
 	return fn;
 }
 
 
-// если 'fn' - это объект, выявить для него перегруженный оператора '()',
-// либо оператор приведения к типу указатель на функцию. Если приведение
-// удалось, вернет новый операнд, иначе NULL
+// РµСЃР»Рё 'fn' - СЌС‚Рѕ РѕР±СЉРµРєС‚, РІС‹СЏРІРёС‚СЊ РґР»СЏ РЅРµРіРѕ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂР° '()',
+// Р»РёР±Рѕ РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ Рє С‚РёРїСѓ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С„СѓРЅРєС†РёСЋ. Р•СЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ
+// СѓРґР°Р»РѕСЃСЊ, РІРµСЂРЅРµС‚ РЅРѕРІС‹Р№ РѕРїРµСЂР°РЅРґ, РёРЅР°С‡Рµ NULL
 POperand FunctionCallBinaryMaker::FoundFunctor( const ClassType &cls ) const
 {
-	// ищем оператор
+	// РёС‰РµРј РѕРїРµСЂР°С‚РѕСЂ
 	OverloadOperatorFounder oof(OC_FUNCTION, false, &cls, errPos);
-	// если перегруженный оператор найден, рекурсивно вызываем строитель функции. 
+	// РµСЃР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РЅР°Р№РґРµРЅ, СЂРµРєСѓСЂСЃРёРІРЅРѕ РІС‹Р·С‹РІР°РµРј СЃС‚СЂРѕРёС‚РµР»СЊ С„СѓРЅРєС†РёРё. 
 	if( oof.IsFound() )
 	{
-		// если неоднозначен, вернуть ошибку
+		// РµСЃР»Рё РЅРµРѕРґРЅРѕР·РЅР°С‡РµРЅ, РІРµСЂРЅСѓС‚СЊ РѕС€РёР±РєСѓ
 		if( oof.IsAmbigous() )
 			return ErrorOperand::GetInstance();
 
-		// иначе рекурсивно вызываем строителя функции для списка
-		// операторов и параметров
+		// РёРЅР°С‡Рµ СЂРµРєСѓСЂСЃРёРІРЅРѕ РІС‹Р·С‹РІР°РµРј СЃС‚СЂРѕРёС‚РµР»СЏ С„СѓРЅРєС†РёРё РґР»СЏ СЃРїРёСЃРєР°
+		// РѕРїРµСЂР°С‚РѕСЂРѕРІ Рё РїР°СЂР°РјРµС‚СЂРѕРІ
 		return FunctionCallBinaryMaker(
 			new BinaryExpression('.', false, fn, new OverloadOperand(oof.GetClassOperatorList()),
 			  new TypyziedEntity(fn->GetType()) ),
 			  parametrList, OC_FUNCTION, errPos, false).Make();
 	}
 	
-	// иначе возвращаем NULL, как показатель, что оператор не найден
+	// РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј NULL, РєР°Рє РїРѕРєР°Р·Р°С‚РµР»СЊ, С‡С‚Рѕ РѕРїРµСЂР°С‚РѕСЂ РЅРµ РЅР°Р№РґРµРЅ
 	else
 		return NULL;
 }
 
-// проверяем возможность копирования и уничтожения каждого параметра.
-// Требуется чтобы конструктор копирования и деструктор были доступны
+// РїСЂРѕРІРµСЂСЏРµРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РєРѕРїРёСЂРѕРІР°РЅРёСЏ Рё СѓРЅРёС‡С‚РѕР¶РµРЅРёСЏ РєР°Р¶РґРѕРіРѕ РїР°СЂР°РјРµС‚СЂР°.
+// РўСЂРµР±СѓРµС‚СЃСЏ С‡С‚РѕР±С‹ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ Р±С‹Р»Рё РґРѕСЃС‚СѓРїРЅС‹
 void FunctionCallBinaryMaker::CheckParametrInitialization( const PExpressionList &parametrList, 
 	const FunctionParametrList &formalList, const Position &errPos ) 
 {
-	// проверяем исключительно классовые параметры, при передачи параметров
-	// которым требуется вызов конструктора. Проверяем, чтобы это был
-	// полностью объявленный класс и доступны конструктор копирования и деструктор.
-	// Те параметры, которые уже преобразовались с помощью 
-	// конструктор (явно или неявно), проверять не нужно
+	// РїСЂРѕРІРµСЂСЏРµРј РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅРѕ РєР»Р°СЃСЃРѕРІС‹Рµ РїР°СЂР°РјРµС‚СЂС‹, РїСЂРё РїРµСЂРµРґР°С‡Рё РїР°СЂР°РјРµС‚СЂРѕРІ
+	// РєРѕС‚РѕСЂС‹Рј С‚СЂРµР±СѓРµС‚СЃСЏ РІС‹Р·РѕРІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°. РџСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СЌС‚Рѕ Р±С‹Р»
+	// РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ РєР»Р°СЃСЃ Рё РґРѕСЃС‚СѓРїРЅС‹ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ.
+	// РўРµ РїР°СЂР°РјРµС‚СЂС‹, РєРѕС‚РѕСЂС‹Рµ СѓР¶Рµ РїСЂРµРѕР±СЂР°Р·РѕРІР°Р»РёСЃСЊ СЃ РїРѕРјРѕС‰СЊСЋ 
+	// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ (СЏРІРЅРѕ РёР»Рё РЅРµСЏРІРЅРѕ), РїСЂРѕРІРµСЂСЏС‚СЊ РЅРµ РЅСѓР¶РЅРѕ
 	int pcnt = parametrList->size() < formalList.GetFunctionParametrCount() ?
 		parametrList->size() : formalList.GetFunctionParametrCount();
 
@@ -2625,19 +2625,19 @@ void FunctionCallBinaryMaker::CheckParametrInitialization( const PExpressionList
 		if( !(prm.GetBaseType().IsClassType() && prm.GetDerivedTypeList().IsEmpty()) )
 			continue;
 
-		// имеем классовый параметр, 
+		// РёРјРµРµРј РєР»Р°СЃСЃРѕРІС‹Р№ РїР°СЂР°РјРµС‚СЂ, 
 		const ClassType &cls = static_cast<const ClassType&>(prm.GetBaseType());
 		
-		// проверяем, чтобы класс был полностью объявлен
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РєР»Р°СЃСЃ Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ
 		if( cls.IsUncomplete() )
 		{
 			theApp.Error( errPos, 
-				"'%i-ый' параметр имеет тип '%s', который не определен",
+				"'%i-С‹Р№' РїР°СЂР°РјРµС‚СЂ РёРјРµРµС‚ С‚РёРї '%s', РєРѕС‚РѕСЂС‹Р№ РЅРµ РѕРїСЂРµРґРµР»РµРЅ",
 				i+1, cls.GetName().c_str());
 			continue;
 		}
 
-		// проверяем не было ли уже преобразование
+		// РїСЂРѕРІРµСЂСЏРµРј РЅРµ Р±С‹Р»Рѕ Р»Рё СѓР¶Рµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 		const POperand &exp = (*parametrList)[i];
 		if( exp->IsExpressionOperand() &&
 			static_cast<const Expression&>(*exp).IsFunctionCall() )
@@ -2649,83 +2649,83 @@ void FunctionCallBinaryMaker::CheckParametrInitialization( const PExpressionList
 				continue;
 		}
 
-		// в противном случае, проверяем, чтобы у объекта был доступен к-тор копирования
-		// и деструктор
+		// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ Сѓ РѕР±СЉРµРєС‚Р° Р±С‹Р» РґРѕСЃС‚СѓРїРµРЅ Рє-С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
+		// Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 		ExpressionMakerUtils::ObjectCreationIsAccessible(cls, errPos, false, true, true);
 	}
 }
 
 
-// проверить является ли функция членом текущего класса, если она
-// вызывается напрямую без this, и совпадает ли ее квалификация с объектом
+// РїСЂРѕРІРµСЂРёС‚СЊ СЏРІР»СЏРµС‚СЃСЏ Р»Рё С„СѓРЅРєС†РёСЏ С‡Р»РµРЅРѕРј С‚РµРєСѓС‰РµРіРѕ РєР»Р°СЃСЃР°, РµСЃР»Рё РѕРЅР°
+// РІС‹Р·С‹РІР°РµС‚СЃСЏ РЅР°РїСЂСЏРјСѓСЋ Р±РµР· this, Рё СЃРѕРІРїР°РґР°РµС‚ Р»Рё РµРµ РєРІР°Р»РёС„РёРєР°С†РёСЏ СЃ РѕР±СЉРµРєС‚РѕРј
 void FunctionCallBinaryMaker::CheckMemberCall( const Method &m ) const
 {
-	// статический метод или конструктор можно вызывать без 'this'
+	// СЃС‚Р°С‚РёС‡РµСЃРєРёР№ РјРµС‚РѕРґ РёР»Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РјРѕР¶РЅРѕ РІС‹Р·С‹РІР°С‚СЊ Р±РµР· 'this'
 	if( m.GetStorageSpecifier() == Function::SS_STATIC ||
 		m.IsConstructor() )
 		return;
 
-	// получаем класс метода и проверяем какое отношение имеет 
-	// текущая область видимости к этому классу
+	// РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ РјРµС‚РѕРґР° Рё РїСЂРѕРІРµСЂСЏРµРј РєР°РєРѕРµ РѕС‚РЅРѕС€РµРЅРёРµ РёРјРµРµС‚ 
+	// С‚РµРєСѓС‰Р°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё Рє СЌС‚РѕРјСѓ РєР»Р°СЃСЃСѓ
 	const ClassType &mcls = static_cast<const ClassType &>(m.GetSymbolTableEntry());
 	const SymbolTable &st = GetCurrentSymbolTable().IsLocalSymbolTable() ?
 		GetScopeSystem().GetFunctionalSymbolTable() : GetCurrentSymbolTable();
 
-	// проверяем, если функциональная, то можно продолжать проверку
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ, С‚Рѕ РјРѕР¶РЅРѕ РїСЂРѕРґРѕР»Р¶Р°С‚СЊ РїСЂРѕРІРµСЂРєСѓ
 	if( st.IsFunctionSymbolTable() &&
 		static_cast<const FunctionSymbolTable&>(st).GetFunction().IsClassMember() )
 	{
-		// получаем класс, к которому принадлежит метод в котором мы находимся,
-		// класс должен либо совпадать с классом вызываемого метода, либо
-		// быть производным для него
+		// РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ, Рє РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ РјРµС‚РѕРґ РІ РєРѕС‚РѕСЂРѕРј РјС‹ РЅР°С…РѕРґРёРјСЃСЏ,
+		// РєР»Р°СЃСЃ РґРѕР»Р¶РµРЅ Р»РёР±Рѕ СЃРѕРІРїР°РґР°С‚СЊ СЃ РєР»Р°СЃСЃРѕРј РІС‹Р·С‹РІР°РµРјРѕРіРѕ РјРµС‚РѕРґР°, Р»РёР±Рѕ
+		// Р±С‹С‚СЊ РїСЂРѕРёР·РІРѕРґРЅС‹Рј РґР»СЏ РЅРµРіРѕ
 		const Method &curMeth = static_cast<const Method &>(
 			static_cast<const FunctionSymbolTable&>(st).GetFunction());
 		const ClassType &cc = static_cast<const ClassType &>(curMeth.GetSymbolTableEntry());
 		if( &cc == &mcls ||
 			DerivationManager( mcls, cc ).IsBase() )
 		{
-			// проверяем квалификаицю, чтобы метод вызывался в более 
-			// квалифицированном методе
+			// РїСЂРѕРІРµСЂСЏРµРј РєРІР°Р»РёС„РёРєР°РёС†СЋ, С‡С‚РѕР±С‹ РјРµС‚РѕРґ РІС‹Р·С‹РІР°Р»СЃСЏ РІ Р±РѕР»РµРµ 
+			// РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРј РјРµС‚РѕРґРµ
 			if( curMeth.GetFunctionPrototype().IsConst() > m.GetFunctionPrototype().IsConst() ||
 				curMeth.GetFunctionPrototype().IsVolatile() > 
 						m.GetFunctionPrototype().IsVolatile() )
 				theApp.Error( errPos,
-					"'%s' - метод менее квалифицирован, чем this; вызов невозможен",
+					"'%s' - РјРµС‚РѕРґ РјРµРЅРµРµ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅ, С‡РµРј this; РІС‹Р·РѕРІ РЅРµРІРѕР·РјРѕР¶РµРЅ",
 					m.GetQualifiedName().c_str() );
 			return;
 		}		
 	}
 
-	// если доходим до сюда, значит выводим ошибку
+	// РµСЃР»Рё РґРѕС…РѕРґРёРј РґРѕ СЃСЋРґР°, Р·РЅР°С‡РёС‚ РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
 	theApp.Error(errPos, 
-		"'%s' - метод не может вызываться в текущей области видимости; отсутствует 'this'",
+		"'%s' - РјРµС‚РѕРґ РЅРµ РјРѕР¶РµС‚ РІС‹Р·С‹РІР°С‚СЊСЃСЏ РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё; РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ 'this'",
 		m.GetQualifiedName().c_str());
 }
 
 
-// создать выражение. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand FunctionCallBinaryMaker::Make()
 {
-	// выполнить стандартные проверки перед вызовом функции. Есть
-	// ли ошибочные параметры или функция, поиск операторов вызова функции,
-	// если слева не функция, а объект
+	// РІС‹РїРѕР»РЅРёС‚СЊ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РїСЂРѕРІРµСЂРєРё РїРµСЂРµРґ РІС‹Р·РѕРІРѕРј С„СѓРЅРєС†РёРё. Р•СЃС‚СЊ
+	// Р»Рё РѕС€РёР±РѕС‡РЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РёР»Рё С„СѓРЅРєС†РёСЏ, РїРѕРёСЃРє РѕРїРµСЂР°С‚РѕСЂРѕРІ РІС‹Р·РѕРІР° С„СѓРЅРєС†РёРё,
+	// РµСЃР»Рё СЃР»РµРІР° РЅРµ С„СѓРЅРєС†РёСЏ, Р° РѕР±СЉРµРєС‚
 	if( fn->IsErrorOperand() )
 		return fn;
 
-	// проверим, есть ли ошибочные параметры или параметры типа,
-	// а также если есть параметры - перегруженные функции, разрешить
-	// неоднозначность
+	// РїСЂРѕРІРµСЂРёРј, РµСЃС‚СЊ Р»Рё РѕС€РёР±РѕС‡РЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РёР»Рё РїР°СЂР°РјРµС‚СЂС‹ С‚РёРїР°,
+	// Р° С‚Р°РєР¶Рµ РµСЃР»Рё РµСЃС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ - РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Рµ С„СѓРЅРєС†РёРё, СЂР°Р·СЂРµС€РёС‚СЊ
+	// РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚СЊ
 	for( int i = 0; i<parametrList->size(); i++ )	
 		if( (*parametrList)[i]->IsErrorOperand() )
 			return ErrorOperand::GetInstance();
 
-	// если функция является основным операндом или выражением
+	// РµСЃР»Рё С„СѓРЅРєС†РёСЏ СЏРІР»СЏРµС‚СЃСЏ РѕСЃРЅРѕРІРЅС‹Рј РѕРїРµСЂР°РЅРґРѕРј РёР»Рё РІС‹СЂР°Р¶РµРЅРёРµРј
 	if( fn->IsPrimaryOperand() || fn->IsExpressionOperand() )
 	{
-		// имеем дело, либо с объектом, либо с функциональным типом,
-		// но для начала проверим, если выражение и оператор выбора,
-		// то второй операнд может быть списком перегруженных функций
-		// который надо разрешить
+		// РёРјРµРµРј РґРµР»Рѕ, Р»РёР±Рѕ СЃ РѕР±СЉРµРєС‚РѕРј, Р»РёР±Рѕ СЃ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅС‹Рј С‚РёРїРѕРј,
+		// РЅРѕ РґР»СЏ РЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ Рё РѕРїРµСЂР°С‚РѕСЂ РІС‹Р±РѕСЂР°,
+		// С‚Рѕ РІС‚РѕСЂРѕР№ РѕРїРµСЂР°РЅРґ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРїРёСЃРєРѕРј РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹С… С„СѓРЅРєС†РёР№
+		// РєРѕС‚РѕСЂС‹Р№ РЅР°РґРѕ СЂР°Р·СЂРµС€РёС‚СЊ
 		if( fn->IsExpressionOperand() )
 		{
 			const Expression &exp = static_cast<const Expression &>(*fn);
@@ -2739,7 +2739,7 @@ POperand FunctionCallBinaryMaker::Make()
 					&static_cast<const BinaryExpression &>(exp).GetOperand1()->GetType()
 				);
 
-				// если функция не найдена, выходим
+				// РµСЃР»Рё С„СѓРЅРєС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°, РІС‹С…РѕРґРёРј
 				if( vf == NULL )
 				{
 					if( implicit && noFunction )
@@ -2747,73 +2747,73 @@ POperand FunctionCallBinaryMaker::Make()
 					return ErrorOperand::GetInstance();
 				}
 
-				// найдена однозначная функция, проверим возможность копирования параметров,				
+				// РЅР°Р№РґРµРЅР° РѕРґРЅРѕР·РЅР°С‡РЅР°СЏ С„СѓРЅРєС†РёСЏ, РїСЂРѕРІРµСЂРёРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РєРѕРїРёСЂРѕРІР°РЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ, 
 				CheckParametrInitialization(vf->GetFunctionPrototype().GetParametrList());
-					
-				// иначе строим новое выражение с конкретной функцией				
+
+				// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј РЅРѕРІРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ СЃ РєРѕРЅРєСЂРµС‚РЅРѕР№ С„СѓРЅРєС†РёРµР№ 
 				const_cast<POperand&>(fn) = new BinaryExpression(exp.GetOperatorCode(), false,
 					static_cast<const BinaryExpression &>(exp).GetOperand1(), 
 					new PrimaryOperand(false, *vf), new TypyziedEntity(*vf));
 
-				// строим вызов функции
+				// СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё
 				PTypyziedEntity rtype = new TypyziedEntity(*vf);
 				const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 				return new FunctionCallExpression( vf->GetDerivedTypeList().IsReference(),
 					fn, parametrList, rtype);
-			}			
+			}
 		}
-		
-		// в противном случае операнд однозначен. Сначала проверяем, если
-		// имеет классовый тип, пытаемся построить вызов перегруженного оператора '()'
+
+		// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РѕРїРµСЂР°РЅРґ РѕРґРЅРѕР·РЅР°С‡РµРЅ. РЎРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё
+		// РёРјРµРµС‚ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї, РїС‹С‚Р°РµРјСЃСЏ РїРѕСЃС‚СЂРѕРёС‚СЊ РІС‹Р·РѕРІ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР° '()'
 		if( ExpressionMakerUtils::IsClassType(fn->GetType()) )
 		{
-			// ищем перегруженный оператор ()
+			// РёС‰РµРј РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ ()
 			POperand p = 
 				FoundFunctor(static_cast<const ClassType&>(fn->GetType().GetBaseType()));
 
-			// если не найден, выведем ошибку
+			// РµСЃР»Рё РЅРµ РЅР°Р№РґРµРЅ, РІС‹РІРµРґРµРј РѕС€РёР±РєСѓ
 			if( p.IsNull() )
 			{
 				if( fn->IsPrimaryOperand() )
-					theApp.Error(errPos, "'%s' - объект не является функцией",
+					theApp.Error(errPos, "'%s' - РѕР±СЉРµРєС‚ РЅРµ СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№",
 						ExpressionPrinter(fn).GetExpressionString().c_str());
 				else
 					theApp.Error( errPos, 
-						"'%s' - класс не содержит перегруженного оператора '()'",
+						"'%s' - РєР»Р°СЃСЃ РЅРµ СЃРѕРґРµСЂР¶РёС‚ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР° '()'",
 						static_cast<const ClassType&>(fn->GetType().GetBaseType()).
 							GetQualifiedName().c_str());
 				return ErrorOperand::GetInstance();
 			}
 
-			// иначе вернем операнд
+			// РёРЅР°С‡Рµ РІРµСЂРЅРµРј РѕРїРµСЂР°РЅРґ
 			return p;
 		}
 
-		// иначе операнд должен быть функцией, указателем на функцию или 
-		// указателем на член-функцию		
+		// РёРЅР°С‡Рµ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№, СѓРєР°Р·Р°С‚РµР»РµРј РЅР° С„СѓРЅРєС†РёСЋ РёР»Рё 
+		// СѓРєР°Р·Р°С‚РµР»РµРј РЅР° С‡Р»РµРЅ-С„СѓРЅРєС†РёСЋ 
 		const DerivedTypeList &dtl = fn->GetType().GetDerivedTypeList();
 		if( dtl.IsFunction() || 
 			(dtl.GetDerivedTypeCount() > 1 && dtl.IsPointer() &&
 			 dtl.GetDerivedType(1)->GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE ))
-		{			
+		{
 			bool isFunction = dynamic_cast<const Function *>(&fn->GetType()) != NULL;
 			const FunctionPrototype &fpt = dtl.IsFunction() ?
 				static_cast<const FunctionPrototype &>(*dtl.GetDerivedType(0)) :
 				static_cast<const FunctionPrototype &>(*dtl.GetDerivedType(1)) ;
 		
-			// имеем функциональный тип, проверяем типы параметров,
-			OverloadFunctionList ofl;			
+			// РёРјРµРµРј С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅС‹Р№ С‚РёРї, РїСЂРѕРІРµСЂСЏРµРј С‚РёРїС‹ РїР°СЂР°РјРµС‚СЂРѕРІ,
+			OverloadFunctionList ofl; 
 			const SmartPtr<Function> tempf = isFunction ? NULL :
 			(	!dtl.IsFunction() ? ((DerivedTypeList&)dtl).PopHeadDerivedType() : (void)0,
 				new Function( "", &GetCurrentSymbolTable(), 
 					(BaseType *)&fn->GetType().GetBaseType(), false, false,
 					fn->GetType().GetDerivedTypeList(), false, Function::SS_NONE,
 					Function::CC_NON )
-			 );
+			);
 			ofl.push_back( tempf.IsNull() ?
 				static_cast<const Function*>(&fn->GetType()) : &*tempf );
-					
-			// выполняем проверку соотв. параметров функции
+
+			// РІС‹РїРѕР»РЅСЏРµРј РїСЂРѕРІРµСЂРєСѓ СЃРѕРѕС‚РІ. РїР°СЂР°РјРµС‚СЂРѕРІ С„СѓРЅРєС†РёРё
 			const TypyziedEntity *obj = NULL;
 			int opc = ((Expression&)*fn).GetOperatorCode();
 			if( fn->IsExpressionOperand() && 
@@ -2830,56 +2830,56 @@ POperand FunctionCallBinaryMaker::Make()
 				return ErrorOperand::GetInstance();
 			}
 
-			// приводим параметры физически
+			// РїСЂРёРІРѕРґРёРј РїР°СЂР°РјРµС‚СЂС‹ С„РёР·РёС‡РµСЃРєРё
 			or.DoParametrListCast(errPos);
-			
-			// после того как типы параметров совпали, проверяем возможность их
-			// копирования			
+
+			// РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє С‚РёРїС‹ РїР°СЂР°РјРµС‚СЂРѕРІ СЃРѕРІРїР°Р»Рё, РїСЂРѕРІРµСЂСЏРµРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РёС…
+			// РєРѕРїРёСЂРѕРІР°РЅРёСЏ 
 			CheckParametrInitialization(fpt.GetParametrList());
-		
-			// если имеем функцию-член, следует проверить, множно ли ее
-			// вызывать напрямую без 'this' в текущей области видимости
-			if( fn->IsPrimaryOperand()						 &&	
-				tempf.IsNull()								 && 
+
+			// РµСЃР»Рё РёРјРµРµРј С„СѓРЅРєС†РёСЋ-С‡Р»РµРЅ, СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ, РјРЅРѕР¶РЅРѕ Р»Рё РµРµ
+			// РІС‹Р·С‹РІР°С‚СЊ РЅР°РїСЂСЏРјСѓСЋ Р±РµР· 'this' РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
+			if( fn->IsPrimaryOperand()  && 
+				tempf.IsNull()  && 
 				static_cast<const Function &>(fn->GetType()).IsClassMember() )
 				CheckMemberCall( static_cast<const Method &>(fn->GetType()) );
-			
-			// создаем результирующий тип
+
+			// СЃРѕР·РґР°РµРј СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї
 			PTypyziedEntity rtype = new TypyziedEntity(fn->GetType());
 			const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 
-			// возвращаем вызов
+			// РІРѕР·РІСЂР°С‰Р°РµРј РІС‹Р·РѕРІ
 			return new FunctionCallExpression( rtype->GetDerivedTypeList().IsReference(),
 					fn, parametrList, rtype );
 		}
 
-		// иначе тип не является функцией, вызов невозможен
+		// РёРЅР°С‡Рµ С‚РёРї РЅРµ СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№, РІС‹Р·РѕРІ РЅРµРІРѕР·РјРѕР¶РµРЅ
 		else
 		{
 			if( fn->IsPrimaryOperand() )
-				theApp.Error(errPos, "'%s' - операнд не является функцией",
+				theApp.Error(errPos, "'%s' - РѕРїРµСЂР°РЅРґ РЅРµ СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№",
 					ExpressionPrinter(fn).GetExpressionString().c_str());
 			else
-				theApp.Error(errPos, "'%s' - не функциональный тип",
+				theApp.Error(errPos, "'%s' - РЅРµ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅС‹Р№ С‚РёРї",
 					fn->GetType().GetTypyziedEntityName().c_str());
 			return ErrorOperand::GetInstance();
 		}
-			
+
 	}
 
-	// если функция является перегруженным операндом
+	// РµСЃР»Рё С„СѓРЅРєС†РёСЏ СЏРІР»СЏРµС‚СЃСЏ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Рј РѕРїРµСЂР°РЅРґРѕРј
 	else if( fn->IsOverloadOperand() )
 	{
-		// сначала проверим, если вызов через this, строим выражение обращения 
-		// и рекурсивно вызываем строителя
+		// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё РІС‹Р·РѕРІ С‡РµСЂРµР· this, СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ РѕР±СЂР°С‰РµРЅРёСЏ 
+		// Рё СЂРµРєСѓСЂСЃРёРІРЅРѕ РІС‹Р·С‹РІР°РµРј СЃС‚СЂРѕРёС‚РµР»СЏ
 		const SymbolTable &st = GetCurrentSymbolTable().IsLocalSymbolTable() ?
 			GetScopeSystem().GetFunctionalSymbolTable() : GetCurrentSymbolTable();
-	
-		// выявляем наилучшую
+
+		// РІС‹СЏРІР»СЏРµРј РЅР°РёР»СѓС‡С€СѓСЋ
 		const Function *vf = CheckBestViableFunction(
 			static_cast<const OverloadOperand &>(*fn).GetOverloadList(),*parametrList, NULL);
-					
-		// если функция не найдена, выходим
+
+		// РµСЃР»Рё С„СѓРЅРєС†РёСЏ РЅРµ РЅР°Р№РґРµРЅР°, РІС‹С…РѕРґРёРј
 		if( vf == NULL )
 		{
 			if( implicit && noFunction )
@@ -2887,61 +2887,61 @@ POperand FunctionCallBinaryMaker::Make()
 			return ErrorOperand::GetInstance();
 		}
 
-		// найдена однозначная функция, проверим возможность копирования параметров,				
+		// РЅР°Р№РґРµРЅР° РѕРґРЅРѕР·РЅР°С‡РЅР°СЏ С„СѓРЅРєС†РёСЏ, РїСЂРѕРІРµСЂРёРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РєРѕРїРёСЂРѕРІР°РЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ, 
 		CheckParametrInitialization(vf->GetFunctionPrototype().GetParametrList());
 
-		// если имеем функцию-член, следует проверить, множно ли ее
-		// вызывать напрямую без 'this' в текущей области видимости
-		if(	vf->IsClassMember() )
+		// РµСЃР»Рё РёРјРµРµРј С„СѓРЅРєС†РёСЋ-С‡Р»РµРЅ, СЃР»РµРґСѓРµС‚ РїСЂРѕРІРµСЂРёС‚СЊ, РјРЅРѕР¶РЅРѕ Р»Рё РµРµ
+		// РІС‹Р·С‹РІР°С‚СЊ РЅР°РїСЂСЏРјСѓСЋ Р±РµР· 'this' РІ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
+		if( vf->IsClassMember() )
 			CheckMemberCall( static_cast<const Method&>(*vf) );
 
-		// строим новое выражение с конкретной функцией										
+		// СЃС‚СЂРѕРёРј РЅРѕРІРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ СЃ РєРѕРЅРєСЂРµС‚РЅРѕР№ С„СѓРЅРєС†РёРµР№ 
 		PTypyziedEntity rtype = new TypyziedEntity(*vf);
 		const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 		return new FunctionCallExpression( vf->GetDerivedTypeList().IsReference(),
 			new PrimaryOperand(false, *vf), parametrList, rtype);
 	}
-	
-	// если функциональное приведение типа
+
+	// РµСЃР»Рё С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕРµ РїСЂРёРІРµРґРµРЅРёРµ С‚РёРїР°
 	else if( fn->IsTypeOperand() ) 
 	{
-		// если имеем классовый тип, значит строим вызов конструктора
+		// РµСЃР»Рё РёРјРµРµРј РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї, Р·РЅР°С‡РёС‚ СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 		if( fn->GetType().GetBaseType().IsClassType() && 
 			fn->GetType().GetDerivedTypeList().IsEmpty() )
 		{
 			const ClassType &cls = static_cast<const ClassType&>(fn->GetType().GetBaseType());
 			const ConstructorList &ctorLst = cls.GetConstructorList();
 
-			// список конструкторов может быть пустой
+			// СЃРїРёСЃРѕРє РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№
 			if( ctorLst.empty() )
 			{
-				theApp.Error(errPos, "'%s' - класс не имеет конструкторов", 
+				theApp.Error(errPos, "'%s' - РєР»Р°СЃСЃ РЅРµ РёРјРµРµС‚ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ", 
 					cls.GetQualifiedName().c_str());
 				return ErrorOperand::GetInstance();
 			}
 
-			OverloadFunctionList ofl(ctorLst.size());			
+			OverloadFunctionList ofl(ctorLst.size()); 
 			copy(ctorLst.begin(), ctorLst.end(), ofl.begin());
 
-			// выбираем наилучший из списка конструкторов, если есть такой,
-			// строим вызов, иначе выходим
+			// РІС‹Р±РёСЂР°РµРј РЅР°РёР»СѓС‡С€РёР№ РёР· СЃРїРёСЃРєР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ, РµСЃР»Рё РµСЃС‚СЊ С‚Р°РєРѕР№,
+			// СЃС‚СЂРѕРёРј РІС‹Р·РѕРІ, РёРЅР°С‡Рµ РІС‹С…РѕРґРёРј
 			if( const Function *ctor = CheckBestViableFunction(ofl, *parametrList, NULL) )
 			{
-				// проверим возможность копирования параметров,				
+				// РїСЂРѕРІРµСЂРёРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РєРѕРїРёСЂРѕРІР°РЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ, 
 				CheckParametrInitialization(ctor->GetFunctionPrototype().GetParametrList());
 				const ClassType &ctorCls = 
 					static_cast<const ClassType&>(ctor->GetSymbolTableEntry());
 				ExpressionMakerUtils::ObjectCreationIsAccessible(
 					ctorCls, errPos, false, false, true);
 
-				// проверяем , чтобы класс не был абстарктым. Создание объекта
-				// абстрактного класса невозможно
+				// РїСЂРѕРІРµСЂСЏРµРј , С‡С‚РѕР±С‹ РєР»Р°СЃСЃ РЅРµ Р±С‹Р» Р°Р±СЃС‚Р°СЂРєС‚С‹Рј. РЎРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р°
+				// Р°Р±СЃС‚СЂР°РєС‚РЅРѕРіРѕ РєР»Р°СЃСЃР° РЅРµРІРѕР·РјРѕР¶РЅРѕ
 				if( ctorCls.IsAbstract() )
 					theApp.Error( errPos,
-						"создание объекта класса '%s' невозможно; класс является абстрактным",
+						"СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° РєР»Р°СЃСЃР° '%s' РЅРµРІРѕР·РјРѕР¶РЅРѕ; РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рј",
 						ctorCls.GetQualifiedName().c_str() );
-			
-				// строим новое выражение с конкретной функцией										
+
+				// СЃС‚СЂРѕРёРј РЅРѕРІРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ СЃ РєРѕРЅРєСЂРµС‚РЅРѕР№ С„СѓРЅРєС†РёРµР№ 
 				PTypyziedEntity rtype = new TypyziedEntity(*ctor);
 				const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 				return new FunctionCallExpression( false,
@@ -2949,24 +2949,24 @@ POperand FunctionCallBinaryMaker::Make()
 			}
 
 			else
-				return ErrorOperand::GetInstance();			
+				return ErrorOperand::GetInstance(); 
 		}
 
-		// иначе тип не является классом, значит переправляем 
-		// преобразование CastMaker'у
+		// РёРЅР°С‡Рµ С‚РёРї РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј, Р·РЅР°С‡РёС‚ РїРµСЂРµРїСЂР°РІР»СЏРµРј 
+		// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ CastMaker'Сѓ
 		else
 		{
-			// сначала проверим, чтобы параметр был 1
+			// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РїР°СЂР°РјРµС‚СЂ Р±С‹Р» 1
 			if( parametrList->size() > 1)
 			{
 				theApp.Error(errPos, 
-					"'%s' - конструктор типа не может принимать '%i' параметр(а)",
+					"'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ С‚РёРїР° РЅРµ РјРѕР¶РµС‚ РїСЂРёРЅРёРјР°С‚СЊ '%i' РїР°СЂР°РјРµС‚СЂ(Р°)",
 					ExpressionPrinter(fn).GetExpressionString().c_str(),
 					parametrList->size());
 				return ErrorOperand::GetInstance();
 			}
 
-			// если нет параметров, значит заменяем вызов на null
+			// РµСЃР»Рё РЅРµС‚ РїР°СЂР°РјРµС‚СЂРѕРІ, Р·РЅР°С‡РёС‚ Р·Р°РјРµРЅСЏРµРј РІС‹Р·РѕРІ РЅР° null
 			else if( parametrList->empty() )
 			{
 				return new PrimaryOperand(false, *new Literal(
@@ -2978,35 +2978,35 @@ POperand FunctionCallBinaryMaker::Make()
 		}
 	}
 
-	// иначе неизвестный операнд
+	// РёРЅР°С‡Рµ РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РѕРїРµСЂР°РЅРґ
 	else
-		INTERNAL( "'FunctionCallBinaryMaker::Make' - неизвестный операнд");
+		INTERNAL( "'FunctionCallBinaryMaker::Make' - РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РѕРїРµСЂР°РЅРґ");
 	return NULL;
 }
 
 
-// создать выражение []
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ []
 POperand ArrayBinaryMaker::Make()
 {
-	// проверяем, если второй тип - указатель, меняем местами операнды
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РІС‚РѕСЂРѕР№ С‚РёРї - СѓРєР°Р·Р°С‚РµР»СЊ, РјРµРЅСЏРµРј РјРµСЃС‚Р°РјРё РѕРїРµСЂР°РЅРґС‹
 	if( ExpressionMakerUtils::IsRvaluePointer(right->GetType()) )
 		swap(const_cast<POperand&>(left), const_cast<POperand&>(right));
 
-	// один из типов должен быть адресным, второй целым
+	// РѕРґРёРЅ РёР· С‚РёРїРѕРІ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р°РґСЂРµСЃРЅС‹Рј, РІС‚РѕСЂРѕР№ С†РµР»С‹Рј
 	if( ExpressionMakerUtils::ToPointerType(const_cast<POperand&>(left), errPos, "[]") )
 	{
-		// проверяем, чтобы второй был целым
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РІС‚РѕСЂРѕР№ Р±С‹Р» С†РµР»С‹Рј
 		if( !ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(right), errPos, "[]") )	
-			return ErrorOperand::GetInstance();		
+			return ErrorOperand::GetInstance(); 
 
-		// иначе строим
+		// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј
 		else
 		{
 			ExpressionMakerUtils::ToRValue(left, errPos);
 			TypyziedEntity *rtype = 
 				ExpressionMakerUtils::DoCopyWithIndirection(left->GetType());
 
-			// снимаем первый тип
+			// СЃРЅРёРјР°РµРј РїРµСЂРІС‹Р№ С‚РёРї
 			INTERNAL_IF( rtype->GetDerivedTypeList().IsEmpty() );
 			const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 			return new BinaryExpression(OC_ARRAY, true, left, right, rtype);
@@ -3018,13 +3018,13 @@ POperand ArrayBinaryMaker::Make()
 }
 
 
-// проверим, чтобы член принадлежал данному классу, проверка
-// осуществляется только при обращении к квалифицированному имени
+// РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ С‡Р»РµРЅ РїСЂРёРЅР°РґР»РµР¶Р°Р» РґР°РЅРЅРѕРјСѓ РєР»Р°СЃСЃСѓ, РїСЂРѕРІРµСЂРєР°
+// РѕСЃСѓС‰РµСЃС‚РІР»СЏРµС‚СЃСЏ С‚РѕР»СЊРєРѕ РїСЂРё РѕР±СЂР°С‰РµРЅРёРё Рє РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕРјСѓ РёРјРµРЅРё
 bool SelectorBinaryMaker::CheckMemberVisibility( const Identifier &id, const ClassType &objCls )
 {
 	if( !id.GetSymbolTableEntry().IsClassSymbolTable() )
 	{
-		theApp.Error(errPos, "'%s' - не является членом класса '%s'",
+		theApp.Error(errPos, "'%s' - РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР° '%s'",
 			id.GetQualifiedName().c_str(), objCls.GetQualifiedName().c_str());
 		return false;
 	}
@@ -3035,44 +3035,44 @@ bool SelectorBinaryMaker::CheckMemberVisibility( const Identifier &id, const Cla
 		return true;
 	else
 	{
-		theApp.Error(errPos, "'%s' - не является членом класса '%s'",
+		theApp.Error(errPos, "'%s' - РЅРµ СЏРІР»СЏРµС‚СЃСЏ С‡Р»РµРЅРѕРј РєР»Р°СЃСЃР° '%s'",
 			id.GetQualifiedName().c_str(), objCls.GetQualifiedName().c_str());
 		return false;
 	}
 }
 
 
-// создать выражение. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand SelectorBinaryMaker::Make()
 {
 	PCSTR opName = op == '.' ? "." : "->";
 
-	// для начала проверим, чтобы операнд слева был выражением или идентификатором
+	// РґР»СЏ РЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РѕРїРµСЂР°РЅРґ СЃР»РµРІР° Р±С‹Р» РІС‹СЂР°Р¶РµРЅРёРµРј РёР»Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј
 	if( left->IsErrorOperand() )
 		return ErrorOperand::GetInstance();
 	if( !(left->IsExpressionOperand() || left->IsPrimaryOperand()) )
 	{
 		theApp.Error(errPos, 
-			"'%s' - оператор требует, чтобы слева был объект", opName );			
+			"'%s' - РѕРїРµСЂР°С‚РѕСЂ С‚СЂРµР±СѓРµС‚, С‡С‚РѕР±С‹ СЃР»РµРІР° Р±С‹Р» РѕР±СЉРµРєС‚", opName ); 
 		return ErrorOperand::GetInstance();
 	}
 
-	// далее, проверяем тип операнда
+	// РґР°Р»РµРµ, РїСЂРѕРІРµСЂСЏРµРј С‚РёРї РѕРїРµСЂР°РЅРґР°
 	if( op == '.' )
 	{
 		if( !ExpressionMakerUtils::IsClassType(left->GetType()) )
 		{
 			theApp.Error(errPos, 
-				"'.' - операнд слева должен иметь классовый тип");				
+				"'.' - РѕРїРµСЂР°РЅРґ СЃР»РµРІР° РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї"); 
 			return ErrorOperand::GetInstance();
 		}
 	}
 
-	// иначе должен быть указатель на класс
+	// РёРЅР°С‡Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєР»Р°СЃСЃ
 	else
 	{
-		// сначала проверим, возможно имеется перегруженный оператор '->',
-		// тогда найдем сначала его
+		// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, РІРѕР·РјРѕР¶РЅРѕ РёРјРµРµС‚СЃСЏ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ '->',
+		// С‚РѕРіРґР° РЅР°Р№РґРµРј СЃРЅР°С‡Р°Р»Р° РµРіРѕ
 		POperand rval = UnaryOverloadOperatorCaller(left, op, errPos).Call();
 		if( !rval.IsNull() )
 			const_cast<POperand&>(left) = rval;
@@ -3084,19 +3084,19 @@ POperand SelectorBinaryMaker::Make()
 		if( !ptr || !left->GetType().GetBaseType().IsClassType() )
 		{
 			theApp.Error(errPos, 
-				"'->' - операнд слева должен иметь тип 'указатель на класс'");				
+				"'->' - РѕРїРµСЂР°РЅРґ СЃР»РµРІР° РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї 'СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєР»Р°СЃСЃ'"); 
 			return ErrorOperand::GetInstance();
-		}		
+		}
 	}
 
-	// после проверки левого операнда, создаем идентификатор
+	// РїРѕСЃР»Рµ РїСЂРѕРІРµСЂРєРё Р»РµРІРѕРіРѕ РѕРїРµСЂР°РЅРґР°, СЃРѕР·РґР°РµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
 	bool qualified = idPkg.GetChildPackageCount() > 1;
 	POperand right = IdentifierOperandMaker( idPkg, &left->GetType() ).Make();
 
 	if( right->IsErrorOperand() )
 		return ErrorOperand::GetInstance();
 
-	// иначе если перегруженная функция
+	// РёРЅР°С‡Рµ РµСЃР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ
 	else if( right->IsOverloadOperand() )
 	{
 		if( qualified )
@@ -3104,16 +3104,16 @@ POperand SelectorBinaryMaker::Make()
 			const OverloadFunctionList &ofl =
 				static_cast<OverloadOperand &>(*right).GetOverloadList();
 			for( int i = 0; i<ofl.size(); i++ )
-			if( !CheckMemberVisibility( *ofl[i],				
+			if( !CheckMemberVisibility( *ofl[i], 
 				static_cast<const ClassType&>(left->GetType().GetBaseType()) ) )
 				return ErrorOperand::GetInstance();
 		}
 
-		// создаем выражение
+		// СЃРѕР·РґР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ
 		return new BinaryExpression( op, true, left, right, NULL );
 	}
 
-	// иначе если обычный член
+	// РёРЅР°С‡Рµ РµСЃР»Рё РѕР±С‹С‡РЅС‹Р№ С‡Р»РµРЅ
 	else if( right->IsPrimaryOperand() )
 	{
 		if( qualified )
@@ -3127,232 +3127,232 @@ POperand SelectorBinaryMaker::Make()
 				return ErrorOperand::GetInstance();
 		}
 
-		// возвращаем результат выражения
+		// РІРѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚ РІС‹СЂР°Р¶РµРЅРёСЏ
 		return new BinaryExpression( op, !right->GetType().IsEnumConstant(),
 			left, right, new TypyziedEntity(right->GetType()) );
 	}
 
-	// иначе мы не можем обратиться к члену через оператор
+	// РёРЅР°С‡Рµ РјС‹ РЅРµ РјРѕР¶РµРј РѕР±СЂР°С‚РёС‚СЊСЃСЏ Рє С‡Р»РµРЅСѓ С‡РµСЂРµР· РѕРїРµСЂР°С‚РѕСЂ
 	else
 	{
 		theApp.Error(errPos,
-			"'%s' - обращение к члену невозможно через '%s'",
+			"'%s' - РѕР±СЂР°С‰РµРЅРёРµ Рє С‡Р»РµРЅСѓ РЅРµРІРѕР·РјРѕР¶РЅРѕ С‡РµСЂРµР· '%s'",
 			ParserUtils::PrintPackageTree(&idPkg).c_str(), opName );
 		return ErrorOperand::GetInstance();
 	}
 }
 
 
-// создать выражение '!'
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ '!'
 POperand LogicalUnaryMaker::Make()
 {
-	// требуется склярный операнд
+	// С‚СЂРµР±СѓРµС‚СЃСЏ СЃРєР»СЏСЂРЅС‹Р№ РѕРїРµСЂР°РЅРґ
 	if( !ExpressionMakerUtils::ToScalarType(const_cast<POperand&>(right), errPos, "!") )
 		return ErrorOperand::GetInstance();
 
-	// иначе строим унарное выражение, результатом будет bool
+	// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ, СЂРµР·СѓР»СЊС‚Р°С‚РѕРј Р±СѓРґРµС‚ bool
 	return new UnaryExpression('!', false, false, right, 
 		new TypyziedEntity((BaseType*)&ImplicitTypeManager(KWBOOL).GetImplicitType(),
 			false, false, DerivedTypeList()) );
 }
 
 
-// создать выражение '~'. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ '~'. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand BitReverseUnaryMaker::Make()
 {
-	// требуется целый операнд
-	if( !ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(right), errPos, "~") )	
+	// С‚СЂРµР±СѓРµС‚СЃСЏ С†РµР»С‹Р№ РѕРїРµСЂР°РЅРґ
+	if( !ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(right), errPos, "~") ) 
 		return ErrorOperand::GetInstance();
 
-	// иначе строим унарное выражение, результатом будет int
+	// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ, СЂРµР·СѓР»СЊС‚Р°С‚РѕРј Р±СѓРґРµС‚ int
 	return new UnaryExpression('~', false, false, right, 
 		new TypyziedEntity((BaseType*)&ImplicitTypeManager(KWINT).GetImplicitType(),
 			false, false, DerivedTypeList()) );
 }
 
 
-// создать выражение % << >> ^ | &
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ % << >> ^ | &
 POperand IntegralBinaryMaker::Make()
 {
 	string opName = ExpressionPrinter::GetOperatorName(op);
 	
-	// оба операнда должны быть целыми	
+	// РѕР±Р° РѕРїРµСЂР°РЅРґР° РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ С†РµР»С‹РјРё 
 	if( !ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(left), errPos, opName) ||
-		!ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(right), errPos, opName) )	
+		!ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(right), errPos, opName) ) 
 		return ErrorOperand::GetInstance();
 
-	// иначе строим бинарное выражение, результатом будет int
+	// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј Р±РёРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ, СЂРµР·СѓР»СЊС‚Р°С‚РѕРј Р±СѓРґРµС‚ int
 	return new BinaryExpression(op, false, left, right, 
 		new TypyziedEntity((BaseType*)&ImplicitTypeManager(KWINT).GetImplicitType(),
 			false, false, DerivedTypeList()) );	
 }
 
 
-// создать выражение *  /
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ *  /
 POperand MulDivBinaryMaker::Make()
 {
 	PCSTR opName = op == '*' ? "*" : "/";
-	// оба операнда должны быть арифметическими
+	// РѕР±Р° РѕРїРµСЂР°РЅРґР° РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРјРё
 	if( !ExpressionMakerUtils::ToArithmeticType(const_cast<POperand&>(left), errPos, opName) ||
-		!ExpressionMakerUtils::ToArithmeticType(const_cast<POperand&>(right), errPos, opName) )	
+		!ExpressionMakerUtils::ToArithmeticType(const_cast<POperand&>(right), errPos, opName) ) 
 		return ErrorOperand::GetInstance();
 
-	// иначе строим бинарное выражение
+	// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј Р±РёРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 	return new BinaryExpression(op, false, left, right, 
 		ExpressionMakerUtils::DoResultArithmeticOperand(
 			left->GetType(), right->GetType()) );
 }
 
 
-// создать выражение +  - 
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ +  - 
 POperand ArithmeticUnaryMaker::Make()
 {
 	PCSTR opName = op == '+' ? "+" : "-";
-	// в случае, если операнд '+', нужен склярный тип. У '-', только арифметический
+	// РІ СЃР»СѓС‡Р°Рµ, РµСЃР»Рё РѕРїРµСЂР°РЅРґ '+', РЅСѓР¶РµРЅ СЃРєР»СЏСЂРЅС‹Р№ С‚РёРї. РЈ '-', С‚РѕР»СЊРєРѕ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёР№
 	if( !(op == '+' ? ExpressionMakerUtils::ToArithmeticOrPointerType(
 			const_cast<POperand&>(right), errPos, opName) :
-		 ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(right), errPos, opName)) )	
+		 ExpressionMakerUtils::ToIntegerType(const_cast<POperand&>(right), errPos, opName)) ) 
 		return ErrorOperand::GetInstance();
 
-	// иначе строим унарное выражение 
+	// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ 
 	return new UnaryExpression(op, false, false, right, 
 		ExpressionMakerUtils::DoCopyWithIndirection(right->GetType()) );
 }
 
 
-// создать выражение '*'
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ '*'
 POperand IndirectionUnaryMaker::Make()
 {	
-	if( !ExpressionMakerUtils::ToPointerType(const_cast<POperand&>(right), errPos, "*") )	
+	if( !ExpressionMakerUtils::ToPointerType(const_cast<POperand&>(right), errPos, "*") ) 
 		return ErrorOperand::GetInstance();
 
-	// тип будет такой же, только удаляем указатель
+	// С‚РёРї Р±СѓРґРµС‚ С‚Р°РєРѕР№ Р¶Рµ, С‚РѕР»СЊРєРѕ СѓРґР°Р»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ
 	TypyziedEntity *rtype = new TypyziedEntity(right->GetType());
 
-	// если первый тип ссылка, снимаем ее
+	// РµСЃР»Рё РїРµСЂРІС‹Р№ С‚РёРї СЃСЃС‹Р»РєР°, СЃРЅРёРјР°РµРј РµРµ
 	if( rtype->GetDerivedTypeList().IsReference() )
 		const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 	INTERNAL_IF( !rtype->GetDerivedTypeList().IsPointer() );
 	const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 
-	// иначе строим унарное выражение, которое является lvalue
+	// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ СЏРІР»СЏРµС‚СЃСЏ lvalue
 	return new UnaryExpression('*', true, false, right, rtype);
 }
 
 
-// создать выражение постфиксный и префиксный кремент
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ РїРѕСЃС‚С„РёРєСЃРЅС‹Р№ Рё РїСЂРµС„РёРєСЃРЅС‹Р№ РєСЂРµРјРµРЅС‚
 POperand IncDecUnaryMaker::Make()
 {
 	PCSTR opName = abs(op) == INCREMENT ? "++" : "--";
-	// сначала проверим, чтобы тип был склярным
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ С‚РёРї Р±С‹Р» СЃРєР»СЏСЂРЅС‹Рј
 	if( !ExpressionMakerUtils::ToArithmeticOrPointerType(
 				const_cast<POperand&>(right), errPos, opName) )	
 		return ErrorOperand::GetInstance();
 
-	// после проверки типа, проверяем, чтобы операнд был модифицируемым lvalue,
-	// т.е. указателем или арифметическим не константным типом
+	// РїРѕСЃР»Рµ РїСЂРѕРІРµСЂРєРё С‚РёРїР°, РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РѕРїРµСЂР°РЅРґ Р±С‹Р» РјРѕРґРёС„РёС†РёСЂСѓРµРјС‹Рј lvalue,
+	// С‚.Рµ. СѓРєР°Р·Р°С‚РµР»РµРј РёР»Рё Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРј РЅРµ РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Рј С‚РёРїРѕРј
 	if( !ExpressionMakerUtils::IsModifiableLValue(right, errPos, opName) )
 		return ErrorOperand::GetInstance();
 
-	// проверяем, если тип является функцией, это ошибка
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё С‚РёРї СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№, СЌС‚Рѕ РѕС€РёР±РєР°
 	if( ExpressionMakerUtils::IsFunctionType(right->GetType()) )
 	{
-		theApp.Error(errPos, "'%s' - не применим к типу '%s'", opName,
+		theApp.Error(errPos, "'%s' - РЅРµ РїСЂРёРјРµРЅРёРј Рє С‚РёРїСѓ '%s'", opName,
 			right->GetType().GetTypyziedEntityName(false).c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// после чего проверим на полностью объявленный тип
+	// РїРѕСЃР»Рµ С‡РµРіРѕ РїСЂРѕРІРµСЂРёРј РЅР° РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ С‚РёРї
 	ExpressionMakerUtils::ToRValue(right, errPos);
 
-	// последнее, если операция декремента, тип не может быть bool
+	// РїРѕСЃР»РµРґРЅРµРµ, РµСЃР»Рё РѕРїРµСЂР°С†РёСЏ РґРµРєСЂРµРјРµРЅС‚Р°, С‚РёРї РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ bool
 	if( abs(op) == DECREMENT && ExpressionMakerUtils::IsIntegral(right->GetType()) &&
 		right->GetType().GetBaseType().GetBaseTypeCode() == BaseType::BT_BOOL )
 	{
-		theApp.Error(errPos, "'--' - не применим к типу 'bool'");
+		theApp.Error(errPos, "'--' - РЅРµ РїСЂРёРјРµРЅРёРј Рє С‚РёРїСѓ 'bool'");
 		return ErrorOperand::GetInstance();
 	}
 
-	// создаем выражение, если оператора были префиксные (меньше нуля), результат lvalue	
+	// СЃРѕР·РґР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ, РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂР° Р±С‹Р»Рё РїСЂРµС„РёРєСЃРЅС‹Рµ (РјРµРЅСЊС€Рµ РЅСѓР»СЏ), СЂРµР·СѓР»СЊС‚Р°С‚ lvalue 
 	return new UnaryExpression(op, op < 0, op > 0, right, 
 		ExpressionMakerUtils::DoCopyWithIndirection(right->GetType()) );
 }
 
 
-// создать выражение &
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ &
 POperand AddressUnaryMaker::Make()
 {
-	// взятие адреса - полиморфная операция. Она может применятся не только к
-	// выражениям или основным операндам, но и к перегруженным функциям.
-	// Также следует учитывать, что это единственная операция, которая применима
-	// к членам класса, без использования 'this'.
-	// Единственная проверка - проверка на lvalue, в том числе и массив и функция
+	// РІР·СЏС‚РёРµ Р°РґСЂРµСЃР° - РїРѕР»РёРјРѕСЂС„РЅР°СЏ РѕРїРµСЂР°С†РёСЏ. РћРЅР° РјРѕР¶РµС‚ РїСЂРёРјРµРЅСЏС‚СЃСЏ РЅРµ С‚РѕР»СЊРєРѕ Рє
+	// РІС‹СЂР°Р¶РµРЅРёСЏРј РёР»Рё РѕСЃРЅРѕРІРЅС‹Рј РѕРїРµСЂР°РЅРґР°Рј, РЅРѕ Рё Рє РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Рј С„СѓРЅРєС†РёСЏРј.
+	// РўР°РєР¶Рµ СЃР»РµРґСѓРµС‚ СѓС‡РёС‚С‹РІР°С‚СЊ, С‡С‚Рѕ СЌС‚Рѕ РµРґРёРЅСЃС‚РІРµРЅРЅР°СЏ РѕРїРµСЂР°С†РёСЏ, РєРѕС‚РѕСЂР°СЏ РїСЂРёРјРµРЅРёРјР°
+	// Рє С‡Р»РµРЅР°Рј РєР»Р°СЃСЃР°, Р±РµР· РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ 'this'.
+	// Р•РґРёРЅСЃС‚РІРµРЅРЅР°СЏ РїСЂРѕРІРµСЂРєР° - РїСЂРѕРІРµСЂРєР° РЅР° lvalue, РІ С‚РѕРј С‡РёСЃР»Рµ Рё РјР°СЃСЃРёРІ Рё С„СѓРЅРєС†РёСЏ
 	try {
 
-		// если операнд перегруженный, единственная проверка, чтобы он был lvalue,
-		// и задаем ему rvalue
+		// РµСЃР»Рё РѕРїРµСЂР°РЅРґ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№, РµРґРёРЅСЃС‚РІРµРЅРЅР°СЏ РїСЂРѕРІРµСЂРєР°, С‡С‚РѕР±С‹ РѕРЅ Р±С‹Р» lvalue,
+		// Рё Р·Р°РґР°РµРј РµРјСѓ rvalue
 		if( right->IsOverloadOperand() )
 		{
 			OverloadOperand &ovop = const_cast<OverloadOperand &>(
 				static_cast<const OverloadOperand &>(*right));
 			if( !ovop.IsLvalue() ) 
 				throw 0;
-		
-			// иначе задаем rvalue и выходим
+
+			// РёРЅР°С‡Рµ Р·Р°РґР°РµРј rvalue Рё РІС‹С…РѕРґРёРј
 			ovop.SetRValue();
 			return right;
 		}
 
-		// если выражение, то оно также должно быть rvalue и добавляем указатель,
-		// если тип не является функцией
+		// РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ, С‚Рѕ РѕРЅРѕ С‚Р°РєР¶Рµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ rvalue Рё РґРѕР±Р°РІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ,
+		// РµСЃР»Рё С‚РёРї РЅРµ СЏРІР»СЏРµС‚СЃСЏ С„СѓРЅРєС†РёРµР№
 		else if( right->IsExpressionOperand() )
 		{
 			if( !static_cast<const Expression &>(*right).IsLvalue() )
 				throw 1;
 		}
 
-		// если основной операнд
+		// РµСЃР»Рё РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ
 		else if( right->IsPrimaryOperand() )
 		{
 			if( !static_cast<const PrimaryOperand &>(*right).IsLvalue() )
-				throw 2;				
+				throw 2;
 		}
 
-		// иначе неизвестный операнд
+		// РёРЅР°С‡Рµ РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РѕРїРµСЂР°РЅРґ
 		else
-			INTERNAL( "'AddressUnaryMaker::Make()' - получает неизвестный операнд");
+			INTERNAL( "'AddressUnaryMaker::Make()' - РїРѕР»СѓС‡Р°РµС‚ РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РѕРїРµСЂР°РЅРґ");
 
 	} catch( int ) {
-		// получаем ошибку, операнд не является lvalue
-		theApp.Error(errPos, "'&' - операнд не является lvalue");
+		// РїРѕР»СѓС‡Р°РµРј РѕС€РёР±РєСѓ, РѕРїРµСЂР°РЅРґ РЅРµ СЏРІР»СЏРµС‚СЃСЏ lvalue
+		theApp.Error(errPos, "'&' - РѕРїРµСЂР°РЅРґ РЅРµ СЏРІР»СЏРµС‚СЃСЏ lvalue");
 		return ErrorOperand::GetInstance(); 
 	}
 
-	// тип будет такой же, только добавляем указатель
+	// С‚РёРї Р±СѓРґРµС‚ С‚Р°РєРѕР№ Р¶Рµ, С‚РѕР»СЊРєРѕ РґРѕР±Р°РІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ
 	TypyziedEntity *rtype = new TypyziedEntity(right->GetType());
 
-	// если первый тип ссылка, снимаем ее
+	// РµСЃР»Рё РїРµСЂРІС‹Р№ С‚РёРї СЃСЃС‹Р»РєР°, СЃРЅРёРјР°РµРј РµРµ
 	if( rtype->GetDerivedTypeList().IsReference() )
 		const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
-	
-	// проверяем, если имеем член класса без this, получаем из него указатель
-	// на член, иначе обычный указатель	
-	if( right->IsPrimaryOperand() && 		
+
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РёРјРµРµРј С‡Р»РµРЅ РєР»Р°СЃСЃР° Р±РµР· this, РїРѕР»СѓС‡Р°РµРј РёР· РЅРµРіРѕ СѓРєР°Р·Р°С‚РµР»СЊ
+	// РЅР° С‡Р»РµРЅ, РёРЅР°С‡Рµ РѕР±С‹С‡РЅС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ 
+	if( right->IsPrimaryOperand() &&  
 		ExpressionMakerUtils::CheckMemberThisVisibility(right, errPos, false) < 0 )
 	{
 		const ClassType &mcls = static_cast<const ClassType &>(
 			dynamic_cast<const Identifier &>(right->GetType()).GetSymbolTableEntry());
 
-		// наконец добавляем указатель на член
+		// РЅР°РєРѕРЅРµС† РґРѕР±Р°РІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ
 		const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PushHeadDerivedType(
 			new PointerToMember(&mcls, false, false));
 	}
 
-	// иначе добавляем обычный указатель
-	else	
+	// РёРЅР°С‡Рµ РґРѕР±Р°РІР»СЏРµРј РѕР±С‹С‡РЅС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ
+	else 
 	{
-		// перед этим проверим, чтобы не был взят адрес из битового поля
-		// проверка, адресс нельзя получить из битового поля
+		// РїРµСЂРµРґ СЌС‚РёРј РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р» РІР·СЏС‚ Р°РґСЂРµСЃ РёР· Р±РёС‚РѕРІРѕРіРѕ РїРѕР»СЏ
+		// РїСЂРѕРІРµСЂРєР°, Р°РґСЂРµСЃСЃ РЅРµР»СЊР·СЏ РїРѕР»СѓС‡РёС‚СЊ РёР· Р±РёС‚РѕРІРѕРіРѕ РїРѕР»СЏ
 		const TypyziedEntity *te = NULL;
 		if( right->IsExpressionOperand() )
 		{
@@ -3365,145 +3365,145 @@ POperand AddressUnaryMaker::Make()
 			te = &right->GetType();
 
 		if( te && te->IsObject() && static_cast<const ::Object*>(te)->
-			GetStorageSpecifier() == ::Object::SS_BITFIELD )	
-			theApp.Error(errPos, "'&' - оператор неприменим к битовому полю");	
+			GetStorageSpecifier() == ::Object::SS_BITFIELD ) 
+			theApp.Error(errPos, "'&' - РѕРїРµСЂР°С‚РѕСЂ РЅРµРїСЂРёРјРµРЅРёРј Рє Р±РёС‚РѕРІРѕРјСѓ РїРѕР»СЋ"); 
 
-		// наконец добавляем указатель
+		// РЅР°РєРѕРЅРµС† РґРѕР±Р°РІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ
 		const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PushHeadDerivedType(
-			new Pointer(false, false));	
+			new Pointer(false, false)); 
 	}
 
-	// иначе строим унарное выражение, которое является rvalue
-	return new UnaryExpression('&', false, false, right, rtype);	
+	// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ СЏРІР»СЏРµС‚СЃСЏ rvalue
+	return new UnaryExpression('&', false, false, right, rtype); 
 }
 
 
-// создать выражение +
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ +
 POperand PlusBinaryMaker::Make()
 {
-	// получаем тип первого операнда
+	// РїРѕР»СѓС‡Р°РµРј С‚РёРї РїРµСЂРІРѕРіРѕ РѕРїРµСЂР°РЅРґР°
 	if( !ExpressionMakerUtils::ToArithmeticOrPointerType(
 					const_cast<POperand&>(left), errPos, "+") ||
 	   !ExpressionMakerUtils::ToArithmeticOrPointerType(
-				const_cast<POperand&>(right), errPos, "+") )	
+				const_cast<POperand&>(right), errPos, "+") ) 
 		return ErrorOperand::GetInstance();
 
-	// иначе проверяем, какие типы получены. Должны быть, либо оба
-	// арифметических, либо один целый, а второй указатель
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј, РєР°РєРёРµ С‚РёРїС‹ РїРѕР»СѓС‡РµРЅС‹. Р”РѕР»Р¶РЅС‹ Р±С‹С‚СЊ, Р»РёР±Рѕ РѕР±Р°
+	// Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС…, Р»РёР±Рѕ РѕРґРёРЅ С†РµР»С‹Р№, Р° РІС‚РѕСЂРѕР№ СѓРєР°Р·Р°С‚РµР»СЊ
 	if( ExpressionMakerUtils::IsArithmetic(left->GetType()) &&
 		ExpressionMakerUtils::IsArithmetic(right->GetType()) )
 	{
-		// строим выражение
+		// СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ
 		return new BinaryExpression('+', false, left, right, 
 			ExpressionMakerUtils::DoResultArithmeticOperand(
 				left->GetType(), right->GetType()) );
 	}
 
-	// иначе проверяем, чтобы один был целым, а второй указателем
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РѕРґРёРЅ Р±С‹Р» С†РµР»С‹Рј, Р° РІС‚РѕСЂРѕР№ СѓРєР°Р·Р°С‚РµР»РµРј
 	else
 	{
-		// если первый - указатель
+		// РµСЃР»Рё РїРµСЂРІС‹Р№ - СѓРєР°Р·Р°С‚РµР»СЊ
 		if( ExpressionMakerUtils::IsRvaluePointer(left->GetType()) )
 		{
-			// проверяем, чтобы второй был целым и указатель был
-			// полностью объявленный тип
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РІС‚РѕСЂРѕР№ Р±С‹Р» С†РµР»С‹Рј Рё СѓРєР°Р·Р°С‚РµР»СЊ Р±С‹Р»
+			// РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ С‚РёРї
 			if( !ExpressionMakerUtils::IsIntegral(right->GetType()) )
 			{
-				theApp.Error(errPos, "'+' - второй операнд должен иметь целый тип");
+				theApp.Error(errPos, "'+' - РІС‚РѕСЂРѕР№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С†РµР»С‹Р№ С‚РёРї");
 				return ErrorOperand::GetInstance(); 
 			}
 
-			// проверяем также, чтобы не было указателя на функцию
+			// РїСЂРѕРІРµСЂСЏРµРј С‚Р°РєР¶Рµ, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С„СѓРЅРєС†РёСЋ
 			if( ExpressionMakerUtils::IsFunctionType(left->GetType()) )
 			{
-				theApp.Error(errPos, "'+' - неприменим к указателю на функцию");
+				theApp.Error(errPos, "'+' - РЅРµРїСЂРёРјРµРЅРёРј Рє СѓРєР°Р·Р°С‚РµР»СЋ РЅР° С„СѓРЅРєС†РёСЋ");
 				return ErrorOperand::GetInstance(); 
 			}
 
-			// проверяем, чтобы указатель был полностью объявленным типом			
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СѓРєР°Р·Р°С‚РµР»СЊ Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Рј С‚РёРїРѕРј 
 			ExpressionMakerUtils::ToRValue(left, errPos);
 
-			// строим выражение
+			// СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ
 			return new BinaryExpression('+', false, left, right, 
 				ExpressionMakerUtils::DoCopyWithIndirection(left->GetType()) );
 		}
 
-		// если второй указатель, значит первый должен быть целым
+		// РµСЃР»Рё РІС‚РѕСЂРѕР№ СѓРєР°Р·Р°С‚РµР»СЊ, Р·РЅР°С‡РёС‚ РїРµСЂРІС‹Р№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С†РµР»С‹Рј
 		else if( ExpressionMakerUtils::IsRvaluePointer(right->GetType()) )
 		{
-			// проверяем, чтобы второй был целым и указатель был
-			// полностью объявленный тип
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РІС‚РѕСЂРѕР№ Р±С‹Р» С†РµР»С‹Рј Рё СѓРєР°Р·Р°С‚РµР»СЊ Р±С‹Р»
+			// РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ С‚РёРї
 			if( !ExpressionMakerUtils::IsIntegral(left->GetType()) )
 			{
-				theApp.Error(errPos, "'+' - первый операнд должен иметь целый тип");
+				theApp.Error(errPos, "'+' - РїРµСЂРІС‹Р№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С†РµР»С‹Р№ С‚РёРї");
 				return ErrorOperand::GetInstance(); 
 			}
-			
-			// проверяем также, чтобы не было указателя на функцию
+
+			// РїСЂРѕРІРµСЂСЏРµРј С‚Р°РєР¶Рµ, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С„СѓРЅРєС†РёСЋ
 			if( ExpressionMakerUtils::IsFunctionType(right->GetType()) )
 			{
-				theApp.Error(errPos, "'+' - неприменим к указателю на функцию");
+				theApp.Error(errPos, "'+' - РЅРµРїСЂРёРјРµРЅРёРј Рє СѓРєР°Р·Р°С‚РµР»СЋ РЅР° С„СѓРЅРєС†РёСЋ");
 				return ErrorOperand::GetInstance(); 
 			}
 
-			// проверяем, чтобы указатель был полностью объявленным типом			
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СѓРєР°Р·Р°С‚РµР»СЊ Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Рј С‚РёРїРѕРј 
 			ExpressionMakerUtils::ToRValue(right, errPos);
 
-			// строим выражение
+			// СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ
 			return new BinaryExpression('+', false, left, right, 
 				ExpressionMakerUtils::DoCopyWithIndirection(right->GetType()) );
 		}
 
-		// иначе, ошибка
+		// РёРЅР°С‡Рµ, РѕС€РёР±РєР°
 		else
 		{
-			theApp.Error(errPos, "'+' - неприменим к типам '%s' и '%s'",
+			theApp.Error(errPos, "'+' - РЅРµРїСЂРёРјРµРЅРёРј Рє С‚РёРїР°Рј '%s' Рё '%s'",
 				left->GetType().GetTypyziedEntityName(false).c_str(),
 				right->GetType().GetTypyziedEntityName(false).c_str());
 			return ErrorOperand::GetInstance(); 
 		}
-	}		
+	} 
 }
 
 
-// создать выражение -
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ -
 POperand MinusBinaryMaker::Make()
-{	
-	// получаем тип первого операнда
+{
+	// РїРѕР»СѓС‡Р°РµРј С‚РёРї РїРµСЂРІРѕРіРѕ РѕРїРµСЂР°РЅРґР°
 	if( !ExpressionMakerUtils::ToArithmeticOrPointerType(
 			const_cast<POperand&>(left), errPos, "-") ||
 		!ExpressionMakerUtils::ToArithmeticOrPointerType(
 			const_cast<POperand&>(right), errPos, "-") )
 		return ErrorOperand::GetInstance();
 
-	// иначе проверяем, какие типы получены. Должны быть, либо оба
-	// арифметических, либо первый указатель, а второй целый, либо
-	// оба указателя
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј, РєР°РєРёРµ С‚РёРїС‹ РїРѕР»СѓС‡РµРЅС‹. Р”РѕР»Р¶РЅС‹ Р±С‹С‚СЊ, Р»РёР±Рѕ РѕР±Р°
+	// Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС…, Р»РёР±Рѕ РїРµСЂРІС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ, Р° РІС‚РѕСЂРѕР№ С†РµР»С‹Р№, Р»РёР±Рѕ
+	// РѕР±Р° СѓРєР°Р·Р°С‚РµР»СЏ
 	if( ExpressionMakerUtils::IsArithmetic(left->GetType()) &&
 		ExpressionMakerUtils::IsArithmetic(right->GetType()) )
 	{
-		// строим выражение
+		// СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ
 		return new BinaryExpression('-', false, left, right, 
 			ExpressionMakerUtils::DoResultArithmeticOperand(
 				left->GetType(), right->GetType()) );
 	}
 
-	// иначе проверяем, если первый указатель, то второй должен быть
-	// либо целым, либо указателем
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РїРµСЂРІС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ, С‚Рѕ РІС‚РѕСЂРѕР№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ
+	// Р»РёР±Рѕ С†РµР»С‹Рј, Р»РёР±Рѕ СѓРєР°Р·Р°С‚РµР»РµРј
 	else if( ExpressionMakerUtils::IsRvaluePointer(left->GetType()) )
 	{
-		// если второй - указатель
+		// РµСЃР»Рё РІС‚РѕСЂРѕР№ - СѓРєР°Р·Р°С‚РµР»СЊ
 		if( ExpressionMakerUtils::IsRvaluePointer(right->GetType()) )
-		{		
-			// проверяем также, чтобы не было указателя на функцию
+		{
+			// РїСЂРѕРІРµСЂСЏРµРј С‚Р°РєР¶Рµ, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С„СѓРЅРєС†РёСЋ
 			if( ExpressionMakerUtils::IsFunctionType(left->GetType()) ||
 				ExpressionMakerUtils::IsFunctionType(right->GetType()) )
 			{
-				theApp.Error(errPos, "'-' - неприменим к указателю на функцию");
+				theApp.Error(errPos, "'-' - РЅРµРїСЂРёРјРµРЅРёРј Рє СѓРєР°Р·Р°С‚РµР»СЋ РЅР° С„СѓРЅРєС†РёСЋ");
 				return ErrorOperand::GetInstance(); 
 			}
 
-			// проверяем, чтобы типы были одинаковые
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‚РёРїС‹ Р±С‹Р»Рё РѕРґРёРЅР°РєРѕРІС‹Рµ
 			ScalarToScalarCaster stsc(left->GetType(), right->GetType(), false);
 			stsc.ClassifyCast();
 			if( !stsc.IsConverted() )
@@ -3512,65 +3512,65 @@ POperand MinusBinaryMaker::Make()
 				return ErrorOperand::GetInstance(); 
 			}
 
-			// выполняем физическое преобразование, возможно требуется из
-			// производного в базовый
+			// РІС‹РїРѕР»РЅСЏРµРј С„РёР·РёС‡РµСЃРєРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ, РІРѕР·РјРѕР¶РЅРѕ С‚СЂРµР±СѓРµС‚СЃСЏ РёР·
+			// РїСЂРѕРёР·РІРѕРґРЅРѕРіРѕ РІ Р±Р°Р·РѕРІС‹Р№
 			stsc.DoCast(left, const_cast<POperand&>(right), errPos);
 
-			// проверяем, чтобы указатель был полностью объявленным типом			
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СѓРєР°Р·Р°С‚РµР»СЊ Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Рј С‚РёРїРѕРј 
 			ExpressionMakerUtils::ToRValue(left, errPos);
 			ExpressionMakerUtils::ToRValue(right, errPos);
 
-			// строим выражение, результирующий тип - unsigned int
+			// СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ, СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї - unsigned int
 			return new BinaryExpression('-', false, left, right, 
 				new TypyziedEntity(
 					(BaseType*)&ImplicitTypeManager(KWINT, KWUNSIGNED).GetImplicitType(),
 					false, false, DerivedTypeList()) );
 		}
 
-		// иначе, если второй целый
+		// РёРЅР°С‡Рµ, РµСЃР»Рё РІС‚РѕСЂРѕР№ С†РµР»С‹Р№
 		else if( ExpressionMakerUtils::IsIntegral(right->GetType()) )
-		{				
-			// проверяем также, чтобы не было указателя на функцию
+		{ 
+			// РїСЂРѕРІРµСЂСЏРµРј С‚Р°РєР¶Рµ, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С„СѓРЅРєС†РёСЋ
 			if( ExpressionMakerUtils::IsFunctionType(left->GetType()) )
 			{
-				theApp.Error(errPos, "'-' - неприменим к указателю на функцию");
+				theApp.Error(errPos, "'-' - РЅРµРїСЂРёРјРµРЅРёРј Рє СѓРєР°Р·Р°С‚РµР»СЋ РЅР° С„СѓРЅРєС†РёСЋ");
 				return ErrorOperand::GetInstance(); 
 			}
 
-			// проверяем, чтобы указатель был полностью объявленным типом			
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СѓРєР°Р·Р°С‚РµР»СЊ Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Рј С‚РёРїРѕРј 
 			ExpressionMakerUtils::ToRValue(left, errPos);
 
-			// строим выражение, результатом будет указатель
+			// СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ, СЂРµР·СѓР»СЊС‚Р°С‚РѕРј Р±СѓРґРµС‚ СѓРєР°Р·Р°С‚РµР»СЊ
 			return new BinaryExpression('-', false, left, right, 
 				ExpressionMakerUtils::DoCopyWithIndirection(left->GetType()) );
 		}
 
-		// иначе, ошибка
+		// РёРЅР°С‡Рµ, РѕС€РёР±РєР°
 		else
 		{
-			theApp.Error(errPos, "'-' - неприменим к типам '%s' и '%s'",
+			theApp.Error(errPos, "'-' - РЅРµРїСЂРёРјРµРЅРёРј Рє С‚РёРїР°Рј '%s' Рё '%s'",
 				left->GetType().GetTypyziedEntityName(false).c_str(),
 				right->GetType().GetTypyziedEntityName(false).c_str());
 			return ErrorOperand::GetInstance(); 
 		}
-	}		
+	}
 
-	// если оба типа не арифметические и первый не указатель,
-	// значит указатель - второй тип, выводим ошибку
+	// РµСЃР»Рё РѕР±Р° С‚РёРїР° РЅРµ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРµ Рё РїРµСЂРІС‹Р№ РЅРµ СѓРєР°Р·Р°С‚РµР»СЊ,
+	// Р·РЅР°С‡РёС‚ СѓРєР°Р·Р°С‚РµР»СЊ - РІС‚РѕСЂРѕР№ С‚РёРї, РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
 	else
 	{
-		theApp.Error(errPos, "'-' - первый операнд должен иметь адресный тип");
+		theApp.Error(errPos, "'-' - РїРµСЂРІС‹Р№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ Р°РґСЂРµСЃРЅС‹Р№ С‚РёРї");
 		return ErrorOperand::GetInstance();
 	}
 }
 
 
-// создать выражение  <   <=   >=  >  ==  !=
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ  <   <=   >=  >  ==  !=
 POperand ConditionBinaryMaker::Make()
 {
 	string opName = ExpressionPrinter::GetOperatorName(op);
 	
-	// проверяем, чтобы тип соотв. правилам
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‚РёРї СЃРѕРѕС‚РІ. РїСЂР°РІРёР»Р°Рј
 	if( !(op == EQUAL || op == NOT_EQUAL ?
 		ExpressionMakerUtils::ToScalarType(const_cast<POperand&>(left), errPos, opName) :
 		ExpressionMakerUtils::ToArithmeticOrPointerType(
@@ -3583,18 +3583,18 @@ POperand ConditionBinaryMaker::Make()
 			const_cast<POperand&>(right), errPos, opName)) )
 		return ErrorOperand::GetInstance();
 
-	// теперь проверяем, можно ли преобразовать один тип к другому
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РѕРґРёРЅ С‚РёРї Рє РґСЂСѓРіРѕРјСѓ
 	ScalarToScalarCaster stsc(left->GetType(), right->GetType(), false);
 	stsc.ClassifyCast();
 
-	// если преобразование невозможно, выйти
+	// РµСЃР»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ, РІС‹Р№С‚Рё
 	if( !stsc.IsConverted() )
 	{
 		theApp.Error(errPos, "'%s' - %s", opName.c_str(), stsc.GetErrorMessage().c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// результирующий тип - bool
+	// СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї - bool
 	stsc.DoCast(left, const_cast<POperand&>(right), errPos);
 	return new BinaryExpression(op, false, left, right, 
 		new TypyziedEntity(
@@ -3603,7 +3603,7 @@ POperand ConditionBinaryMaker::Make()
 }
 
 
-// создать выражение. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand LogicalBinaryMaker::Make()
 {
 	string opName = op == LOGIC_AND ? "&&" : "||";
@@ -3617,45 +3617,45 @@ POperand LogicalBinaryMaker::Make()
 }
 
 
-// создать выражение ?:
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ ?:
 POperand IfTernaryMaker::Make()
 {
 	string opName = "?:";
 
-	// первое выражение длжно иметь склярный тип
+	// РїРµСЂРІРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РґР»Р¶РЅРѕ РёРјРµС‚СЊ СЃРєР»СЏСЂРЅС‹Р№ С‚РёРї
 	if( !ExpressionMakerUtils::ToScalarType(const_cast<POperand&>(cond), errPos, opName) )
 		return ErrorOperand::GetInstance();
 
-	// если первый тип void, значит результат будет второй
+	// РµСЃР»Рё РїРµСЂРІС‹Р№ С‚РёРї void, Р·РЅР°С‡РёС‚ СЂРµР·СѓР»СЊС‚Р°С‚ Р±СѓРґРµС‚ РІС‚РѕСЂРѕР№
 	if( left->GetType().GetDerivedTypeList().IsEmpty() &&
 		left->GetType().GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID )
 		return new TernaryExpression('?', false, cond, left, right, 
 			ExpressionMakerUtils::DoCopyWithIndirection(right->GetType()) );
 
-	// если второй void, значит результат первый
+	// РµСЃР»Рё РІС‚РѕСЂРѕР№ void, Р·РЅР°С‡РёС‚ СЂРµР·СѓР»СЊС‚Р°С‚ РїРµСЂРІС‹Р№
 	else if( right->GetType().GetDerivedTypeList().IsEmpty() &&
 		right->GetType().GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID )
 		return new TernaryExpression('?', false, cond, left, right, 
 			ExpressionMakerUtils::DoCopyWithIndirection(left->GetType()) );
 
-	// иначе пытаемся преобразовать оба типа
+	// РёРЅР°С‡Рµ РїС‹С‚Р°РµРјСЃСЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РѕР±Р° С‚РёРїР°
 	PCaster caster1 = AutoCastManager(left->GetType(), right->GetType(), true).RevealCaster(),
 			caster2 = AutoCastManager(right->GetType(), left->GetType(), true).RevealCaster();
 	caster1->ClassifyCast();
 	caster2->ClassifyCast();
 
-	// если оба преобразования успешны, это не катит
+	// РµСЃР»Рё РѕР±Р° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ СѓСЃРїРµС€РЅС‹, СЌС‚Рѕ РЅРµ РєР°С‚РёС‚
 	if( caster1->IsConverted() && caster2->IsConverted() &&
 		caster1->GetCastCategory() > Caster::CC_EQUAL )
 	{
 		theApp.Error(errPos,
-			"'?:' - преобразование из '%s' в '%s' неоднозначно",
+			"'?:' - РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РёР· '%s' РІ '%s' РЅРµРѕРґРЅРѕР·РЅР°С‡РЅРѕ",
 			left->GetType().GetTypyziedEntityName().c_str(),
 			right->GetType().GetTypyziedEntityName().c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// если типы одинаковы, есть маза получить lvalue
+	// РµСЃР»Рё С‚РёРїС‹ РѕРґРёРЅР°РєРѕРІС‹, РµСЃС‚СЊ РјР°Р·Р° РїРѕР»СѓС‡РёС‚СЊ lvalue
 	if( caster1->GetCastCategory() == Caster::CC_EQUAL &&
 		caster2->GetCastCategory() == Caster::CC_EQUAL )
 	{
@@ -3664,7 +3664,7 @@ POperand IfTernaryMaker::Make()
 			ExpressionMakerUtils::DoCopyWithIndirection(left->GetType()) );
 	}
 
-	// если первое успешно, результатом будет первый тип
+	// РµСЃР»Рё РїРµСЂРІРѕРµ СѓСЃРїРµС€РЅРѕ, СЂРµР·СѓР»СЊС‚Р°С‚РѕРј Р±СѓРґРµС‚ РїРµСЂРІС‹Р№ С‚РёРї
 	if( caster1->IsConverted() )
 	{
 		caster1->DoCast(left, const_cast<POperand&>(right), errPos);
@@ -3679,11 +3679,11 @@ POperand IfTernaryMaker::Make()
 			ExpressionMakerUtils::DoCopyWithIndirection(right->GetType()) );
 	}
 
-	// иначе преобразование невозможно
+	// РёРЅР°С‡Рµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 	else
 	{
 		theApp.Error(errPos,
-			"'?:' - невозможно преобразовать '%s' к '%s'",
+			"'?:' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '%s' Рє '%s'",
 			left->GetType().GetTypyziedEntityName(false).c_str(),
 			right->GetType().GetTypyziedEntityName(false).c_str());
 		return ErrorOperand::GetInstance();
@@ -3691,17 +3691,17 @@ POperand IfTernaryMaker::Make()
 }
 
 
-// метод, проверяет выражение если операция сдвоенная;
-// -1 - ошибка, 0 - продолжит проверку, 1 - создать выражение и выйти
+// РјРµС‚РѕРґ, РїСЂРѕРІРµСЂСЏРµС‚ РІС‹СЂР°Р¶РµРЅРёРµ РµСЃР»Рё РѕРїРµСЂР°С†РёСЏ СЃРґРІРѕРµРЅРЅР°СЏ;
+// -1 - РѕС€РёР±РєР°, 0 - РїСЂРѕРґРѕР»Р¶РёС‚ РїСЂРѕРІРµСЂРєСѓ, 1 - СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ Рё РІС‹Р№С‚Рё
 int AssignBinaryMaker::CheckOperation( const string &opName )
 {
 	INTERNAL_IF( op == '=' );
 
-	// проверяем, если левый операнд, является классовым типом,
-	// то операция не может построится
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё Р»РµРІС‹Р№ РѕРїРµСЂР°РЅРґ, СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРІС‹Рј С‚РёРїРѕРј,
+	// С‚Рѕ РѕРїРµСЂР°С†РёСЏ РЅРµ РјРѕР¶РµС‚ РїРѕСЃС‚СЂРѕРёС‚СЃСЏ
 	if( ExpressionMakerUtils::IsClassType(left->GetType()) )
 	{
-		theApp.Error(errPos, "'%s::operator %s(%s)' - не объявлен",
+		theApp.Error(errPos, "'%s::operator %s(%s)' - РЅРµ РѕР±СЉСЏРІР»РµРЅ",
 			static_cast<const ClassType&>(
 				left->GetType().GetBaseType()).GetQualifiedName().c_str(),
 			opName.c_str(), 
@@ -3710,51 +3710,51 @@ int AssignBinaryMaker::CheckOperation( const string &opName )
 		return -1;
 	}
 
-	// иначе если += или -=, тип может быть указателем или арифметическим,
-	// иначе только арифметическим
+	// РёРЅР°С‡Рµ РµСЃР»Рё += РёР»Рё -=, С‚РёРї РјРѕР¶РµС‚ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»РµРј РёР»Рё Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРј,
+	// РёРЅР°С‡Рµ С‚РѕР»СЊРєРѕ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРј
 	if( op == PLUS_ASSIGN || op == MINUS_ASSIGN )
 	{
-		// если указатель
+		// РµСЃР»Рё СѓРєР°Р·Р°С‚РµР»СЊ
 		if( ExpressionMakerUtils::IsRvaluePointer(left->GetType()) )
 		{
-			// проверяем, чтобы второй был целым и указатель был
-			// полностью объявленный тип
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РІС‚РѕСЂРѕР№ Р±С‹Р» С†РµР»С‹Рј Рё СѓРєР°Р·Р°С‚РµР»СЊ Р±С‹Р»
+			// РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ С‚РёРї
 			if( !ExpressionMakerUtils::IsIntegral(right->GetType()) )
 			{
 				theApp.Error(errPos, 
-					"'%s' - второй операнд должен иметь целый тип", opName.c_str());
+					"'%s' - РІС‚РѕСЂРѕР№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С†РµР»С‹Р№ С‚РёРї", opName.c_str());
 				return -1; 
 			}
 
-			// проверяем также, чтобы не было указателя на функцию
+			// РїСЂРѕРІРµСЂСЏРµРј С‚Р°РєР¶Рµ, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С„СѓРЅРєС†РёСЋ
 			if( ExpressionMakerUtils::IsFunctionType(left->GetType()) )
 			{
 				theApp.Error(errPos, 
-					"'%s' - неприменим к указателю на функцию", opName.c_str());
+					"'%s' - РЅРµРїСЂРёРјРµРЅРёРј Рє СѓРєР°Р·Р°С‚РµР»СЋ РЅР° С„СѓРЅРєС†РёСЋ", opName.c_str());
 				return -1; 
 			}
 
-			// проверяем, чтобы указатель был полностью объявленным типом			
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СѓРєР°Р·Р°С‚РµР»СЊ Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Рј С‚РёРїРѕРј
 			ExpressionMakerUtils::ToRValue(left, errPos);
 			return 1;
 		}
 		
-		// иначе если не арифметический, ошибка
+		// РёРЅР°С‡Рµ РµСЃР»Рё РЅРµ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёР№, РѕС€РёР±РєР°
 		else if( !ExpressionMakerUtils::IsArithmetic(left->GetType()) ||
 			left->GetType().GetBaseType().GetBaseTypeCode() == BaseType::BT_ENUM )
-			goto err;		
+			goto err;
 	}
 
-	// проверим, чтобы тип был арифметическим
+	// РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ С‚РёРї Р±С‹Р» Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёРј
 	else
 	{
-		// нельзя также, чтобы тип был перечислимый
+		// РЅРµР»СЊР·СЏ С‚Р°РєР¶Рµ, С‡С‚РѕР±С‹ С‚РёРї Р±С‹Р» РїРµСЂРµС‡РёСЃР»РёРјС‹Р№
 		if( !ExpressionMakerUtils::IsArithmetic(left->GetType()) ||
 			left->GetType().GetBaseType().GetBaseTypeCode() == BaseType::BT_ENUM )
 		{
 		err:
 			theApp.Error(errPos, 
-				"'%s' - не арифметический тип; '%s' - оператор требует арифметический тип",
+				"'%s' - РЅРµ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёР№ С‚РёРї; '%s' - РѕРїРµСЂР°С‚РѕСЂ С‚СЂРµР±СѓРµС‚ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёР№ С‚РёРї",
 				left->GetType().GetTypyziedEntityName().c_str(), opName.c_str());
 			return -1;
 		}
@@ -3764,20 +3764,20 @@ int AssignBinaryMaker::CheckOperation( const string &opName )
 }
 
 
-// создать выражение -  =   +=   -=   *=   /=   %=   >>=   <<=  |=  &=  ^=
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ -  =   +=   -=   *=   /=   %=   >>=   <<=  |=  &=  ^=
 POperand AssignBinaryMaker::Make()
 {
-	// если операция присвоения сдвоенная, создать промежуточную операцию,
-	// которую в последствии использовать как правый операнд	
+	// РµСЃР»Рё РѕРїРµСЂР°С†РёСЏ РїСЂРёСЃРІРѕРµРЅРёСЏ СЃРґРІРѕРµРЅРЅР°СЏ, СЃРѕР·РґР°С‚СЊ РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅСѓСЋ РѕРїРµСЂР°С†РёСЋ,
+	// РєРѕС‚РѕСЂСѓСЋ РІ РїРѕСЃР»РµРґСЃС‚РІРёРё РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РєР°Рє РїСЂР°РІС‹Р№ РѕРїРµСЂР°РЅРґ
 	string opName = ExpressionPrinter::GetOperatorName(op);
 
-	// проверяем, чтобы операнд был модифицируемым lvalue в первую очередь
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РѕРїРµСЂР°РЅРґ Р±С‹Р» РјРѕРґРёС„РёС†РёСЂСѓРµРјС‹Рј lvalue РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ
 	if( !ExpressionMakerUtils::IsModifiableLValue(left, errPos, opName.c_str()) )
 		return ErrorOperand::GetInstance();
 
-	// проверка на сдвоенную операцию
+	// РїСЂРѕРІРµСЂРєР° РЅР° СЃРґРІРѕРµРЅРЅСѓСЋ РѕРїРµСЂР°С†РёСЋ
 	if( op != '=' )
-	{		
+	{
 		if( int r = CheckOperation(opName) )
 			return r < 0 ? ErrorOperand::GetInstance() :
 				new BinaryExpression(op, true, left, right, 
@@ -3785,34 +3785,34 @@ POperand AssignBinaryMaker::Make()
 	
 	}
 
-	// если left, имеет классовый тип, проверяем, чтобы класс был полностью объявлен
+	// РµСЃР»Рё left, РёРјРµРµС‚ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї, РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РєР»Р°СЃСЃ Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ
 	if( ExpressionMakerUtils::IsClassType(left->GetType()) &&
 		static_cast<const ClassType&>(left->GetType().GetBaseType()).IsUncomplete() )
 	{
-		theApp.Error(errPos, "'%s' - незавершенный класс; присвоение невозможно",
+		theApp.Error(errPos, "'%s' - РЅРµР·Р°РІРµСЂС€РµРЅРЅС‹Р№ РєР»Р°СЃСЃ; РїСЂРёСЃРІРѕРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 			static_cast<const ClassType&>(left->GetType().GetBaseType()).
 			GetQualifiedName().c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// перед преобразованием, делаем неявное преобразование из ссылки в не ссылку,
-	// т.к. преобразователь выводит ошибку по поводу меньшей квалифицированности
+	// РїРµСЂРµРґ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµРј, РґРµР»Р°РµРј РЅРµСЏРІРЅРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РёР· СЃСЃС‹Р»РєРё РІ РЅРµ СЃСЃС‹Р»РєСѓ,
+	// С‚.Рє. РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚РµР»СЊ РІС‹РІРѕРґРёС‚ РѕС€РёР±РєСѓ РїРѕ РїРѕРІРѕРґСѓ РјРµРЅСЊС€РµР№ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅРЅРѕСЃС‚Рё
 	if( left->GetType().GetDerivedTypeList().IsReference() )	
 		const_cast<POperand&>(left) = 
 			new UnaryExpression(GOC_REFERENCE_CONVERSION, true, false,
 				left, ExpressionMakerUtils::DoCopyWithIndirection(left->GetType()) );	
 
-	// выполняем автоматическое преобразование
+	// РІС‹РїРѕР»РЅСЏРµРј Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 	PCaster caster = AutoCastManager(left->GetType(), right->GetType(), true).RevealCaster();
 	INTERNAL_IF( caster.IsNull() );
 	caster->ClassifyCast();
 
-	// если преобразование не удалось, выйти
+	// РµСЃР»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµ СѓРґР°Р»РѕСЃСЊ, РІС‹Р№С‚Рё
 	if( !caster->IsConverted() )
 	{
 		if( caster->GetErrorMessage().empty() )
 			theApp.Error(errPos, 
-				"'%s' - невозможно преобразовать '%s' к '%s'",
+				"'%s' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '%s' Рє '%s'",
 				opName.c_str(), right->GetType().GetTypyziedEntityName(false).c_str(),
 				left->GetType().GetTypyziedEntityName(false).c_str() );
 		else
@@ -3822,20 +3822,20 @@ POperand AssignBinaryMaker::Make()
 		return ErrorOperand::GetInstance();
 	}
 
-	// иначе выполняем преобразование
+	// РёРЅР°С‡Рµ РІС‹РїРѕР»РЅСЏРµРј РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 	caster->DoCast(left, const_cast<POperand&>(right), errPos);
 
-	// строим выражение. Оператор '=', т.к. сдвоенные операции строятся по отдельности,
-	// результат lvalue
+	// СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ. РћРїРµСЂР°С‚РѕСЂ '=', С‚.Рє. СЃРґРІРѕРµРЅРЅС‹Рµ РѕРїРµСЂР°С†РёРё СЃС‚СЂРѕСЏС‚СЃСЏ РїРѕ РѕС‚РґРµР»СЊРЅРѕСЃС‚Рё,
+	// СЂРµР·СѓР»СЊС‚Р°С‚ lvalue
 	return new BinaryExpression(op, true, left, right, 
 		ExpressionMakerUtils::DoCopyWithIndirection(left->GetType()));
 }
 
 
-// создать выражение. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand ComaBinaryMaker::Make()
 {
-	// оба операнда должны быть выражением или основным операндом
+	// РѕР±Р° РѕРїРµСЂР°РЅРґР° РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµРј РёР»Рё РѕСЃРЅРѕРІРЅС‹Рј РѕРїРµСЂР°РЅРґРѕРј
 	INTERNAL_IF( !( (left->IsPrimaryOperand()  || left->IsExpressionOperand()) &&
 					(right->IsPrimaryOperand() || right->IsExpressionOperand()) ) );
 
@@ -3847,8 +3847,8 @@ POperand ComaBinaryMaker::Make()
 }
 
 
-// перед тем как начать строительство выражения, следует преобразовать
-// пакет с типом в выражение sizeof, которое строится на основании пакета
+// РїРµСЂРµРґ С‚РµРј РєР°Рє РЅР°С‡Р°С‚СЊ СЃС‚СЂРѕРёС‚РµР»СЊСЃС‚РІРѕ РІС‹СЂР°Р¶РµРЅРёСЏ, СЃР»РµРґСѓРµС‚ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ
+// РїР°РєРµС‚ СЃ С‚РёРїРѕРј РІ РІС‹СЂР°Р¶РµРЅРёРµ sizeof, РєРѕС‚РѕСЂРѕРµ СЃС‚СЂРѕРёС‚СЃСЏ РЅР° РѕСЃРЅРѕРІР°РЅРёРё РїР°РєРµС‚Р°
 void NewTernaryMaker::MakeSizeofExpression( const NodePackage &typePkg )
 {
 	INTERNAL_IF( typePkg.GetPackageID() != PC_DECLARATION || 
@@ -3856,70 +3856,70 @@ void NewTernaryMaker::MakeSizeofExpression( const NodePackage &typePkg )
 		typePkg.GetChildPackage(1)->GetPackageID() != PC_DECLARATOR );
 	INTERNAL_IF( !allocType->IsTypeOperand() );
 
-	// сразу создадим результирующий тип выражения
+	// СЃСЂР°Р·Сѓ СЃРѕР·РґР°РґРёРј СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї РІС‹СЂР°Р¶РµРЅРёСЏ
 	PTypyziedEntity sizeofExpType = new TypyziedEntity( 
 		(BaseType*)&ImplicitTypeManager(KWINT, KWUNSIGNED).GetImplicitType(),
 		false, false, DerivedTypeList() );
 
-	// далее проверяем, если есть список производных типов у декларатора
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РµСЃС‚СЊ СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ Сѓ РґРµРєР»Р°СЂР°С‚РѕСЂР°
 	const NodePackage &dtr = static_cast<const NodePackage &>(*typePkg.GetChildPackage(1));
 	if( dtr.GetChildPackageCount() > 0	&&
 		dtr.GetChildPackage(0)->GetPackageID() == PC_ARRAY )
 	{
 		const NodePackage &ar = *static_cast<const NodePackage *>(dtr.GetChildPackage(0));
-		// получаем выражение, только если количество дочерних пакетов равно 3
+		// РїРѕР»СѓС‡Р°РµРј РІС‹СЂР°Р¶РµРЅРёРµ, С‚РѕР»СЊРєРѕ РµСЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ РґРѕС‡РµСЂРЅРёС… РїР°РєРµС‚РѕРІ СЂР°РІРЅРѕ 3
 		if( ar.GetChildPackageCount() == 3 )
 		{
 			const POperand &arraySz = static_cast<const ExpressionPackage *>(
 					ar.GetChildPackage(1))->GetExpression();
 
-			// проверяем, чтобы выражение было целым
+			// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РІС‹СЂР°Р¶РµРЅРёРµ Р±С‹Р»Рѕ С†РµР»С‹Рј
 			if( !ExpressionMakerUtils::IsIntegral(arraySz->GetType()) )
-				theApp.Error(errPos, "'new[]' - размер массива не целый");
+				theApp.Error(errPos, "'new[]' - СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР° РЅРµ С†РµР»С‹Р№");
 
-			// если выражение интерпретируемое
+			// РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјРѕРµ
 			double asz;
-			if( ExpressionMakerUtils::IsInterpretable(arraySz, asz) )			
+			if( ExpressionMakerUtils::IsInterpretable(arraySz, asz) )
 				if( asz < 1 )
-					theApp.Error(errPos, "'new[]' - некорректный размер выделяемой памяти");			
+					theApp.Error(errPos, "'new[]' - РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ СЂР°Р·РјРµСЂ РІС‹РґРµР»СЏРµРјРѕР№ РїР°РјСЏС‚Рё");
 
-			// снимаем с выделяемого типа верхний массив
+			// СЃРЅРёРјР°РµРј СЃ РІС‹РґРµР»СЏРµРјРѕРіРѕ С‚РёРїР° РІРµСЂС…РЅРёР№ РјР°СЃСЃРёРІ
 			TypyziedEntity *destType = new TypyziedEntity(allocType->GetType());
 			INTERNAL_IF( !destType->GetDerivedTypeList().IsArray() );
 			const_cast<DerivedTypeList &>(destType->GetDerivedTypeList()).PopHeadDerivedType();
 
-			// создаем выражение выходим
+			// СЃРѕР·РґР°РµРј РІС‹СЂР°Р¶РµРЅРёРµ РІС‹С…РѕРґРёРј
 			POperand szofExp = new UnaryExpression( KWSIZEOF, false, false, 
 					new TypeOperand(*destType), sizeofExpType );
 
-			// умножаем размер на выражение
+			// СѓРјРЅРѕР¶Р°РµРј СЂР°Р·РјРµСЂ РЅР° РІС‹СЂР°Р¶РµРЅРёРµ
 			allocSize = new BinaryExpression('*', false, arraySz, szofExp, sizeofExpType );
 			return ;
 		}
 	}
 
-	// в противном случае просто высчитываем размер типа
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РїСЂРѕСЃС‚Рѕ РІС‹СЃС‡РёС‚С‹РІР°РµРј СЂР°Р·РјРµСЂ С‚РёРїР°
 	allocSize = new UnaryExpression( KWSIZEOF, false, false, allocType, sizeofExpType );
 }
 
 
-// метод производит поиск оператора new и строит вызов
+// РјРµС‚РѕРґ РїСЂРѕРёР·РІРѕРґРёС‚ РїРѕРёСЃРє РѕРїРµСЂР°С‚РѕСЂР° new Рё СЃС‚СЂРѕРёС‚ РІС‹Р·РѕРІ
 POperand NewTernaryMaker::MakeNewCall( bool array, bool clsType )
 {
 	PExpressionList paramList = placementList;
 
-	// добавляем в список параметров, первым параметром выражение sizeof
+	// РґРѕР±Р°РІР»СЏРµРј РІ СЃРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ, РїРµСЂРІС‹Рј РїР°СЂР°РјРµС‚СЂРѕРј РІС‹СЂР°Р¶РµРЅРёРµ sizeof
 	paramList->insert(paramList->begin(), allocSize);
 
-	// далее выполняем поиск оператора. Сначала, если тип классовый,
-	// ищем внутри класса
+	// РґР°Р»РµРµ РІС‹РїРѕР»РЅСЏРµРј РїРѕРёСЃРє РѕРїРµСЂР°С‚РѕСЂР°. РЎРЅР°С‡Р°Р»Р°, РµСЃР»Рё С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№,
+	// РёС‰РµРј РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°
 	if( clsType && !globalOp )
 	{
 		const ClassType &cls = 
 			static_cast<const ClassType &>(allocType->GetType().GetBaseType());
 		OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
 
-		// если оператор найден, вернем вызов функции
+		// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅР°Р№РґРµРЅ, РІРµСЂРЅРµРј РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё
 		if( oof.IsFound() )
 		{
 			INTERNAL_IF( oof.GetClassOperatorList().empty() || oof.IsAmbigous() );
@@ -3927,32 +3927,32 @@ POperand NewTernaryMaker::MakeNewCall( bool array, bool clsType )
 			return FunctionCallBinaryMaker(pol, paramList, OC_FUNCTION, errPos).Make();
 		}
 
-		// если неоднозначен, также возвращаем errorOperand
+		// РµСЃР»Рё РЅРµРѕРґРЅРѕР·РЅР°С‡РµРЅ, С‚Р°РєР¶Рµ РІРѕР·РІСЂР°С‰Р°РµРј errorOperand
 		else if( oof.IsAmbigous() )
 			return ErrorOperand::GetInstance();
 	}
 
-	// в противном случае выполняем поиск глобального оператора
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РІС‹РїРѕР»РЅСЏРµРј РїРѕРёСЃРє РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
 	OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
 
-	// если оператор найден, вернем вызов функции
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅР°Р№РґРµРЅ, РІРµСЂРЅРµРј РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё
 	if( oof.IsFound() )
 	{
 		INTERNAL_IF( oof.GetGlobalOperatorList().empty() || oof.IsAmbigous() );
-		POperand pol = new OverloadOperand( oof.GetGlobalOperatorList() );				 
+		POperand pol = new OverloadOperand( oof.GetGlobalOperatorList() );
 		return FunctionCallBinaryMaker(pol, paramList, OC_FUNCTION, errPos).Make();
 	}
 
-	// в этой точке следует выводить ошибку
-	theApp.Fatal(errPos, "'void *operator new(unsigned)' - не объявлен");
+	// РІ СЌС‚РѕР№ С‚РѕС‡РєРµ СЃР»РµРґСѓРµС‚ РІС‹РІРѕРґРёС‚СЊ РѕС€РёР±РєСѓ
+	theApp.Fatal(errPos, "'void *operator new(unsigned)' - РЅРµ РѕР±СЉСЏРІР»РµРЅ");
 	return ErrorOperand::GetInstance();
 }
 
 
-// создать выражение. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand NewTernaryMaker::Make()
 {
-	// проверяем, если хоть один из элементов ошибочен, вернуть
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё С…РѕС‚СЊ РѕРґРёРЅ РёР· СЌР»РµРјРµРЅС‚РѕРІ РѕС€РёР±РѕС‡РµРЅ, РІРµСЂРЅСѓС‚СЊ
 	// errorOperand
 	int i;
 	for( i = 0; i<placementList->size(); i++ )
@@ -3963,76 +3963,76 @@ POperand NewTernaryMaker::Make()
 		if( initializatorList->at(i)->IsErrorOperand() )
 			return ErrorOperand::GetInstance();
 
-	// если тип является ошибочным
+	// РµСЃР»Рё С‚РёРї СЏРІР»СЏРµС‚СЃСЏ РѕС€РёР±РѕС‡РЅС‹Рј
 	if( allocType->IsErrorOperand() )
 		return ErrorOperand::GetInstance();
 	INTERNAL_IF( !allocType->IsTypeOperand() );
 
-	// все операнды являются корректными. Проверяем выделяемый тип.
-	// Не может быть ссылкой, void, незвершенный или абстрактный класс,
-	// функцией
+	// РІСЃРµ РѕРїРµСЂР°РЅРґС‹ СЏРІР»СЏСЋС‚СЃСЏ РєРѕСЂСЂРµРєС‚РЅС‹РјРё. РџСЂРѕРІРµСЂСЏРµРј РІС‹РґРµР»СЏРµРјС‹Р№ С‚РёРї.
+	// РќРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃСЃС‹Р»РєРѕР№, void, РЅРµР·РІРµСЂС€РµРЅРЅС‹Р№ РёР»Рё Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РєР»Р°СЃСЃ,
+	// С„СѓРЅРєС†РёРµР№
 	const TypyziedEntity &at = allocType->GetType();
 	if( at.GetDerivedTypeList().IsReference() || at.GetDerivedTypeList().IsFunction() ||
 		(at.GetDerivedTypeList().IsEmpty() && 
 		 at.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID) )
 	{
-		theApp.Error(errPos, "'new' - тип '%s' не является объектным",
+		theApp.Error(errPos, "'new' - С‚РёРї '%s' РЅРµ СЏРІР»СЏРµС‚СЃСЏ РѕР±СЉРµРєС‚РЅС‹Рј",
 			at.GetTypyziedEntityName().c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// проверяем, чтобы класс не был абстрактным или незавершенным
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РєР»Р°СЃСЃ РЅРµ Р±С‹Р» Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рј РёР»Рё РЅРµР·Р°РІРµСЂС€РµРЅРЅС‹Рј
 	PTypyziedEntity rtype = new TypyziedEntity(at);
 	bool array = at.GetDerivedTypeList().IsArray();
 	while( rtype->GetDerivedTypeList().IsArray() )
 		const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 	
-	// теперь проверяем, если результирующий тип - абстрактный или незавершенный
-	// класс, это ошибка
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї - Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РёР»Рё РЅРµР·Р°РІРµСЂС€РµРЅРЅС‹Р№
+	// РєР»Р°СЃСЃ, СЌС‚Рѕ РѕС€РёР±РєР°
 	if( rtype->GetDerivedTypeList().IsEmpty() &&
 		(at.GetBaseType().IsClassType() &&  
 		 (static_cast<const ClassType&>(at.GetBaseType()).IsUncomplete() ||
 		  static_cast<const ClassType&>(at.GetBaseType()).IsAbstract()) ) )
 	{
-		theApp.Error(errPos, "'new%s' - создание объекта %s класса невозможно",
+		theApp.Error(errPos, "'new%s' - СЃРѕР·РґР°РЅРёРµ РѕР±СЉРµРєС‚Р° %s РєР»Р°СЃСЃР° РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 			array ? "[]" : "", static_cast<const ClassType&>(at.GetBaseType()).
-				IsUncomplete() ? "незавершенного" : "абстрактного");
+				IsUncomplete() ? "РЅРµР·Р°РІРµСЂС€РµРЅРЅРѕРіРѕ" : "Р°Р±СЃС‚СЂР°РєС‚РЅРѕРіРѕ");
 		return ErrorOperand::GetInstance();
 	}
 	
-	// объявляем операнд-функцию, которая автоматически вызывается при выделении памяти
+	// РѕР±СЉСЏРІР»СЏРµРј РѕРїРµСЂР°РЅРґ-С„СѓРЅРєС†РёСЋ, РєРѕС‚РѕСЂР°СЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РІС‹РґРµР»РµРЅРёРё РїР°РјСЏС‚Рё
 	bool cls = rtype->GetDerivedTypeList().IsEmpty() && rtype->GetBaseType().IsClassType();
 	POperand call = MakeNewCall(array, cls);
 	if( call->IsErrorOperand() )
 		return ErrorOperand::GetInstance();
 
-	// далее проверяем инициализаторы
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂС‹
 	ExpressionMakerUtils::CorrectObjectInitialization( at, 
 		const_cast<PExpressionList&>(initializatorList), false, errPos);
 
 	const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).
 		PushHeadDerivedType(new Pointer(false, false) );
-	// возвращаем результат
+	// РІРѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚
 	return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
 }
 
 
-// метод строит вызова оператора delete
+// РјРµС‚РѕРґ СЃС‚СЂРѕРёС‚ РІС‹Р·РѕРІР° РѕРїРµСЂР°С‚РѕСЂР° delete
 POperand DeleteUnaryMaker::MakeDeleteCall( bool clsType )
 {
-	// формируем список параметров
+	// С„РѕСЂРјРёСЂСѓРµРј СЃРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ
 	PExpressionList paramList = new ExpressionList;
 	paramList->push_back( right );
 
-	// далее выполняем поиск оператора. Сначала, если тип классовый,
-	// ищем внутри класса
+	// РґР°Р»РµРµ РІС‹РїРѕР»РЅСЏРµРј РїРѕРёСЃРє РѕРїРµСЂР°С‚РѕСЂР°. РЎРЅР°С‡Р°Р»Р°, РµСЃР»Рё С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№,
+	// РёС‰РµРј РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°
 	if( clsType && op > 0 )
 	{
 		const ClassType &cls = 
 			static_cast<const ClassType &>(right->GetType().GetBaseType());
 		OverloadOperatorFounder oof( op, false, &cls, errPos);
 
-		// если оператор найден, вернем вызов функции
+		// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅР°Р№РґРµРЅ, РІРµСЂРЅРµРј РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё
 		if( oof.IsFound() )
 		{
 			INTERNAL_IF( oof.GetClassOperatorList().empty() || oof.IsAmbigous() );
@@ -4040,15 +4040,15 @@ POperand DeleteUnaryMaker::MakeDeleteCall( bool clsType )
 			return FunctionCallBinaryMaker(pol, paramList, OC_FUNCTION, errPos).Make();
 		}
 
-		// если неоднозначен, также возвращаем errorOperand
+		// РµСЃР»Рё РЅРµРѕРґРЅРѕР·РЅР°С‡РµРЅ, С‚Р°РєР¶Рµ РІРѕР·РІСЂР°С‰Р°РµРј errorOperand
 		else if( oof.IsAmbigous() )
 			return ErrorOperand::GetInstance();
 	}
 
-	// в противном случае выполняем поиск глобального оператора
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РІС‹РїРѕР»РЅСЏРµРј РїРѕРёСЃРє РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
 	OverloadOperatorFounder oof( op, true, NULL, errPos);
 
-	// если оператор найден, вернем вызов функции
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅР°Р№РґРµРЅ, РІРµСЂРЅРµРј РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё
 	if( oof.IsFound() )
 	{
 		INTERNAL_IF( oof.GetGlobalOperatorList().empty() || oof.IsAmbigous() );
@@ -4056,29 +4056,29 @@ POperand DeleteUnaryMaker::MakeDeleteCall( bool clsType )
 		return FunctionCallBinaryMaker(pol, paramList, OC_FUNCTION, errPos).Make();
 	}
 
-	// в этой точке следует выводить ошибку
-	theApp.Fatal(errPos, "'void operator delete(void *)' - не объявлен");
+	// РІ СЌС‚РѕР№ С‚РѕС‡РєРµ СЃР»РµРґСѓРµС‚ РІС‹РІРѕРґРёС‚СЊ РѕС€РёР±РєСѓ
+	theApp.Fatal(errPos, "'void operator delete(void *)' - РЅРµ РѕР±СЉСЏРІР»РµРЅ");
 	return ErrorOperand::GetInstance();
 }
 
 
-// создать выражение delete, delete[], ::delete, ::delete[]
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ delete, delete[], ::delete, ::delete[]
 POperand DeleteUnaryMaker::Make()
 {
 	string opName = ExpressionPrinter::GetOperatorName(op);
 	if( !ExpressionMakerUtils::ToPointerType(const_cast<POperand&>(right), errPos, opName) )
 		return ErrorOperand::GetInstance();
-		
-	// далле проверяем, чтобы указатель не был функцией
+
+	// РґР°Р»Р»Рµ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СѓРєР°Р·Р°С‚РµР»СЊ РЅРµ Р±С‹Р» С„СѓРЅРєС†РёРµР№
 	if( ExpressionMakerUtils::IsFunctionType(right->GetType()) )
 	{
 		theApp.Error(errPos, 
-			"'%s' - невозможно удалить указатель на функцию",
+			"'%s' - РЅРµРІРѕР·РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С„СѓРЅРєС†РёСЋ",
 			opName.c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// последнее, проверяем доступность деструктора, если тип классовый
+	// РїРѕСЃР»РµРґРЅРµРµ, РїСЂРѕРІРµСЂСЏРµРј РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ РґРµСЃС‚СЂСѓРєС‚РѕСЂР°, РµСЃР»Рё С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№
 	const DerivedTypeList &dtl = right->GetType().GetDerivedTypeList();
 	bool clsType = right->GetType().GetBaseType().IsClassType() &&
 		(dtl.GetDerivedTypeCount() == 1 || 
@@ -4091,38 +4091,38 @@ POperand DeleteUnaryMaker::Make()
 }
 
 
-// создать выражение. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand PointerToMemberBinaryMaker::Make()
 {
-	const ClassType *lcls = NULL;	// класс, к члену которого обращаются
+	const ClassType *lcls = NULL; // РєР»Р°СЃСЃ, Рє С‡Р»РµРЅСѓ РєРѕС‚РѕСЂРѕРіРѕ РѕР±СЂР°С‰Р°СЋС‚СЃСЏ
 	string opName = op == DOT_POINT ? ".*" : "->*";
 
-	// проверяем тип левого операнда,
+	// РїСЂРѕРІРµСЂСЏРµРј С‚РёРї Р»РµРІРѕРіРѕ РѕРїРµСЂР°РЅРґР°,
 	if( op == DOT_POINT )
 	{
 		if( !ExpressionMakerUtils::IsClassType(left->GetType()) )
 		{
-			theApp.Error(errPos, "'%s' - не классовый тип; '%s' - требует классовый тип",
+			theApp.Error(errPos, "'%s' - РЅРµ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї; '%s' - С‚СЂРµР±СѓРµС‚ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї",
 				left->GetType().GetTypyziedEntityName().c_str(), opName.c_str());
 			return ErrorOperand::GetInstance();
 		}
 
-		// иначе получаем класс
+		// РёРЅР°С‡Рµ РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ
 		lcls = &static_cast<const ClassType&>(left->GetType().GetBaseType());
 	}
 
-	// иначе должен быть указатель на класс
+	// РёРЅР°С‡Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєР»Р°СЃСЃ
 	else
 	{
-		// базовый тип должен быть классовый
+		// Р±Р°Р·РѕРІС‹Р№ С‚РёРї РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РєР»Р°СЃСЃРѕРІС‹Р№
 		if( !left->GetType().GetBaseType().IsClassType() )
 		{
-			theApp.Error(errPos, "'%s' - не классовый тип; '%s' - требует классовый тип",
+			theApp.Error(errPos, "'%s' - РЅРµ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї; '%s' - С‚СЂРµР±СѓРµС‚ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї",
 				left->GetType().GetTypyziedEntityName().c_str(), opName.c_str());
 			return ErrorOperand::GetInstance();
 		}
 
-		// проверяем указатель
+		// РїСЂРѕРІРµСЂСЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ
 		const DerivedTypeList &dtl = left->GetType().GetDerivedTypeList();
 		int cnt = dtl.GetDerivedTypeCount();
 		if( (dtl.IsPointer() && cnt == 1) || 
@@ -4130,17 +4130,17 @@ POperand PointerToMemberBinaryMaker::Make()
 			   GetDerivedTypeCode() == DerivedType::DT_POINTER ) )
 			lcls = &static_cast<const ClassType&>(left->GetType().GetBaseType());
 
-		// иначе ошибка
+		// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 		else
 		{
-			theApp.Error(errPos, "'%s' - левый операнд должен иметь тип '%s'", opName.c_str(),
+			theApp.Error(errPos, "'%s' - Р»РµРІС‹Р№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї '%s'", opName.c_str(),
 				(static_cast<const ClassType&>(left->GetType().GetBaseType()).
 				 GetQualifiedName().c_str() + string(" *")).c_str());
 			return ErrorOperand::GetInstance();
 		}
 	}
 
-	// после чего проверяем, чтобы второй операнд, был указателем на член
+	// РїРѕСЃР»Рµ С‡РµРіРѕ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РІС‚РѕСЂРѕР№ РѕРїРµСЂР°РЅРґ, Р±С‹Р» СѓРєР°Р·Р°С‚РµР»РµРј РЅР° С‡Р»РµРЅ
 	const DerivedTypeList &dtl = right->GetType().GetDerivedTypeList();
 	int cnt = dtl.GetDerivedTypeCount();
 	const ClassType *mcls = NULL;
@@ -4151,16 +4151,16 @@ POperand PointerToMemberBinaryMaker::Make()
 		   GetDerivedTypeCode() == DerivedType::DT_POINTER_TO_MEMBER )
 		mcls = &static_cast<const PointerToMember &>(*dtl.GetDerivedType(1)).GetMemberClassType();
 
-	// иначе ошибка
+	// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 	else
 	{
 		theApp.Error(errPos, 
-			"'%s' - правый операнд должен иметь тип 'указатель на член'", opName.c_str());				
+			"'%s' - РїСЂР°РІС‹Р№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї 'СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ'", opName.c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// после чего проверяем, чтобы указатель на член, имел класс такой же как у объекта,
-	// либо однозначный доступный базовый
+	// РїРѕСЃР»Рµ С‡РµРіРѕ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ, РёРјРµР» РєР»Р°СЃСЃ С‚Р°РєРѕР№ Р¶Рµ РєР°Рє Сѓ РѕР±СЉРµРєС‚Р°,
+	// Р»РёР±Рѕ РѕРґРЅРѕР·РЅР°С‡РЅС‹Р№ РґРѕСЃС‚СѓРїРЅС‹Р№ Р±Р°Р·РѕРІС‹Р№
 	INTERNAL_IF( mcls == NULL || lcls == NULL );
 	if( mcls != lcls )
 	{
@@ -4168,39 +4168,39 @@ POperand PointerToMemberBinaryMaker::Make()
 		if( dm.IsBase() && dm.IsUnambigous() && dm.IsAccessible() )
 			;
 
-		// иначе ошибка
+		// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 		else
 		{
 			theApp.Error(errPos,
-				"'%s' - не является доступным однозначным базовым классом для '%s'",
+				"'%s' - РЅРµ СЏРІР»СЏРµС‚СЃСЏ РґРѕСЃС‚СѓРїРЅС‹Рј РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј Р±Р°Р·РѕРІС‹Рј РєР»Р°СЃСЃРѕРј РґР»СЏ '%s'",
 				mcls->GetQualifiedName().c_str(), lcls->GetQualifiedName().c_str());
 			return ErrorOperand::GetInstance();
 		}
 	}
 
-	// сначала выявляем квалификаторы, от объекта могут передаваться к результирующему типу
+	// СЃРЅР°С‡Р°Р»Р° РІС‹СЏРІР»СЏРµРј РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹, РѕС‚ РѕР±СЉРµРєС‚Р° РјРѕРіСѓС‚ РїРµСЂРµРґР°РІР°С‚СЊСЃСЏ Рє СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РµРјСѓ С‚РёРїСѓ
 	bool rc = right->GetType().IsConst() || left->GetType().IsConst(),
 		 rv = right->GetType().IsVolatile() || left->GetType().IsVolatile();
 
-	// строим бинарное выражение
+	// СЃС‚СЂРѕРёРј Р±РёРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 	TypyziedEntity *rtype = new TypyziedEntity((BaseType*)&right->GetType().GetBaseType(),
 		rc, rv, right->GetType().GetDerivedTypeList());
 
-	// если есть ссылка, убираем ссылку
+	// РµСЃР»Рё РµСЃС‚СЊ СЃСЃС‹Р»РєР°, СѓР±РёСЂР°РµРј СЃСЃС‹Р»РєСѓ
 	if( rtype->GetDerivedTypeList().IsReference() )
 		const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 
-	// убираем указатель на член
+	// СѓР±РёСЂР°РµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ
 	const_cast<DerivedTypeList&>(rtype->GetDerivedTypeList()).PopHeadDerivedType();
 
-	// возвращаем выражение
+	// РІРѕР·РІСЂР°С‰Р°РµРј РІС‹СЂР°Р¶РµРЅРёРµ
 	return new BinaryExpression(op, true, left, right, rtype);
 }
 
-// создать выражение. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand TypeidUnaryMaker::Make()
 {
-	// ищем предопределенную структуру std::type_info
+	// РёС‰РµРј РїСЂРµРґРѕРїСЂРµРґРµР»РµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ std::type_info
 	const ClassType *clsTI = NULL;
 	try {
 		NameManager nm("std", &GetScopeSystem().GetGlobalSymbolTable(), false);
@@ -4210,20 +4210,20 @@ POperand TypeidUnaryMaker::Make()
 		if( nm.GetRoleList().front().second != R_NAMESPACE )
 			throw 1;
 
-		// далее в этой области видимости ищем структуру type_info
+		// РґР°Р»РµРµ РІ СЌС‚РѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РёС‰РµРј СЃС‚СЂСѓРєС‚СѓСЂСѓ type_info
 		NameManager tnm("type_info", 
 			static_cast<const NameSpace *>(nm.GetRoleList().front().first), false);
 		if( tnm.GetRoleCount() != 1 ||
 			tnm.GetRoleList().front().second != R_CLASS_TYPE )
 			throw 2;
 
-		// иначе получаем класс и переходим к постройке выражения
+		// РёРЅР°С‡Рµ РїРѕР»СѓС‡Р°РµРј РєР»Р°СЃСЃ Рё РїРµСЂРµС…РѕРґРёРј Рє РїРѕСЃС‚СЂРѕР№РєРµ РІС‹СЂР°Р¶РµРЅРёСЏ
 		clsTI = dynamic_cast<const ClassType *>(tnm.GetRoleList().front().first);
 		INTERNAL_IF( clsTI == NULL );
 
 	} catch( int ) {
 		theApp.Error(errPos, 
-			"'typeid' - структура std::type_info не объявлена; подключите файл 'typeinfo'");
+			"'typeid' - СЃС‚СЂСѓРєС‚СѓСЂР° std::type_info РЅРµ РѕР±СЉСЏРІР»РµРЅР°; РїРѕРґРєР»СЋС‡РёС‚Рµ С„Р°Р№Р» 'typeinfo'");
 		return ErrorOperand::GetInstance();
 	}
 
@@ -4232,73 +4232,73 @@ POperand TypeidUnaryMaker::Make()
 }
 
 
-// создать выражение. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand DynamicCastBinaryMaker::Make()
 {
 	// dynamic_cast<T>(v);
-	// T - должен быть ссылкой или указателем на полностью объявленный класс.
-	// либо указателем на void.
-	// v - должен быть lvalue  или указателем на ПОК соответственно
+	// T - РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЃСЃС‹Р»РєРѕР№ РёР»Рё СѓРєР°Р·Р°С‚РµР»РµРј РЅР° РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ РєР»Р°СЃСЃ.
+	// Р»РёР±Рѕ СѓРєР°Р·Р°С‚РµР»РµРј РЅР° void.
+	// v - РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ lvalue  РёР»Рё СѓРєР°Р·Р°С‚РµР»РµРј РЅР° РџРћРљ СЃРѕРѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕ
 	const TypyziedEntity &toType = left->GetType(),
 						 &fromType = right->GetType();
-	
-	// проверяем, чтобы квалификация была не меньше
+
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РєРІР°Р»РёС„РёРєР°С†РёСЏ Р±С‹Р»Р° РЅРµ РјРµРЅСЊС€Рµ
 	if( toType.IsConst() < fromType.IsConst() ||
 		toType.IsVolatile() < fromType.IsVolatile() )
 		theApp.Error(errPos, 
-		"'dynamic_cast' - '%s' менее квалифицирован, чем '%s'; преобразование невозможно",
+		"'dynamic_cast' - '%s' РјРµРЅРµРµ РєРІР°Р»РёС„РёС†РёСЂРѕРІР°РЅ, С‡РµРј '%s'; РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 			toType.GetTypyziedEntityName(false).c_str(),
 			fromType.GetTypyziedEntityName(false).c_str());	
 
-	// проверим, если левый операнд 'void *', сразу выполним преобразование
-	// без дополнительных проверок
+	// РїСЂРѕРІРµСЂРёРј, РµСЃР»Рё Р»РµРІС‹Р№ РѕРїРµСЂР°РЅРґ 'void *', СЃСЂР°Р·Сѓ РІС‹РїРѕР»РЅРёРј РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
+	// Р±РµР· РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… РїСЂРѕРІРµСЂРѕРє
 	if( toType.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID )
 	{
-		// проверяем, чтобы был указатель на void, и правый операнд был указатель
-		// на полностью объявленный полиморфный класс
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ Р±С‹Р» СѓРєР°Р·Р°С‚РµР»СЊ РЅР° void, Рё РїСЂР°РІС‹Р№ РѕРїРµСЂР°РЅРґ Р±С‹Р» СѓРєР°Р·Р°С‚РµР»СЊ
+		// РЅР° РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅРЅС‹Р№ РїРѕР»РёРјРѕСЂС„РЅС‹Р№ РєР»Р°СЃСЃ
 		const DerivedTypeList &dtl = fromType.GetDerivedTypeList();
-		if( toType.GetDerivedTypeList().IsPointer()				&&
+		if( toType.GetDerivedTypeList().IsPointer()  &&
 			toType.GetDerivedTypeList().GetDerivedTypeCount() == 1 &&
-			fromType.GetBaseType().IsClassType()					&&
-			( (dtl.GetDerivedTypeCount() == 1 && dtl.IsPointer())	||
+			fromType.GetBaseType().IsClassType()  &&
+			( (dtl.GetDerivedTypeCount() == 1 && dtl.IsPointer())  ||
 			  (dtl.GetDerivedTypeCount() == 2 && dtl.IsReference() &&
 			   dtl.GetDerivedType(1)->GetDerivedTypeCode() == DerivedType::DT_POINTER) ) )
 		{
-			// класс должен быть полиморфным и полностью объявлен
+			// РєР»Р°СЃСЃ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїРѕР»РёРјРѕСЂС„РЅС‹Рј Рё РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ
 			const ClassType &cls = static_cast<const ClassType&>(fromType.GetBaseType());
 			if( cls.IsUncomplete() || !cls.IsPolymorphic() )
 			{
 				theApp.Error(errPos, 
-					"'dynamic_cast' - класс '%s' не является %s",
+					"'dynamic_cast' - РєР»Р°СЃСЃ '%s' РЅРµ СЏРІР»СЏРµС‚СЃСЏ %s",
 					cls.GetQualifiedName().c_str(), 
-					cls.IsUncomplete() ? "завершенным" : "полиморфным");				
+					cls.IsUncomplete() ? "Р·Р°РІРµСЂС€РµРЅРЅС‹Рј" : "РїРѕР»РёРјРѕСЂС„РЅС‹Рј"); 
 				return ErrorOperand::GetInstance();
 			}
 
-			// иначе строим выражение
+			// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ
 			return new BinaryExpression(KWDYNAMIC_CAST, false, left, right,
 				new TypyziedEntity(toType) );	
 		}
 
-		// иначе ощибка
+		// РёРЅР°С‡Рµ РѕС‰РёР±РєР°
 		else
 		{
 			theApp.Error(errPos, 
-				"'dynamic_cast' - левый операнд должен быть 'void *'; "
-				"правый операнд должен быть указателем на класс");
+				"'dynamic_cast' - Р»РµРІС‹Р№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ 'void *'; "
+				"РїСЂР°РІС‹Р№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»РµРј РЅР° РєР»Р°СЃСЃ");
 			return ErrorOperand::GetInstance();
 		}
 	}
 
-	// иначе проверяем уже классы
+	// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј СѓР¶Рµ РєР»Р°СЃСЃС‹
 	if( !toType.GetBaseType().IsClassType()  ||
 		!fromType.GetBaseType().IsClassType() )
 	{
-		theApp.Error(errPos, "'dynamic_cast' - операнды должны иметь классовый тип");
+		theApp.Error(errPos, "'dynamic_cast' - РѕРїРµСЂР°РЅРґС‹ РґРѕР»Р¶РЅС‹ РёРјРµС‚СЊ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї");
 		return ErrorOperand::GetInstance();
 	}
 
-	// проверяем, если ук-ль
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё СѓРє-Р»СЊ
 	if( toType.GetDerivedTypeList().IsPointer() &&
 		toType.GetDerivedTypeList().GetDerivedTypeCount() == 1 )
 	{
@@ -4309,12 +4309,12 @@ POperand DynamicCastBinaryMaker::Make()
 			 ;
 		else
 		{
-			theApp.Error(errPos, "'dynamic_cast' - правый операнд должен быть указателем");
+			theApp.Error(errPos, "'dynamic_cast' - РїСЂР°РІС‹Р№ РѕРїРµСЂР°РЅРґ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°С‚РµР»РµРј");
 			return ErrorOperand::GetInstance();
 		}
 	}
 
-	// иначе левый должен быть ссылкой, а правый lvalue
+	// РёРЅР°С‡Рµ Р»РµРІС‹Р№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЃСЃС‹Р»РєРѕР№, Р° РїСЂР°РІС‹Р№ lvalue
 	else if( toType.GetDerivedTypeList().IsReference() &&
 			  toType.GetDerivedTypeList().GetDerivedTypeCount() == 1 &&
 		((right->IsExpressionOperand() && static_cast<const Expression&>(*right).IsLvalue()) ||
@@ -4323,87 +4323,87 @@ POperand DynamicCastBinaryMaker::Make()
 		fromType.GetDerivedTypeList().GetDerivedTypeCount() <= 1 )
 		;
 
-	// иначе ошибка
+	// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 	else
 	{
-		theApp.Error(errPos, "'dynamic_cast' - невозможно преобразовать '%s' к '%s'",
+		theApp.Error(errPos, "'dynamic_cast' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '%s' Рє '%s'",
 			fromType.GetTypyziedEntityName(false).c_str(),
-			toType.GetTypyziedEntityName(false).c_str());		
+			toType.GetTypyziedEntityName(false).c_str()); 
 		return ErrorOperand::GetInstance();
 	}
 
-	// далее проверяем классы
+	// РґР°Р»РµРµ РїСЂРѕРІРµСЂСЏРµРј РєР»Р°СЃСЃС‹
 	const ClassType &fromCls = static_cast<const ClassType&>(fromType.GetBaseType()),
 					&toCls = static_cast<const ClassType&>(toType.GetBaseType());
 
-	// проверим, чтобы класс правого операнда был полностью объявлен
+	// РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РєР»Р°СЃСЃ РїСЂР°РІРѕРіРѕ РѕРїРµСЂР°РЅРґР° Р±С‹Р» РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ
 	if( fromCls.IsUncomplete() )
 	{
 		theApp.Error(errPos, 
-			"'dynamic_cast' - класс '%s' не полностью объявлен; приведение невозможно",
+			"'dynamic_cast' - РєР»Р°СЃСЃ '%s' РЅРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ; РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 			fromCls.GetQualifiedName().c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// теперь проверяем возможно статической проверки
+	// С‚РµРїРµСЂСЊ РїСЂРѕРІРµСЂСЏРµРј РІРѕР·РјРѕР¶РЅРѕ СЃС‚Р°С‚РёС‡РµСЃРєРѕР№ РїСЂРѕРІРµСЂРєРё
 	if( toType.GetBaseType().IsClassType() )
 	{
-		// проверим в первую очередь, чтобы результирующий класс был объявлен
+		// РїСЂРѕРІРµСЂРёРј РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ, С‡С‚РѕР±С‹ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ РєР»Р°СЃСЃ Р±С‹Р» РѕР±СЉСЏРІР»РµРЅ
 		if( toCls.IsUncomplete() )
 		{
 			theApp.Error(errPos, 
-				"'dynamic_cast' - класс '%s' не полностью объявлен; приведение невозможно",
+				"'dynamic_cast' - РєР»Р°СЃСЃ '%s' РЅРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ; РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ",
 				toCls.GetQualifiedName().c_str());
 			return ErrorOperand::GetInstance();
 		}
 
-		// если toCls, является для fromCls однозначным доступным базовым, то 
-		// строим явное приведение, через static_cast, иначе продолжаем проверки
+		// РµСЃР»Рё toCls, СЏРІР»СЏРµС‚СЃСЏ РґР»СЏ fromCls РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј РґРѕСЃС‚СѓРїРЅС‹Рј Р±Р°Р·РѕРІС‹Рј, С‚Рѕ 
+		// СЃС‚СЂРѕРёРј СЏРІРЅРѕРµ РїСЂРёРІРµРґРµРЅРёРµ, С‡РµСЂРµР· static_cast, РёРЅР°С‡Рµ РїСЂРѕРґРѕР»Р¶Р°РµРј РїСЂРѕРІРµСЂРєРё
 		DerivationManager dm(toCls, fromCls);
 		if( dm.IsBase() )
 		{
 			if( !dm.IsAccessible() || !dm.IsUnambigous() )
 				theApp.Warning(errPos, 
-				"'dynamic_cast' - преобразование в недоступный или неоднозначный базовый класс");
+				"'dynamic_cast' - РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІ РЅРµРґРѕСЃС‚СѓРїРЅС‹Р№ РёР»Рё РЅРµРѕРґРЅРѕР·РЅР°С‡РЅС‹Р№ Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ");
 
-			// строим статическое приведение, т.к. динамическое не требуется
+			// СЃС‚СЂРѕРёРј СЃС‚Р°С‚РёС‡РµСЃРєРѕРµ РїСЂРёРІРµРґРµРЅРёРµ, С‚.Рє. РґРёРЅР°РјРёС‡РµСЃРєРѕРµ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ
 			else
 				return new BinaryExpression(KWSTATIC_CAST, 
 					toType.GetDerivedTypeList().IsReference(), left, right,
-					new TypyziedEntity(toType) );				
+					new TypyziedEntity(toType) ); 
 		}
 	}
 
-	// иначе идет динамическое преобразование, проверяем, чтобы операнд
-	// имел тип полиморфного класса
+	// РёРЅР°С‡Рµ РёРґРµС‚ РґРёРЅР°РјРёС‡РµСЃРєРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ, РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РѕРїРµСЂР°РЅРґ
+	// РёРјРµР» С‚РёРї РїРѕР»РёРјРѕСЂС„РЅРѕРіРѕ РєР»Р°СЃСЃР°
 	if( !fromCls.IsPolymorphic() )
 	{
 		theApp.Error(errPos,
-			"'dynamic_cast' - класс '%s' не является полиморфным",
+			"'dynamic_cast' - РєР»Р°СЃСЃ '%s' РЅРµ СЏРІР»СЏРµС‚СЃСЏ РїРѕР»РёРјРѕСЂС„РЅС‹Рј",
 			fromCls.GetQualifiedName().c_str());
 		return ErrorOperand::GetInstance(); 
 	}
 
 	return new BinaryExpression(KWDYNAMIC_CAST, 
 		toType.GetDerivedTypeList().IsReference(), 
-		left, right, new TypyziedEntity(toType) );	
+		left, right, new TypyziedEntity(toType) ); 
 }
 
 
-// возвращает true, если возможно преобразование из lvalue B к cv D&,
-// либо из B * к D *
+// РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РёР· lvalue B Рє cv D&,
+// Р»РёР±Рѕ РёР· B * Рє D *
 bool StaticCastBinaryMaker::BaseToDerivedExist( 
 					const TypyziedEntity &toType, const TypyziedEntity &fromType )
 {
 	if( !(toType.GetBaseType().IsClassType() && fromType.GetBaseType().IsClassType()) )
 		return false;
 
-	// если ссылка, тогда выражение должно быть lvalue
+	// РµСЃР»Рё СЃСЃС‹Р»РєР°, С‚РѕРіРґР° РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ lvalue
 	if( toType.GetDerivedTypeList().IsReference() && 
 		toType.GetDerivedTypeList().GetDerivedTypeCount() == 1 )
 		return ExpressionMakerUtils::IsLValue(right);
 
-	// иначе должен быть один указатель
+	// РёРЅР°С‡Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РѕРґРёРЅ СѓРєР°Р·Р°С‚РµР»СЊ
 	else if( toType.GetDerivedTypeList().IsPointer() &&
 		toType.GetDerivedTypeList().GetDerivedTypeCount() == 1 )
 	{
@@ -4415,66 +4415,66 @@ bool StaticCastBinaryMaker::BaseToDerivedExist(
 			   DerivedType::DT_POINTER) ;
 	}
 
-	// иначе невозможно
+	// РёРЅР°С‡Рµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 	else
 		return false;
 }
 
 
-// проверить преобразование
+// РїСЂРѕРІРµСЂРёС‚СЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 int StaticCastBinaryMaker::CheckConversion( )
 {
-	// нельзя приводить к типу массива или функции
+	// РЅРµР»СЊР·СЏ РїСЂРёРІРѕРґРёС‚СЊ Рє С‚РёРїСѓ РјР°СЃСЃРёРІР° РёР»Рё С„СѓРЅРєС†РёРё
 	if( left->GetType().GetDerivedTypeList().IsArray() || 
 		left->GetType().GetDerivedTypeList().IsFunction() ) 
 		return -1;
 	
-	// сначала пробуем, преобразовать с помощью автоматического преобразования,
-	// вида "T t(e)"
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕР±СѓРµРј, РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ СЃ РїРѕРјРѕС‰СЊСЋ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРіРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ,
+	// РІРёРґР° "T t(e)"
 	PCaster pCaster= 
 		AutoCastManager(left->GetType(), right->GetType(), true, true).RevealCaster();
 	Caster &caster = *pCaster;
 	caster.ClassifyCast();
 
-	// если преобразование возможно, преобразуем операнды физически и
-	// возвращаем 1
+	// РµСЃР»Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІРѕР·РјРѕР¶РЅРѕ, РїСЂРµРѕР±СЂР°Р·СѓРµРј РѕРїРµСЂР°РЅРґС‹ С„РёР·РёС‡РµСЃРєРё Рё
+	// РІРѕР·РІСЂР°С‰Р°РµРј 1
 	if( caster.IsConverted() )
 	{
 		caster.DoCast(left, const_cast<POperand&>(right), errPos);
 		return 1;
 	}
 
-	// иначе пытаемся преобразовать согласно другим правилам
-	// возможно преобразование в void
+	// РёРЅР°С‡Рµ РїС‹С‚Р°РµРјСЃСЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ СЃРѕРіР»Р°СЃРЅРѕ РґСЂСѓРіРёРј РїСЂР°РІРёР»Р°Рј
+	// РІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІ void
 	const TypyziedEntity &toType = left->GetType(), &fromType = right->GetType();
 	if( toType.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID &&
 		toType.GetDerivedTypeList().IsEmpty() )
 		return 0;
 
-	// из lvalue 'B', в 'cv D &', либо из B * в D *
+	// РёР· lvalue 'B', РІ 'cv D &', Р»РёР±Рѕ РёР· B * РІ D *
 	if( BaseToDerivedExist(toType, fromType) )
 	{	
-		// проверяем, чтобы квалификация выражения была меньше
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РєРІР°Р»РёС„РёРєР°С†РёСЏ РІС‹СЂР°Р¶РµРЅРёСЏ Р±С‹Р»Р° РјРµРЅСЊС€Рµ
 		if( fromType.IsConst() > toType.IsConst() ||
 			fromType.IsVolatile() > toType.IsVolatile() )
 			return -1;
 
-		// проверяем, чтобы 'B' был однозначным доступным, не виртуальным базовым классом 'D'
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ 'B' Р±С‹Р» РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј РґРѕСЃС‚СѓРїРЅС‹Рј, РЅРµ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј Р±Р°Р·РѕРІС‹Рј РєР»Р°СЃСЃРѕРј 'D'
 		DerivationManager dm( static_cast<const ClassType &>(fromType.GetBaseType()),
 			static_cast<const ClassType &>(toType.GetBaseType()) );
 		
-		// проверяем, чтобы был базовым, не виртуальным, однозначным, доступным
+		// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ Р±С‹Р» Р±Р°Р·РѕРІС‹Рј, РЅРµ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј, РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј, РґРѕСЃС‚СѓРїРЅС‹Рј
 		if( !dm.IsBase() || dm.IsVirtual() || !dm.IsUnambigous() || !dm.IsAccessible() )
 			return -1;
 
-		// иначе строим выражение и возвращаем 1
+		// РёРЅР°С‡Рµ СЃС‚СЂРѕРёРј РІС‹СЂР°Р¶РµРЅРёРµ Рё РІРѕР·РІСЂР°С‰Р°РµРј 1
 		const_cast<POperand&>(right) = 
 			new BinaryExpression( GOC_BASE_TO_DERIVED_CONVERSION, 
 				false, left, right, new TypyziedEntity(left->GetType()) );
 		return 1;	
 	}
 
-	// если оба типа целых, целый тип можно преобразовать в перечислимый
+	// РµСЃР»Рё РѕР±Р° С‚РёРїР° С†РµР»С‹С…, С†РµР»С‹Р№ С‚РёРї РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РІ РїРµСЂРµС‡РёСЃР»РёРјС‹Р№
 	if( ExpressionMakerUtils::IsIntegral(toType) && ExpressionMakerUtils::IsIntegral(fromType) )
 	{
 		if( toType.GetBaseType().GetBaseTypeCode() == BaseType::BT_ENUM )
@@ -4482,7 +4482,7 @@ int StaticCastBinaryMaker::CheckConversion( )
 		return -1;
 	}
 
-	// указатель на void, можно преобразовать в указатель на др. тип
+	// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° void, РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РІ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РґСЂ. С‚РёРї
 	if( fromType.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID &&
 		fromType.GetDerivedTypeList().GetDerivedTypeCount() == 1 &&
 		fromType.GetDerivedTypeList().IsPointer() ) 
@@ -4496,17 +4496,17 @@ int StaticCastBinaryMaker::CheckConversion( )
 }
 
 	
-// создать выражение static_cast
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ static_cast
 POperand StaticCastBinaryMaker::Make()
 {
 	if( int r = CheckConversion() )
 	{
-		// если r==1, физическое преобразование не требуется,
-		// возвращаем right
+		// РµСЃР»Рё r==1, С„РёР·РёС‡РµСЃРєРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ,
+		// РІРѕР·РІСЂР°С‰Р°РµРј right
 		if( r == 1 )
 			return right;
 
-		theApp.Error(errPos, "'static_cast' - невозможно преобразовать '%s' к '%s'",
+		theApp.Error(errPos, "'static_cast' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '%s' Рє '%s'",
 			right->GetType().GetTypyziedEntityName(false).c_str(),
 			left->GetType().GetTypyziedEntityName(false).c_str());
 		return ErrorOperand::GetInstance();
@@ -4519,102 +4519,102 @@ POperand StaticCastBinaryMaker::Make()
 }
 
 
-// создать выражение reinterpret_cast
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ reinterpret_cast
 POperand ReinterpretCastBinaryMaker::Make()
 {
 	const TypyziedEntity &fromType = right->GetType(), &toType = left->GetType();
 	const DerivedTypeList &fromDtl = fromType.GetDerivedTypeList(), 
 						  &toDtl = toType.GetDerivedTypeList();
 
-	// нельзя приводить к типу массива или функции
+	// РЅРµР»СЊР·СЏ РїСЂРёРІРѕРґРёС‚СЊ Рє С‚РёРїСѓ РјР°СЃСЃРёРІР° РёР»Рё С„СѓРЅРєС†РёРё
 	if( toDtl.IsArray() || toDtl.IsFunction() ) 
 	{
 		theApp.Error(errPos, 
-			"'reinterpret_cast' - результирующий тип не может быть массивом или функицей");
+			"'reinterpret_cast' - СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјР°СЃСЃРёРІРѕРј РёР»Рё С„СѓРЅРєРёС†РµР№");
 		return ErrorOperand::GetInstance();
 	}
 
-	// Если один тип целый, а второй указатель или наоборот, либо
-	// оба указатели
+	// Р•СЃР»Рё РѕРґРёРЅ С‚РёРї С†РµР»С‹Р№, Р° РІС‚РѕСЂРѕР№ СѓРєР°Р·Р°С‚РµР»СЊ РёР»Рё РЅР°РѕР±РѕСЂРѕС‚, Р»РёР±Рѕ
+	// РѕР±Р° СѓРєР°Р·Р°С‚РµР»Рё
 	if( (ExpressionMakerUtils::IsIntegral(fromType) &&
-		 ExpressionMakerUtils::IsRvaluePointer(toType))     ||
+		 ExpressionMakerUtils::IsRvaluePointer(toType))  ||
 		(ExpressionMakerUtils::IsIntegral(toType) &&
-		 ExpressionMakerUtils::IsRvaluePointer(fromType))   ||
+		 ExpressionMakerUtils::IsRvaluePointer(fromType))  ||
 		(ExpressionMakerUtils::IsRvaluePointer(fromType) &&
 		 ExpressionMakerUtils::IsRvaluePointer(toType))	)
 		 ;
 
-	// иначе если оба указатели на член, проверяем, чтобы оба были
-	// объекты или функции
+	// РёРЅР°С‡Рµ РµСЃР»Рё РѕР±Р° СѓРєР°Р·Р°С‚РµР»Рё РЅР° С‡Р»РµРЅ, РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РѕР±Р° Р±С‹Р»Рё
+	// РѕР±СЉРµРєС‚С‹ РёР»Рё С„СѓРЅРєС†РёРё
 	else if( toDtl.IsPointerToMember() && fromDtl.IsPointerToMember() &&
-			 ((toDtl.GetDerivedTypeCount() > 1 && toDtl.GetDerivedType(1)->
-			   GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE) +
-			  (fromDtl.GetDerivedTypeCount() > 1 && fromDtl.GetDerivedType(1)->
-			   GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE)) != 1 )
+			((toDtl.GetDerivedTypeCount() > 1 && toDtl.GetDerivedType(1)->
+			GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE) +
+			(fromDtl.GetDerivedTypeCount() > 1 && fromDtl.GetDerivedType(1)->
+			GetDerivedTypeCode() == DerivedType::DT_FUNCTION_PROTOTYPE)) != 1 )
 		;
 
-	// Если правый операнд lvalue, а конечный тип - ссылка,
-	// преобразование возможно.
+	// Р•СЃР»Рё РїСЂР°РІС‹Р№ РѕРїРµСЂР°РЅРґ lvalue, Р° РєРѕРЅРµС‡РЅС‹Р№ С‚РёРї - СЃСЃС‹Р»РєР°,
+	// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІРѕР·РјРѕР¶РЅРѕ.
 	else if( toType.GetDerivedTypeList().IsReference() &&
 		((right->IsExpressionOperand() && static_cast<const Expression&>(*right).IsLvalue()) ||
 		 (right->IsPrimaryOperand() && static_cast<const PrimaryOperand&>(*right).IsLvalue())) )
 		;
 
-	// иначе приведение невозможно
+	// РёРЅР°С‡Рµ РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 	else
 	{
-		theApp.Error(errPos, "'reinterpret_cast' - невозможно преобразовать '%s' к '%s'",
+		theApp.Error(errPos, "'reinterpret_cast' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '%s' Рє '%s'",
 			right->GetType().GetTypyziedEntityName(false).c_str(),
 			left->GetType().GetTypyziedEntityName(false).c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// В конце, если результирующий тип ссылка, результат lvalue
+	// Р’ РєРѕРЅС†Рµ, РµСЃР»Рё СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї СЃСЃС‹Р»РєР°, СЂРµР·СѓР»СЊС‚Р°С‚ lvalue
 	return new BinaryExpression(KWREINTERPRET_CAST, toType.GetDerivedTypeList().IsReference(),
 		left, right, new TypyziedEntity(left->GetType()));
 }
 
 
-// создать выражение const_cast. Может вернуть ErrorOperand, если приведение невозможно
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ const_cast. РњРѕР¶РµС‚ РІРµСЂРЅСѓС‚СЊ ErrorOperand, РµСЃР»Рё РїСЂРёРІРµРґРµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 POperand ConstCastBinaryMaker::Make()
 { 
-	// сравниваем типы
+	// СЃСЂР°РІРЅРёРІР°РµРј С‚РёРїС‹
 	ScalarToScalarCaster stsc(left->GetType(), right->GetType(), false);
 	stsc.ClassifyCast();
 	if( !stsc.IsConverted() || stsc.GetCastCategory() != Caster::CC_EQUAL )
 	{
-		theApp.Error(errPos, "'const_cast' - невозможно преобразовать '%s' к '%s'",
+		theApp.Error(errPos, "'const_cast' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ '%s' Рє '%s'",
 			right->GetType().GetTypyziedEntityName(false).c_str(),
 			left->GetType().GetTypyziedEntityName(false).c_str());
 		return ErrorOperand::GetInstance();
 	}
 
-	// невозможно rvalue, преобразовать к lvalue
+	// РЅРµРІРѕР·РјРѕР¶РЅРѕ rvalue, РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ Рє lvalue
 	bool llv = 
 		static_cast<const TypeOperand&>(*left).GetType().GetDerivedTypeList().IsReference(),
 		rlv = ExpressionMakerUtils::IsLValue(right);
 
-	// невозможно преобразовать, если левый lvalue, а правый rvalue
+	// РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ, РµСЃР»Рё Р»РµРІС‹Р№ lvalue, Р° РїСЂР°РІС‹Р№ rvalue
 	if( llv && !rlv )
 	{
-		theApp.Error(errPos, "'const_cast' - невозможно преобразовать rvalue к lvalue");
+		theApp.Error(errPos, "'const_cast' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ rvalue Рє lvalue");
 		return ErrorOperand::GetInstance();
 	}
 
-	// результирующий тип - левый
+	// СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ С‚РёРї - Р»РµРІС‹Р№
 	return new BinaryExpression(KWCONST_CAST, llv, left, right, 
 		new TypyziedEntity(left->GetType()) );
 }
 
 
-// создать выражение throw
+// СЃРѕР·РґР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ throw
 POperand ThrowUnaryMaker::Make()
 {	
-	// строим без проверок. Следует заметить, что throw может быть
-	// без параметра, тогда right - создается как операнд с типом void
+	// СЃС‚СЂРѕРёРј Р±РµР· РїСЂРѕРІРµСЂРѕРє. РЎР»РµРґСѓРµС‚ Р·Р°РјРµС‚РёС‚СЊ, С‡С‚Рѕ throw РјРѕР¶РµС‚ Р±С‹С‚СЊ
+	// Р±РµР· РїР°СЂР°РјРµС‚СЂР°, С‚РѕРіРґР° right - СЃРѕР·РґР°РµС‚СЃСЏ РєР°Рє РѕРїРµСЂР°РЅРґ СЃ С‚РёРїРѕРј void
 	return new UnaryExpression(KWTHROW, false, false,
 		right, new TypyziedEntity(
 		(BaseType*)&ImplicitTypeManager(KWVOID).GetImplicitType(), false, false,
-		DerivedTypeList()) );	
+		DerivedTypeList()) ); 
 }
 

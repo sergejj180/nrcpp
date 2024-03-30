@@ -1,24 +1,24 @@
-// объявление таблицы макросов
+// РѕР±СЉСЏРІР»РµРЅРёРµ С‚Р°Р±Р»РёС†С‹ РјР°РєСЂРѕСЃРѕРІ
 
 
 #include "hash.h"
 #define MACROTAB_SIZE	531
 
 
-// структура параметров макросов
+// СЃС‚СЂСѓРєС‚СѓСЂР° РїР°СЂР°РјРµС‚СЂРѕРІ РјР°РєСЂРѕСЃРѕРІ
 struct Param { 
 	string name, val; 
 	bool operator==( const Param &ob ) { return ob.name == name; }
 };
 
 
-// структура макросов
+// СЃС‚СЂСѓРєС‚СѓСЂР° РјР°РєСЂРѕСЃРѕРІ
 struct Macro
 {
 	string name, val;
 	enum { MACROS, FUNCTION } type;
 	list<Param> params;
-	bool pred;	// если макрос предопределен - true
+	bool pred;	// РµСЃР»Рё РјР°РєСЂРѕСЃ РїСЂРµРґРѕРїСЂРµРґРµР»РµРЅ - true
 	
 	Macro(string n, string v, bool p = false) { 
 		name = n, val = v, type = MACROS;
@@ -34,10 +34,10 @@ struct Macro
 };
 
 
-// таблица макросов
+// С‚Р°Р±Р»РёС†Р° РјР°РєСЂРѕСЃРѕРІ
 class MacroTable : public HashTab<Macro, MACROTAB_SIZE>
 {
-	// возвращает итератор на объект
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ РёС‚РµСЂР°С‚РѕСЂ РЅР° РѕР±СЉРµРєС‚
 	bool _Find( char *name, list<Macro>::iterator &i ) {
 		list<Macro> &p = HashFunc( name );
 
@@ -46,20 +46,20 @@ class MacroTable : public HashTab<Macro, MACROTAB_SIZE>
 	}
 
 public:
-	// возвращает указатель на объект в табице, или NULL
+	// РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РѕР±СЉРµРєС‚ РІ С‚Р°Р±РёС†Рµ, РёР»Рё NULL
 	Macro *Find( char *name );
 
 
-	// вставляет элемент в таблицу
+	// РІСЃС‚Р°РІР»СЏРµС‚ СЌР»РµРјРµРЅС‚ РІ С‚Р°Р±Р»РёС†Сѓ
 	void Insert( Macro ob );
 
 
-	// удаляет элемент из таблицы
+	// СѓРґР°Р»СЏРµС‚ СЌР»РµРјРµРЅС‚ РёР· С‚Р°Р±Р»РёС†С‹
 	void Remove( char *name );
 };
 
 
-// функтор для поиска параметра
+// С„СѓРЅРєС‚РѕСЂ РґР»В¤ РїРѕРёСЃРєР° РїР°СЂР°РјРµС‚СЂР°
 class FuncParam 
 {
 	string &str;
@@ -72,7 +72,7 @@ public:
 extern MacroTable mtab;
 
 
-// проходит по строке s и выполняет макроподстановку,
-// dodef указывает на необходимость обработки оператора defined
-// в диреткивах #if/#elif
+// РїСЂРѕС…РѕРґРёС‚ РїРѕ СЃС‚СЂРѕРєРµ s Рё РІС‹РїРѕР»РЅСЏРµС‚ РјР°РєСЂРѕРїРѕРґСЃС‚Р°РЅРѕРІРєСѓ,
+// dodef СѓРєР°Р·С‹РІР°РµС‚ РЅР° РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚СЊ РѕР±СЂР°Р±РѕС‚РєРё РѕРїРµСЂР°С‚РѕСЂР° defined
+// РІ РґРёСЂРµС‚РєРёРІР°С… #if/#elif
 string Substitution( string buf, bool dodef = false );

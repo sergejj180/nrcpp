@@ -1,4 +1,4 @@
-// лексический анализатор для компилятора C++ - LexicalAnalyzer.cpp
+// Р»РµРєСЃРёС‡РµСЃРєРёР№ Р°РЅР°Р»РёР·Р°С‚РѕСЂ РґР»СЏ РєРѕРјРїРёР»СЏС‚РѕСЂР° C++ - LexicalAnalyzer.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -10,28 +10,28 @@ using namespace nrc;
 
 
 
-// структура которая обеспечивает поиск кода лексемы
-// по ее имени 
+// СЃС‚СЂСѓРєС‚СѓСЂР° РєРѕС‚РѕСЂР°СЏ РѕР±РµСЃРїРµС‡РёРІР°РµС‚ РїРѕРёСЃРє РєРѕРґР° Р»РµРєСЃРµРјС‹
+// РїРѕ РµРµ РёРјРµРЅРё 
 struct keywords
 {
-	// имя ключевого слова
+	// РёРјСЏ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР°
 	const char *name;
 
 
-	// код ключевого слова
+	// РєРѕРґ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР°
 	int code;
 
 }	kpp_words[] = {
 	{ "define", KPP_DEFINE },
-	{ "error",  KPP_ERROR  },
-	{ "undef",  KPP_UNDEF  },
-	{ "elif",   KPP_ELIF   },
-	{ "if",		KPP_IF     },
+	{ "error", KPP_ERROR },
+	{ "undef", KPP_UNDEF },
+	{ "elif", KPP_ELIF },
+	{ "if", KPP_IF },
 	{ "include", KPP_INCLUDE },
-	{ "else",   KPP_ELSE   },
-	{ "ifdef",  KPP_IFDEF  },
-	{ "line",   KPP_LINE   },
-	{ "endif",  KPP_ENDIF  },
+	{ "else", KPP_ELSE },
+	{ "ifdef", KPP_IFDEF },
+	{ "line", KPP_LINE },
+	{ "endif", KPP_ENDIF },
 	{ "ifndef", KPP_IFNDEF },
 	{ "pragma", KPP_PRAGMA }
 	},
@@ -39,19 +39,19 @@ struct keywords
 	c_words[] = {
 	{ "auto", KWAUTO }, { "break", KWBREAK },
 	{ "case", KWCASE }, { "char",  KWCHAR },
-	{ "const", KWCONST }, { "continue", KWCONTINUE }, 
+	{ "const", KWCONST }, { "continue", KWCONTINUE },
 	{ "default", KWDEFAULT }, { "do", KWDO },
-	{ "double", KWDOUBLE }, { "else", KWELSE }, 
-	{ "enum", KWENUM },	{ "extern", KWEXTERN },  
+	{ "double", KWDOUBLE }, { "else", KWELSE },
+	{ "enum", KWENUM }, { "extern", KWEXTERN },
 	{ "float", KWFLOAT }, { "for", KWFOR },
 	{ "goto", KWGOTO }, { "if", KWIF }, 
 	{ "int", KWINT }, { "long", KWLONG },
 	{ "register", KWREGISTER }, { "return", KWRETURN }, 
 	{ "short", KWSHORT }, { "signed", KWSIGNED }, 
-	{ "sizeof", KWSIZEOF },  { "static", KWSTATIC }, 
+	{ "sizeof", KWSIZEOF }, { "static", KWSTATIC }, 
 	{ "struct", KWSTRUCT }, { "switch", KWSWITCH }, 
-	{ "typedef", KWTYPEDEF }, { "union", KWUNION },  
-	{ "unsigned", KWUNSIGNED }, { "void", KWVOID },  
+	{ "typedef", KWTYPEDEF }, { "union", KWUNION }, 
+	{ "unsigned", KWUNSIGNED }, { "void", KWVOID }, 
 	{ "volatile", KWVOLATILE }, { "while", KWWHILE } 
 	},
 
@@ -64,7 +64,7 @@ struct keywords
 	{ "continue", KWCONTINUE }, { "default", KWDEFAULT },
 	{ "delete", KWDELETE }, { "do", KWDO },
 	{ "double", KWDOUBLE }, { "dynamic_cast", KWDYNAMIC_CAST },
-	{ "else", KWELSE }, { "enum", KWENUM },	
+	{ "else", KWELSE }, { "enum", KWENUM }, 
 	{ "explicit", KWEXPLICIT }, { "export", KWEXPORT },
 	{ "extern", KWEXTERN },  { "false", KWFALSE }, 
 	{ "float", KWFLOAT }, { "for", KWFOR },
@@ -84,19 +84,19 @@ struct keywords
 	{ "throw", KWTHROW }, { "true", KWTRUE }, 
 	{ "try", KWTRY }, { "typedef", KWTYPEDEF },
 	{ "typeid", KWTYPEID }, { "typename", KWTYPENAME },
-	{ "union", KWUNION },  { "unsigned", KWUNSIGNED },
-	{ "using", KWUSING },  { "virtual", KWVIRTUAL },
-	{ "void", KWVOID },  { "volatile", KWVOLATILE },
+	{ "union", KWUNION }, { "unsigned", KWUNSIGNED },
+	{ "using", KWUSING }, { "virtual", KWVIRTUAL },
+	{ "void", KWVOID }, { "volatile", KWVOLATILE },
 	{ "wchar_t", KWWCHAR_T }, { "while", KWWHILE } 
 };
 
 
-// буфер с содержимым лексемы
+// Р±СѓС„РµСЂ СЃ СЃРѕРґРµСЂР¶РёРјС‹Рј Р»РµРєСЃРµРјС‹
 static string lexbuf;
 
 
-// функция возвращает код ключевого слова или -1
-// в случае если такого ключевого слова нет
+// С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРґ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РёР»Рё -1
+// РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё С‚Р°РєРѕРіРѕ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РЅРµС‚
 inline int LookupKeywordCode( const char *keyname, keywords *kmas, int szmas )
 {
 	int r;
@@ -113,59 +113,59 @@ inline int LookupKeywordCode( const char *keyname, keywords *kmas, int szmas )
 }
 
 
-// ищет ключевые слова kpp
+// РёС‰РµС‚ РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° kpp
 static int LookupKppKeywords( const char *keyname )
 {
 	return LookupKeywordCode( keyname, kpp_words, sizeof( kpp_words ) );
 }
 
 
-// ищет ключевые слова языка С
+// РёС‰РµС‚ РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° СЏР·С‹РєР° РЎ
 static int LookupCKeywords( const char *keyname )
 {
 	return LookupKeywordCode( keyname, c_words, sizeof( c_words ) );
 }
 
 
-// ищет ключевые слова языка С++
+// РёС‰РµС‚ РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° СЏР·С‹РєР° РЎ++
 static int LookupCPPKeywords( const char *keyname )
 {
 	return LookupKeywordCode( keyname, cpp_words, sizeof( cpp_words ) );
 }
 
 
-// возвращает имя ключевого слова по коду
+// РІРѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РїРѕ РєРѕРґСѓ
 const char *GetKeywordName( int code )
 {
 	return cpp_words[code - KWASM].name;
 }
 
 
-// игнорирует пробелы и новые строки
+// РёРіРЅРѕСЂРёСЂСѓРµС‚ РїСЂРѕР±РµР»С‹ Рё РЅРѕРІС‹Рµ СЃС‚СЂРѕРєРё
 static int IgnoreNewlinesAndSpaces( BaseRead &ob )
 {
 	register int c;
 
 	while( (ob >> c) != EOF )
 
-		// внимание: табуляция считается как 1 символ (а не 4 пробела)
-		if( c == ' ' || c == '\t' )		
+		// РІРЅРёРјР°РЅРёРµ: С‚Р°Р±СѓР»СЏС†РёСЏ СЃС‡РёС‚Р°РµС‚СЃСЏ РєР°Рє 1 СЃРёРјРІРѕР» (Р° РЅРµ 4 РїСЂРѕР±РµР»Р°)
+		if( c == ' ' || c == '\t' ) 
 			continue;
 
-		else if( c == '\n' )		
-			((CppFileRead &)(ob)).NewLine();		
+		else if( c == '\n' ) 
+			((CppFileRead &)(ob)).NewLine(); 
 
 		else
 			break;
 
-	ob << c; // возвращаем один символ в поток
+	ob << c; // РІРѕР·РІСЂР°С‰Р°РµРј РѕРґРёРЅ СЃРёРјРІРѕР» РІ РїРѕС‚РѕРє
 	return c;
 }
 
 
-// проверяет, если 'nam' - альтернативное имя такое
-// как and, or, ... то вернуть ненуловое значение - код
-// настоящей лексемы, иначе 0
+// РїСЂРѕРІРµСЂСЏРµС‚, РµСЃР»Рё 'nam' - Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕРµ РёРјСЏ С‚Р°РєРѕРµ
+// РєР°Рє and, or, ... С‚Рѕ РІРµСЂРЅСѓС‚СЊ РЅРµРЅСѓР»РѕРІРѕРµ Р·РЅР°С‡РµРЅРёРµ - РєРѕРґ
+// РЅР°СЃС‚РѕСЏС‰РµР№ Р»РµРєСЃРµРјС‹, РёРЅР°С‡Рµ 0
 inline static int IsAlternativeName( const char *n ) 
 {
 	struct TempAgr
@@ -173,16 +173,16 @@ inline static int IsAlternativeName( const char *n )
 		const char *name;
 		int tok;
 	} alt[] = {
-		"and",	  LOGIC_AND,
+		"and", LOGIC_AND,
 		"and_eq", AND_ASSIGN, 
 		"bitand", '&',
-		"bitor",  '|',
-		"compl",  '~',
-		"not",	  '!',
+		"bitor", '|',
+		"compl", '~',
+		"not", '!',
 		"not_eq", NOT_EQUAL,
-		"or",	  LOGIC_OR,
-		"or_eq",  OR_ASSIGN,
-		"xor",	  '^',
+		"or", LOGIC_OR,
+		"or_eq", OR_ASSIGN,
+		"xor", '^',
 		"xor_eq", XOR_ASSIGN
 	};
 
@@ -193,7 +193,7 @@ inline static int IsAlternativeName( const char *n )
 }
 
 
-// выделить лексему 'идентификатор'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ'
 inline static int LexemName( BaseRead &ob )
 {
 	register int c;
@@ -209,7 +209,7 @@ inline static int LexemName( BaseRead &ob )
 }
 
 
-// выделить лексему 'оператор'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'РѕРїРµСЂР°С‚РѕСЂ'
 inline static int LexemOperator( BaseRead &ob )
 {
 	register int c;
@@ -259,10 +259,10 @@ inline static int LexemOperator( BaseRead &ob )
 	{
 		ob >> c;
 		
-		if(c == '=') { lexbuf = "%="; return PERCENT_ASSIGN; }			
-		else if(c == '>') { lexbuf = "%>"; return '}'; }	
+		if(c == '=') { lexbuf = "%="; return PERCENT_ASSIGN; }
+		else if(c == '>') { lexbuf = "%>"; return '}'; }
 		
-		// альтеранатива '%>'  - '{' , '%:' - #, '%:%:' - ##
+		// Р°Р»СЊС‚РµСЂР°РЅР°С‚РёРІР° '%>'  - '{' , '%:' - #, '%:%:' - ##
 		else if(c == ':') 
 		{ 
 			ob >> c;
@@ -270,7 +270,7 @@ inline static int LexemOperator( BaseRead &ob )
 			{
 				ob >> c;
 				if( c != ':' )
-					theApp.Error("пропущен символ ':' в лексеме '%%:%%:'"),
+					theApp.Error("РїСЂРѕРїСѓС‰РµРЅ СЃРёРјРІРѕР» ':' РІ Р»РµРєСЃРµРјРµ '%%:%%:'"),
 					ob << c;
 				lexbuf = "%:%:";
 				return DOUBLE_SHARP;
@@ -299,7 +299,7 @@ inline static int LexemOperator( BaseRead &ob )
 			else { ob << c; lexbuf = "<<"; return LEFT_SHIFT; }
 		}
 
-		// альтеранатива '<%'  - '{', '<:' - '['
+		// Р°Р»СЊС‚РµСЂР°РЅР°С‚РёРІР° '<%'  - '{', '<:' - '['
 		else if(c == '%') { lexbuf = "<%"; return '{'; }
 		else if(c == ':') { lexbuf = "<:"; return '['; }
 		else { ob << c; lexbuf = '<'; return '<'; }
@@ -361,7 +361,7 @@ inline static int LexemOperator( BaseRead &ob )
 	{
 		ob >> c;
 		if( c == ':' ) { lexbuf = "::"; return COLON_COLON; }
-		else if(c == '>') { lexbuf = ":>"; return ']'; }	// ':>' - ']'
+		else if(c == '>') { lexbuf = ":>"; return ']'; } // ':>' - ']'
 		else { ob << c; lexbuf = ':'; return ':'; }
 	}
 
@@ -376,7 +376,7 @@ inline static int LexemOperator( BaseRead &ob )
 			else 
 			{
 				ob << c;
-				theApp.Error( "пропущена '.' в операторе '...'");
+				theApp.Error( "РїСЂРѕРїСѓС‰РµРЅР° '.' РІ РѕРїРµСЂР°С‚РѕСЂРµ '...'");
 				lexbuf = "...";
 				return ELLIPSES;
 			}
@@ -401,7 +401,7 @@ inline static int LexemOperator( BaseRead &ob )
 
 	else if( c == EOF )
 	{
-		lexbuf = "<конец файла>";
+		lexbuf = "<РєРѕРЅРµС† С„Р°Р№Р»Р°>";
 		return c;
 	}
 
@@ -413,25 +413,25 @@ inline static int LexemOperator( BaseRead &ob )
 }
 
 
-// выделить лексему 'строковый литерал'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'СЃС‚СЂРѕРєРѕРІС‹Р№ Р»РёС‚РµСЂР°Р»'
 inline static int LexemString( BaseRead &ob )
 {
 	register int c;
 	bool wstr = lexbuf.at(0) == 'L';
 
-	// цикл выполняется пока есть возможность соединять строки
+	// С†РёРєР» РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїРѕРєР° РµСЃС‚СЊ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ СЃРѕРµРґРёРЅСЏС‚СЊ СЃС‚СЂРѕРєРё
 	for( ;; )
 	{	
 		for(;;)
 		{
 			ob >> c;
-			if( c == '\"' )			
-				break;		// строка считана
+			if( c == '\"' ) 
+				break; // СЃС‚СЂРѕРєР° СЃС‡РёС‚Р°РЅР°
 
 			else if( c == '\\' )
 			{
 				int pc;
-						
+
 				ob >> pc;
 				if(pc == '\"' || pc == '\\')
 				{
@@ -447,7 +447,7 @@ inline static int LexemString( BaseRead &ob )
 			{
 				ob << c;
 
-				theApp.Error( "не хватает `\"' в конце строки" );
+				theApp.Error( "РЅРµ С…РІР°С‚Р°РµС‚ `\"' РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё" );
 				lexbuf += '\"';
 				return STRING;
 			}		
@@ -455,26 +455,26 @@ inline static int LexemString( BaseRead &ob )
 			lexbuf += c;
 		}
 
-		// переходим к следующей лексеме, возможно это будет опять строка,
-		// тогда возможно будет конкатенация
+		// РїРµСЂРµС…РѕРґРёРј Рє СЃР»РµРґСѓСЋС‰РµР№ Р»РµРєСЃРµРјРµ, РІРѕР·РјРѕР¶РЅРѕ СЌС‚Рѕ Р±СѓРґРµС‚ РѕРїСЏС‚СЊ СЃС‚СЂРѕРєР°,
+		// С‚РѕРіРґР° РІРѕР·РјРѕР¶РЅРѕ Р±СѓРґРµС‚ РєРѕРЅРєР°С‚РµРЅР°С†РёСЏ
 		c = IgnoreNewlinesAndSpaces( ob );
-		if( c == '\"' )		// продолжаем итерацию цикла
+		if( c == '\"' ) // РїСЂРѕРґРѕР»Р¶Р°РµРј РёС‚РµСЂР°С†РёСЋ С†РёРєР»Р°
 		{
 			if( wstr )
-				theApp.Error("конкатенация строк разных типов");
+				theApp.Error("РєРѕРЅРєР°С‚РµРЅР°С†РёСЏ СЃС‚СЂРѕРє СЂР°Р·РЅС‹С… С‚РёРїРѕРІ");
 			wstr = false;
 			ob >> c;
 		}
 
-		// возможно строка типа wchar_t
-		else if( c == 'L' )		
+		// РІРѕР·РјРѕР¶РЅРѕ СЃС‚СЂРѕРєР° С‚РёРїР° wchar_t
+		else if( c == 'L' ) 
 		{
 			ob >> c, ob >> c;
 
 			if( c == '\"' )
 			{
 				if( !wstr )
-					theApp.Error("конкатенация строк разных типов");
+					theApp.Error("РєРѕРЅРєР°С‚РµРЅР°С†РёСЏ СЃС‚СЂРѕРє СЂР°Р·РЅС‹С… С‚РёРїРѕРІ");
 				wstr = true;
 			}
 
@@ -493,19 +493,19 @@ inline static int LexemString( BaseRead &ob )
 		}
 	}
 
-	return STRING;	// kill warning
+	return STRING; 	// kill warning
 }
 
 
-// функция возвращает ненулевое значение если символ восьмеричный
+// С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РЅРµРЅСѓР»РµРІРѕРµ Р·РЅР°С‡РµРЅРёРµ РµСЃР»Рё СЃРёРјРІРѕР» РІРѕСЃСЊРјРµСЂРёС‡РЅС‹Р№
 int isdigit8( int c )
 {
 	return c >= '0' && c <= '7';
 }
 
 
-// считывает число из входного потока, пока
-// функция isfunc возвращает true 
+// СЃС‡РёС‚С‹РІР°РµС‚ С‡РёСЃР»Рѕ РёР· РІС…РѕРґРЅРѕРіРѕ РїРѕС‚РѕРєР°, РїРѕРєР°
+// С„СѓРЅРєС†РёСЏ isfunc РІРѕР·РІСЂР°С‰Р°РµС‚ true 
 static void ReadDigit( BaseRead &ob, int (*isfunc)(int) )
 {
 	register int c;
@@ -520,33 +520,33 @@ static void ReadDigit( BaseRead &ob, int (*isfunc)(int) )
 }
 
 
-// считать суффикс у числа, вернуть true если суффикс suf
-// будет задан
+// СЃС‡РёС‚Р°С‚СЊ СЃСѓС„С„РёРєСЃ Сѓ С‡РёСЃР»Р°, РІРµСЂРЅСѓС‚СЊ true РµСЃР»Рё СЃСѓС„С„РёРєСЃ suf
+// Р±СѓРґРµС‚ Р·Р°РґР°РЅ
 static inline bool ReadDigitSuffix( BaseRead &ob, char suf )
 {
 	bool sl, ss;
 
-	sl = ss = false;	// два суффикса могут быть установлены
+	sl = ss = false; // РґРІР° СЃСѓС„С„РёРєСЃР° РјРѕРіСѓС‚ Р±С‹С‚СЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹
 
-	// первый суффикс 'l', второй suf
+	// РїРµСЂРІС‹Р№ СЃСѓС„С„РёРєСЃ 'l', РІС‚РѕСЂРѕР№ suf
 	for( register int c;; )
 	{
 		ob >> c;
 		if( toupper(c) == 'L' )
 		{
 			if( sl ) 
-				theApp.Warning("суффикс 'L' у числа уже задан");
+				theApp.Warning("СЃСѓС„С„РёРєСЃ 'L' Сѓ С‡РёСЃР»Р° СѓР¶Рµ Р·Р°РґР°РЅ");
 			else
 				sl = true, lexbuf += c;
 		}
 
-		// или 'U' или 'F'
+		// РёР»Рё 'U' РёР»Рё 'F'
 		else if( toupper(c) == toupper(suf) )
 		{
 			if( ss )
-				theApp.Warning("суффикс '%c' у числа уже задан", suf);
-			else 			
-				ss = true, lexbuf += c;				
+				theApp.Warning("СЃСѓС„С„РёРєСЃ '%c' Сѓ С‡РёСЃР»Р° СѓР¶Рµ Р·Р°РґР°РЅ", suf);
+			else 
+				ss = true, lexbuf += c;
 		}
 
 		else
@@ -560,7 +560,7 @@ static inline bool ReadDigitSuffix( BaseRead &ob, char suf )
 }
 
 
-// выделить лексему 'число'
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ 'С‡РёСЃР»Рѕ'
 inline static int LexemDigit( BaseRead &ob )
 {
 	register int c;
@@ -579,14 +579,14 @@ inline static int LexemDigit( BaseRead &ob )
 			
 			ob >> p; ob << p;
 
-			if( !isdigit(p) )	// просто оператор точка
+			if( !isdigit(p) ) // РїСЂРѕСЃС‚Рѕ РѕРїРµСЂР°С‚РѕСЂ С‚РѕС‡РєР°
 			{ ob << c;	return -1; }
 
 			else
 				state = 2;
 		}
 
-		// десятичное число 1-9
+		// РґРµСЃСЏС‚РёС‡РЅРѕРµ С‡РёСЃР»Рѕ 1-9
 		else 
 		{
 			lexbuf += c;
@@ -618,7 +618,7 @@ inline static int LexemDigit( BaseRead &ob )
 			ReadDigit( ob, isxdigit );
 
 			if( toupper( *(lexbuf.end() - 1) ) == 'X' )
-				theApp.Error("отсутствует 16-ричная последовательность после '%c'",c);
+				theApp.Error("РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ 16-СЂРёС‡РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РїРѕСЃР»Рµ '%c'",c);
 			return ReadDigitSuffix(ob, 'U') ? UINTEGER16 : INTEGER16;
 		}
 
@@ -626,7 +626,7 @@ inline static int LexemDigit( BaseRead &ob )
 		{
 			lexbuf += c;
 			ReadDigit( ob, isdigit8 );
-			return ReadDigitSuffix(ob, 'U') ? UINTEGER8 : INTEGER8;			
+			return ReadDigitSuffix(ob, 'U') ? UINTEGER8 : INTEGER8; 
 		}
 
 		else 
@@ -638,7 +638,7 @@ inline static int LexemDigit( BaseRead &ob )
 		break;
 
 	case 2:
-		// сюда переход только после точки
+		// СЃСЋРґР° РїРµСЂРµС…РѕРґ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ С‚РѕС‡РєРё
 		lexbuf += c;
 		ob >> c;
 	
@@ -661,14 +661,14 @@ inline static int LexemDigit( BaseRead &ob )
 			}
 		}
 
-		// иначе было считано число и осталась просто точка
+		// РёРЅР°С‡Рµ Р±С‹Р»Рѕ СЃС‡РёС‚Р°РЅРѕ С‡РёСЃР»Рѕ Рё РѕСЃС‚Р°Р»Р°СЃСЊ РїСЂРѕСЃС‚Рѕ С‚РѕС‡РєР°
 		else
 			goto read_suffix;
 
 		break;
 
 	case 3:
-		// сюда переход после E
+		// СЃСЋРґР° РїРµСЂРµС…РѕРґ РїРѕСЃР»Рµ E
 		lexbuf += c;
 		ob >> c;
 
@@ -678,7 +678,7 @@ inline static int LexemDigit( BaseRead &ob )
 		if( !isdigit(c) )
 		{
 			ob << c;
-			theApp.Error( "пропущено значение экспоненты" );
+			theApp.Error( "РїСЂРѕРїСѓС‰РµРЅРѕ Р·РЅР°С‡РµРЅРёРµ СЌРєСЃРїРѕРЅРµРЅС‚С‹" );
 			return LDOUBLE;
 		}
 
@@ -693,21 +693,21 @@ inline static int LexemDigit( BaseRead &ob )
 
 
 
-// выделить лексему символьная константа
+// РІС‹РґРµР»РёС‚СЊ Р»РµРєСЃРµРјСѓ СЃРёРјРІРѕР»СЊРЅР°СЏ РєРѕРЅСЃС‚Р°РЅС‚Р°
 inline static int LexemCharacter( BaseRead &ob )
 {
 	register int c;
 	
-	// символ ' уже считан, считываем до другого '
-	// либо до новой строки, количество символов не имеет
-	// значения, корректность значения символа проверяется после
+	// СЃРёРјРІРѕР» ' СѓР¶Рµ СЃС‡РёС‚Р°РЅ, СЃС‡РёС‚С‹РІР°РµРј РґРѕ РґСЂСѓРіРѕРіРѕ '
+	// Р»РёР±Рѕ РґРѕ РЅРѕРІРѕР№ СЃС‚СЂРѕРєРё, РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРёРјРІРѕР»РѕРІ РЅРµ РёРјРµРµС‚
+	// Р·РЅР°С‡РµРЅРёСЏ, РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ Р·РЅР°С‡РµРЅРёСЏ СЃРёРјРІРѕР»Р° РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РїРѕСЃР»Рµ
 	
 	ob >> c;
-	if( c == '\'' )	// пустой символ
+	if( c == '\'' ) // РїСѓСЃС‚РѕР№ СЃРёРјРІРѕР»
 	{
 		lexbuf += '\\',
-		lexbuf += '0', lexbuf += '\'';	// автоматически добавляем \0
-		theApp.Error( "пустой символ" );
+		lexbuf += '0', lexbuf += '\''; // Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РґРѕР±Р°РІР»СЏРµРј \0
+		theApp.Error( "РїСѓСЃС‚РѕР№ СЃРёРјРІРѕР»" );
 		return CHARACTER;
 	}
 
@@ -746,20 +746,20 @@ inline static int LexemCharacter( BaseRead &ob )
 		{
 			ob << c;
 
-			theApp.Error( "не хватает `\'' в конце строки" );
+			theApp.Error( "РЅРµ С…РІР°С‚Р°РµС‚ `\'' РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё" );
 			lexbuf += '\'';
 			return CHARACTER;
-		}		
+		} 
 
 		lexbuf += c;
 	}
 
-	return CHARACTER;	// kill warning
+	return CHARACTER; // kill warning
 }
 
 
-// функция выделяет следующую лексему из
-// потока in
+// С„СѓРЅРєС†РёСЏ РІС‹РґРµР»СЏРµС‚ СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ РёР·
+// РїРѕС‚РѕРєР° in
 static int Lex( BaseRead &ob, Position &lxmPos )
 {
 	register int c;
@@ -767,15 +767,15 @@ static int Lex( BaseRead &ob, Position &lxmPos )
 	lexbuf = "";
 	c = IgnoreNewlinesAndSpaces(ob);
 
-	lxmPos = ((CppFileRead&)ob).GetPosition();		// сохраняем позицию лексемы	
+	lxmPos = ((CppFileRead&)ob).GetPosition(); // СЃРѕС…СЂР°РЅСЏРµРј РїРѕР·РёС†РёСЋ Р»РµРєСЃРµРјС‹ 
 
 	if( IS_NAME_START(c) ) 
 	{
-		ob >> c;  // считываем этот символ еще раз
+		ob >> c;  // СЃС‡РёС‚С‹РІР°РµРј СЌС‚РѕС‚ СЃРёРјРІРѕР» РµС‰Рµ СЂР°Р·
 		lexbuf += c;
 		
-		// возможно признак обозначения wide-string
-		if( c == 'L' )	
+		// РІРѕР·РјРѕР¶РЅРѕ РїСЂРёР·РЅР°Рє РѕР±РѕР·РЅР°С‡РµРЅРёСЏ wide-string
+		if( c == 'L' ) 
 		{
 			int p; 
 
@@ -800,20 +800,20 @@ static int Lex( BaseRead &ob, Position &lxmPos )
 
 		LexemName(ob);
 
-		// возможно альтернативное имя, такое как and, or...
+		// РІРѕР·РјРѕР¶РЅРѕ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕРµ РёРјСЏ, С‚Р°РєРѕРµ РєР°Рє and, or...
 		if( int a = IsAlternativeName( lexbuf.c_str() ) )
 			return a;
 
-		// иначе просто имя,
-		// ключевые слова определяются потом
-		return NAME;	
+		// РёРЅР°С‡Рµ РїСЂРѕСЃС‚Рѕ РёРјСЏ,
+		// РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° РѕРїСЂРµРґРµР»СЏСЋС‚СЃСЏ РїРѕС‚РѕРј
+		return NAME; 
 	}
 
 	else if( isdigit(c) || c == '.' )
 	{
 		int r;
 		if( (r = LexemDigit(ob)) == -1 )
-			return LexemOperator(ob);	// иначе считываем точку (.*)
+			return LexemOperator(ob); // РёРЅР°С‡Рµ СЃС‡РёС‚С‹РІР°РµРј С‚РѕС‡РєСѓ (.*)
 		else
 			return r;
 	}
@@ -836,7 +836,7 @@ static int Lex( BaseRead &ob, Position &lxmPos )
 		return LexemOperator(ob);
 }
 
-// оператор вывода контейнера на стандартный вывод, используется при отладке
+// РѕРїРµСЂР°С‚РѕСЂ РІС‹РІРѕРґР° РєРѕРЅС‚РµР№РЅРµСЂР° РЅР° СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РІС‹РІРѕРґ, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё РѕС‚Р»Р°РґРєРµ
 ostream &operator<<( ostream &out, const LexemContainer &lc )
 {
 	out << "CALL   \"operator<<( ostream &out, const LexemContainer &lc )\"\n ";
@@ -848,21 +848,21 @@ ostream &operator<<( ostream &out, const LexemContainer &lc )
 }
 
 
-// получить следующую лексему
+// РїРѕР»СѓС‡РёС‚СЊ СЃР»РµРґСѓСЋС‰СѓСЋ Р»РµРєСЃРµРјСѓ
 const Lexem &LexicalAnalyzer::NextLexem()
 {
-	// сохраняем текущую лексему, как предыдущую и вычисляем след.
+	// СЃРѕС…СЂР°РЅСЏРµРј С‚РµРєСѓС‰СѓСЋ Р»РµРєСЃРµРјСѓ, РєР°Рє РїСЂРµРґС‹РґСѓС‰СѓСЋ Рё РІС‹С‡РёСЃР»СЏРµРј СЃР»РµРґ.
 	prevLxm = lastLxm;
 
-	// если буферная лексема задана, вернем ее
+	// РµСЃР»Рё Р±СѓС„РµСЂРЅР°СЏ Р»РµРєСЃРµРјР° Р·Р°РґР°РЅР°, РІРµСЂРЅРµРј РµРµ
 	if( backLxm.GetCode() != 0 )
 	{
 		lastLxm = backLxm;
-		backLxm = Lexem();		// очищаем буферную лексему
+		backLxm = Lexem(); // РѕС‡РёС‰Р°РµРј Р±СѓС„РµСЂРЅСѓСЋ Р»РµРєСЃРµРјСѓ
 		return lastLxm ;
 	}
 
-	// если задан контейнер, вернем из него
+	// РµСЃР»Рё Р·Р°РґР°РЅ РєРѕРЅС‚РµР№РЅРµСЂ, РІРµСЂРЅРµРј РёР· РЅРµРіРѕ
 	if( lexemContainer != NULL )
 	{
 		lastLxm = lexemContainer->front();
@@ -873,11 +873,11 @@ const Lexem &LexicalAnalyzer::NextLexem()
 		return lastLxm;
 	}
 
-	// иначе режим считывания из файла	
+	// РёРЅР°С‡Рµ СЂРµР¶РёРј СЃС‡РёС‚С‹РІР°РЅРёСЏ РёР· С„Р°Р№Р»Р°	
 	lastLxm.code = Lex(*inStream, lastLxm.pos);
 	lastLxm.buf = lexbuf.c_str();
 	
-	// если это имя, то проверим его семантическое значение
+	// РµСЃР»Рё СЌС‚Рѕ РёРјСЏ, С‚Рѕ РїСЂРѕРІРµСЂРёРј РµРіРѕ СЃРµРјР°РЅС‚РёС‡РµСЃРєРѕРµ Р·РЅР°С‡РµРЅРёРµ
 	if( lastLxm.code == NAME )
 	{
 		int nc = LookupCPPKeywords(lastLxm.buf.c_str());

@@ -1,4 +1,4 @@
-// реализация поведения сущностей относящихся к телу функции - Body.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РїРѕРІРµРґРµРЅРёСЏ СЃСѓС‰РЅРѕСЃС‚РµР№ РѕС‚РЅРѕСЃСЏС‰РёС…СЃСЏ Рє С‚РµР»Сѓ С„СѓРЅРєС†РёРё - Body.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -19,11 +19,11 @@ using namespace nrc;
 #include "ExpressionMaker.h"
 
 
-// единственный экземпляр ошибочного операнда
+// РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ СЌРєР·РµРјРїР»СЏСЂ РѕС€РёР±РѕС‡РЅРѕРіРѕ РѕРїРµСЂР°РЅРґР°
 POperand ErrorOperand::errorOperand = NULL;
 
 
-// явно определяем абстрактные деструкторы
+// СЏРІРЅРѕ РѕРїСЂРµРґРµР»СЏРµРј Р°Р±СЃС‚СЂР°РєС‚РЅС‹Рµ РґРµСЃС‚СЂСѓРєС‚РѕСЂС‹
 ObjectInitializator::~ObjectInitializator() { }
 BodyComponent::~BodyComponent() { }
 Instruction::~Instruction() { }	
@@ -31,7 +31,7 @@ AdditionalOperation::~AdditionalOperation() { }
 LabelBodyComponent::~LabelBodyComponent() { }
 
 
-// в деструкторе уничтожается значение по умолчанию
+// РІ РґРµСЃС‚СЂСѓРєС‚РѕСЂРµ СѓРЅРёС‡С‚РѕР¶Р°РµС‚СЃСЏ Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 Parametr::~Parametr() 
 {
 	if( defaultValue && !defaultValue->IsErrorOperand() )
@@ -39,21 +39,21 @@ Parametr::~Parametr()
 }
 
 
-// задаем функцию, создаем список инициализации
+// Р·Р°РґР°РµРј С„СѓРЅРєС†РёСЋ, СЃРѕР·РґР°РµРј СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 ConstructorFunctionBody::ConstructorFunctionBody( const Function &pFn, const Position &ccPos )
 	: FunctionBody(pFn, ccPos), oieList(new ObjectInitElementList)
 {
 }
 
 
-// удалить список инициализации конструктора
+// СѓРґР°Р»РёС‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 ConstructorFunctionBody::~ConstructorFunctionBody()
 {
 	delete oieList;
 }
 
 
-// задать список инициализации конструктора
+// Р·Р°РґР°С‚СЊ СЃРїРёСЃРѕРє РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°
 void ConstructorFunctionBody::SetConstructorInitList( const ObjectInitElementList &ol )
 {
 	oieList->assign(ol.begin(), ol.end());

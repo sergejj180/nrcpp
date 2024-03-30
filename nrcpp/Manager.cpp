@@ -1,4 +1,4 @@
-// реализиация интерфейсов КЛАССОВ-МЕНЕДЖЕРОВ - Manager.cpp
+// СЂРµР°Р»РёР·РёР°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃРѕРІ РљР›РђРЎРЎРћР’-РњР•РќР•Р”Р–Р•Р РћР’ - Manager.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -18,7 +18,7 @@ using namespace nrc;
 #include "Overload.h"  
 
 
-// поиск using-идентификатора по указателю на оригинальный идентификатор
+// РїРѕРёСЃРє using-РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° РїРѕ СѓРєР°Р·Р°С‚РµР»СЋ РЅР° РѕСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
 const UsingIdentifier *SynonymList::find_using_identifier( const Identifier *id ) const
 {
 	for( register const_iterator p = begin(); p != end(); p ++ )
@@ -35,62 +35,62 @@ const UsingIdentifier *SynonymList::find_using_identifier( const Identifier *id 
 }
 
 
-// конструктор принимает запрос, и заполняет список ролей
-// согласно запросу. 
-// qn - имя (запрос), bt - если задано, область видимости в которой следует
-// искать имя, watchFriend - производить поиск также и по дружеским областям,
-// для классов - базовые классы, для других - using области
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїСЂРёРЅРёРјР°РµС‚ Р·Р°РїСЂРѕСЃ, Рё Р·Р°РїРѕР»РЅСЏРµС‚ СЃРїРёСЃРѕРє СЂРѕР»РµР№
+// СЃРѕРіР»Р°СЃРЅРѕ Р·Р°РїСЂРѕСЃСѓ. 
+// qn - РёРјСЏ (Р·Р°РїСЂРѕСЃ), bt - РµСЃР»Рё Р·Р°РґР°РЅРѕ, РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РІ РєРѕС‚РѕСЂРѕР№ СЃР»РµРґСѓРµС‚
+// РёСЃРєР°С‚СЊ РёРјСЏ, watchFriend - РїСЂРѕРёР·РІРѕРґРёС‚СЊ РїРѕРёСЃРє С‚Р°РєР¶Рµ Рё РїРѕ РґСЂСѓР¶РµСЃРєРёРј РѕР±Р»Р°СЃС‚СЏРј,
+// РґР»СЏ РєР»Р°СЃСЃРѕРІ - Р±Р°Р·РѕРІС‹Рµ РєР»Р°СЃСЃС‹, РґР»СЏ РґСЂСѓРіРёС… - using РѕР±Р»Р°СЃС‚Рё
 NameManager::NameManager( const CharString &qn, const SymbolTable *bt, bool watchFriend )
 		: queryName(qn), bindTable(bt)
 {
-	// результирующая строка
+	// СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰Р°СЏ СЃС‚СЂРѕРєР°
 	IdentifierList foundList;
 
-	// если задана область видимости в которой следует производить поиск
+	// РµСЃР»Рё Р·Р°РґР°РЅР° РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё РІ РєРѕС‚РѕСЂРѕР№ СЃР»РµРґСѓРµС‚ РїСЂРѕРёР·РІРѕРґРёС‚СЊ РїРѕРёСЃРє
 	if( bindTable != NULL )
 	{
-		// производить поиск с учетом дружеских областей видимости
+		// РїСЂРѕРёР·РІРѕРґРёС‚СЊ РїРѕРёСЃРє СЃ СѓС‡РµС‚РѕРј РґСЂСѓР¶РµСЃРєРёС… РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё
 		if( watchFriend )
 			bindTable->FindSymbol( queryName, foundList );
 
-		// производим поиск только в данной области, не учитывая дружеские
-		// ОВ		
+		// РїСЂРѕРёР·РІРѕРґРёРј РїРѕРёСЃРє С‚РѕР»СЊРєРѕ РІ РґР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚Рё, РЅРµ СѓС‡РёС‚С‹РІР°СЏ РґСЂСѓР¶РµСЃРєРёРµ
+		// РћР’
 		else
 			bindTable->FindInScope( queryName, foundList );
 		
 	}
-	
-	// в противном случае - глубокий поиск по всем областям 
-	// видимости до нахождения первого соответствия, начиная с текущего
+
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ - РіР»СѓР±РѕРєРёР№ РїРѕРёСЃРє РїРѕ РІСЃРµРј РѕР±Р»Р°СЃС‚СЏРј 
+	// РІРёРґРёРјРѕСЃС‚Рё РґРѕ РЅР°С…РѕР¶РґРµРЅРёСЏ РїРµСЂРІРѕРіРѕ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ, РЅР°С‡РёРЅР°СЏ СЃ С‚РµРєСѓС‰РµРіРѕ
 	else
 		theApp.GetTranslationUnit().GetScopeSystem().DeepSearch(queryName, foundList);
 
-	// проверяем найдено ли соотв.
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР°Р№РґРµРЅРѕ Р»Рё СЃРѕРѕС‚РІ.
 	if( foundList.empty() )
 		return;
 
-	// иначе заполняем список out, парами идентификатор-роль
+	// РёРЅР°С‡Рµ Р·Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє out, РїР°СЂР°РјРё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ-СЂРѕР»СЊ
 	for( IdentifierList::iterator p = foundList.begin(); p != foundList.end() ; ++p )
 	{		
 		Identifier *id = const_cast<Identifier *>(*p);
 		INTERNAL_IF( id == NULL );
 
-		// создаем пару
+		// СЃРѕР·РґР°РµРј РїР°СЂСѓ
 		Role role = GetIdentifierRole(id);
 
-		// если имеем роль - using-идентификатор, следует получить
-		// указатель на действительный декларатор
+		// РµСЃР»Рё РёРјРµРµРј СЂРѕР»СЊ - using-РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ, СЃР»РµРґСѓРµС‚ РїРѕР»СѓС‡РёС‚СЊ
+		// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РґРµР№СЃС‚РІРёС‚РµР»СЊРЅС‹Р№ РґРµРєР»Р°СЂР°С‚РѕСЂ
 		if( role == R_USING_IDENTIFIER )
 		{
-			// помещаем синоним в список синонимов для возможности проверки доступа
+			// РїРѕРјРµС‰Р°РµРј СЃРёРЅРѕРЅРёРј РІ СЃРїРёСЃРѕРє СЃРёРЅРѕРЅРёРјРѕРІ РґР»СЏ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РїСЂРѕРІРµСЂРєРё РґРѕСЃС‚СѓРїР°
 			synonymList.push_back( RolePair(id, role) );
 			id = const_cast<Identifier *>(
 					&static_cast<UsingIdentifier *>(id)->GetUsingIdentifier());
 			role = GetIdentifierRole(id);
 			INTERNAL_IF( role == R_USING_IDENTIFIER );
 		}
-		
-		// если имеем синоним области видимости, преобразуем его в область видимости
+
+		// РµСЃР»Рё РёРјРµРµРј СЃРёРЅРѕРЅРёРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё, РїСЂРµРѕР±СЂР°Р·СѓРµРј РµРіРѕ РІ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 		else if( role == R_NAMESPACE_ALIAS )
 		{
 			synonymList.push_back( RolePair(id, role) );
@@ -98,51 +98,51 @@ NameManager::NameManager( const CharString &qn, const SymbolTable *bt, bool watc
 			role = R_NAMESPACE;
 		}
 
-		// это приводит к неверной генерации кода
+		// СЌС‚Рѕ РїСЂРёРІРѕРґРёС‚ Рє РЅРµРІРµСЂРЅРѕР№ РіРµРЅРµСЂР°С†РёРё РєРѕРґР°
 		this->roleList.push_back( RolePair(id, role) );
 	}
 }
 
 	
-// получить роль идентификатора
+// РїРѕР»СѓС‡РёС‚СЊ СЂРѕР»СЊ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
 Role NameManager::GetIdentifierRole( const Identifier *id ) 
 {
 	INTERNAL_IF( id == NULL );
 
-	// определеяем к какому классу относится id
-	// если объект
+	// РѕРїСЂРµРґРµР»РµСЏРµРј Рє РєР°РєРѕРјСѓ РєР»Р°СЃСЃСѓ РѕС‚РЅРѕСЃРёС‚СЃСЏ id
+	// РµСЃР»Рё РѕР±СЉРµРєС‚
 	if( const ::Object *obj = dynamic_cast<const ::Object *>(id) )
-		return obj->IsClassMember() ? R_DATAMEMBER : R_OBJECT;		// может быть данное-член
+		return obj->IsClassMember() ? R_DATAMEMBER : R_OBJECT; // РјРѕР¶РµС‚ Р±С‹С‚СЊ РґР°РЅРЅРѕРµ-С‡Р»РµРЅ
 		
-	// иначе если функция
+	// РёРЅР°С‡Рµ РµСЃР»Рё С„СѓРЅРєС†РёСЏ
 	else if( const Function *fn = dynamic_cast<const Function *>(id) )
 	{
-		// если шаблонная функция, неважно - конструктор, метод,
-		// или перегруженный оператор
+		// РµСЃР»Рё С€Р°Р±Р»РѕРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ, РЅРµРІР°Р¶РЅРѕ - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РјРµС‚РѕРґ,
+		// РёР»Рё РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ
 		if( fn->IsTemplate() )
 			return R_TEMPLATE_FUNCTION;
 
-		// специализация шаблонного класса, конструктора, метода и т.д.
+		// СЃРїРµС†РёР°Р»РёР·Р°С†РёСЏ С€Р°Р±Р»РѕРЅРЅРѕРіРѕ РєР»Р°СЃСЃР°, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°, РјРµС‚РѕРґР° Рё С‚.Рґ.
 		else if( fn->IsTemplateSpecialization() )
-			return R_TEMPLATE_FUNCTION_SPECIALIZATION;	
-		
-		// если метод
+			return R_TEMPLATE_FUNCTION_SPECIALIZATION;
+
+		// РµСЃР»Рё РјРµС‚РѕРґ
 		else if( fn->IsClassMember() )
 		{
-			// перегруженный оператор класса
+			// РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РєР»Р°СЃСЃР°
 			if( fn->IsOverloadOperator() )
 				return R_CLASS_OVERLOAD_OPERATOR;
 
-			// если конструктор
+			// РµСЃР»Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 			else if( dynamic_cast<const ConstructorMethod *>(fn) != NULL )
 				return R_CONSTRUCTOR;
 
-			// если метод
+			// РµСЃР»Рё РјРµС‚РѕРґ
 			else
 				return R_METHOD;
 		}
 
-		// иначе функция, которая может быть перегруженным оператором
+		// РёРЅР°С‡Рµ С„СѓРЅРєС†РёСЏ, РєРѕС‚РѕСЂР°СЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Рј РѕРїРµСЂР°С‚РѕСЂРѕРј
 		else
 		{
 			if( fn->IsOverloadOperator() )
@@ -152,29 +152,28 @@ Role NameManager::GetIdentifierRole( const Identifier *id )
 		}
 	}
 
-	// иначе если класс
+	// РёРЅР°С‡Рµ РµСЃР»Рё РєР»Р°СЃСЃ
 	else if( const ClassType *cls = dynamic_cast<const ClassType *>(id) )
 	{
-		// тип объединения
+		// С‚РёРї РѕР±СЉРµРґРёРЅРµРЅРёСЏ
 		if( cls->GetBaseTypeCode() == BaseType::BT_UNION )
-			return R_UNION_CLASS_TYPE;			
+			return R_UNION_CLASS_TYPE;
 
 		else
 			return R_CLASS_TYPE;
 	}	
 
-	// иначе если тип перечисления
+	// РёРЅР°С‡Рµ РµСЃР»Рё С‚РёРї РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 	else if( const EnumType *enumT = dynamic_cast<const EnumType *>(id) )
 		return R_ENUM_TYPE;
-	
-	
-	// иначе если шаблонный класс
+
+	// РёРЅР°С‡Рµ РµСЃР»Рё С€Р°Р±Р»РѕРЅРЅС‹Р№ РєР»Р°СЃСЃ
 	else if( const TemplateClassType *tmptCls = dynamic_cast<const TemplateClassType *>(id) )
 		return R_TEMPLATE_CLASS;
-	
-	// иначе если шаблонный параметр
+
+	// РёРЅР°С‡Рµ РµСЃР»Рё С€Р°Р±Р»РѕРЅРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ
 	else if( const TemplateParametr *param = dynamic_cast<const TemplateParametr *>(id) )
-	{		
+	{
 		if( param->GetTemplateParametrType() == TemplateParametr::TP_TYPE )
 			return R_TEMPLATE_TYPE_PARAMETR;
 
@@ -185,134 +184,134 @@ Role NameManager::GetIdentifierRole( const Identifier *id )
 			return R_TEMPLATE_TEMPLATE_PARAMETR;
 	}
 
-	// иначе если именованная область видимости
+	// РёРЅР°С‡Рµ РµСЃР»Рё РёРјРµРЅРѕРІР°РЅРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 	else if( const NameSpace *ns = dynamic_cast<const NameSpace *>(id) )
 		return R_NAMESPACE;
 
-	// иначе если параметр функции
+	// РёРЅР°С‡Рµ РµСЃР»Рё РїР°СЂР°РјРµС‚СЂ С„СѓРЅРєС†РёРё
 	else if( const Parametr *param = dynamic_cast<const Parametr *>(id) )
 		return R_PARAMETR;
 
 
-	// иначе если константа перечисления
+	// РёРЅР°С‡Рµ РµСЃР»Рё РєРѕРЅСЃС‚Р°РЅС‚Р° РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ
 	else if( const EnumConstant *ecnst = dynamic_cast<const EnumConstant *>(id) )
 		return ecnst->IsClassMember() ? R_CLASS_ENUM_CONSTANT : R_ENUM_CONSTANT;
 
-	// иначе если using-идентификатор
+	// РёРЅР°С‡Рµ РµСЃР»Рё using-РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
 	else if( const UsingIdentifier *ui = dynamic_cast<const UsingIdentifier *>(id) )
 		return R_USING_IDENTIFIER;
 
-	// иначе если синоним области видимости
+	// РёРЅР°С‡Рµ РµСЃР»Рё СЃРёРЅРѕРЅРёРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	else if( const NameSpaceAlias *nsa = dynamic_cast<const NameSpaceAlias *>(id) )
 		return R_NAMESPACE_ALIAS;
 
-	// иначе неизвестно
+	// РёРЅР°С‡Рµ РЅРµРёР·РІРµСЃС‚РЅРѕ
 	else
 		return R_UNCKNOWN;
 }
 
 
-// если имя является типом
+// РµСЃР»Рё РёРјСЏ СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРѕРј
 bool NameManager::IsTypeName() const
 {
 	return AmbiguityChecker(GetRoleList()).IsTypeName(false) != NULL;
 }
 
 
-// если имя является типом typedef
+// РµСЃР»Рё РёРјСЏ СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРѕРј typedef
 bool NameManager::IsTypedef() const
 {
 	return AmbiguityChecker(GetRoleList()).IsTypedef() != NULL;
 }
 
 
-// если имя является типом
+// РµСЃР»Рё РёРјСЏ СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРѕРј
 bool QualifiedNameManager::IsTypeName() const
 {
 	return AmbiguityChecker(GetRoleList()).IsTypeName(false) != NULL;
 }
 
 
-// если имя является типом typedef
+// РµСЃР»Рё РёРјСЏ СЏРІР»СЏРµС‚СЃСЏ С‚РёРїРѕРј typedef
 bool QualifiedNameManager::IsTypedef() const
 {
 	return AmbiguityChecker(GetRoleList()).IsTypedef() != NULL;
 }
 
 
-// создать менеджер составного имени,
-// можно задать область видимости, в которой следует искать имя. 	 
-// Эта функция используется для поиска среди составных имен, хотя может
-// использоваться и для одиночных, в случае если np содержит только
-// один под пакет. np - должен иметь заголовок PC_QUALIFIED_NAME или PC_QUALIFIED_TYPENAME
+// СЃРѕР·РґР°С‚СЊ РјРµРЅРµРґР¶РµСЂ СЃРѕСЃС‚Р°РІРЅРѕРіРѕ РёРјРµРЅРё,
+// РјРѕР¶РЅРѕ Р·Р°РґР°С‚СЊ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё, РІ РєРѕС‚РѕСЂРѕР№ СЃР»РµРґСѓРµС‚ РёСЃРєР°С‚СЊ РёРјСЏ.
+// Р­С‚Р° С„СѓРЅРєС†РёСЏ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РїРѕРёСЃРєР° СЃСЂРµРґРё СЃРѕСЃС‚Р°РІРЅС‹С… РёРјРµРЅ, С…РѕС‚СЏ РјРѕР¶РµС‚
+// РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ Рё РґР»СЏ РѕРґРёРЅРѕС‡РЅС‹С…, РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё np СЃРѕРґРµСЂР¶РёС‚ С‚РѕР»СЊРєРѕ
+// РѕРґРёРЅ РїРѕРґ РїР°РєРµС‚. np - РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ Р·Р°РіРѕР»РѕРІРѕРє PC_QUALIFIED_NAME РёР»Рё PC_QUALIFIED_TYPENAME
 QualifiedNameManager::QualifiedNameManager( const NodePackage *np, const SymbolTable *bt )
 	: queryPackage(np), bindTable(bt)
 {   
-	// проверка корректности входных параметров
+	// РїСЂРѕРІРµСЂРєР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚Рё РІС…РѕРґРЅС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ
 	INTERNAL_IF( np == NULL || (np->GetPackageID() != PC_QUALIFIED_NAME &&
 		np->GetPackageID() != PC_QUALIFIED_TYPENAME) );
 
-	// если пакетов нет, то и делать ничего не надо
+	// РµСЃР»Рё РїР°РєРµС‚РѕРІ РЅРµС‚, С‚Рѕ Рё РґРµР»Р°С‚СЊ РЅРёС‡РµРіРѕ РЅРµ РЅР°РґРѕ
 	if( np->GetChildPackageCount() == 0 )
 		return;
 
-	// если мы имеем всего один пакет
+	// РµСЃР»Рё РјС‹ РёРјРµРµРј РІСЃРµРіРѕ РѕРґРёРЅ РїР°РєРµС‚
 	if( np->GetChildPackageCount() == 1 )
 	{
-		// возможно был передан пакет с ошибкой
+		// РІРѕР·РјРѕР¶РЅРѕ Р±С‹Р» РїРµСЂРµРґР°РЅ РїР°РєРµС‚ СЃ РѕС€РёР±РєРѕР№
 		if( np->GetChildPackage(0)->GetPackageID() == PC_ERROR_CHILD_PACKAGE )
 			return;
 
-		// в противном случае пакет должен содержать лексему с кодом NAME
+		// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РїР°РєРµС‚ РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ Р»РµРєСЃРµРјСѓ СЃ РєРѕРґРѕРј NAME
 		register int pid = np->GetChildPackage(0)->GetPackageID() ;
 		INTERNAL_IF( pid != NAME && pid != PC_OVERLOAD_OPERATOR && pid != PC_CAST_OPERATOR &&
 			 pid != PC_DESTRUCTOR );
 
-		CharString nam = GetPackageName(*np->GetChildPackage(0));			
+		CharString nam = GetPackageName(*np->GetChildPackage(0));
 
-		// получаем роли для одиночного имени
+		// РїРѕР»СѓС‡Р°РµРј СЂРѕР»Рё РґР»СЏ РѕРґРёРЅРѕС‡РЅРѕРіРѕ РёРјРµРЅРё
 		NameManager nm( nam, this->bindTable );
 		roleList = nm.GetRoleList();
 		synonymList = nm.GetSynonymList();
 		return;
 	}
 
-	// иначе имеем составное имя, которое следует извлечь из пакета
-	// используя класс NameManager
-	// ---  ШАБЛОННЫЕ КЛАССЫ В КАЧЕСТВЕ ОБЛАСТЕЙ ВИДИМОСТИ НЕ РАССМАТРИВАЮТСЯ,
-	// ---  ИХ ПОДДЕРЖКУ СЛЕДУЕТ ДОБАВИТЬ, КОГДА БУДЕТ ИЗВЕСТНА САМА СИСТЕМА
-	// ---  ОБРАБОТКИ ШАБЛОНОВ
+	// РёРЅР°С‡Рµ РёРјРµРµРј СЃРѕСЃС‚Р°РІРЅРѕРµ РёРјСЏ, РєРѕС‚РѕСЂРѕРµ СЃР»РµРґСѓРµС‚ РёР·РІР»РµС‡СЊ РёР· РїР°РєРµС‚Р°
+	// РёСЃРїРѕР»СЊР·СѓСЏ РєР»Р°СЃСЃ NameManager
+	// ---  РЁРђР‘Р›РћРќРќР«Р• РљР›РђРЎРЎР« Р’ РљРђР§Р•РЎРўР’Р• РћР‘Р›РђРЎРўР•Р™ Р’РР”РРњРћРЎРўР РќР• Р РђРЎРЎРњРђРўР РР’РђР®РўРЎРЇ,
+	// ---  РРҐ РџРћР”Р”Р•Р Р–РљРЈ РЎР›Р•Р”РЈР•Рў Р”РћР‘РђР’РРўР¬, РљРћР“Р”Рђ Р‘РЈР”Р•Рў РР—Р’Р•РЎРўРќРђ РЎРђРњРђ РЎРРЎРўР•РњРђ
+	// ---  РћР‘Р РђР‘РћРўРљР РЁРђР‘Р›РћРќРћР’
 
-	const SymbolTable *entry = NULL;	// стартовая таблица символов с которой начинаем поиск
-	int i = 0;						// индекс пакета с которого начинается цикл обработки
+	const SymbolTable *entry = NULL; // СЃС‚Р°СЂС‚РѕРІР°СЏ С‚Р°Р±Р»РёС†Р° СЃРёРјРІРѕР»РѕРІ СЃ РєРѕС‚РѕСЂРѕР№ РЅР°С‡РёРЅР°РµРј РїРѕРёСЃРє
+	int i = 0; // РёРЅРґРµРєСЃ РїР°РєРµС‚Р° СЃ РєРѕС‚РѕСЂРѕРіРѕ РЅР°С‡РёРЅР°РµС‚СЃСЏ С†РёРєР» РѕР±СЂР°Р±РѕС‚РєРё
 
-	// ошибки возникающие при обработке составного имени возникают когда
-	// имя не является областью видимости. для перехвата этих ошибок мы и создаем try-блок
+	// РѕС€РёР±РєРё РІРѕР·РЅРёРєР°СЋС‰РёРµ РїСЂРё РѕР±СЂР°Р±РѕС‚РєРµ СЃРѕСЃС‚Р°РІРЅРѕРіРѕ РёРјРµРЅРё РІРѕР·РЅРёРєР°СЋС‚ РєРѕРіРґР°
+	// РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё. РґР»СЏ РїРµСЂРµС…РІР°С‚Р° СЌС‚РёС… РѕС€РёР±РѕРє РјС‹ Рё СЃРѕР·РґР°РµРј try-Р±Р»РѕРє
 	try {
 
-	// если код пакета - '::', произведем поиск первого имени в 
-	// глобальной области видимости
+	// РµСЃР»Рё РєРѕРґ РїР°РєРµС‚Р° - '::', РїСЂРѕРёР·РІРµРґРµРј РїРѕРёСЃРє РїРµСЂРІРѕРіРѕ РёРјРµРЅРё РІ 
+	// РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё
 	if( np->GetChildPackage(0)->GetPackageID() == COLON_COLON )
 	{
-		// следующей лексемой должен быть идентификатор
+		// СЃР»РµРґСѓСЋС‰РµР№ Р»РµРєСЃРµРјРѕР№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ
 		register int pid = np->GetChildPackage(1)->GetPackageID() ;
 		INTERNAL_IF( pid != NAME && pid != PC_OVERLOAD_OPERATOR && pid != PC_CAST_OPERATOR &&
 			 pid != PC_DESTRUCTOR );
 
-		// получаем глобальную область видимости
+		// РїРѕР»СѓС‡Р°РµРј РіР»РѕР±Р°Р»СЊРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
 		const SymbolTable *globalST = GetScopeSystem().GetFirstSymbolTable();
 
-		// производим поиск имени в глобальной области видимости без учета
-		// дружеских областей видимости
+		// РїСЂРѕРёР·РІРѕРґРёРј РїРѕРёСЃРє РёРјРµРЅРё РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Р±РµР· СѓС‡РµС‚Р°
+		// РґСЂСѓР¶РµСЃРєРёС… РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё
 		NameManager nm( GetPackageName(*np->GetChildPackage(1)), globalST, false );
 
-		// далее если пакета всего 2, то имя может и не быть областью видимости,
-		// оно является конечным, в противном случае имя должно быть областью видимости
+		// РґР°Р»РµРµ РµСЃР»Рё РїР°РєРµС‚Р° РІСЃРµРіРѕ 2, С‚Рѕ РёРјСЏ РјРѕР¶РµС‚ Рё РЅРµ Р±С‹С‚СЊ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё,
+		// РѕРЅРѕ СЏРІР»СЏРµС‚СЃСЏ РєРѕРЅРµС‡РЅС‹Рј, РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РёРјСЏ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё
 		if( np->GetChildPackageCount() == 2 )
 		{
 			roleList = nm.GetRoleList();
 			synonymList = nm.GetSynonymList();
-			qualifierList.AddSymbolTable(globalST);		// добавляем ОВ учавствующую в поиске
+			qualifierList.AddSymbolTable(globalST); // РґРѕР±Р°РІР»СЏРµРј РћР’ СѓС‡Р°РІСЃС‚РІСѓСЋС‰СѓСЋ РІ РїРѕРёСЃРєРµ
 			return;
 		}
 
@@ -320,19 +319,19 @@ QualifiedNameManager::QualifiedNameManager( const NodePackage *np, const SymbolT
 		{
 			entry = IsSymbolTable(nm);
 			if( !entry )
-				throw 1;	// ошибка, имя не является областью видимости
+				throw 1; // РѕС€РёР±РєР°, РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё
 			qualifierList.AddSymbolTable(entry);
-			i = 2;			// цикл обработки начнется со второго пакета
+			i = 2; // С†РёРєР» РѕР±СЂР°Р±РѕС‚РєРё РЅР°С‡РЅРµС‚СЃСЏ СЃРѕ РІС‚РѕСЂРѕРіРѕ РїР°РєРµС‚Р°
 		}
 	}
 
-	// в противном случае поиск следует производить с текущей области видимости,
-	// до первого соответствия
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РїРѕРёСЃРє СЃР»РµРґСѓРµС‚ РїСЂРѕРёР·РІРѕРґРёС‚СЊ СЃ С‚РµРєСѓС‰РµР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё,
+	// РґРѕ РїРµСЂРІРѕРіРѕ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ
 	else
 	{
-		// первым пакетом в нашем случае должно быть имя
+		// РїРµСЂРІС‹Рј РїР°РєРµС‚РѕРј РІ РЅР°С€РµРј СЃР»СѓС‡Р°Рµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РёРјСЏ
 		INTERNAL_IF( np->GetChildPackage(0)->GetPackageID() != NAME );
-		NameManager nm( GetPackageName(*np->GetChildPackage(0)), bindTable );		
+		NameManager nm( GetPackageName(*np->GetChildPackage(0)), bindTable );
 
 		entry = IsSymbolTable(nm);
 		if( !entry )
@@ -342,55 +341,55 @@ QualifiedNameManager::QualifiedNameManager( const NodePackage *np, const SymbolT
 	}
 
 		
-	// цикл спецификации имени: сохраняем области видимости из
-	// пакетов в список и получаем список ролей последнего имени
-	// 'i' задается выше, при считывании начальной области видимости 
+	// С†РёРєР» СЃРїРµС†РёС„РёРєР°С†РёРё РёРјРµРЅРё: СЃРѕС…СЂР°РЅСЏРµРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РёР·
+	// РїР°РєРµС‚РѕРІ РІ СЃРїРёСЃРѕРє Рё РїРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє СЂРѕР»РµР№ РїРѕСЃР»РµРґРЅРµРіРѕ РёРјРµРЅРё
+	// 'i' Р·Р°РґР°РµС‚СЃСЏ РІС‹С€Рµ, РїСЂРё СЃС‡РёС‚С‹РІР°РЅРёРё РЅР°С‡Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё 
 	for( ;; )
 	{
-		// пакет должен быть '::' и следом за ним должно идти имя
-		INTERNAL_IF( np->GetChildPackage(i)->GetPackageID() != COLON_COLON );	
+		// РїР°РєРµС‚ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ '::' Рё СЃР»РµРґРѕРј Р·Р° РЅРёРј РґРѕР»Р¶РЅРѕ РёРґС‚Рё РёРјСЏ
+		INTERNAL_IF( np->GetChildPackage(i)->GetPackageID() != COLON_COLON ); 
 		i++;
 		register int pid = np->GetChildPackage(i)->GetPackageID();
 		INTERNAL_IF( i == np->GetChildPackageCount() || 
 			(pid != NAME && pid != PC_OVERLOAD_OPERATOR && pid != PC_CAST_OPERATOR &&
 			 pid != PC_DESTRUCTOR) );
-		
-		// получаем имя из последней полученной области видимости,
-		// причем поиск нового имени производится именно в ней, без учета дружеских
-		// областей видимости
+
+		// РїРѕР»СѓС‡Р°РµРј РёРјСЏ РёР· РїРѕСЃР»РµРґРЅРµР№ РїРѕР»СѓС‡РµРЅРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё,
+		// РїСЂРёС‡РµРј РїРѕРёСЃРє РЅРѕРІРѕРіРѕ РёРјРµРЅРё РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РёРјРµРЅРЅРѕ РІ РЅРµР№, Р±РµР· СѓС‡РµС‚Р° РґСЂСѓР¶РµСЃРєРёС…
+		// РѕР±Р»Р°СЃС‚РµР№ РІРёРґРёРјРѕСЃС‚Рё
 		CharString name = GetPackageName(*np->GetChildPackage(i));
 		const SymbolTable *lastSt = 
 			&qualifierList.GetSymbolTable(qualifierList.GetSymbolTableCount()-1);
 
-		// есть один момент. Если lastSt - классовая область видимости и 
-		// name - такое же как имя класса, просто возвращаем список конструкторов
-		// класса и выходим
+		// РµСЃС‚СЊ РѕРґРёРЅ РјРѕРјРµРЅС‚. Р•СЃР»Рё lastSt - РєР»Р°СЃСЃРѕРІР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё Рё 
+		// name - С‚Р°РєРѕРµ Р¶Рµ РєР°Рє РёРјСЏ РєР»Р°СЃСЃР°, РїСЂРѕСЃС‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРј СЃРїРёСЃРѕРє РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ
+		// РєР»Р°СЃСЃР° Рё РІС‹С…РѕРґРёРј
 		if( lastSt->IsClassSymbolTable() && 
 			i == np->GetChildPackageCount()-1 &&
 			static_cast<const ClassType *>(lastSt)->GetName() == name )
 		{
 			INTERNAL_IF( !roleList.empty() );
 
-			// загружаем список конструкторов в список ролей
+			// Р·Р°РіСЂСѓР¶Р°РµРј СЃРїРёСЃРѕРє РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ РІ СЃРїРёСЃРѕРє СЂРѕР»РµР№
 			const ConstructorList &cl =
 				static_cast<const ClassType *>(lastSt)->GetConstructorList();
 			for( ConstructorList::const_iterator p = cl.begin(); p != cl.end(); p++ )
 				roleList.push_back( RolePair((ConstructorMethod*)*p, R_CONSTRUCTOR) );
 
-			// если список пуст, ошибка
+			// РµСЃР»Рё СЃРїРёСЃРѕРє РїСѓСЃС‚, РѕС€РёР±РєР°
 			if( cl.empty() )
 				theApp.Error(
 					ParserUtils::GetPackagePosition((NodePackage*)np->GetChildPackage(i)),
-					"'%s' - конструктор еще не объявлен", name.c_str());
+					"'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РµС‰Рµ РЅРµ РѕР±СЉСЏРІР»РµРЅ", name.c_str());
 			break;
 		}
 
-		NameManager stm( name, lastSt, false );		// получаем список ролей имени
+		NameManager stm( name, lastSt, false ); // РїРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє СЂРѕР»РµР№ РёРјРµРЅРё
 	
-		// если мы имеем последний идентификатор, т.е.
-		// то, что нам нужно в конечном итоге найти - получаем список 
-		// его ролей и выходим. В случае если у имени нет ролей (не найдено),
-		// все равно цикл обработки считается успешным, но выводится ошибка
+		// РµСЃР»Рё РјС‹ РёРјРµРµРј РїРѕСЃР»РµРґРЅРёР№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ, С‚.Рµ.
+		// С‚Рѕ, С‡С‚Рѕ РЅР°Рј РЅСѓР¶РЅРѕ РІ РєРѕРЅРµС‡РЅРѕРј РёС‚РѕРіРµ РЅР°Р№С‚Рё - РїРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє 
+		// РµРіРѕ СЂРѕР»РµР№ Рё РІС‹С…РѕРґРёРј. Р’ СЃР»СѓС‡Р°Рµ РµСЃР»Рё Сѓ РёРјРµРЅРё РЅРµС‚ СЂРѕР»РµР№ (РЅРµ РЅР°Р№РґРµРЅРѕ),
+		// РІСЃРµ СЂР°РІРЅРѕ С†РёРєР» РѕР±СЂР°Р±РѕС‚РєРё СЃС‡РёС‚Р°РµС‚СЃСЏ СѓСЃРїРµС€РЅС‹Рј, РЅРѕ РІС‹РІРѕРґРёС‚СЃСЏ РѕС€РёР±РєР°
 		if( i == np->GetChildPackageCount()-1 )
 		{
 			roleList = stm.GetRoleList();
@@ -398,46 +397,46 @@ QualifiedNameManager::QualifiedNameManager( const NodePackage *np, const SymbolT
 			if( roleList.empty() )
 				theApp.Error( 
 					ParserUtils::GetPackagePosition((NodePackage*)np->GetChildPackage(i)),
-					"'%s' - идентификатор не найден в области видимости '%s'",
+					"'%s' - РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅРµ РЅР°Р№РґРµРЅ РІ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё '%s'",
 					name.c_str(),
 					dynamic_cast<const Identifier *>(lastSt)->GetQualifiedName().c_str() );
 			
-			break;	// цикл окончен
+			break; // С†РёРєР» РѕРєРѕРЅС‡РµРЅ
 		}
 
-		// иначе имя должно быть областью видимости, добавляем ее в 
-		// список квалификаторов имени
+		// РёРЅР°С‡Рµ РёРјСЏ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё, РґРѕР±Р°РІР»СЏРµРј РµРµ РІ 
+		// СЃРїРёСЃРѕРє РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ РёРјРµРЅРё
 		else if( const SymbolTable *st = IsSymbolTable(stm) )
-			qualifierList.AddSymbolTable(st);				
+			qualifierList.AddSymbolTable(st);
 
-		// иначе возбуждаем исключительную ситуацию для вывода ошибки
+		// РёРЅР°С‡Рµ РІРѕР·Р±СѓР¶РґР°РµРј РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅСѓСЋ СЃРёС‚СѓР°С†РёСЋ РґР»СЏ РІС‹РІРѕРґР° РѕС€РёР±РєРё
 		else
-			throw i;	
+			throw i;
 		i++;
 	}
 
-	// ошибки типа имя не является областью видимости, в параметре
-	// индекс пакета в котором содержится имя
+	// РѕС€РёР±РєРё С‚РёРїР° РёРјСЏ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё, РІ РїР°СЂР°РјРµС‚СЂРµ
+	// РёРЅРґРµРєСЃ РїР°РєРµС‚Р° РІ РєРѕС‚РѕСЂРѕРј СЃРѕРґРµСЂР¶РёС‚СЃСЏ РёРјСЏ
 	} catch( int pkgIx ) {
 
-		// освобождаем память занятую списками и выводим ошибку
+		// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ Р·Р°РЅСЏС‚СѓСЋ СЃРїРёСЃРєР°РјРё Рё РІС‹РІРѕРґРёРј РѕС€РёР±РєСѓ
 		roleList.clear();
 		qualifierList.Clear();
 		synonymList.clear();
 
 		LexemPackage *lp = (LexemPackage *)np->GetChildPackage(pkgIx);
 		theApp.Error( lp->GetLexem().GetPos(), 
-			"'%s' не является квалификатором области видимости",
+			"'%s' РЅРµ СЏРІР»СЏРµС‚СЃСЏ РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРј РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё",
 			lp->GetLexem().GetBuf().c_str() );
 	}	
 }
 
-// проверить, является ли имя областью видимости. Если является - возвращает 
-// указатель на нее, в противном случае - NULL
+// РїСЂРѕРІРµСЂРёС‚СЊ, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РёРјСЏ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё. Р•СЃР»Рё СЏРІР»СЏРµС‚СЃСЏ - РІРѕР·РІСЂР°С‰Р°РµС‚ 
+// СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅРµРµ, РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ - NULL
 const SymbolTable *QualifiedNameManager::IsSymbolTable( const NameManager &nm ) const 
 {
-	// имя должно быть классом, именованованной областью видимости,
-	// либо typedef - типом, который определяет класс
+	// РёРјСЏ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РєР»Р°СЃСЃРѕРј, РёРјРµРЅРѕРІР°РЅРѕРІР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚СЊСЋ РІРёРґРёРјРѕСЃС‚Рё,
+	// Р»РёР±Рѕ typedef - С‚РёРїРѕРј, РєРѕС‚РѕСЂС‹Р№ РѕРїСЂРµРґРµР»СЏРµС‚ РєР»Р°СЃСЃ
 	const SymbolTable *rval = NULL;
 	AmbiguityChecker achk(nm.GetRoleList(), ParserUtils::GetPackagePosition(queryPackage), true);
 
@@ -447,7 +446,7 @@ const SymbolTable *QualifiedNameManager::IsSymbolTable( const NameManager &nm ) 
 	else if( const NameSpace *ns = achk.IsNameSpace() )
 		return ns;
 
-	// в typedef'е, может быть класс
+	// РІ typedef'Рµ, РјРѕР¶РµС‚ Р±С‹С‚СЊ РєР»Р°СЃСЃ
 	else if( const ::Object *td = achk.IsTypedef() )
 	{
 		if( const ClassType *cls = CheckerUtils::TypedefIsClass(*td) )
@@ -460,15 +459,15 @@ const SymbolTable *QualifiedNameManager::IsSymbolTable( const NameManager &nm ) 
 }
 
 
-// возвращает имя пакета. Пакет может иметь код NAME, PC_OVERLOAD_OPERATOR,
-// PC_CAST_OPERATOR, PC_DESTRUCTOR. В последних двух случаях вызывается 
-// функция-строитель для получения корректного имени идентификатора
+// РІРѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ РїР°РєРµС‚Р°. РџР°РєРµС‚ РјРѕР¶РµС‚ РёРјРµС‚СЊ РєРѕРґ NAME, PC_OVERLOAD_OPERATOR,
+// PC_CAST_OPERATOR, PC_DESTRUCTOR. Р’ РїРѕСЃР»РµРґРЅРёС… РґРІСѓС… СЃР»СѓС‡Р°СЏС… РІС‹Р·С‹РІР°РµС‚СЃСЏ 
+// С„СѓРЅРєС†РёСЏ-СЃС‚СЂРѕРёС‚РµР»СЊ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕСЂСЂРµРєС‚РЅРѕРіРѕ РёРјРµРЅРё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
 CharString QualifiedNameManager::GetPackageName( const Package &pkg )
 {
 	register int pid = pkg.GetPackageID();
 
-	if( pid == NAME )	
-		return static_cast<const LexemPackage &>(pkg).GetLexem().GetBuf();	
+	if( pid == NAME )
+		return static_cast<const LexemPackage &>(pkg).GetLexem().GetBuf();
 
 	else if( pid == PC_OVERLOAD_OPERATOR )
 	{
@@ -500,23 +499,23 @@ CharString QualifiedNameManager::GetPackageName( const Package &pkg )
 
 	else
 		INTERNAL( 
-			"'QualifiedNameManager::GetPackageName' принимает пакет с некорректным кодом");
+			"'QualifiedNameManager::GetPackageName' РїСЂРёРЅРёРјР°РµС‚ РїР°РєРµС‚ СЃ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Рј РєРѕРґРѕРј");
 	return "";
 }
 
 
-// менеджер встроенных типов. В параметрах код типа, код модификаторов,
-// если модификаторы не заданы они равны -1
+// РјРµРЅРµРґР¶РµСЂ РІСЃС‚СЂРѕРµРЅРЅС‹С… С‚РёРїРѕРІ. Р’ РїР°СЂР°РјРµС‚СЂР°С… РєРѕРґ С‚РёРїР°, РєРѕРґ РјРѕРґРёС„РёРєР°С‚РѕСЂРѕРІ,
+// РµСЃР»Рё РјРѕРґРёС„РёРєР°С‚РѕСЂС‹ РЅРµ Р·Р°РґР°РЅС‹ РѕРЅРё СЂР°РІРЅС‹ -1
 ImplicitTypeManager::ImplicitTypeManager( int lcode, int msgn, int msz )
 {
-	// структура для перевода из кодов лексем во
-	// внутренние коды базовых типов
+	// СЃС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ РїРµСЂРµРІРѕРґР° РёР· РєРѕРґРѕРІ Р»РµРєСЃРµРј РІРѕ
+	// РІРЅСѓС‚СЂРµРЅРЅРёРµ РєРѕРґС‹ Р±Р°Р·РѕРІС‹С… С‚РёРїРѕРІ
 	struct LxmToBT
 	{
-		// внутренний код
+		// РІРЅСѓС‚СЂРµРЅРЅРёР№ РєРѕРґ
 		BaseType::BT btCode;
 		
-		// код лексемы
+		// РєРѕРґ Р»РµРєСЃРµРјС‹
 		int lxmCode;
 	} codes[] = {
 		BaseType::BT_BOOL,    KWBOOL,
@@ -532,23 +531,23 @@ ImplicitTypeManager::ImplicitTypeManager( int lcode, int msgn, int msz )
 	for( int i = 0; i< sizeof(codes)/ sizeof(LxmToBT) ; i++ )
 		if( codes[i].lxmCode == lcode ) 
 		{
-			baseTypeCode = codes[i].btCode;			
+			baseTypeCode = codes[i].btCode;
 			break;
 		}
 
-	// код базового типа должен быть задан
+	// РєРѕРґ Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р·Р°РґР°РЅ
 	INTERNAL_IF( baseTypeCode == BaseType::BT_NONE );
 	modSign = BaseType::MN_NONE;
 	modSize = BaseType::MZ_NONE;
 
-	// задаем модификатор знака
+	// Р·Р°РґР°РµРј РјРѕРґРёС„РёРєР°С‚РѕСЂ Р·РЅР°РєР°
 	if( msgn != -1 )
 	{
 		INTERNAL_IF( msgn != KWSIGNED && msgn != KWUNSIGNED );
 		modSign = (msgn == KWUNSIGNED ? BaseType::MN_UNSIGNED : BaseType::MN_SIGNED);
 	}
 
-	// задаем модификатор размера
+	// Р·Р°РґР°РµРј РјРѕРґРёС„РёРєР°С‚РѕСЂ СЂР°Р·РјРµСЂР°
 	if( msz != -1 )
 	{
 		INTERNAL_IF( msz != KWSHORT && msz != KWLONG );
@@ -556,7 +555,7 @@ ImplicitTypeManager::ImplicitTypeManager( int lcode, int msgn, int msz )
 	}
 }
 
-// конструктор для уже созданного типа
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґР»СЏ СѓР¶Рµ СЃРѕР·РґР°РЅРЅРѕРіРѕ С‚РёРїР°
 ImplicitTypeManager::ImplicitTypeManager( const BaseType &bt )
 {
 	baseTypeCode = bt.GetBaseTypeCode();
@@ -565,10 +564,10 @@ ImplicitTypeManager::ImplicitTypeManager( const BaseType &bt )
 }
 
 
-// по коду, возвращает указатель на уже созданный базовый тип
+// РїРѕ РєРѕРґСѓ, РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СѓР¶Рµ СЃРѕР·РґР°РЅРЅС‹Р№ Р±Р°Р·РѕРІС‹Р№ С‚РёРї
 const BaseType &ImplicitTypeManager::GetImplicitType()
 {
-	// инкапсулированная таблица базовых типов
+	// РёРЅРєР°РїСЃСѓР»РёСЂРѕРІР°РЅРЅР°СЏ С‚Р°Р±Р»РёС†Р° Р±Р°Р·РѕРІС‹С… С‚РёРїРѕРІ
 	static BaseType *btTable[] = {
 		new BaseType(BaseType::BT_BOOL),
 		new BaseType(BaseType::BT_CHAR),
@@ -593,28 +592,28 @@ const BaseType &ImplicitTypeManager::GetImplicitType()
 
 
 	if( baseTypeCode != BaseType::BT_INT && baseTypeCode != BaseType::BT_CHAR )	
-		modSign = BaseType::MN_NONE;		
+		modSign = BaseType::MN_NONE;
 
 	if( baseTypeCode != BaseType::BT_INT && baseTypeCode != BaseType::BT_DOUBLE )
 		modSize = BaseType::MZ_NONE;
 
 	for( int i = 0; i<sizeof(btTable)/sizeof(BaseType*); i++ )
 		if( btTable[i]->GetBaseTypeCode() == baseTypeCode &&
-			btTable[i]->GetSizeModifier() == modSize	  &&
-			btTable[i]->GetSignModifier() == modSign	  )
+			btTable[i]->GetSizeModifier() == modSize  &&
+			btTable[i]->GetSignModifier() == modSign  )
 			return *btTable[i];
 		
-	INTERNAL( "код базового типа не рассматривается в методе 'GetImplicitType'" );
-	return *new BaseType(BaseType::BT_NONE);	// убить предупр.
+	INTERNAL( "РєРѕРґ Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° РЅРµ СЂР°СЃСЃРјР°С‚СЂРёРІР°РµС‚СЃСЏ РІ РјРµС‚РѕРґРµ 'GetImplicitType'" );
+	return *new BaseType(BaseType::BT_NONE); // СѓР±РёС‚СЊ РїСЂРµРґСѓРїСЂ.
 }
 
 
-// получить размер типа
+// РїРѕР»СѓС‡РёС‚СЊ СЂР°Р·РјРµСЂ С‚РёРїР°
 int ImplicitTypeManager::GetImplicitTypeSize() const 
 {
 	switch( baseTypeCode )
 	{
-	case BaseType::BT_BOOL:	
+	case BaseType::BT_BOOL:
 		return BOOL_TYPE_SIZE;
 
 	case BaseType::BT_CHAR:
@@ -623,7 +622,7 @@ int ImplicitTypeManager::GetImplicitTypeSize() const
 	case BaseType::BT_WCHAR_T:
 		return WCHAR_T_TYPE_SIZE;
 
-	case BaseType::BT_INT:	
+	case BaseType::BT_INT:
 		if( modSize == BaseType::MZ_SHORT )
 			return SHORT_INT_TYPE_SIZE;
 
@@ -639,24 +638,24 @@ int ImplicitTypeManager::GetImplicitTypeSize() const
 	case BaseType::BT_DOUBLE:
 		return modSize == BaseType::MZ_LONG ? LONG_DOUBLE_TYPE_SIZE : DOUBLE_TYPE_SIZE;
 
-		// размер типа void не должен братся, на совести вызывающей функции
-	case BaseType::BT_VOID:		
+		// СЂР°Р·РјРµСЂ С‚РёРїР° void РЅРµ РґРѕР»Р¶РµРЅ Р±СЂР°С‚СЃСЏ, РЅР° СЃРѕРІРµСЃС‚Рё РІС‹Р·С‹РІР°СЋС‰РµР№ С„СѓРЅРєС†РёРё
+	case BaseType::BT_VOID:
 		return VOID_TYPE_SIZE;
-	
-		// в противном случае, внутренняя ошибка
+
+		// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР°
 	default:
-		INTERNAL( "код базового типа не рассматривается в методе 'GetImplicitTypeSize'" );
+		INTERNAL( "РєРѕРґ Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° РЅРµ СЂР°СЃСЃРјР°С‚СЂРёРІР°РµС‚СЃСЏ РІ РјРµС‚РѕРґРµ 'GetImplicitTypeSize'" );
 	}
 
-	return -1;		// убить warning
+	return -1; // СѓР±РёС‚СЊ warning
 }
 
-// получить строковое представление имени
+// РїРѕР»СѓС‡РёС‚СЊ СЃС‚СЂРѕРєРѕРІРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ РёРјРµРЅРё
 CharString ImplicitTypeManager::GetImplicitTypeName() const 
 {
 	switch( baseTypeCode )
 	{
-	case BaseType::BT_BOOL:	
+	case BaseType::BT_BOOL:
 		return "bool";
 
 	case BaseType::BT_CHAR:
@@ -672,13 +671,13 @@ CharString ImplicitTypeManager::GetImplicitTypeName() const
 	case BaseType::BT_WCHAR_T:
 		return "wchar_t";
 
-	case BaseType::BT_INT:	
+	case BaseType::BT_INT:
 		{
 			CharString intnam;
 			
 			if( modSign == BaseType::MN_SIGNED )
 				intnam += "signed ";
-		
+
 			else if( modSign == BaseType::MN_UNSIGNED )
 				intnam += "unsigned ";
 
@@ -698,20 +697,20 @@ CharString ImplicitTypeManager::GetImplicitTypeName() const
 	case BaseType::BT_DOUBLE:
 		return modSize == BaseType::MZ_LONG ? "long double" : "double";
 
-		// размер типа void не должен братся, на совести вызывающей функции
-	case BaseType::BT_VOID:		
+		// СЂР°Р·РјРµСЂ С‚РёРїР° void РЅРµ РґРѕР»Р¶РµРЅ Р±СЂР°С‚СЃСЏ, РЅР° СЃРѕРІРµСЃС‚Рё РІС‹Р·С‹РІР°СЋС‰РµР№ С„СѓРЅРєС†РёРё
+	case BaseType::BT_VOID:
 		return "void";
 	
-		// в противном случае, внутренняя ошибка
+		// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ, РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР°
 	default:
-		INTERNAL( "код базового типа не рассматривается в методе 'GetImplicitTypeName'" );
+		INTERNAL( "РєРѕРґ Р±Р°Р·РѕРІРѕРіРѕ С‚РёРїР° РЅРµ СЂР°СЃСЃРјР°С‚СЂРёРІР°РµС‚СЃСЏ РІ РјРµС‚РѕРґРµ 'GetImplicitTypeName'" );
 	}
 
-	return CharString();		// убить warning
+	return CharString(); // СѓР±РёС‚СЊ warning
 }
 
 
-// конструктор определяет к какой группе относится код
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РѕРїСЂРµРґРµР»СЏРµС‚ Рє РєР°РєРѕР№ РіСЂСѓРїРїРµ РѕС‚РЅРѕСЃРёС‚СЃСЏ РєРѕРґ
 TypeSpecifierManager::TypeSpecifierManager( int c ) : code(c), group(TSG_UNCKNOWN)
 {
 	if( c == KWBOOL || c == KWCHAR  || c == KWWCHAR_T ||
@@ -742,30 +741,30 @@ TypeSpecifierManager::TypeSpecifierManager( int c ) : code(c), group(TSG_UNCKNOW
 }
 
 
-// получить имя группы на русском языке
+// РїРѕР»СѓС‡РёС‚СЊ РёРјСЏ РіСЂСѓРїРїС‹ РЅР° СЂСѓСЃСЃРєРѕРј СЏР·С‹РєРµ
 CharString TypeSpecifierManager::GetGroupNameRU() const
 {
 	switch( group )
-	{	
-	case TSG_BASETYPE:		return "базовый тип";
-	case TSG_CLASSSPEC:		return "спецификатор класса";
-	case TSG_CVQUALIFIER:	return "cv-квалификатор";
-	case TSG_SIGNMODIFIER:	return "модификатор знака";
-	case TSG_SIZEMODIFIER:	return "модификатор размера";
-	case TSG_STORAGESPEC:	return "спецификатор хранения";
-	case TSG_FRIEND:		return "спецификатор дружбы";
-	case TSG_FUNCTIONSPEC:	return "спецификатор функции";
+	{
+	case TSG_BASETYPE:		return "Р±Р°Р·РѕРІС‹Р№ С‚РёРї";
+	case TSG_CLASSSPEC:		return "СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РєР»Р°СЃСЃР°";
+	case TSG_CVQUALIFIER:	return "cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂ";
+	case TSG_SIGNMODIFIER:	return "РјРѕРґРёС„РёРєР°С‚РѕСЂ Р·РЅР°РєР°";
+	case TSG_SIZEMODIFIER:	return "РјРѕРґРёС„РёРєР°С‚РѕСЂ СЂР°Р·РјРµСЂР°";
+	case TSG_STORAGESPEC:	return "СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ";
+	case TSG_FRIEND:		return "СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹";
+	case TSG_FUNCTIONSPEC:	return "СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С„СѓРЅРєС†РёРё";
 	}
 
-	return "<неизвестная группа>";
+	return "<РЅРµРёР·РІРµСЃС‚РЅР°СЏ РіСЂСѓРїРїР°>";
 }
 
 
-// получить имя группы на английском
+// РїРѕР»СѓС‡РёС‚СЊ РёРјСЏ РіСЂСѓРїРїС‹ РЅР° Р°РЅРіР»РёР№СЃРєРѕРј
 CharString TypeSpecifierManager::GetGroupNameENG() const
 {
 	switch( group )
-	{	
+	{
 	case TSG_BASETYPE:		return "base type";
 	case TSG_CLASSSPEC:		return "class specifier";
 	case TSG_CVQUALIFIER:	return "cv-qualifier";
@@ -780,7 +779,7 @@ CharString TypeSpecifierManager::GetGroupNameENG() const
 }
 
 
-// вернуть базовый тип, в случае если спецификатор является базовым типом	
+// РІРµСЂРЅСѓС‚СЊ Р±Р°Р·РѕРІС‹Р№ С‚РёРї, РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё СЃРїРµС†РёС„РёРєР°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ Р±Р°Р·РѕРІС‹Рј С‚РёРїРѕРј
 BaseType::BT TypeSpecifierManager::CodeToBaseType() const 
 {
 	INTERNAL_IF( !IsBaseType() );
@@ -788,10 +787,10 @@ BaseType::BT TypeSpecifierManager::CodeToBaseType() const
 }
 
 
-// вернуть спецификатор класса
+// РІРµСЂРЅСѓС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РєР»Р°СЃСЃР°
 BaseType::BT TypeSpecifierManager::CodeToClassSpec() const
 {
-	INTERNAL_IF( !IsClassSpec() );		
+	INTERNAL_IF( !IsClassSpec() );
 	if( code == KWCLASS )
 		return BaseType::BT_CLASS;
 
@@ -806,25 +805,25 @@ BaseType::BT TypeSpecifierManager::CodeToClassSpec() const
 
 }
 
-// вернуть модификатор знака
+// РІРµСЂРЅСѓС‚СЊ РјРѕРґРёС„РёРєР°С‚РѕСЂ Р·РЅР°РєР°
 BaseType::MSIGN TypeSpecifierManager::CodeToSignModifier() const
 {
 	INTERNAL_IF( !IsSignModifier() );
-	return code == KWSIGNED ? BaseType::MN_SIGNED : BaseType::MN_UNSIGNED;			
+	return code == KWSIGNED ? BaseType::MN_SIGNED : BaseType::MN_UNSIGNED;
 }
 
-// вернуть модификатор размера
+// РІРµСЂРЅСѓС‚СЊ РјРѕРґРёС„РёРєР°С‚РѕСЂ СЂР°Р·РјРµСЂР°
 BaseType::MSIZE TypeSpecifierManager::CodeToSizeModifier() const 
 {
-	INTERNAL_IF( !IsSizeModifier() );	
-	return code == KWLONG ? BaseType::MZ_LONG : BaseType::MZ_SHORT;			
+	INTERNAL_IF( !IsSizeModifier() );
+	return code == KWLONG ? BaseType::MZ_LONG : BaseType::MZ_SHORT;
 }
 
 
-// вернуть спецификатор хранения
+// РІРµСЂРЅСѓС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ
 ::Object::SS TypeSpecifierManager::CodeToStorageSpecifierObj() const
 {
-	INTERNAL_IF( !IsStorageSpecifier() );	
+	INTERNAL_IF( !IsStorageSpecifier() );
 	if( code == KWAUTO )
 		return ::Object::SS_AUTO;
 
@@ -843,12 +842,12 @@ BaseType::MSIZE TypeSpecifierManager::CodeToSizeModifier() const
 	else if( code == KWMUTABLE )
 		return ::Object::SS_MUTABLE;
 
-	INTERNAL( "'CodeToStorageSpecifierObj' получил не корректный код" );
-	return ::Object::SS_NONE;	// этого не должно быть
+	INTERNAL( "'CodeToStorageSpecifierObj' РїРѕР»СѓС‡РёР» РЅРµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ РєРѕРґ" );
+	return ::Object::SS_NONE; // СЌС‚РѕРіРѕ РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ
 }
 
 	
-// вернуть спецификатор хранения функции
+// РІРµСЂРЅСѓС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё
 Function::SS TypeSpecifierManager::CodeToStorageSpecifierFn() const
 {
 	INTERNAL_IF( !IsStorageSpecifier() );
@@ -861,12 +860,12 @@ Function::SS TypeSpecifierManager::CodeToStorageSpecifierFn() const
 	else if( code == KWTYPEDEF )
 		return Function::SS_TYPEDEF;
 	
-	INTERNAL( "'CodeToStorageSpecifierFn' получил не корректный код" ); 
+	INTERNAL( "'CodeToStorageSpecifierFn' РїРѕР»СѓС‡РёР» РЅРµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ РєРѕРґ" ); 
 	return Function::SS_NONE;
 }
 
 
-// получить строковое представление спецификатора хранения объекта
+// РїРѕР»СѓС‡РёС‚СЊ СЃС‚СЂРѕРєРѕРІРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С…СЂР°РЅРµРЅРёСЏ РѕР±СЉРµРєС‚Р°
 CharString ManagerUtils::GetObjectStorageSpecifierName( ::Object::SS ss )
 {
 	switch( ss )
@@ -881,12 +880,12 @@ CharString ManagerUtils::GetObjectStorageSpecifierName( ::Object::SS ss )
 	case ::Object::SS_NONE:			return "<none>";
 	}
 
-	INTERNAL("'GetObjectStorageSpecifierName' функция получает неизвестный код");
+	INTERNAL("'GetObjectStorageSpecifierName' С„СѓРЅРєС†РёСЏ РїРѕР»СѓС‡Р°РµС‚ РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ");
 	return "";
 }
 
 
-// получить строковое представление спецификатора функции
+// РїРѕР»СѓС‡РёС‚СЊ СЃС‚СЂРѕРєРѕРІРѕРµ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёРµ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С„СѓРЅРєС†РёРё
 CharString ManagerUtils::GetFunctionStorageSpecifierName( Function::SS ss )
 {
 	switch( ss )
@@ -897,33 +896,33 @@ CharString ManagerUtils::GetFunctionStorageSpecifierName( Function::SS ss )
 	case ::Object::SS_NONE:			return "<none>";
 	}
 
-	INTERNAL("'GetFunctionStorageSpecifierName' функция получает неизвестный код");
+	INTERNAL("'GetFunctionStorageSpecifierName' С„СѓРЅРєС†РёСЏ РїРѕР»СѓС‡Р°РµС‚ РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ");
 	return "";
 }
 
 
-// получить спецификатор доступа в виде имени
+// РїРѕР»СѓС‡РёС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° РІ РІРёРґРµ РёРјРµРЅРё
 PCSTR ManagerUtils::GetAccessSpecifierName( ClassMember::AS as )
 {
 	switch( as )
 	{
-	case ClassMember::AS_PUBLIC:	return "открытый";
-	case ClassMember::AS_PRIVATE:	return "закрытый";
-	case ClassMember::AS_PROTECTED:	return "защищенный";
-	case ClassMember::NOT_CLASS_MEMBER: return "<не член>";
+	case ClassMember::AS_PUBLIC:	return "РѕС‚РєСЂС‹С‚С‹Р№";
+	case ClassMember::AS_PRIVATE:	return "Р·Р°РєСЂС‹С‚С‹Р№";
+	case ClassMember::AS_PROTECTED:	return "Р·Р°С‰РёС‰РµРЅРЅС‹Р№";
+	case ClassMember::NOT_CLASS_MEMBER: return "<РЅРµ С‡Р»РµРЅ>";
 	}
 
-	INTERNAL( "'GetAccessSpecifierName' получила неизвестный код спецификатора доступа" );
+	INTERNAL( "'GetAccessSpecifierName' РїРѕР»СѓС‡РёР»Р° РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РєРѕРґ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° РґРѕСЃС‚СѓРїР°" );
 	return "";
 }
 
 
-// получить название области видимости в виде имени, если
-// она является идентификатором, вернуть его
+// РїРѕР»СѓС‡РёС‚СЊ РЅР°Р·РІР°РЅРёРµ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё РІ РІРёРґРµ РёРјРµРЅРё, РµСЃР»Рё
+// РѕРЅР° СЏРІР»СЏРµС‚СЃСЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј, РІРµСЂРЅСѓС‚СЊ РµРіРѕ
 CharString ManagerUtils::GetSymbolTableName( const SymbolTable &st )
 {
 	if( st.IsGlobalSymbolTable() )
-		return "глобальная область видимости";
+		return "РіР»РѕР±Р°Р»СЊРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё";
 	
 	else if( st.IsNamespaceSymbolTable() )
 		return static_cast<const NameSpace &>(st).GetQualifiedName();
@@ -939,14 +938,13 @@ CharString ManagerUtils::GetSymbolTableName( const SymbolTable &st )
 		return static_cast<const ClassType &>(st).GetQualifiedName();
 	
 	else
-		INTERNAL( "'GetAccessSpecifierName' получила неизвестную область видимости" );
+		INTERNAL( "'GetAccessSpecifierName' РїРѕР»СѓС‡РёР»Р° РЅРµРёР·РІРµСЃС‚РЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё" );
 	return "";
 }
 
 
-// метод характеризует класс 'base' по отношению к 'derived'
-void DerivationManager::Characterize( const ClassType &base, 
-							const ClassType &curCls, bool ac )
+// РјРµС‚РѕРґ С…Р°СЂР°РєС‚РµСЂРёР·СѓРµС‚ РєР»Р°СЃСЃ 'base' РїРѕ РѕС‚РЅРѕС€РµРЅРёСЋ Рє 'derived'
+void DerivationManager::Characterize( const ClassType &base, const ClassType &curCls, bool ac )
 {
 	register const BaseClassList &bcl = curCls.GetBaseClassList();
 	for( int i = 0; i<bcl.GetBaseClassCount(); i++ )
@@ -954,16 +952,16 @@ void DerivationManager::Characterize( const ClassType &base,
 		const BaseClassCharacteristic &clh = *bcl.GetBaseClassCharacteristic(i);
 		const ClassType &bcls = clh.GetPointerToClass();
 
-		// ac учитываем доступность как предыдущих классов так и текущих
+		// ac СѓС‡РёС‚С‹РІР°РµРј РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ РєР°Рє РїСЂРµРґС‹РґСѓС‰РёС… РєР»Р°СЃСЃРѕРІ С‚Р°Рє Рё С‚РµРєСѓС‰РёС…
 		ac = ac && clh.GetAccessSpecifier() == ClassMember::AS_PUBLIC;
 
-		// если полученный класс является 'base', выполним операции и
-		// выйдем из цикла, т.к. класс не может наследовать сам себя
+		// РµСЃР»Рё РїРѕР»СѓС‡РµРЅРЅС‹Р№ РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ 'base', РІС‹РїРѕР»РЅРёРј РѕРїРµСЂР°С†РёРё Рё
+		// РІС‹Р№РґРµРј РёР· С†РёРєР»Р°, С‚.Рє. РєР»Р°СЃСЃ РЅРµ РјРѕР¶РµС‚ РЅР°СЃР»РµРґРѕРІР°С‚СЊ СЃР°Рј СЃРµР±СЏ
 		if( &base == &bcls )
 		{
 			baseCount++;
 
-			// если первый класс, проверяем его на виртуальность и на доступность
+			// РµСЃР»Рё РїРµСЂРІС‹Р№ РєР»Р°СЃСЃ, РїСЂРѕРІРµСЂСЏРµРј РµРіРѕ РЅР° РІРёСЂС‚СѓР°Р»СЊРЅРѕСЃС‚СЊ Рё РЅР° РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ
 			if( baseCount == 1 )
 			{
 				virtualDerivation = clh.IsVirtualDerivation();
@@ -974,38 +972,38 @@ void DerivationManager::Characterize( const ClassType &base,
 			{
 				virtualDerivation = virtualDerivation && clh.IsVirtualDerivation();
 
-				// из нескольких базовых классов можно выбрать самый доступный,
-				// если он виртуален
+				// РёР· РЅРµСЃРєРѕР»СЊРєРёС… Р±Р°Р·РѕРІС‹С… РєР»Р°СЃСЃРѕРІ РјРѕР¶РЅРѕ РІС‹Р±СЂР°С‚СЊ СЃР°РјС‹Р№ РґРѕСЃС‚СѓРїРЅС‹Р№,
+				// РµСЃР»Рё РѕРЅ РІРёСЂС‚СѓР°Р»РµРЅ
 				accessible = accessible || ac;
-			}				   			
+			}
 		}
 
 
-		// иначе вызываем рекурсию двигаясь вверх по иерархии
+		// РёРЅР°С‡Рµ РІС‹Р·С‹РІР°РµРј СЂРµРєСѓСЂСЃРёСЋ РґРІРёРіР°СЏСЃСЊ РІРІРµСЂС… РїРѕ РёРµСЂР°СЂС…РёРё
 		else
 			Characterize( base, bcls, ac );
 	}		
 }
 
 
-// функция поиска всех четырех функций членов
+// С„СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° РІСЃРµС… С‡РµС‚С‹СЂРµС… С„СѓРЅРєС†РёР№ С‡Р»РµРЅРѕРІ
 void SMFManager::FoundSMF()
 {
-	// сначала проходим по списку конструкторов
+	// СЃРЅР°С‡Р°Р»Р° РїСЂРѕС…РѕРґРёРј РїРѕ СЃРїРёСЃРєСѓ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ
 	for( ConstructorList::const_iterator p = pClass.GetConstructorList().begin();
 		 p != pClass.GetConstructorList().end(); p++ )
 	{
-		if( IsDefaultConstructor(**p, pClass) )		
+		if( IsDefaultConstructor(**p, pClass) )
 			ctorDef.first ? (ctorDef.second = true) : (void)(ctorDef.first = *p);
 		
 		else if( IsCopyConstructor(**p, pClass) )
 			ctorCopy.first ? (ctorCopy.second = true) : (void)(ctorCopy.first = *p);
 	}
 
-	// сохраняем деструктор
+	// СЃРѕС…СЂР°РЅСЏРµРј РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 	dtor.first = pClass.GetDestructor();
 
-	// наконец ищем оператор копирования
+	// РЅР°РєРѕРЅРµС† РёС‰РµРј РѕРїРµСЂР°С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
 	NameManager nm("operator =", &pClass, false);	
 	if( nm.GetRoleCount() != 0 )
 	{
@@ -1016,8 +1014,8 @@ void SMFManager::FoundSMF()
 			const ClassOverloadOperator &coo = 
 				static_cast<const ClassOverloadOperator &>( * (*p).first );
 
-			// проверяем, если оператор копирования, сохраняем его
-			if( IsCopyOperator(coo, pClass) )		
+			// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ, СЃРѕС…СЂР°РЅСЏРµРј РµРіРѕ
+			if( IsCopyOperator(coo, pClass) )
 				copyOperator.first ? 
 					(void)(copyOperator.second = true) : (copyOperator.first = &coo);
 		}

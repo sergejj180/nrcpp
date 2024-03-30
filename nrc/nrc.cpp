@@ -1,10 +1,10 @@
 // NoRules Compiler Library 
-// реализация библиотеки - NRC.H
+// СЂРµР°Р»РёР·Р°С†РёСЏ Р±РёР±Р»РёРѕС‚РµРєРё - NRC.H
 
 #include "nrc.h"
 using namespace nrc;
 
-// единственный метод класса - возвращает имя самого класса
+// РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ РјРµС‚РѕРґ РєР»Р°СЃСЃР° - РІРѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ СЃР°РјРѕРіРѕ РєР»Р°СЃСЃР°
 nrc::CharString nrc::SObject::Name()
 {
 	return CharString("nrc::Object");
@@ -12,14 +12,14 @@ nrc::CharString nrc::SObject::Name()
 
 
 //------------------------------------------------------------------------------------------------
-// возвращает имя самого класса
+// РІРѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ СЃР°РјРѕРіРѕ РєР»Р°СЃСЃР°
 nrc::CharString nrc::CharString::Name()
 {
-	return CharString("NRC::CharString");
+	return CharString("nrc::CharString");
 }
 
 
-// удаляет передние и задние пробелы
+// СѓРґР°Р»СЏРµС‚ РїРµСЂРµРґРЅРёРµ Рё Р·Р°РґРЅРёРµ РїСЂРѕР±РµР»С‹
 void nrc::CharString::Trim()
 {
 	TrimLeft();
@@ -27,7 +27,7 @@ void nrc::CharString::Trim()
 }
 
 
-// удаляет передние пробелы
+// СѓРґР°Р»СЏРµС‚ РїРµСЂРµРґРЅРёРµ РїСЂРѕР±РµР»С‹
 void nrc::CharString::TrimLeft()
 {
 	const char *p = c_str(), *q = p;
@@ -39,7 +39,7 @@ void nrc::CharString::TrimLeft()
 }
 
 
-// удаляет задние пробелы
+// СѓРґР°Р»СЏРµС‚ Р·Р°РґРЅРёРµ РїСЂРѕР±РµР»С‹
 void nrc::CharString::TrimRight()
 {
 	const char *p = c_str() + length() - 1, *q = p;
@@ -51,7 +51,7 @@ void nrc::CharString::TrimRight()
 }
 
 
-// форматирует строку и записывает ее в буфер
+// С„РѕСЂРјР°С‚РёСЂСѓРµС‚ СЃС‚СЂРѕРєСѓ Рё Р·Р°РїРёСЃС‹РІР°РµС‚ РµРµ РІ Р±СѓС„РµСЂ
 void nrc::CharString::Format( const char *s, ... )
 {
 	static char buf[1024];
@@ -64,7 +64,7 @@ void nrc::CharString::Format( const char *s, ... )
 }
 
 
-// перевести строку в нижний регистр 
+// РїРµСЂРµРІРµСЃС‚Рё СЃС‚СЂРѕРєСѓ РІ РЅРёР¶РЅРёР№ СЂРµРіРёСЃС‚СЂ 
 void nrc::CharString::LowerCase()
 {
 	for( int i = 0; i<length(); i++ )
@@ -73,7 +73,7 @@ void nrc::CharString::LowerCase()
 }
 
 	
-// перевести строку в верхний регистр
+// РїРµСЂРµРІРµСЃС‚Рё СЃС‚СЂРѕРєСѓ РІ РІРµСЂС…РЅРёР№ СЂРµРіРёСЃС‚СЂ
 void nrc::CharString::UpperCase()
 {	
 	for( int i = 0; i<length(); i++ )
@@ -81,7 +81,7 @@ void nrc::CharString::UpperCase()
 }
 
 
-// перевернуть строку
+// РїРµСЂРµРІРµСЂРЅСѓС‚СЊ СЃС‚СЂРѕРєСѓ
 void nrc::CharString::Reverse()
 {
 	CharString s = c_str();
@@ -90,14 +90,14 @@ void nrc::CharString::Reverse()
 }
 
 
-// сравнить две строки без учета регистра, но с учетом локальных установок
+// СЃСЂР°РІРЅРёС‚СЊ РґРІРµ СЃС‚СЂРѕРєРё Р±РµР· СѓС‡РµС‚Р° СЂРµРіРёСЃС‚СЂР°, РЅРѕ СЃ СѓС‡РµС‚РѕРј Р»РѕРєР°Р»СЊРЅС‹С… СѓСЃС‚Р°РЅРѕРІРѕРє
 bool nrc::CharString::CompareNoCase( const char *s )
 {
 	return !_stricoll(c_str(), s);
 }
 
 
-// удалить из строки все символы находящиеся в наборе 'set'
+// СѓРґР°Р»РёС‚СЊ РёР· СЃС‚СЂРѕРєРё РІСЃРµ СЃРёРјРІРѕР»С‹ РЅР°С…РѕРґСЏС‰РёРµСЃСЏ РІ РЅР°Р±РѕСЂРµ 'set'
 void nrc::CharString::DeleteInSet( const char *set )
 {
 	CharString out;
@@ -114,9 +114,9 @@ void nrc::CharString::DeleteInSet( const char *set )
 }
 
 
-// заменить символы из набора inset, символами из набора outset
-// причем каждому символу из inset должен соответствовать символ
-// из outset, если длинна inset меньше, то символы заменяются
+// Р·Р°РјРµРЅРёС‚СЊ СЃРёРјРІРѕР»С‹ РёР· РЅР°Р±РѕСЂР° inset, СЃРёРјРІРѕР»Р°РјРё РёР· РЅР°Р±РѕСЂР° outset
+// РїСЂРёС‡РµРј РєР°Р¶РґРѕРјСѓ СЃРёРјРІРѕР»Сѓ РёР· inset РґРѕР»Р¶РµРЅ СЃРѕРѕС‚РІРµС‚СЃС‚РІРѕРІР°С‚СЊ СЃРёРјРІРѕР»
+// РёР· outset, РµСЃР»Рё РґР»РёРЅРЅР° inset РјРµРЅСЊС€Рµ, С‚Рѕ СЃРёРјРІРѕР»С‹ Р·Р°РјРµРЅСЏСЋС‚СЃСЏ
 // defchar
 void nrc::CharString::ChangeInSet( const char *inset, const char *outset, char defchar )
 {
@@ -140,7 +140,7 @@ void nrc::CharString::ChangeInSet( const char *inset, const char *outset, char d
 }
 
 
-// оставить в строке только символы из набора
+// РѕСЃС‚Р°РІРёС‚СЊ РІ СЃС‚СЂРѕРєРµ С‚РѕР»СЊРєРѕ СЃРёРјРІРѕР»С‹ РёР· РЅР°Р±РѕСЂР°
 void nrc::CharString::KeepInSet( const char *set )
 {
 	CharString out;
@@ -157,8 +157,8 @@ void nrc::CharString::KeepInSet( const char *set )
 }
 
 
-// перегруженный метод, оставляет в строке символы, для которых
-// chkfunc возвращает ненулевое значение
+// РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РјРµС‚РѕРґ, РѕСЃС‚Р°РІР»СЏРµС‚ РІ СЃС‚СЂРѕРєРµ СЃРёРјРІРѕР»С‹, РґР»СЏ РєРѕС‚РѕСЂС‹С…
+// chkfunc РІРѕР·РІСЂР°С‰Р°РµС‚ РЅРµРЅСѓР»РµРІРѕРµ Р·РЅР°С‡РµРЅРёРµ
 void nrc::CharString::KeepInSet( int (*chkfunc)(int c) )
 {
 	CharString out;
@@ -174,8 +174,8 @@ void nrc::CharString::KeepInSet( int (*chkfunc)(int c) )
 }
 
 
-// удалить символы с начала до того как появится символ из набора
-// вернуть удаленную строку
+// СѓРґР°Р»РёС‚СЊ СЃРёРјРІРѕР»С‹ СЃ РЅР°С‡Р°Р»Р° РґРѕ С‚РѕРіРѕ РєР°Рє РїРѕСЏРІРёС‚СЃСЏ СЃРёРјРІРѕР» РёР· РЅР°Р±РѕСЂР°
+// РІРµСЂРЅСѓС‚СЊ СѓРґР°Р»РµРЅРЅСѓСЋ СЃС‚СЂРѕРєСѓ
 nrc::CharString nrc::CharString::DeleteLeftWhileNot( const char *set )
 {
 	int cnt = 0;
@@ -188,8 +188,8 @@ nrc::CharString nrc::CharString::DeleteLeftWhileNot( const char *set )
 }
 
 
-// удалить символы с конца до того как появится символ из набора
-// вернуть удаленную строку
+// СѓРґР°Р»РёС‚СЊ СЃРёРјРІРѕР»С‹ СЃ РєРѕРЅС†Р° РґРѕ С‚РѕРіРѕ РєР°Рє РїРѕСЏРІРёС‚СЃСЏ СЃРёРјРІРѕР» РёР· РЅР°Р±РѕСЂР°
+// РІРµСЂРЅСѓС‚СЊ СѓРґР°Р»РµРЅРЅСѓСЋ СЃС‚СЂРѕРєСѓ
 nrc::CharString nrc::CharString::DeleteRightWhileNot( const char *set )
 {
 	int cnt = 0, i = length()-1;
@@ -202,14 +202,14 @@ nrc::CharString nrc::CharString::DeleteRightWhileNot( const char *set )
 }
 
 
-// вернуть указатель на буфер
+// РІРµСЂРЅСѓС‚СЊ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° Р±СѓС„РµСЂ
 nrc::CharString::operator const char *()
 {
 	return c_str();
 }
 
 
-// преобразовать целое число в строку и записать
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ С†РµР»РѕРµ С‡РёСЃР»Рѕ РІ СЃС‚СЂРѕРєСѓ Рё Р·Р°РїРёСЃР°С‚СЊ
 nrc::CharString &nrc::CharString::operator=( int d )
 {
 	char buf[25];
@@ -219,7 +219,7 @@ nrc::CharString &nrc::CharString::operator=( int d )
 }
 
 	
-// преобразовать вещественное число в строку и заменить
+// РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РІРµС‰РµСЃС‚РІРµРЅРЅРѕРµ С‡РёСЃР»Рѕ РІ СЃС‚СЂРѕРєСѓ Рё Р·Р°РјРµРЅРёС‚СЊ
 nrc::CharString &nrc::CharString::operator=( double f )
 {
 	char buf[100];
@@ -229,14 +229,14 @@ nrc::CharString &nrc::CharString::operator=( double f )
 }
 
 //------------------------------------------------------------------------------------------------
-// возвращает имя самого класса
+// РІРѕР·РІСЂР°С‰Р°РµС‚ РёРјСЏ СЃР°РјРѕРіРѕ РєР»Р°СЃСЃР°
 nrc::CharString nrc::StringList::Name() 
 {
 	return CharString("NRC::StringList");
 }
 	
 
-// добавить строку в конец списка
+// РґРѕР±Р°РІРёС‚СЊ СЃС‚СЂРѕРєСѓ РІ РєРѕРЅРµС† СЃРїРёСЃРєР°
 void nrc::StringList::Append( CharString &s )
 {
 	CharString *n = new CharString(s);
@@ -244,8 +244,8 @@ void nrc::StringList::Append( CharString &s )
 }
 
 	
-// удалить строку в позиции N. 
-// Индексация начинается с нуля
+// СѓРґР°Р»РёС‚СЊ СЃС‚СЂРѕРєСѓ РІ РїРѕР·РёС†РёРё N. 
+// РРЅРґРµРєСЃР°С†РёСЏ РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ РЅСѓР»СЏ
 void nrc::StringList::Delete( int n )
 {
 	if( n < 0 || n >= size() )
@@ -260,7 +260,7 @@ void nrc::StringList::Delete( int n )
 }
 
 	
-// очистить весь список
+// РѕС‡РёСЃС‚РёС‚СЊ РІРµСЃСЊ СЃРїРёСЃРѕРє
 void nrc::StringList::Clear()
 {
 	for( int i = 0; i<size(); i++ )
@@ -269,7 +269,7 @@ void nrc::StringList::Clear()
 }
 
 
-// загрузить строки из файла
+// Р·Р°РіСЂСѓР·РёС‚СЊ СЃС‚СЂРѕРєРё РёР· С„Р°Р№Р»Р°
 bool nrc::StringList::LoadFromFile( const char *fname )
 {
 	ifstream fin(fname);
@@ -288,7 +288,7 @@ bool nrc::StringList::LoadFromFile( const char *fname )
 }
 
 
-// сохранить строки в файле
+// СЃРѕС…СЂР°РЅРёС‚СЊ СЃС‚СЂРѕРєРё РІ С„Р°Р№Р»Рµ
 bool nrc::StringList::SaveToFile( const char *fname )
 {
 	ofstream fout(fname);
@@ -307,7 +307,7 @@ bool nrc::StringList::SaveToFile( const char *fname )
 }
 
 
-// вернуть список строк в виде буфера
+// РІРµСЂРЅСѓС‚СЊ СЃРїРёСЃРѕРє СЃС‚СЂРѕРє РІ РІРёРґРµ Р±СѓС„РµСЂР°
 nrc::CharString nrc::StringList::Text()
 {
 	CharString s;
@@ -319,10 +319,10 @@ nrc::CharString nrc::StringList::Text()
 }
 
 
-// разделить строку на части, через символ-разделитель
-// и загрузить ее в список строк. При этом предыдущее состояние
-// списка стирается. Строка заключенная в двойные или одинарные кавычки
-// считается одним словом, независимо от разделителя
+// СЂР°Р·РґРµР»РёС‚СЊ СЃС‚СЂРѕРєСѓ РЅР° С‡Р°СЃС‚Рё, С‡РµСЂРµР· СЃРёРјРІРѕР»-СЂР°Р·РґРµР»РёС‚РµР»СЊ
+// Рё Р·Р°РіСЂСѓР·РёС‚СЊ РµРµ РІ СЃРїРёСЃРѕРє СЃС‚СЂРѕРє. РџСЂРё СЌС‚РѕРј РїСЂРµРґС‹РґСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
+// СЃРїРёСЃРєР° СЃС‚РёСЂР°РµС‚СЃСЏ. РЎС‚СЂРѕРєР° Р·Р°РєР»СЋС‡РµРЅРЅР°СЏ РІ РґРІРѕР№РЅС‹Рµ РёР»Рё РѕРґРёРЅР°СЂРЅС‹Рµ РєР°РІС‹С‡РєРё
+// СЃС‡РёС‚Р°РµС‚СЃСЏ РѕРґРЅРёРј СЃР»РѕРІРѕРј, РЅРµР·Р°РІРёСЃРёРјРѕ РѕС‚ СЂР°Р·РґРµР»РёС‚РµР»СЏ
 void nrc::StringList::DelimText( const CharString &s, char delim )
 {
 	Clear();
@@ -332,7 +332,7 @@ void nrc::StringList::DelimText( const CharString &s, char delim )
 
 	for( int i = 0; i<s.length(); i++ )
 	{
-		// строка заключенная в кавычки
+		// СЃС‚СЂРѕРєР° Р·Р°РєР»СЋС‡РµРЅРЅР°СЏ РІ РєР°РІС‹С‡РєРё
 		if( s[i] == '\"' )
 		{
 			if( i != 0 && s[i-1] == '\\' )
@@ -347,7 +347,7 @@ void nrc::StringList::DelimText( const CharString &s, char delim )
 			}
 		}
 
-		// добавляем слово
+		// РґРѕР±Р°РІР»СЏРµРј СЃР»РѕРІРѕ
 		if( s[i] == delim || isspace(s[i]) )
 		{			
 			if( out.empty() || quote )
@@ -364,7 +364,7 @@ void nrc::StringList::DelimText( const CharString &s, char delim )
 }
 
 
-// найти строку соответствующую шаблону
+// РЅР°Р№С‚Рё СЃС‚СЂРѕРєСѓ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰СѓСЋ С€Р°Р±Р»РѕРЅСѓ
 int nrc::StringList::Find( const CharString &s, 
 			bool (*fcmp)(const CharString &, const CharString&), int startPos )	const
 {
@@ -378,14 +378,14 @@ int nrc::StringList::Find( const CharString &s,
 }
 
 
-// сортировка строк
+// СЃРѕСЂС‚РёСЂРѕРІРєР° СЃС‚СЂРѕРє
 void nrc::StringList::Sort( bool (*fcmp)(const CharString *, const CharString*) )
 {
 	sort(begin(), end(), fcmp);
 }
 
 
-// оператор доступа к строкам
+// РѕРїРµСЂР°С‚РѕСЂ РґРѕСЃС‚СѓРїР° Рє СЃС‚СЂРѕРєР°Рј
 nrc::CharString &nrc::StringList::operator[]( int ix )
 {
 	static CharString def;

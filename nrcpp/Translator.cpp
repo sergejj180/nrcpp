@@ -1,4 +1,4 @@
-// реализация транслятора в С-код - Translator.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ С‚СЂР°РЅСЃР»СЏС‚РѕСЂР° РІ РЎ-РєРѕРґ - Translator.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -20,17 +20,17 @@ using namespace nrc;
 
 
 
-// счетчик временных объектов
+// СЃС‡РµС‚С‡РёРє РІСЂРµРјРµРЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ
 int TemporaryObject::temporaryCounter = 0;
 
-// генерирует имя области видимости без добавочных символов. Учитывает
-// след. области видимости: глобальная, именованная, классовая, функциональная (локальная)
+// РіРµРЅРµСЂРёСЂСѓРµС‚ РёРјСЏ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Р±РµР· РґРѕР±Р°РІРѕС‡РЅС‹С… СЃРёРјРІРѕР»РѕРІ. РЈС‡РёС‚С‹РІР°РµС‚
+// СЃР»РµРґ. РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё: РіР»РѕР±Р°Р»СЊРЅР°СЏ, РёРјРµРЅРѕРІР°РЅРЅР°СЏ, РєР»Р°СЃСЃРѕРІР°СЏ, С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ (Р»РѕРєР°Р»СЊРЅР°СЏ)
 const string &TranslatorUtils::GenerateScopeName( const SymbolTable &scope )
 {
 	static string rbuf;	
 	const SymbolTable *psc = &scope;
-	
-	// переходим от локальной области видимости к функциональной
+
+	// РїРµСЂРµС…РѕРґРёРј РѕС‚ Р»РѕРєР°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё Рє С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕР№
 	while( psc->IsLocalSymbolTable() )
 	{
 		psc = &static_cast<const LocalSymbolTable *>(psc)->GetParentSymbolTable();
@@ -38,8 +38,8 @@ const string &TranslatorUtils::GenerateScopeName( const SymbolTable &scope )
 	}
 
 	for( rbuf = "";; )
-	{		
-		// проверяем, если функциональная, подставляем имя функции к общему имени
+	{
+		// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅР°СЏ, РїРѕРґСЃС‚Р°РІР»СЏРµРј РёРјСЏ С„СѓРЅРєС†РёРё Рє РѕР±С‰РµРјСѓ РёРјРµРЅРё
 		if( psc->IsFunctionSymbolTable() )
 		{
 			rbuf = static_cast<const FunctionSymbolTable *>(psc)->
@@ -47,34 +47,34 @@ const string &TranslatorUtils::GenerateScopeName( const SymbolTable &scope )
 			psc = &static_cast<const FunctionSymbolTable *>(psc)->GetParentSymbolTable();
 		}
 
-		// если классовая
+		// РµСЃР»Рё РєР»Р°СЃСЃРѕРІР°СЏ
 		else if( psc->IsClassSymbolTable() )
 		{
 			rbuf = static_cast<const ClassType *>(psc)->GetName() + '_' + rbuf;
 			psc = &static_cast<const ClassType *>(psc)->GetSymbolTableEntry();
 		}
 
-		// если именованная
+		// РµСЃР»Рё РёРјРµРЅРѕРІР°РЅРЅР°СЏ
 		else if( psc->IsNamespaceSymbolTable() )
 		{
 			rbuf = static_cast<const NameSpace *>(psc)->GetName() + '_' + rbuf;
 			psc = &static_cast<const NameSpace *>(psc)->GetSymbolTableEntry();
 		}
 
-		// если глобальная, выходим ничего не добавляя
+		// РµСЃР»Рё РіР»РѕР±Р°Р»СЊРЅР°СЏ, РІС‹С…РѕРґРёРј РЅРёС‡РµРіРѕ РЅРµ РґРѕР±Р°РІР»СЏСЏ
 		else if( psc->IsGlobalSymbolTable() )
 			return rbuf;
-		
-		// иначе неизвестная
+
+		// РёРЅР°С‡Рµ РЅРµРёР·РІРµСЃС‚РЅР°СЏ
 		else
-			INTERNAL("'TranslatorUtils::GenerateScopeName' - неизвестная область видимости");
+			INTERNAL("'TranslatorUtils::GenerateScopeName' - РЅРµРёР·РІРµСЃС‚РЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё");
 	}
 
-	return rbuf;	// kill warning
+	return rbuf; // kill warning
 }
 
 
-// сгенерировать имя для безимянного идентификатора
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РёРјСЏ РґР»СЏ Р±РµР·РёРјСЏРЅРЅРѕРіРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
 string TranslatorUtils::GenerateUnnamed( )
 {
 	static int unnamedCount = 1;
@@ -83,75 +83,75 @@ string TranslatorUtils::GenerateUnnamed( )
 }
 
 
-// вернуть строковый эквивалент оператора
+// РІРµСЂРЅСѓС‚СЊ СЃС‚СЂРѕРєРѕРІС‹Р№ СЌРєРІРёРІР°Р»РµРЅС‚ РѕРїРµСЂР°С‚РѕСЂР°
 PCSTR TranslatorUtils::GenerateOperatorName( int op )
 {	
 	PCSTR opBuf;
 	switch( op )
 	{
-	case KWNEW:				opBuf = "new";		  break;
-	case -KWDELETE:		
-	case KWDELETE:			opBuf = "delete";	  break;
-	case OC_NEW_ARRAY:		opBuf = "newar";	  break;
+	case KWNEW:  opBuf = "new";  break;
+	case -KWDELETE:
+	case KWDELETE:  opBuf = "delete";  break;
+	case OC_NEW_ARRAY:  opBuf = "newar";  break;
 	case -OC_DELETE_ARRAY:  
-	case OC_DELETE_ARRAY:	opBuf = "deletear";	  break;
-	case OC_FUNCTION:		opBuf = "fn";		  break;
-	case OC_ARRAY:			opBuf = "ar";		  break;
-	case PLUS_ASSIGN:		opBuf = "plusasgn";   break;
-	case MINUS_ASSIGN:		opBuf = "minasgn";       break;
-	case MUL_ASSIGN:		opBuf = "mulasgn";       break;
-	case DIV_ASSIGN:		opBuf = "divasgn";       break;
-	case PERCENT_ASSIGN:	opBuf = "percasgn";      break;
-	case LEFT_SHIFT_ASSIGN:	opBuf = "leftshftasgn";  break;
-	case RIGHT_SHIFT_ASSIGN:opBuf = "rightshftasgn"; break;
-	case AND_ASSIGN:		opBuf = "andasgn";       break;
-	case XOR_ASSIGN:		opBuf = "xorasgn";       break;
-	case OR_ASSIGN:			opBuf = "orasgn";		 break;
-	case LEFT_SHIFT:		opBuf = "lshft";	     break;
-	case RIGHT_SHIFT:		opBuf = "rshft";		 break;
-	case LESS_EQU:			opBuf = "lessequ";		 break;
-	case GREATER_EQU:		opBuf = "grequ";		 break;
-	case EQUAL:				opBuf = "equ";			 break;
-	case NOT_EQUAL:			opBuf = "notequ";		 break;
-	case LOGIC_AND:			opBuf = "logand";		 break;
-	case LOGIC_OR:			opBuf = "logor";		 break;
+	case OC_DELETE_ARRAY:  opBuf = "deletear";  break;
+	case OC_FUNCTION:  opBuf = "fn";  break;
+	case OC_ARRAY:  opBuf = "ar";  break;
+	case PLUS_ASSIGN:  opBuf = "plusasgn";  break;
+	case MINUS_ASSIGN:  opBuf = "minasgn";  break;
+	case MUL_ASSIGN:  opBuf = "mulasgn";  break;
+	case DIV_ASSIGN:  opBuf = "divasgn";  break;
+	case PERCENT_ASSIGN:  opBuf = "percasgn";  break;
+	case LEFT_SHIFT_ASSIGN:  opBuf = "leftshftasgn";  break;
+	case RIGHT_SHIFT_ASSIGN:  opBuf = "rightshftasgn";  break;
+	case AND_ASSIGN:  opBuf = "andasgn";  break;
+	case XOR_ASSIGN:  opBuf = "xorasgn";  break;
+	case OR_ASSIGN:  opBuf = "orasgn";  break;
+	case LEFT_SHIFT:  opBuf = "lshft";  break;
+	case RIGHT_SHIFT:  opBuf = "rshft";  break;
+	case LESS_EQU:  opBuf = "lessequ";  break;
+	case GREATER_EQU:  opBuf = "grequ";  break;
+	case EQUAL:  opBuf = "equ";  break;
+	case NOT_EQUAL:  opBuf = "notequ";  break;
+	case LOGIC_AND:  opBuf = "logand";  break;
+	case LOGIC_OR:  opBuf = "logor";  break;
 	case -INCREMENT:
-	case INCREMENT:			opBuf = "inc";      break;
+	case INCREMENT:  opBuf = "inc";  break;
 	case -DECREMENT:
-	case DECREMENT:			opBuf = "dec";      break;
-	case ARROW:				opBuf = "arrow";    break;
-	case ARROW_POINT:		opBuf = "arpoint";  break;
-	case DOT_POINT:			opBuf = "dotpoint"; break;
-	case '+':				opBuf = "plus";		break;
-	case '-':				opBuf = "minus";	break;
-	case '*':				opBuf = "mul";		break;
-	case '/':				opBuf = "div";		break;
-	case '%':				opBuf = "perc";		break;
-	case '^':				opBuf = "xor";		break;
-	case '!':				opBuf = "not";		break;
-	case '=':				opBuf = "asgn";		break;
-	case '<':				opBuf = "less";		break;
-	case '>':				opBuf = "greater";  break;	
-	case '&':				opBuf = "and";		break;
-	case '|':				opBuf = "or";		break;
-	case '~':				opBuf = "inv";		break;
-	case ',':				opBuf = "coma";		break;
+	case DECREMENT:  opBuf = "dec";  break;
+	case ARROW:  opBuf = "arrow";  break;
+	case ARROW_POINT:  opBuf = "arpoint";  break;
+	case DOT_POINT:  opBuf = "dotpoint";  break;
+	case '+':  opBuf = "plus";  break;
+	case '-':  opBuf = "minus";  break;
+	case '*':  opBuf = "mul";  break;
+	case '/':  opBuf = "div";  break;
+	case '%':  opBuf = "perc";  break;
+	case '^':  opBuf = "xor";  break;
+	case '!':  opBuf = "not";  break;
+	case '=':  opBuf = "asgn";  break;
+	case '<':  opBuf = "less";  break;
+	case '>':  opBuf = "greater";  break;
+	case '&':  opBuf = "and";  break;
+	case '|':  opBuf = "or";  break;
+	case '~':  opBuf = "inv";  break;
+	case ',':  opBuf = "coma";  break;
 	default:
-		INTERNAL("'TranslatorUtils::GenerateOverloadOperatorName' - неизвестный оператор");
+		INTERNAL("'TranslatorUtils::GenerateOverloadOperatorName' - РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ");
 		break;
 	}
-	
+
 	return opBuf;
 }
 
 
-// сгенерировать и вывести декларацию, только если она не typedef и не
-// режим приложения не диагностичный
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ Рё РІС‹РІРµСЃС‚Рё РґРµРєР»Р°СЂР°С†РёСЋ, С‚РѕР»СЊРєРѕ РµСЃР»Рё РѕРЅР° РЅРµ typedef Рё РЅРµ
+// СЂРµР¶РёРј РїСЂРёР»РѕР¶РµРЅРёСЏ РЅРµ РґРёР°РіРЅРѕСЃС‚РёС‡РЅС‹Р№
 void TranslatorUtils::TranslateDeclaration( const TypyziedEntity &declarator, 
 		const PObjectInitializator &iator, bool global )
 {
-	// если не требуется, не генерируем
-	if( theApp.IsDiagnostic()				||
+	// РµСЃР»Рё РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ, РЅРµ РіРµРЅРµСЂРёСЂСѓРµРј
+	if( theApp.IsDiagnostic()  ||
 		(declarator.IsObject() &&
 		 static_cast<const ::Object &>(declarator).GetStorageSpecifier() ==
 		 ::Object::SS_TYPEDEF) )
@@ -164,93 +164,93 @@ void TranslatorUtils::TranslateDeclaration( const TypyziedEntity &declarator,
 }
 
 
-// транслировать декларацию класса
+// С‚СЂР°РЅСЃР»РёСЂРѕРІР°С‚СЊ РґРµРєР»Р°СЂР°С†РёСЋ РєР»Р°СЃСЃР°
 void TranslatorUtils::TranslateClass( const ClassType &cls )
 {
 	if( theApp.IsDiagnostic() )
 		return;
-	
+
 	ClassGenerator cgen( cls );
 	cgen.Generate();
 	theApp.GetGenerator().GenerateToCurrentBuffer(cgen.GetClassBuffer());
-	theApp.GetGenerator().GenerateToCurrentBuffer(cgen.GetOutSideBuffer());				
+	theApp.GetGenerator().GenerateToCurrentBuffer(cgen.GetOutSideBuffer());
 	theApp.GetGenerator().FlushCurrentBuffer();	
 }
 
 
-// возвращает true, если член имеет классовый тип
+// РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё С‡Р»РµРЅ РёРјРµРµС‚ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї
 bool SMFGenegator::NeedConstructor( const DataMember &dm )
 {
-	// если не классовый тип, либо спецификатор хранения 
-	// указывает, что конструирование члена не требуется внутри класса
-	if( !dm.GetBaseType().IsClassType()					||
+	// РµСЃР»Рё РЅРµ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї, Р»РёР±Рѕ СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ 
+	// СѓРєР°Р·С‹РІР°РµС‚, С‡С‚Рѕ РєРѕРЅСЃС‚СЂСѓРёСЂРѕРІР°РЅРёРµ С‡Р»РµРЅР° РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ РІРЅСѓС‚СЂРё РєР»Р°СЃСЃР°
+	if( !dm.GetBaseType().IsClassType()  ||
 		dm.GetStorageSpecifier() == ::Object::SS_STATIC ||
 		dm.GetStorageSpecifier() == ::Object::SS_TYPEDEF )
 		return false;
-	
+
 	for( int i = 0; i<dm.GetDerivedTypeList().GetDerivedTypeCount(); i++ )
 		if( dm.GetDerivedTypeList().GetDerivedType(i)->
 			GetDerivedTypeCode() != DerivedType::DT_ARRAY )
 			return false;
 
-	// иначе тип классовый и конструктор необходим
+	// РёРЅР°С‡Рµ С‚РёРї РєР»Р°СЃСЃРѕРІС‹Р№ Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµРѕР±С…РѕРґРёРј
 	return true;
 }
 
 
-// заполнить список зависимых классов, заполняется в методе Generate
+// Р·Р°РїРѕР»РЅРёС‚СЊ СЃРїРёСЃРѕРє Р·Р°РІРёСЃРёРјС‹С… РєР»Р°СЃСЃРѕРІ, Р·Р°РїРѕР»РЅСЏРµС‚СЃСЏ РІ РјРµС‚РѕРґРµ Generate
 void SMFGenegator::FillDependClassList()
 {
-	// сначала вставляем базовые классы	
+	// СЃРЅР°С‡Р°Р»Р° РІСЃС‚Р°РІР»СЏРµРј Р±Р°Р·РѕРІС‹Рµ РєР»Р°СЃСЃС‹	
 	int i = 0;
 	for( i = 0; i<pClass.GetBaseClassList().GetBaseClassCount(); i++ )
 	{
 		const BaseClassCharacteristic &pBase = 
 			*pClass.GetBaseClassList().GetBaseClassCharacteristic(i);
-		
+
 		AddDependClass( &pBase.GetPointerToClass() );
 		if( pBase.IsVirtualDerivation() )
 			haveVBC = true;
 	}
 
-	// после этого заполняем список нестатическими (и не типами) данными членами,
-	// которые имеют классовый тип
+	// РїРѕСЃР»Рµ СЌС‚РѕРіРѕ Р·Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє РЅРµСЃС‚Р°С‚РёС‡РµСЃРєРёРјРё (Рё РЅРµ С‚РёРїР°РјРё) РґР°РЅРЅС‹РјРё С‡Р»РµРЅР°РјРё,
+	// РєРѕС‚РѕСЂС‹Рµ РёРјРµСЋС‚ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї
 	for( i = 0; i<pClass.GetMemberList().GetClassMemberCount(); i++ )
 		if( const DataMember *dm = dynamic_cast<const DataMember *>(
 				&*pClass.GetMemberList().GetClassMember(i)) )
 		{
-			if( NeedConstructor(*dm) )	
+			if( NeedConstructor(*dm) )
 				AddDependClass( static_cast<const ClassType *>(&dm->GetBaseType()) );
 
-			// устанавливаем флаг если в классе есть объекты требующие
-			// явной инициализация
+			// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј С„Р»Р°Рі РµСЃР»Рё РІ РєР»Р°СЃСЃРµ РµСЃС‚СЊ РѕР±СЉРµРєС‚С‹ С‚СЂРµР±СѓСЋС‰РёРµ
+			// СЏРІРЅРѕР№ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
 			if( (dm->GetStorageSpecifier() != ::Object::SS_STATIC   &&
 				 dm->GetStorageSpecifier() != ::Object::SS_TYPEDEF) && 
 				(dm->GetDerivedTypeList().IsReference() || 
 				 ExpressionMakerUtils::IsConstant(*dm)) )
-				explicitInit = true;		
+				explicitInit = true;
 		}
 }
 
 
-// метод проходит по списку зависимых классов и проверяет,
-// является ли доступным, однозначным и присутствует ли вообще
-// специальный метод. Специальный метод получаем через ук-ль на функцию
-// член
+// РјРµС‚РѕРґ РїСЂРѕС…РѕРґРёС‚ РїРѕ СЃРїРёСЃРєСѓ Р·Р°РІРёСЃРёРјС‹С… РєР»Р°СЃСЃРѕРІ Рё РїСЂРѕРІРµСЂСЏРµС‚,
+// СЏРІР»СЏРµС‚СЃСЏ Р»Рё РґРѕСЃС‚СѓРїРЅС‹Рј, РѕРґРЅРѕР·РЅР°С‡РЅС‹Рј Рё РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ Р»Рё РІРѕРѕР±С‰Рµ
+// СЃРїРµС†РёР°Р»СЊРЅС‹Р№ РјРµС‚РѕРґ. РЎРїРµС†РёР°Р»СЊРЅС‹Р№ РјРµС‚РѕРґ РїРѕР»СѓС‡Р°РµРј С‡РµСЂРµР· СѓРє-Р»СЊ РЅР° С„СѓРЅРєС†РёСЋ
+// С‡Р»РµРЅ
 bool SMFGenegator::CanGenerate( const SMFManagerList &sml, 
 			const SMFManager::SmfPair &(SMFManager::*GetMethod)() const ) const
 {
-	// проверяем, каждый класс в списке
+	// РїСЂРѕРІРµСЂСЏРµРј, РєР°Р¶РґС‹Р№ РєР»Р°СЃСЃ РІ СЃРїРёСЃРєРµ
 	for( SMFManagerList::const_iterator p = sml.begin(); p != sml.end(); p++ )
 	{
 		const SMFManager::SmfPair &smp = (*p.*GetMethod)();
 		
-		// проверяем сначала чтобы метод был объявлен (first != NULL)
-		// и однозначен (second == false)
+		// РїСЂРѕРІРµСЂСЏРµРј СЃРЅР°С‡Р°Р»Р° С‡С‚РѕР±С‹ РјРµС‚РѕРґ Р±С‹Р» РѕР±СЉСЏРІР»РµРЅ (first != NULL)
+		// Рё РѕРґРЅРѕР·РЅР°С‡РµРЅ (second == false)
 		if( !smp.first || smp.second )
 			return false;
 
-		// в последнюю очередь проверяем доступность метода
+		// РІ РїРѕСЃР»РµРґРЅСЋСЋ РѕС‡РµСЂРµРґСЊ РїСЂРѕРІРµСЂСЏРµРј РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ РјРµС‚РѕРґР°
 		if( !AccessControlChecker( pClass, static_cast<const ClassType&>(
 				smp.first->GetSymbolTableEntry()), *smp.first ).IsAccessible() )
 			return false;
@@ -261,34 +261,34 @@ bool SMFGenegator::CanGenerate( const SMFManagerList &sml,
 
 
 
-// возвращает true, если метод может быть сгенерирован как тривиальный.
-// Вывод деляется на основе списка зависимых классов и полиморфности собственного
+// РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё РјРµС‚РѕРґ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ РєР°Рє С‚СЂРёРІРёР°Р»СЊРЅС‹Р№.
+// Р’С‹РІРѕРґ РґРµР»СЏРµС‚СЃСЏ РЅР° РѕСЃРЅРѕРІРµ СЃРїРёСЃРєР° Р·Р°РІРёСЃРёРјС‹С… РєР»Р°СЃСЃРѕРІ Рё РїРѕР»РёРјРѕСЂС„РЅРѕСЃС‚Рё СЃРѕР±СЃС‚РІРµРЅРЅРѕРіРѕ
 SMFGenegator::DependInfo SMFGenegator::GetDependInfo( const SMFManagerList &sml, 
 			const SMFManager::SmfPair &(SMFManager::*GetMethod)() const ) const
 {
 	DependInfo di;
 
-	// проверяем, каждый класс в списке
+	// РїСЂРѕРІРµСЂСЏРµРј, РєР°Р¶РґС‹Р№ РєР»Р°СЃСЃ РІ СЃРїРёСЃРєРµ
 	for( SMFManagerList::const_iterator p = sml.begin(); p != sml.end(); p++ )
 	{
 		const Method &meth = *(*p.*GetMethod)().first;
 		INTERNAL_IF( !&meth );
 		if( !meth.IsTrivial() )
 			di.trivial = false;
-					
+
 		if( !meth.GetFunctionPrototype().GetParametrList().IsEmpty() &&
 			!meth.GetFunctionPrototype().GetParametrList().GetFunctionParametr(0)->IsConst() )
 			di.paramIsConst = false;
 	}
 
-	// для тривиальности также требуется, чтобы у класс не был полиморфным,
-	// т.е. отсутствовала виртуальная таблица
+	// РґР»СЏ С‚СЂРёРІРёР°Р»СЊРЅРѕСЃС‚Рё С‚Р°РєР¶Рµ С‚СЂРµР±СѓРµС‚СЃСЏ, С‡С‚РѕР±С‹ Сѓ РєР»Р°СЃСЃ РЅРµ Р±С‹Р» РїРѕР»РёРјРѕСЂС„РЅС‹Рј,
+	// С‚.Рµ. РѕС‚СЃСѓС‚СЃС‚РІРѕРІР°Р»Р° РІРёСЂС‚СѓР°Р»СЊРЅР°СЏ С‚Р°Р±Р»РёС†Р°
 	di.trivial = di.trivial && !pClass.IsPolymorphic() && !haveVBC;
 	return di;
 }
 
 
-// вернуть true, если метод требуется объявить виртуальным
+// РІРµСЂРЅСѓС‚СЊ true, РµСЃР»Рё РјРµС‚РѕРґ С‚СЂРµР±СѓРµС‚СЃСЏ РѕР±СЉСЏРІРёС‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рј
 bool SMFGenegator::IsDeclareVirtual(const SMFManagerList &sml, 
 			const SMFManager::SmfPair &(SMFManager::*GetMethod)() const ) const
 {
@@ -306,7 +306,7 @@ bool SMFGenegator::IsDeclareVirtual(const SMFManagerList &sml,
 }
 
 
-// метод возвращает список производных типов с функией без параметров
+// РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ СЃ С„СѓРЅРєРёРµР№ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ
 const DerivedTypeList &SMFGenegator::MakeDTL0() const 
 {
 	static FunctionParametrList fpl;
@@ -319,26 +319,26 @@ const DerivedTypeList &SMFGenegator::MakeDTL0() const
 }
 
 
-// метод возвращает список производных типов с функией у которой
-// в параметре константный или не константая ссылка на этот класс
-// и возвращаемым типом ссылкой
+// РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ СЃ С„СѓРЅРєРёРµР№ Сѓ РєРѕС‚РѕСЂРѕР№
+// РІ РїР°СЂР°РјРµС‚СЂРµ РєРѕРЅСЃС‚Р°РЅС‚РЅС‹Р№ РёР»Рё РЅРµ РєРѕРЅСЃС‚Р°РЅС‚Р°СЏ СЃСЃС‹Р»РєР° РЅР° СЌС‚РѕС‚ РєР»Р°СЃСЃ
+// Рё РІРѕР·РІСЂР°С‰Р°РµРјС‹Рј С‚РёРїРѕРј СЃСЃС‹Р»РєРѕР№
 const DerivedTypeList &SMFGenegator::MakeDTL1( bool isConst ) const
-{		
+{
 	static FunctionParametrList fpl;
-		
-	// создаем параметр
+
+	// СЃРѕР·РґР°РµРј РїР°СЂР°РјРµС‚СЂ
 	static DerivedTypeList prmDtl;
 	static PDerivedType ref = new Reference;
 	if( prmDtl.IsEmpty() )
-		prmDtl.AddDerivedType(ref);		
+		prmDtl.AddDerivedType(ref);
 
-	// вставляем параметр в список
+	// РІСЃС‚Р°РІР»СЏРµРј РїР°СЂР°РјРµС‚СЂ РІ СЃРїРёСЃРѕРє
 	fpl.ClearFunctionParametrList();
 	fpl.AddFunctionParametr( new Parametr(&pClass, isConst, false, prmDtl, "src",
 		&pClass, NULL, false) );
 
-	// создаем производный тип функции
-	static FunctionThrowTypeList fttl;	
+	// СЃРѕР·РґР°РµРј РїСЂРѕРёР·РІРѕРґРЅС‹Р№ С‚РёРї С„СѓРЅРєС†РёРё
+	static FunctionThrowTypeList fttl;
 	static DerivedTypeList dtl;
 	dtl.ClearDerivedTypeList();
 	dtl.AddDerivedType( new FunctionPrototype(false, false, fpl, fttl, true, false) );
@@ -347,35 +347,35 @@ const DerivedTypeList &SMFGenegator::MakeDTL1( bool isConst ) const
 }
 
 
-// построить конструктор по умолчанию
+// РїРѕСЃС‚СЂРѕРёС‚СЊ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 ConstructorMethod *SMFGenegator::MakeDefCtor( bool trivial ) const 
 {
-	CharString name(".");	// имя конструктора начинается всегда с точки
-	name += pClass.GetName().c_str();		
-		
+	CharString name("."); // РёРјСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РЅР°С‡РёРЅР°РµС‚СЃСЏ РІСЃРµРіРґР° СЃ С‚РѕС‡РєРё
+	name += pClass.GetName().c_str();  
+
 	DerivedTypeList dtl = MakeDTL0();
 	dtl.AddDerivedType( new Reference );
 	return new ConstructorMethod( name, &pClass, &pClass,
-		false, false, dtl, true,	// inline - true
+		false, false, dtl, true,  // inline - true
 		Function::SS_NONE, Function::CC_NON, ClassMember::AS_PUBLIC, false, 
 		trivial ? ConstructorMethod::DT_TRIVIAL : ConstructorMethod::DT_IMPLICIT );
 }
 
 
-// построить конструктор копирования
+// РїРѕСЃС‚СЂРѕРёС‚СЊ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
 ConstructorMethod *SMFGenegator::MakeCopyCtor( bool trivial, bool isConst ) const 
 {
-	CharString name(".");	// имя конструктора начинается всегда с точки
-	name += pClass.GetName().c_str();		
-	
+	CharString name("."); // РёРјСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РЅР°С‡РёРЅР°РµС‚СЃСЏ РІСЃРµРіРґР° СЃ С‚РѕС‡РєРё
+	name += pClass.GetName().c_str();
+
 	return new ConstructorMethod( name, &pClass, &pClass,
-		false, false, MakeDTL1(isConst), true,	// inline - true
+		false, false, MakeDTL1(isConst), true, // inline - true
 		Function::SS_NONE, Function::CC_NON, ClassMember::AS_PUBLIC, false, 
 		trivial ? Method::DT_TRIVIAL : Method::DT_IMPLICIT );
 }
 
 
-// построить деструктор
+// РїРѕСЃС‚СЂРѕРёС‚СЊ РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 Method *SMFGenegator::MakeDtor( bool trivial, bool isVirtual ) const 
 {
 	CharString name("~");
@@ -388,7 +388,7 @@ Method *SMFGenegator::MakeDtor( bool trivial, bool isVirtual ) const
 }
 
 
-// построить оператор присваивания
+// РїРѕСЃС‚СЂРѕРёС‚СЊ РѕРїРµСЂР°С‚РѕСЂ РїСЂРёСЃРІР°РёРІР°РЅРёСЏ
 ClassOverloadOperator *SMFGenegator::MakeCopyOperator( 
 				Method::DT dt, bool isConst, bool isVirtual ) const 
 {
@@ -398,7 +398,7 @@ ClassOverloadOperator *SMFGenegator::MakeCopyOperator(
 }
 
 
-// выводит отладочную информацию по методу
+// РІС‹РІРѕРґРёС‚ РѕС‚Р»Р°РґРѕС‡РЅСѓСЋ РёРЅС„РѕСЂРјР°С†РёСЋ РїРѕ РјРµС‚РѕРґСѓ
 void SMFGenegator::DebugMethod( const Method &meth )
 {
 	string outs = meth.GetTypyziedEntityName().c_str();
@@ -411,38 +411,38 @@ void SMFGenegator::DebugMethod( const Method &meth )
 }
 
 
-// метод генерирует для класса специальные функции члены, если
-// это необходимо
+// РјРµС‚РѕРґ РіРµРЅРµСЂРёСЂСѓРµС‚ РґР»СЏ РєР»Р°СЃСЃР° СЃРїРµС†РёР°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё С‡Р»РµРЅС‹, РµСЃР»Рё
+// СЌС‚Рѕ РЅРµРѕР±С…РѕРґРёРјРѕ
 void SMFGenegator::Generate()
 {
-	// проверяем, если нам не нужно ничего генерировать, выходим
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РЅР°Рј РЅРµ РЅСѓР¶РЅРѕ РЅРёС‡РµРіРѕ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ, РІС‹С…РѕРґРёРј
 	if( !pClass.GetConstructorList().empty()  &&
-		smfManager.GetCopyConstructor().first &&
-		smfManager.GetDestructor().first	  &&
+		smfManager.GetCopyConstructor().first  &&
+		smfManager.GetDestructor().first  &&
 		smfManager.GetCopyOperator().first  )
 		return;
 
-	// иначе заполняем список зависимых классов текущего класса
+	// РёРЅР°С‡Рµ Р·Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє Р·Р°РІРёСЃРёРјС‹С… РєР»Р°СЃСЃРѕРІ С‚РµРєСѓС‰РµРіРѕ РєР»Р°СЃСЃР°
 	FillDependClassList();
 
-	// после заполнения списка зависимых классов, формируем на его
-	// основе список менеджеров этих классов
+	// РїРѕСЃР»Рµ Р·Р°РїРѕР»РЅРµРЅРёСЏ СЃРїРёСЃРєР° Р·Р°РІРёСЃРёРјС‹С… РєР»Р°СЃСЃРѕРІ, С„РѕСЂРјРёСЂСѓРµРј РЅР° РµРіРѕ
+	// РѕСЃРЅРѕРІРµ СЃРїРёСЃРѕРє РјРµРЅРµРґР¶РµСЂРѕРІ СЌС‚РёС… РєР»Р°СЃСЃРѕРІ
 	SMFManagerList dependClsManagers;
 	for( ClassTypeList::const_iterator p = dependClsList.begin();
 		 p != dependClsList.end(); p++ )
 		dependClsManagers.push_back( SMFManager(**p) );
 
-	// проверяем, нужен ли нам конструктор по умолчанию,
-	// в случае если конструкторов не объявлено, продолжаем генерацию
+	// РїСЂРѕРІРµСЂСЏРµРј, РЅСѓР¶РµРЅ Р»Рё РЅР°Рј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+	// РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРІ РЅРµ РѕР±СЉСЏРІР»РµРЅРѕ, РїСЂРѕРґРѕР»Р¶Р°РµРј РіРµРЅРµСЂР°С†РёСЋ
 	if( pClass.GetConstructorList().empty() )
 	{
-		// проверяем, можно ли сгенерировать к-ор по умолчанию для нашего класса
+		// РїСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ Рє-РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РґР»СЏ РЅР°С€РµРіРѕ РєР»Р°СЃСЃР°
 		if( CanGenerate(dependClsManagers, &SMFManager::GetDefaultConstructor) && !explicitInit )
 			pClass.InsertSymbol( MakeDefCtor( 
 				GetDependInfo(dependClsManagers, &SMFManager::GetDefaultConstructor).trivial) );
 	}
 
-	// если копирующий конструктор не сгенерирован, генерируем
+	// РµСЃР»Рё РєРѕРїРёСЂСѓСЋС‰РёР№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ, РіРµРЅРµСЂРёСЂСѓРµРј
 	if( smfManager.GetCopyConstructor().first == NULL )
 	{
 		if( CanGenerate(dependClsManagers, &SMFManager::GetCopyConstructor) && !explicitInit )
@@ -452,7 +452,7 @@ void SMFGenegator::Generate()
 		}
 	}
 
-	// если необх. сгенерировать деструктор
+	// РµСЃР»Рё РЅРµРѕР±С…. СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 	if( smfManager.GetDestructor().first == NULL )
 	{
 		if( CanGenerate(dependClsManagers, &SMFManager::GetDestructor) )
@@ -463,78 +463,78 @@ void SMFGenegator::Generate()
 		}
 	}
 
-	// если необх. сгенерировать оператор присваивания
+	// РµСЃР»Рё РЅРµРѕР±С…. СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РѕРїРµСЂР°С‚РѕСЂ РїСЂРёСЃРІР°РёРІР°РЅРёСЏ
 	if( smfManager.GetCopyOperator().first == NULL )
 	{
-		// помимо стандартных проверок, также проверяем, чтобы в классе
-		// не было ссылок и константных объектов. В этом случае оператор
-		// копирования не генерируется
+		// РїРѕРјРёРјРѕ СЃС‚Р°РЅРґР°СЂС‚РЅС‹С… РїСЂРѕРІРµСЂРѕРє, С‚Р°РєР¶Рµ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РІ РєР»Р°СЃСЃРµ
+		// РЅРµ Р±С‹Р»Рѕ СЃСЃС‹Р»РѕРє Рё РєРѕРЅСЃС‚Р°РЅС‚РЅС‹С… РѕР±СЉРµРєС‚РѕРІ. Р’ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ РѕРїРµСЂР°С‚РѕСЂ
+		// РєРѕРїРёСЂРѕРІР°РЅРёСЏ РЅРµ РіРµРЅРµСЂРёСЂСѓРµС‚СЃСЏ
 		if( CanGenerate(dependClsManagers, &SMFManager::GetCopyOperator) && !explicitInit )
-		{						
-			DependInfo di = GetDependInfo(dependClsManagers, &SMFManager::GetCopyOperator);			
+		{
+			DependInfo di = GetDependInfo(dependClsManagers, &SMFManager::GetCopyOperator);
 			bool isVirtual = IsDeclareVirtual(dependClsManagers, &SMFManager::GetCopyOperator);
 			pClass.InsertSymbol( MakeCopyOperator( (di.trivial ?
 				Method::DT_TRIVIAL : Method::DT_IMPLICIT), di.paramIsConst, isVirtual) );
 		}
 
-		// иначе нам все равно следует сгенерировать оператор, но пометить
-		// его как недоступный
+		// РёРЅР°С‡Рµ РЅР°Рј РІСЃРµ СЂР°РІРЅРѕ СЃР»РµРґСѓРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РѕРїРµСЂР°С‚РѕСЂ, РЅРѕ РїРѕРјРµС‚РёС‚СЊ
+		// РµРіРѕ РєР°Рє РЅРµРґРѕСЃС‚СѓРїРЅС‹Р№
 		else
 			pClass.InsertSymbol( MakeCopyOperator(Method::DT_UNAVAIBLE, false, false) );
 	}
 }
 
 
-// сгенерировать специальные функции члены, которые не заданы
-// явно пользователем
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ СЃРїРµС†РёР°Р»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё С‡Р»РµРЅС‹, РєРѕС‚РѕСЂС‹Рµ РЅРµ Р·Р°РґР°РЅС‹
+// СЏРІРЅРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
 void ClassParserImpl::GenerateSMF()
 {
 	SMFGenegator(*clsType).Generate();
 }
 
 
-// сгенерировать С-тип в выходной буфер
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РЎ-С‚РёРї РІ РІС‹С…РѕРґРЅРѕР№ Р±СѓС„РµСЂ
 void CTypePrinter::Generate( )
-{	
+{
 	BaseType::BT bt = type.GetBaseType().GetBaseTypeCode();
-	
-	// const - игнорируем, volatile оставляем
+
+	// const - РёРіРЅРѕСЂРёСЂСѓРµРј, volatile РѕСЃС‚Р°РІР»СЏРµРј
 	if( type.IsVolatile() )
 		baseType = "volatile ";
 
-	// если базовый тип встроенный, печатаем его. bool в начале программы 
-	// подключается через файл stdbool.h
+	// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї РІСЃС‚СЂРѕРµРЅРЅС‹Р№, РїРµС‡Р°С‚Р°РµРј РµРіРѕ. bool РІ РЅР°С‡Р°Р»Рµ РїСЂРѕРіСЂР°РјРјС‹ 
+	// РїРѕРґРєР»СЋС‡Р°РµС‚СЃСЏ С‡РµСЂРµР· С„Р°Р№Р» stdbool.h
 	if( bt == BaseType::BT_BOOL    || bt == BaseType::BT_CHAR   ||
 		bt == BaseType::BT_WCHAR_T || bt == BaseType::BT_INT    || 
 		bt == BaseType::BT_FLOAT   || bt == BaseType::BT_DOUBLE ||
 		bt == BaseType::BT_VOID )
 		baseType += ImplicitTypeManager(type.GetBaseType()).GetImplicitTypeName().c_str();
 
-	// иначе печатаем имя класса
+	// РёРЅР°С‡Рµ РїРµС‡Р°С‚Р°РµРј РёРјСЏ РєР»Р°СЃСЃР°
 	else
 	{
-		INTERNAL_IF( bt != BaseType::BT_CLASS	 &&
-					 bt != BaseType::BT_STRUCT	 &&
-					 bt != BaseType::BT_ENUM	 &&
+		INTERNAL_IF( bt != BaseType::BT_CLASS  &&
+					 bt != BaseType::BT_STRUCT  &&
+					 bt != BaseType::BT_ENUM  &&
 					 bt != BaseType::BT_UNION );
-		
-		// если перечисление, заменяем на int
+
+		// РµСЃР»Рё РїРµСЂРµС‡РёСЃР»РµРЅРёРµ, Р·Р°РјРµРЅСЏРµРј РЅР° int
 		if( bt == BaseType::BT_ENUM )
 			baseType += "int";
 
-		// иначе структура или объединение
+		// РёРЅР°С‡Рµ СЃС‚СЂСѓРєС‚СѓСЂР° РёР»Рё РѕР±СЉРµРґРёРЅРµРЅРёРµ
 		else
 		{
 			baseType += (bt == BaseType::BT_UNION ? "union " : "struct ");
-		
-			// прибавляем С-имя. Учитываем, что С-имя сгенерировано в любом случае
+
+			// РїСЂРёР±Р°РІР»СЏРµРј РЎ-РёРјСЏ. РЈС‡РёС‚С‹РІР°РµРј, С‡С‚Рѕ РЎ-РёРјСЏ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРѕ РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ
 			baseType += static_cast<const ClassType &>(type.GetBaseType()).GetC_Name();
 		}
 	}
-	
-	// если имеем конструктор, конструктор возвращает указатель на передаваемый
-	// объект. Соотв. в каждом конструкторе следует добавить "return this;" 
-	// в конце тела и там где операция return
+
+	// РµСЃР»Рё РёРјРµРµРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РїРµСЂРµРґР°РІР°РµРјС‹Р№
+	// РѕР±СЉРµРєС‚. РЎРѕРѕС‚РІ. РІ РєР°Р¶РґРѕРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ СЃР»РµРґСѓРµС‚ РґРѕР±Р°РІРёС‚СЊ "return this;" 
+	// РІ РєРѕРЅС†Рµ С‚РµР»Р° Рё С‚Р°Рј РіРґРµ РѕРїРµСЂР°С†РёСЏ return
 	if( type.IsFunction() && static_cast<const Function &>(type).IsClassMember() &&
 		static_cast<const Method &>(type).IsConstructor() )
 		baseType += " *";
@@ -545,14 +545,14 @@ void CTypePrinter::Generate( )
 		int ix = 0;
 		bool namePrint = id == NULL;
 
-		PrintPointer(dtlBuf, ix, namePrint);		
+		PrintPointer(dtlBuf, ix, namePrint);
 		outBuffer = baseType + ' ' + dtlBuf;
 	}
 
-	else if( id != NULL )		
+	else if( id != NULL )
 		outBuffer = baseType + ' ' + id->GetC_Name();
 
-	// удаляем пробелы
+	// СѓРґР°Р»СЏРµРј РїСЂРѕР±РµР»С‹
 	if( outBuffer[outBuffer.length()-1] == ' ' )
 		outBuffer.erase(outBuffer.end()-1);
 	if( outBuffer[0] == ' ' )
@@ -560,7 +560,7 @@ void CTypePrinter::Generate( )
 }
 
 
-// печатать префиксные производные типы и сохранять их в буфер
+// РїРµС‡Р°С‚Р°С‚СЊ РїСЂРµС„РёРєСЃРЅС‹Рµ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ С‚РёРїС‹ Рё СЃРѕС…СЂР°РЅСЏС‚СЊ РёС… РІ Р±СѓС„РµСЂ
 void CTypePrinter::PrintPointer( string &buf, int &ix, bool &namePrint )
 {
 	bool isPrint = false;
@@ -569,15 +569,15 @@ void CTypePrinter::PrintPointer( string &buf, int &ix, bool &namePrint )
 		const DerivedType &dt = *type.GetDerivedTypeList().GetDerivedType(ix);
 		DerivedType::DT dtc = dt.GetDerivedTypeCode();
 
-		// ссылка и указатель обозначаются одним символом
+		// СЃСЃС‹Р»РєР° Рё СѓРєР°Р·Р°С‚РµР»СЊ РѕР±РѕР·РЅР°С‡Р°СЋС‚СЃСЏ РѕРґРЅРёРј СЃРёРјРІРѕР»РѕРј
 		if( dtc == DerivedType::DT_REFERENCE || dtc == DerivedType::DT_POINTER )
 			buf = '*' + buf;
 
-		// меняем базовый тип на int и выходим из цикла
+		// РјРµРЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅР° int Рё РІС‹С…РѕРґРёРј РёР· С†РёРєР»Р°
 		else if( dtc == DerivedType::DT_POINTER_TO_MEMBER )
-		{	
-			// если имеем указатель на член-функцию, преобразуем его в указатель
-			// на функцию, 
+		{
+			// РµСЃР»Рё РёРјРµРµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‡Р»РµРЅ-С„СѓРЅРєС†РёСЋ, РїСЂРµРѕР±СЂР°Р·СѓРµРј РµРіРѕ РІ СѓРєР°Р·Р°С‚РµР»СЊ
+			// РЅР° С„СѓРЅРєС†РёСЋ, 
 			if( ix != type.GetDerivedTypeList().GetDerivedTypeCount()-1 &&
 				type.GetDerivedTypeList().GetDerivedType(ix+1)->GetDerivedTypeCode() ==
 				DerivedType::DT_FUNCTION_PROTOTYPE )
@@ -586,8 +586,8 @@ void CTypePrinter::PrintPointer( string &buf, int &ix, bool &namePrint )
 				INTERNAL_IF( !thisBuf.empty() );
 				PrintThis( static_cast<const PointerToMember&>(dt).GetMemberClassType(),thisBuf);
 			}
-			
-			// иначе преобразуем тип в int и выходим
+
+			// РёРЅР°С‡Рµ РїСЂРµРѕР±СЂР°Р·СѓРµРј С‚РёРї РІ int Рё РІС‹С…РѕРґРёРј
 			else
 			{
 				baseType = "int";
@@ -598,30 +598,30 @@ void CTypePrinter::PrintPointer( string &buf, int &ix, bool &namePrint )
 
 		else
 		{
-			// если имя еще не было распечатано, печатаем его
+			// РµСЃР»Рё РёРјСЏ РµС‰Рµ РЅРµ Р±С‹Р»Рѕ СЂР°СЃРїРµС‡Р°С‚Р°РЅРѕ, РїРµС‡Р°С‚Р°РµРј РµРіРѕ
 			if( !namePrint )
-			{				
+			{
 				buf = buf + id->GetC_Name();
 				namePrint = true;
 			}
 
-			if( isPrint )			
-				buf = '(' + buf + ')';			
+			if( isPrint )
+				buf = '(' + buf + ')';
 
-			PrintPostfix( buf, ix );			
+			PrintPostfix( buf, ix );
 		}
 	}
 
-	// если имя так и не было напечатано, печатаем	
+	// РµСЃР»Рё РёРјСЏ С‚Р°Рє Рё РЅРµ Р±С‹Р»Рѕ РЅР°РїРµС‡Р°С‚Р°РЅРѕ, РїРµС‡Р°С‚Р°РµРј	
 	if( !namePrint )
-	{				
+	{
 		buf = buf + id->GetC_Name();
 		namePrint = true;
 	}
 }
 
 
-// печатать постфиксные производные типы и сохранять в буфер
+// РїРµС‡Р°С‚Р°С‚СЊ РїРѕСЃС‚С„РёРєСЃРЅС‹Рµ РїСЂРѕРёР·РІРѕРґРЅС‹Рµ С‚РёРїС‹ Рё СЃРѕС…СЂР°РЅСЏС‚СЊ РІ Р±СѓС„РµСЂ
 void CTypePrinter::PrintPostfix( string &buf, int &ix )
 {
 	int i;
@@ -635,8 +635,8 @@ void CTypePrinter::PrintPostfix( string &buf, int &ix )
 			const FunctionPrototype &fp =  static_cast<const FunctionPrototype &>(dt);
 			buf += '(';
 
-			// если задан this-буфер, значит следует вывести параметр this для
-			// метода и очистить буфер
+			// РµСЃР»Рё Р·Р°РґР°РЅ this-Р±СѓС„РµСЂ, Р·РЅР°С‡РёС‚ СЃР»РµРґСѓРµС‚ РІС‹РІРµСЃС‚Рё РїР°СЂР°РјРµС‚СЂ this РґР»СЏ
+			// РјРµС‚РѕРґР° Рё РѕС‡РёСЃС‚РёС‚СЊ Р±СѓС„РµСЂ
 			if( !thisBuf.empty() )
 			{
 				buf += thisBuf;
@@ -649,26 +649,26 @@ void CTypePrinter::PrintPostfix( string &buf, int &ix )
 			{
 				const Parametr &prm = *fp.GetParametrList().GetFunctionParametr(i);
 
-				// если печатаем декларацию (задано имя), проверяем, чтобы у параметра
-				// также было задано имя				
+				// РµСЃР»Рё РїРµС‡Р°С‚Р°РµРј РґРµРєР»Р°СЂР°С†РёСЋ (Р·Р°РґР°РЅРѕ РёРјСЏ), РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ Сѓ РїР°СЂР°РјРµС‚СЂР°
+				// С‚Р°РєР¶Рµ Р±С‹Р»Рѕ Р·Р°РґР°РЅРѕ РёРјСЏ
 				CTypePrinter prmPrinter(prm, id ? &prm : NULL);
 				prmPrinter.Generate();
 
-				// прибавляем распечатанный параметр
+				// РїСЂРёР±Р°РІР»СЏРµРј СЂР°СЃРїРµС‡Р°С‚Р°РЅРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ
 				if( prm.IsHaveRegister() )
 					buf += "register ";
 				buf += prmPrinter.GetOutBuffer();
-							
+
 				if( i < fp.GetParametrList().GetFunctionParametrCount()-1 )
 					buf += ", ";
-			}						
-			
-			if( fp.IsHaveEllipse() )			
+			}
+
+			if( fp.IsHaveEllipse() )
 				buf += i == 0 ? "..." : ", ...";
 			buf += ')';		
 		}
 
-		else if( dtc == DerivedType::DT_ARRAY )		
+		else if( dtc == DerivedType::DT_ARRAY )
 		{
 			if( dt.GetDerivedTypeSize() > 0 )
 				buf = buf + '[' + CharString( dt.GetDerivedTypeSize() ).c_str() + ']';
@@ -676,7 +676,7 @@ void CTypePrinter::PrintPostfix( string &buf, int &ix )
 				buf += "[]";
 		}
 
-		// иначе опять следует печатать указатели, только сначала
+		// РёРЅР°С‡Рµ РѕРїСЏС‚СЊ СЃР»РµРґСѓРµС‚ РїРµС‡Р°С‚Р°С‚СЊ СѓРєР°Р·Р°С‚РµР»Рё, С‚РѕР»СЊРєРѕ СЃРЅР°С‡Р°Р»Р°
 		else
 		{
 			INTERNAL_IF( dtc != DerivedType::DT_REFERENCE &&
@@ -684,13 +684,13 @@ void CTypePrinter::PrintPostfix( string &buf, int &ix )
 						 dtc != DerivedType::DT_POINTER_TO_MEMBER );
 
 			bool nm = true;
-			PrintPointer(buf, ix, nm);						 
+			PrintPointer(buf, ix, nm);
 		}
 	}
 }
 
 
-// задать информацию генерации для виртуального метода
+// Р·Р°РґР°С‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ РіРµРЅРµСЂР°С†РёРё РґР»СЏ РІРёСЂС‚СѓР°Р»СЊРЅРѕРіРѕ РјРµС‚РѕРґР°
 Method::VFData::VFData( int vtIndex, const Method &thisMeth )
 	: vtIndex(vtIndex), 
 	rootVfCls(static_cast<const ClassType &>(thisMeth.GetSymbolTableEntry())) 
@@ -700,25 +700,25 @@ Method::VFData::VFData( int vtIndex, const Method &thisMeth )
 	INTERNAL_IF( !ent->GetDerivedTypeList().IsFunction() );
 	const_cast<DerivedTypeList &>(ent->GetDerivedTypeList()).PushHeadDerivedType(
 		new Pointer(false, false));
-	
+
 	CTypePrinter ctp(*ent, thisMeth);
 	castBuf = '(' + (ctp.Generate(), ctp.GetOutBuffer()) + ')';
 }
 
 
-// сгенерировать заголовок класса
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ Р·Р°РіРѕР»РѕРІРѕРє РєР»Р°СЃСЃР°
 string ClassGenerator::GenerateHeader( const ClassType &cls )
 {
 	string header;
 	header = cls.GetBaseTypeCode() == BaseType::BT_UNION ? "union " : "struct ";
 	header += cls.GetC_Name();
 
-	// добавить заголовок к выходному буферу
+	// РґРѕР±Р°РІРёС‚СЊ Р·Р°РіРѕР»РѕРІРѕРє Рє РІС‹С…РѕРґРЅРѕРјСѓ Р±СѓС„РµСЂСѓ
 	return header;
 }
 
 
-// сгенерировать базовые подобъекты (классы)
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ Р±Р°Р·РѕРІС‹Рµ РїРѕРґРѕР±СЉРµРєС‚С‹ (РєР»Р°СЃСЃС‹)
 void ClassGenerator::GenerateBaseClassList( const BaseClassList &bcl )
 {
 	for( int i = 0; i<bcl.GetBaseClassCount(); i++ )
@@ -727,52 +727,52 @@ void ClassGenerator::GenerateBaseClassList( const BaseClassList &bcl )
 		const ClassType &pbcls = bcc.GetPointerToClass();
 		string subObjBuf = '\t' + GenerateHeader(pbcls);
 
-		// если виртуальное наследование, прибавляем указатель
+		// РµСЃР»Рё РІРёСЂС‚СѓР°Р»СЊРЅРѕРµ РЅР°СЃР»РµРґРѕРІР°РЅРёРµ, РїСЂРёР±Р°РІР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ
 		if( bcc.IsVirtualDerivation() )
 			subObjBuf += " *";
 
-		// генерируем имя подобъекта
+		// РіРµРЅРµСЂРёСЂСѓРµРј РёРјСЏ РїРѕРґРѕР±СЉРµРєС‚Р°
 		subObjBuf += ' ' + pbcls.GetC_Name() + "so;\n";
 		clsBuffer += subObjBuf;
 	}
 }
 
 
-// сгенерировать список данных-членов и методов
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ СЃРїРёСЃРѕРє РґР°РЅРЅС‹С…-С‡Р»РµРЅРѕРІ Рё РјРµС‚РѕРґРѕРІ
 void ClassGenerator::GenerateMemberList( const ClassMemberList &cml )
 {
 	for( int i = 0; i<cml.GetClassMemberCount(); i++ )
 	{
-		const ClassMember &member = *cml.GetClassMember(i);		
+		const ClassMember &member = *cml.GetClassMember(i);
 
-		// если данное-член, генерируем член
+		// РµСЃР»Рё РґР°РЅРЅРѕРµ-С‡Р»РµРЅ, РіРµРЅРµСЂРёСЂСѓРµРј С‡Р»РµРЅ
 		if( const DataMember *pobj = dynamic_cast<const DataMember *>(&member) )
 		{
-			// typedef-не генерируем
+			// typedef-РЅРµ РіРµРЅРµСЂРёСЂСѓРµРј
 			if( pobj->GetStorageSpecifier() == ::Object::SS_TYPEDEF )
 				continue;
 
-			// иначе сгенерируем определение			
+			// РёРЅР°С‡Рµ СЃРіРµРЅРµСЂРёСЂСѓРµРј РѕРїСЂРµРґРµР»РµРЅРёРµ
 			CTypePrinter tp( *pobj, pobj );
 			tp.Generate();
 
-			// если static, генерируем за пределами класса, как extern-член
-			if( pobj->GetStorageSpecifier() == ::Object::SS_STATIC )			
+			// РµСЃР»Рё static, РіРµРЅРµСЂРёСЂСѓРµРј Р·Р° РїСЂРµРґРµР»Р°РјРё РєР»Р°СЃСЃР°, РєР°Рє extern-С‡Р»РµРЅ
+			if( pobj->GetStorageSpecifier() == ::Object::SS_STATIC )
 			{
 				string mbuf = tp.GetOutBuffer();
-				// если есть инициализатор, задаем
+				// РµСЃР»Рё РµСЃС‚СЊ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ, Р·Р°РґР°РµРј
 				if( pobj->IsConst() && pobj->GetObjectInitializer() )
 					mbuf = "const " + mbuf + " = " + 
 						CharString( (int)*pobj->GetObjectInitializer() );
 
-				// иначе объявляем как extern
+				// РёРЅР°С‡Рµ РѕР±СЉСЏРІР»СЏРµРј РєР°Рє extern
 				else
 					mbuf = "extern " + mbuf;
 
 				outSideBuffer += mbuf + ";\n";
 			}
 
-			// если битовое поле
+			// РµСЃР»Рё Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ
 			else if( pobj->IsBitField() )
 			{
 				const double *v = pobj->GetObjectInitializer();
@@ -782,16 +782,16 @@ void ClassGenerator::GenerateMemberList( const ClassMemberList &cml )
 				clsBuffer += mbuf;
 			}
 
-			// иначе генерируем как обычный член
+			// РёРЅР°С‡Рµ РіРµРЅРµСЂРёСЂСѓРµРј РєР°Рє РѕР±С‹С‡РЅС‹Р№ С‡Р»РµРЅ
 			else
-				clsBuffer += '\t' + tp.GetOutBuffer() + ";\n";				
+				clsBuffer += '\t' + tp.GetOutBuffer() + ";\n";
 		}
 
-		// если метод, генерируем его за пределами класса
+		// РµСЃР»Рё РјРµС‚РѕРґ, РіРµРЅРµСЂРёСЂСѓРµРј РµРіРѕ Р·Р° РїСЂРµРґРµР»Р°РјРё РєР»Р°СЃСЃР°
 		else if( const Method *pmeth = dynamic_cast<const Method *>(&member) )
 		{
-			// если метод тривиальный или недоступный или абстрактный,
-			// не генерируем его
+			// РµСЃР»Рё РјРµС‚РѕРґ С‚СЂРёРІРёР°Р»СЊРЅС‹Р№ РёР»Рё РЅРµРґРѕСЃС‚СѓРїРЅС‹Р№ РёР»Рё Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№,
+			// РЅРµ РіРµРЅРµСЂРёСЂСѓРµРј РµРіРѕ
 			if( pmeth->IsTrivial() || pmeth->IsAbstract() || pmeth->IsUnavaible() )
 				continue;
 
@@ -807,7 +807,7 @@ void ClassGenerator::GenerateMemberList( const ClassMemberList &cml )
 }
 
 
-// рекурсиный метод вызываемый из GenerateVTable
+// СЂРµРєСѓСЂСЃРёРЅС‹Р№ РјРµС‚РѕРґ РІС‹Р·С‹РІР°РµРјС‹Р№ РёР· GenerateVTable
 void ClassGenerator::GenerateVTable( const ClassType &cls, string *fnArray, int fnArraySize )
 {
 	const VirtualFunctionList &vfl = cls.GetVirtualFunctionList();
@@ -821,71 +821,71 @@ void ClassGenerator::GenerateVTable( const ClassType &cls, string *fnArray, int 
 }
 
 
-// сгенерировать таблицу виртуальных функций для данного класса,
-// учитывая базовые классы
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ С‚Р°Р±Р»РёС†Сѓ РІРёСЂС‚СѓР°Р»СЊРЅС‹С… С„СѓРЅРєС†РёР№ РґР»СЏ РґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР°,
+// СѓС‡РёС‚С‹РІР°СЏ Р±Р°Р·РѕРІС‹Рµ РєР»Р°СЃСЃС‹
 void ClassGenerator::GenerateVTable( )
 {
 	const int vfcnt = pClass.GetVirtualFunctionCount();
-	// если виртуальных функций в классе нет, строить виртуальную 
-	// таблицу не требуется
+	// РµСЃР»Рё РІРёСЂС‚СѓР°Р»СЊРЅС‹С… С„СѓРЅРєС†РёР№ РІ РєР»Р°СЃСЃРµ РЅРµС‚, СЃС‚СЂРѕРёС‚СЊ РІРёСЂС‚СѓР°Р»СЊРЅСѓСЋ 
+	// С‚Р°Р±Р»РёС†Сѓ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ
 	if( vfcnt == 0 )
 		return;
 	string *fnBuf = new string[vfcnt];
 	GenerateVTable( pClass, fnBuf, vfcnt);
 
-	// постусловие, чтобы все элементы буфера были заполнены
+	// РїРѕСЃС‚СѓСЃР»РѕРІРёРµ, С‡С‚РѕР±С‹ РІСЃРµ СЌР»РµРјРµРЅС‚С‹ Р±СѓС„РµСЂР° Р±С‹Р»Рё Р·Р°РїРѕР»РЅРµРЅС‹
 	for( int i = 0; i<vfcnt; i++ )
 		INTERNAL_IF( fnBuf[i].empty() );
 	delete [] fnBuf;
 }
 
 
-// сгенерировать определение класса и зависимую информацию
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РѕРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°СЃСЃР° Рё Р·Р°РІРёСЃРёРјСѓСЋ РёРЅС„РѕСЂРјР°С†РёСЋ
 void ClassGenerator::Generate()
 {
-	// генерируем заголовок
+	// РіРµРЅРµСЂРёСЂСѓРµРј Р·Р°РіРѕР»РѕРІРѕРє
 	clsBuffer = GenerateHeader(pClass);
 
-	// если класс не полностью объявлен, генерируем только заголовок и выходим
+	// РµСЃР»Рё РєР»Р°СЃСЃ РЅРµ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЉСЏРІР»РµРЅ, РіРµРЅРµСЂРёСЂСѓРµРј С‚РѕР»СЊРєРѕ Р·Р°РіРѕР»РѕРІРѕРє Рё РІС‹С…РѕРґРёРј
 	if( pClass.IsUncomplete() )
 	{
 		clsBuffer += ';';
 		return;
 	}
 
-	// добавляем '{'
+	// РґРѕР±Р°РІР»СЏРµРј '{'
 	clsBuffer += "\n{\n";
 	int prevBufSize = clsBuffer.size();
 
-	// генерируем базовые подобъекты
+	// РіРµРЅРµСЂРёСЂСѓРµРј Р±Р°Р·РѕРІС‹Рµ РїРѕРґРѕР±СЉРµРєС‚С‹
 	GenerateBaseClassList( pClass.GetBaseClassList() );
-	// генерируем члены
+	// РіРµРЅРµСЂРёСЂСѓРµРј С‡Р»РµРЅС‹
 	GenerateMemberList( pClass.GetMemberList() );
 
-	// здесь, проверяем, если буфер содержит только "\n{\n",
-	// значит в него ничего не сгенерировано и следует сгенерировать
-	// поле, чтобы класс не был пустым
+	// Р·РґРµСЃСЊ, РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё Р±СѓС„РµСЂ СЃРѕРґРµСЂР¶РёС‚ С‚РѕР»СЊРєРѕ "\n{\n",
+	// Р·РЅР°С‡РёС‚ РІ РЅРµРіРѕ РЅРёС‡РµРіРѕ РЅРµ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРѕ Рё СЃР»РµРґСѓРµС‚ СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ
+	// РїРѕР»Рµ, С‡С‚РѕР±С‹ РєР»Р°СЃСЃ РЅРµ Р±С‹Р» РїСѓСЃС‚С‹Рј
 	if( clsBuffer.size() == prevBufSize )
 		clsBuffer += "\tint _;";
 
-	// закрываем скобку
+	// Р·Р°РєСЂС‹РІР°РµРј СЃРєРѕР±РєСѓ
 	clsBuffer += "\n};\n\n";
 }
 
 
-// сгенерировать, инициализацию конструктором. Возвращает буфер с вызовом
-// конструктора. Не рассматривает тривиальные конструкторы
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ, РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј. Р’РѕР·РІСЂР°С‰Р°РµС‚ Р±СѓС„РµСЂ СЃ РІС‹Р·РѕРІРѕРј
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°. РќРµ СЂР°СЃСЃРјР°С‚СЂРёРІР°РµС‚ С‚СЂРёРІРёР°Р»СЊРЅС‹Рµ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
 void DeclarationGenerator::GenerateConstructorCall( const ::Object &obj,
 		const ConstructorInitializator &ci, string &out )
 {
-	INTERNAL("!!! распечатать вызов конструктора и регистрацию объекта");
+	INTERNAL("!!! СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ РІС‹Р·РѕРІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° Рё СЂРµРіРёСЃС‚СЂР°С†РёСЋ РѕР±СЉРµРєС‚Р°");
 	INTERNAL_IF( !ci.GetConstructor() || ci.GetConstructor()->IsTrivial() );
 }
 
 
-// сгенерировать выражение из инициализатора. В списке выражение должно быть одно.
-// Если выражение является интерпретируемым и может использоваться как прямой
-// инициализатор глобального объекта, вернуть true, иначе false
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ РёР· РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂР°. Р’ СЃРїРёСЃРєРµ РІС‹СЂР°Р¶РµРЅРёРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РѕРґРЅРѕ.
+// Р•СЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ СЏРІР»СЏРµС‚СЃСЏ РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјС‹Рј Рё РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РєР°Рє РїСЂСЏРјРѕР№
+// РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РѕР±СЉРµРєС‚Р°, РІРµСЂРЅСѓС‚СЊ true, РёРЅР°С‡Рµ false
 bool DeclarationGenerator::GenerateExpressionInit(  const ::Object &obj,
 		const ConstructorInitializator &ci, string &out )
 {
@@ -893,78 +893,78 @@ bool DeclarationGenerator::GenerateExpressionInit(  const ::Object &obj,
 	if( ci.GetExpressionList()->empty() )
 		return true;
 
-	// иначе имеем один инициализатор, распечатаем его
+	// РёРЅР°С‡Рµ РёРјРµРµРј РѕРґРёРЅ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ, СЂР°СЃРїРµС‡Р°С‚Р°РµРј РµРіРѕ
 	const POperand &exp = ci.GetExpressionList()->front();
 	INTERNAL_IF( !(exp->IsExpressionOperand() || exp->IsPrimaryOperand()) );
 
-	// если инициализатор может использоваться как прямой
-	// для глобального объекта установлен в true
+	// РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РєР°Рє РїСЂСЏРјРѕР№
+	// РґР»СЏ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РѕР±СЉРµРєС‚Р° СѓСЃС‚Р°РЅРѕРІР»РµРЅ РІ true
 	bool directIator = false;
 
-	// если имеем основной операнд, проанализируем, является ли он интерпретируемым
+	// РµСЃР»Рё РёРјРµРµРј РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ, РїСЂРѕР°РЅР°Р»РёР·РёСЂСѓРµРј, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РѕРЅ РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјС‹Рј
 	if( exp->IsPrimaryOperand() )
 	{
-		// проверка, является ли операнд интерпретируемым
+		// РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РѕРїРµСЂР°РЅРґ РёРЅС‚РµСЂРїСЂРµС‚РёСЂСѓРµРјС‹Рј
 		double rval;
 		if( ExpressionMakerUtils::IsInterpretable(exp, rval) ||
 			exp->GetType().IsLiteral() )
-			directIator = true;		
+			directIator = true;
 	}
 
-	INTERNAL(" !!!! распечатаем все выражение в выходной буфер");
+	INTERNAL(" !!!! СЂР°СЃРїРµС‡Р°С‚Р°РµРј РІСЃРµ РІС‹СЂР°Р¶РµРЅРёРµ РІ РІС‹С…РѕРґРЅРѕР№ Р±СѓС„РµСЂ");
 
 	return directIator;
 }
 
 
-// сгенерировать инициализатор для объекта. Если инициализатор возможно
-// сгенерировать как прямой, генерируем. Иначе генерируем в буфер косвенной
-// инициализации
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РґР»СЏ РѕР±СЉРµРєС‚Р°. Р•СЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РІРѕР·РјРѕР¶РЅРѕ
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РєР°Рє РїСЂСЏРјРѕР№, РіРµРЅРµСЂРёСЂСѓРµРј. РРЅР°С‡Рµ РіРµРЅРµСЂРёСЂСѓРµРј РІ Р±СѓС„РµСЂ РєРѕСЃРІРµРЅРЅРѕР№
+// РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 void DeclarationGenerator::GenerateInitialization( const ::Object &obj )
 {
 	INTERNAL_IF( iator.IsNull() );
 
-	// если инициализатор конструктором (либо значением)
+	// РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј (Р»РёР±Рѕ Р·РЅР°С‡РµРЅРёРµРј)
 	if( iator->IsConstructorInitializator() )
 	{
 		const ConstructorInitializator &oci = 
 			static_cast<const ConstructorInitializator &>(*iator);
 		string out;
 
-		// если инициализация выражением
+		// РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІС‹СЂР°Р¶РµРЅРёРµРј
 		if( !oci.GetConstructor() || oci.GetConstructor()->IsTrivial() )
-		{			
+		{
 			bool directIator = GenerateExpressionInit(obj, oci, out);
 			if( !out.empty() )
 			{
-				// если сгенерирован прямой инициализатор или имеем локальный объект,
-				// генерируем инициализацию через равно
+				// РµСЃР»Рё СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅ РїСЂСЏРјРѕР№ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РёР»Рё РёРјРµРµРј Р»РѕРєР°Р»СЊРЅС‹Р№ РѕР±СЉРµРєС‚,
+				// РіРµРЅРµСЂРёСЂСѓРµРј РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ С‡РµСЂРµР· СЂР°РІРЅРѕ
 				if( directIator || !global )
-					outBuffer += " = " + out;			
+					outBuffer += " = " + out;
 
-				// иначе генерируем в буфер косвенной инициализации
+				// РёРЅР°С‡Рµ РіРµРЅРµСЂРёСЂСѓРµРј РІ Р±СѓС„РµСЂ РєРѕСЃРІРµРЅРЅРѕР№ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
 				else
 					indirectInitBuf = obj.GetC_Name() + " = " + out;
 			}
 		}
 
-		// иначе, инициализируем конструктором
+		// РёРЅР°С‡Рµ, РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРѕРј
 		else
 			GenerateConstructorCall(obj, oci, out);		
 	}
 
-	// иначе инициализатор является списочным
+	// РёРЅР°С‡Рµ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ СЏРІР»СЏРµС‚СЃСЏ СЃРїРёСЃРѕС‡РЅС‹Рј
 	else
 	{
-		INTERNAL("не реализовано");
+		INTERNAL("РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅРѕ");
 	}
 }
 
 
-// сгенерировать декларацию
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РґРµРєР»Р°СЂР°С†РёСЋ
 void DeclarationGenerator::Generate()
 {
-	// распечатаем декларацию объекта
+	// СЂР°СЃРїРµС‡Р°С‚Р°РµРј РґРµРєР»Р°СЂР°С†РёСЋ РѕР±СЉРµРєС‚Р°
 	if( declarator.IsObject() )
 	{
 		const ::Object &obj = static_cast<const ::Object &>(declarator);
@@ -972,8 +972,8 @@ void DeclarationGenerator::Generate()
 		ctp.Generate();
 		outBuffer += ctp.GetOutBuffer();
 
-		// добавим к декларации спецификатор хранения, если есть.
-		// Для выходного кода имеет значение только extern, static и register
+		// РґРѕР±Р°РІРёРј Рє РґРµРєР»Р°СЂР°С†РёРё СЃРїРµС†РёС„РёРєР°С‚РѕСЂ С…СЂР°РЅРµРЅРёСЏ, РµСЃР»Рё РµСЃС‚СЊ.
+		// Р”Р»СЏ РІС‹С…РѕРґРЅРѕРіРѕ РєРѕРґР° РёРјРµРµС‚ Р·РЅР°С‡РµРЅРёРµ С‚РѕР»СЊРєРѕ extern, static Рё register
 		if( (obj.GetStorageSpecifier() == ::Object::SS_STATIC &&
 			 !obj.GetSymbolTableEntry().IsClassSymbolTable())  || 
 			obj.GetStorageSpecifier() == ::Object::SS_EXTERN   ||
@@ -981,15 +981,15 @@ void DeclarationGenerator::Generate()
 			outBuffer = ManagerUtils::GetObjectStorageSpecifierName( 
 				obj.GetStorageSpecifier() ) + ' ' + outBuffer;
 
-		// если инициализатор присутствует, сгенерируем инициализацию для объекта
+		// РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚, СЃРіРµРЅРµСЂРёСЂСѓРµРј РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ РґР»СЏ РѕР±СЉРµРєС‚Р°
 		if( !iator.IsNull() )
 			GenerateInitialization(obj);
 	}
-		
-	// распечатаем декларацию функции
+
+	// СЂР°СЃРїРµС‡Р°С‚Р°РµРј РґРµРєР»Р°СЂР°С†РёСЋ С„СѓРЅРєС†РёРё
 	else
 	{
-		// у функции не должно быть инициализатора
+		// Сѓ С„СѓРЅРєС†РёРё РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂР°
 		INTERNAL_IF( !iator.IsNull() );
 		const Function &fn = static_cast<const Function &>(declarator);
 		CTypePrinter ctp( declarator, fn, false );
@@ -1001,66 +1001,66 @@ void DeclarationGenerator::Generate()
 		else if( fn.GetStorageSpecifier() == Function::SS_STATIC )
 			outBuffer = "extern " + outBuffer;
 
-		// добавим спецификатор inline
+		// РґРѕР±Р°РІРёРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ inline
 		if( fn.IsInline() )
 			outBuffer = "inline " + outBuffer;
 	}
 
-	// в конце добавляем ';'
+	// РІ РєРѕРЅС†Рµ РґРѕР±Р°РІР»СЏРµРј ';'
 	outBuffer += ";\n";
 }
 
 
-// создать новый временный объект
+// СЃРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№ РІСЂРµРјРµРЅРЅС‹Р№ РѕР±СЉРµРєС‚
 const TemporaryObject &TemporaryManager::CreateTemporaryObject( const TypyziedEntity &type )
 {
-	// если имеем неиспользуемые объекты, вернем их
+	// РµСЃР»Рё РёРјРµРµРј РЅРµРёСЃРїРѕР»СЊР·СѓРµРјС‹Рµ РѕР±СЉРµРєС‚С‹, РІРµСЂРЅРµРј РёС…
 	if( unUsed > 0 )
 	{
 		for( TemporaryList::iterator p = temporaryList.begin();
 			 p != temporaryList.end(); p++ )
 			if( !(*p).IsUsed() )
 				return (*p).SetUsed(), unUsed--, (*p);
-		INTERNAL("ошибка в подсчете неиспользуемых временных объектов");
+		INTERNAL("РѕС€РёР±РєР° РІ РїРѕРґСЃС‡РµС‚Рµ РЅРµРёСЃРїРѕР»СЊР·СѓРµРјС‹С… РІСЂРµРјРµРЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ");
 	}
 
-	// иначе создаем временный объект вручную и генерируем декларацию
+	// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІСЂСѓС‡РЅСѓСЋ Рё РіРµРЅРµСЂРёСЂСѓРµРј РґРµРєР»Р°СЂР°С†РёСЋ
 	INTERNAL_IF( !genBuffer.empty() );
 	TemporaryObject temporary(type);
 	static LocalSymbolTable lst(GetScopeSystem().GetGlobalSymbolTable());
 	Identifier id( temporary.GetName().c_str(), &lst );
 
-	// генерируем декларацию
+	// РіРµРЅРµСЂРёСЂСѓРµРј РґРµРєР»Р°СЂР°С†РёСЋ
 	CTypePrinter ctp( temporary.GetType(), &id );
 	genBuffer = (ctp.Generate(), ctp.GetOutBuffer());
 
-	// вставляем временный объект в список
+	// РІСЃС‚Р°РІР»СЏРµРј РІСЂРµРјРµРЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІ СЃРїРёСЃРѕРє
 	temporaryList.push_front(temporary);
 	return temporaryList.front();
 }
 
 
-// освободить временный объект
+// РѕСЃРІРѕР±РѕРґРёС‚СЊ РІСЂРµРјРµРЅРЅС‹Р№ РѕР±СЉРµРєС‚
 void TemporaryManager::FreeTemporaryObject( TemporaryObject &tobj ) 
 {
 	tobj.SetUnUsed();
 	unUsed++;
 
-	// если объект имеет классовый тип и не тривиальный деструктор,
-	// вызовем функцию уничтожения объекта
+	// РµСЃР»Рё РѕР±СЉРµРєС‚ РёРјРµРµС‚ РєР»Р°СЃСЃРѕРІС‹Р№ С‚РёРї Рё РЅРµ С‚СЂРёРІРёР°Р»СЊРЅС‹Р№ РґРµСЃС‚СЂСѓРєС‚РѕСЂ,
+	// РІС‹Р·РѕРІРµРј С„СѓРЅРєС†РёСЋ СѓРЅРёС‡С‚РѕР¶РµРЅРёСЏ РѕР±СЉРµРєС‚Р°
 	const TypyziedEntity &type = tobj.GetType();
 	if( type.GetBaseType().IsClassType() && type.GetDerivedTypeList().IsEmpty() &&
 		static_cast<const ClassType &>(type.GetBaseType()).GetDestructor() &&
 		!static_cast<const ClassType &>(type.GetBaseType()).GetDestructor()->IsTrivial() )
 	{
-		// буфер должен быть пустым при освобождении объекта
+		// Р±СѓС„РµСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј РїСЂРё РѕСЃРІРѕР±РѕР¶РґРµРЅРёРё РѕР±СЉРµРєС‚Р°
 		INTERNAL_IF( !genBuffer.empty() );
 		genBuffer = "__destroy_last_registered_object();";
 	}
 }
 
 
-// рекурсивный метод генерации пути
+// СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ РјРµС‚РѕРґ РіРµРЅРµСЂР°С†РёРё РїСѓС‚Рё
 bool ExpressionGenerator::PrintPathToBase( 
 		const ClassType &cur, const ClassType &base, string &out )
 {
@@ -1069,19 +1069,19 @@ bool ExpressionGenerator::PrintPathToBase(
 	{
 		const BaseClassCharacteristic &bcc = *bcl.GetBaseClassCharacteristic(i);
 
-		// если классы совпали, печатаем и выходим
+		// РµСЃР»Рё РєР»Р°СЃСЃС‹ СЃРѕРІРїР°Р»Рё, РїРµС‡Р°С‚Р°РµРј Рё РІС‹С…РѕРґРёРј
 		if( &bcc.GetPointerToClass() == &base )
-		{			
+		{
 			out += base.GetC_Name() + "so" + (bcc.IsVirtualDerivation() ? "->" : ".");
 			return true;
 		}
 
-		// иначе проверяем, если класс находится выше в иерархии, также добавляем его		
+		// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РєР»Р°СЃСЃ РЅР°С…РѕРґРёС‚СЃСЏ РІС‹С€Рµ РІ РёРµСЂР°СЂС…РёРё, С‚Р°РєР¶Рµ РґРѕР±Р°РІР»СЏРµРј РµРіРѕ
 		else if( PrintPathToBase(bcc.GetPointerToClass(), base, out) )
 		{
-			// добавляем подобъект спереди
+			// РґРѕР±Р°РІР»СЏРµРј РїРѕРґРѕР±СЉРµРєС‚ СЃРїРµСЂРµРґРё
 			out = bcc.GetPointerToClass().GetC_Name() + "so" + 
-				(bcc.IsVirtualDerivation() ? "->" : ".") + out;			
+				(bcc.IsVirtualDerivation() ? "->" : ".") + out;
 			return true;
 		}
 	}
@@ -1090,14 +1090,14 @@ bool ExpressionGenerator::PrintPathToBase(
 }
 
 
-// сгенерировать путь от текущего класса к базовому. Если классы совпадают,
-// ничего не генерировать. Если базовый класс отсутствует в иерархии - внутренняя ошибка
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РїСѓС‚СЊ РѕС‚ С‚РµРєСѓС‰РµРіРѕ РєР»Р°СЃСЃР° Рє Р±Р°Р·РѕРІРѕРјСѓ. Р•СЃР»Рё РєР»Р°СЃСЃС‹ СЃРѕРІРїР°РґР°СЋС‚,
+// РЅРёС‡РµРіРѕ РЅРµ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ. Р•СЃР»Рё Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ РёРµСЂР°СЂС…РёРё - РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР°
 const string &ExpressionGenerator::PrintPathToBase( const ClassType &cur, const ClassType &base )
 {
 	static string out;
 	out = "";
 	
-	// если изначально заданные классы совпали, ничего не печатаем
+	// РµСЃР»Рё РёР·РЅР°С‡Р°Р»СЊРЅРѕ Р·Р°РґР°РЅРЅС‹Рµ РєР»Р°СЃСЃС‹ СЃРѕРІРїР°Р»Рё, РЅРёС‡РµРіРѕ РЅРµ РїРµС‡Р°С‚Р°РµРј
 	if( &cur == &base )	
 		return out;	
 
@@ -1106,23 +1106,23 @@ const string &ExpressionGenerator::PrintPathToBase( const ClassType &cur, const 
 }
 
 
-// распечатать основной операнд. Флаг printThis указывает на автоматическую
-// подстановку указателя this для нестатических и не typedef данных членов.
-// Возвращает действительную типизированную сущность для дальнейшего анализа
+// СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ РѕСЃРЅРѕРІРЅРѕР№ РѕРїРµСЂР°РЅРґ. Р¤Р»Р°Рі printThis СѓРєР°Р·С‹РІР°РµС‚ РЅР° Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєСѓСЋ
+// РїРѕРґСЃС‚Р°РЅРѕРІРєСѓ СѓРєР°Р·Р°С‚РµР»СЏ this РґР»СЏ РЅРµСЃС‚Р°С‚РёС‡РµСЃРєРёС… Рё РЅРµ typedef РґР°РЅРЅС‹С… С‡Р»РµРЅРѕРІ.
+// Р’РѕР·РІСЂР°С‰Р°РµС‚ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅСѓСЋ С‚РёРїРёР·РёСЂРѕРІР°РЅРЅСѓСЋ СЃСѓС‰РЅРѕСЃС‚СЊ РґР»СЏ РґР°Р»СЊРЅРµР№С€РµРіРѕ Р°РЅР°Р»РёР·Р°
 const TypyziedEntity &ExpressionGenerator::PrintPrimaryOperand( 
 		const PrimaryOperand &po, bool printThis, string &out )
 {
 	const TypyziedEntity &entity = po.GetType().IsDynamicTypyziedEntity() ?
 		static_cast<const DynamicTypyziedEntity &>(po.GetType()).GetOriginal() : po.GetType();
 
-	// если объект
+	// РµСЃР»Рё РѕР±СЉРµРєС‚
 	if( entity.IsObject() )
 	{
 		const ::Object &obj = static_cast<const ::Object &>(entity);
 
-		// в любом случае распечатаем полный путь к члену и если требуется
-		// распечатаем this
-		if( obj.IsClassMember()										&& 
+		// РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ СЂР°СЃРїРµС‡Р°С‚Р°РµРј РїРѕР»РЅС‹Р№ РїСѓС‚СЊ Рє С‡Р»РµРЅСѓ Рё РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ
+		// СЂР°СЃРїРµС‡Р°С‚Р°РµРј this
+		if( obj.IsClassMember()  && 
 			!static_cast<const DataMember &>(obj).IsStaticMember()  )
 		{
 			INTERNAL_IF( thisCls == NULL );
@@ -1130,29 +1130,29 @@ const TypyziedEntity &ExpressionGenerator::PrintPrimaryOperand(
 				static_cast<const ClassType &>(obj.GetSymbolTableEntry()) ) + obj.GetC_Name();
 		}
 
-		// иначе распечатываем просто имя
+		// РёРЅР°С‡Рµ СЂР°СЃРїРµС‡Р°С‚С‹РІР°РµРј РїСЂРѕСЃС‚Рѕ РёРјСЏ
 		else
 			out = obj.GetC_Name();
 	}
 
-	// если функция, просто подставляем имя
+	// РµСЃР»Рё С„СѓРЅРєС†РёСЏ, РїСЂРѕСЃС‚Рѕ РїРѕРґСЃС‚Р°РІР»СЏРµРј РёРјСЏ
 	else if( entity.IsFunction() )
 		out = static_cast<const Function &>(entity).GetC_Name();
 	
-	// если параметр подставляем имя
+	// РµСЃР»Рё РїР°СЂР°РјРµС‚СЂ РїРѕРґСЃС‚Р°РІР»СЏРµРј РёРјСЏ
 	else if( entity.IsParametr() )
 		out = static_cast<const Parametr &>(entity).GetC_Name();
 
-	// если литерал, подставляем буфер с литералом
-	else if( entity.IsLiteral() )	
-		out = static_cast<const Literal &>(entity).GetLiteralValue().c_str();		
+	// РµСЃР»Рё Р»РёС‚РµСЂР°Р», РїРѕРґСЃС‚Р°РІР»СЏРµРј Р±СѓС„РµСЂ СЃ Р»РёС‚РµСЂР°Р»РѕРј
+	else if( entity.IsLiteral() )
+		out = static_cast<const Literal &>(entity).GetLiteralValue().c_str();
 
-	// если константа перечисления, подставляем целое значение
-	else if( entity.IsEnumConstant() )	
+	// РµСЃР»Рё РєРѕРЅСЃС‚Р°РЅС‚Р° РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ, РїРѕРґСЃС‚Р°РІР»СЏРµРј С†РµР»РѕРµ Р·РЅР°С‡РµРЅРёРµ
+	else if( entity.IsEnumConstant() )
 		out = CharString(static_cast<const EnumConstant &>(entity).GetConstantValue()).c_str();	
 
-	// в противном случае остается только this. Проверим, чтобы this-класс 
-	// присутствовл и типы совпадали
+	// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РѕСЃС‚Р°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ this. РџСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ this-РєР»Р°СЃСЃ 
+	// РїСЂРёСЃСѓС‚СЃС‚РІРѕРІР» Рё С‚РёРїС‹ СЃРѕРІРїР°РґР°Р»Рё
 	else
 	{
 		INTERNAL_IF( thisCls == NULL || &entity.GetBaseType() != thisCls ||
@@ -1165,7 +1165,7 @@ const TypyziedEntity &ExpressionGenerator::PrintPrimaryOperand(
 }
 
 
-// распечатать унарное выражение
+// СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 void ExpressionGenerator::PrintUnary( const UnaryExpression &ue, string &out )
 {
 	int op = ue.GetOperatorCode();
@@ -1190,13 +1190,13 @@ void ExpressionGenerator::PrintUnary( const UnaryExpression &ue, string &out )
 		break;
 	case -DECREMENT:
 		out = "--" + PrintExpression(opr);
-		break;	
-	case GOC_REFERENCE_CONVERSION:		
-		// пропускаем разименование, т.к. генератор сделает это автоматически
+		break;
+	case GOC_REFERENCE_CONVERSION:
+		// РїСЂРѕРїСѓСЃРєР°РµРј СЂР°Р·РёРјРµРЅРѕРІР°РЅРёРµ, С‚.Рє. РіРµРЅРµСЂР°С‚РѕСЂ СЃРґРµР»Р°РµС‚ СЌС‚Рѕ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё
 		out = PrintExpression(opr);
 		break;
 	case '&':
-		// если имеем взятие указателя на член, генерируем offsetof,		
+		// РµСЃР»Рё РёРјРµРµРј РІР·СЏС‚РёРµ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° С‡Р»РµРЅ, РіРµРЅРµСЂРёСЂСѓРµРј offsetof,
 		if( opr->IsPrimaryOperand() && 
 			ue.GetType().GetDerivedTypeList().IsPointerToMember() )
 		{
@@ -1210,22 +1210,22 @@ void ExpressionGenerator::PrintUnary( const UnaryExpression &ue, string &out )
 			out += dmBuf + ')';
 		}
 
-		// иначе оставляем без изменений
+		// РёРЅР°С‡Рµ РѕСЃС‚Р°РІР»СЏРµРј Р±РµР· РёР·РјРµРЅРµРЅРёР№
 		else
 			out = "&" + PrintExpression(opr);
 		break;
 	case KWTYPEID:
 	case KWTHROW:
 	default:
-		INTERNAL( "'ExpressionGenerator::PrintUnary': неизвестный унарный оператор");
+		INTERNAL( "'ExpressionGenerator::PrintUnary': РЅРµРёР·РІРµСЃС‚РЅС‹Р№ СѓРЅР°СЂРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ");
 	}
 }
 
 
-// распечатать унарное выражение
+// СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 void ExpressionGenerator::PrintBinary( const BinaryExpression &be, string &out )
 {
-	int op = be.GetOperatorCode();	
+	int op = be.GetOperatorCode();
 	switch( op )
 	{
 	case '.':
@@ -1248,7 +1248,7 @@ void ExpressionGenerator::PrintBinary( const BinaryExpression &be, string &out )
 	case KWDYNAMIC_CAST:
 	case ARROW_POINT:
 	case DOT_POINT:
-		INTERNAL("!! не реализовано");
+		INTERNAL("!! РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅРѕ");
 	case OC_ARRAY:
 		out = '(' + PrintExpression(be.GetOperand1()) + ")[" +
 			PrintExpression(be.GetOperand2() ) + ']';
@@ -1264,7 +1264,7 @@ void ExpressionGenerator::PrintBinary( const BinaryExpression &be, string &out )
 }
 
 
-// распечатать унарное выражение
+// СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 void ExpressionGenerator::PrintTernary( const TernaryExpression &te, string &out )
 {
 	INTERNAL_IF( te.GetOperatorCode() != '?' );
@@ -1273,13 +1273,13 @@ void ExpressionGenerator::PrintTernary( const TernaryExpression &te, string &out
 }
 
 
-// распечатать унарное выражение
+// СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 void ExpressionGenerator::PrintFunctionCall( const FunctionCallExpression &fce, string &out )
 {
 	const POperand &fn = fce.GetFunctionOperand();
 	string objBuf;
 
-	// если выражение - обращение к члену, поместить объект первым параметром
+	// РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ - РѕР±СЂР°С‰РµРЅРёРµ Рє С‡Р»РµРЅСѓ, РїРѕРјРµСЃС‚РёС‚СЊ РѕР±СЉРµРєС‚ РїРµСЂРІС‹Рј РїР°СЂР°РјРµС‚СЂРѕРј
 	if( fn->IsExpressionOperand() )
 	{
 		int op = static_cast<const Expression &>(*fn).GetOperatorCode();
@@ -1289,25 +1289,25 @@ void ExpressionGenerator::PrintFunctionCall( const FunctionCallExpression &fce, 
 }
 
 
-// распечатать унарное выражение
+// СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ СѓРЅР°СЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ
 void ExpressionGenerator::PrintNewExpression( const NewExpression &ne, string &out )
 {
 }
 
 
-// координатор распечатки выражений, вызывает метод соответствующий оператору.
-// prvOp - код предыдущего оператора, если оператора не было -1
+// РєРѕРѕСЂРґРёРЅР°С‚РѕСЂ СЂР°СЃРїРµС‡Р°С‚РєРё РІС‹СЂР°Р¶РµРЅРёР№, РІС‹Р·С‹РІР°РµС‚ РјРµС‚РѕРґ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ РѕРїРµСЂР°С‚РѕСЂСѓ.
+// prvOp - РєРѕРґ РїСЂРµРґС‹РґСѓС‰РµРіРѕ РѕРїРµСЂР°С‚РѕСЂР°, РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂР° РЅРµ Р±С‹Р»Рѕ -1
 string ExpressionGenerator::PrintExpression( const POperand &opr )
 {
 	INTERNAL_IF( opr.IsNull() || !(opr->IsExpressionOperand() || opr->IsPrimaryOperand()) );
 	string out;
 
-	// если был оператор обращения к члену или взятия адреса на член,
-	// этот фрагмент выполняется при распечатке этих операторов
+	// РµСЃР»Рё Р±С‹Р» РѕРїРµСЂР°С‚РѕСЂ РѕР±СЂР°С‰РµРЅРёСЏ Рє С‡Р»РµРЅСѓ РёР»Рё РІР·СЏС‚РёСЏ Р°РґСЂРµСЃР° РЅР° С‡Р»РµРЅ,
+	// СЌС‚РѕС‚ С„СЂР°РіРјРµРЅС‚ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё СЂР°СЃРїРµС‡Р°С‚РєРµ СЌС‚РёС… РѕРїРµСЂР°С‚РѕСЂРѕРІ
 	if( opr->IsPrimaryOperand() )	
-		PrintPrimaryOperand( static_cast<const PrimaryOperand &>(*opr), true, out );		
+		PrintPrimaryOperand( static_cast<const PrimaryOperand &>(*opr), true, out );
 
-	// иначе ориентируемся на тип выражения
+	// РёРЅР°С‡Рµ РѕСЂРёРµРЅС‚РёСЂСѓРµРјСЃСЏ РЅР° С‚РёРї РІС‹СЂР°Р¶РµРЅРёСЏ
 	else 
 	{
 		const Expression &exp = static_cast<const Expression &>(*opr);
@@ -1322,24 +1322,24 @@ string ExpressionGenerator::PrintExpression( const POperand &opr )
 		else if( exp.IsNewExpression() )
 			PrintNewExpression( static_cast<const NewExpression &>(exp), out );
 		else
-			INTERNAL( "неизвестный тип выражения" );
+			INTERNAL( "РЅРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї РІС‹СЂР°Р¶РµРЅРёСЏ" );
 
-		// если выражение в скобках, поместить его
+		// РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ РІ СЃРєРѕР±РєР°С…, РїРѕРјРµСЃС‚РёС‚СЊ РµРіРѕ
 		if( exp.IsInCramps() )
 			out = '(' + out + ')';
 	}
 
-	// если была ссылка, разименовываем
+	// РµСЃР»Рё Р±С‹Р»Р° СЃСЃС‹Р»РєР°, СЂР°Р·РёРјРµРЅРѕРІС‹РІР°РµРј
 	if( opr->GetType().GetDerivedTypeList().IsReference() )
 		out = "(*" + out + ')';
 	return out;
 }
 
 
-// сгенерировать выражение
+// СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РІС‹СЂР°Р¶РµРЅРёРµ
 void ExpressionGenerator::Generate()
 {
-	// если выражение является основным операндом, сразу генерируем
+	// РµСЃР»Рё РІС‹СЂР°Р¶РµРЅРёРµ СЏРІР»СЏРµС‚СЃСЏ РѕСЃРЅРѕРІРЅС‹Рј РѕРїРµСЂР°РЅРґРѕРј, СЃСЂР°Р·Сѓ РіРµРЅРµСЂРёСЂСѓРµРј
 	if( exp->IsPrimaryOperand() )
 		PrintPrimaryOperand( static_cast<const PrimaryOperand &>(*exp), true, outBuffer );
 	else

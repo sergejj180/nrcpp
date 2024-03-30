@@ -1,6 +1,6 @@
-// реализация интерфеса строителей членов класса - MemeberMaker.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµСЃР° СЃС‚СЂРѕРёС‚РµР»РµР№ С‡Р»РµРЅРѕРІ РєР»Р°СЃСЃР° - MemeberMaker.cpp
 
-// реализация интерфейса КЛАССОВ-СТРОИТЕЛЕЙ - Maker.cpp
+// СЂРµР°Р»РёР·Р°С†РёСЏ РёРЅС‚РµСЂС„РµР№СЃР° РљР›РђРЎРЎРћР’-РЎРўР РћРРўР•Р›Р•Р™ - Maker.cpp
 
 #pragma warning(disable: 4786)
 #include <nrc.h>
@@ -23,26 +23,26 @@ using namespace nrc;
 using namespace MakerUtils;
 
 
-// функция создания данного-члена, переопределяет метод класса DeclarationMaker
+// С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РґР°РЅРЅРѕРіРѕ-С‡Р»РµРЅР°, РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РјРµС‚РѕРґ РєР»Р°СЃСЃР° DeclarationMaker
 bool DataMemberMaker::Make()
 {
 	DataMemberChecker dmc(*toc);
 	if( dmc.IsRedeclared() )
 		return false;
 
-	// иначе создаем член и вставляем его в класс
+	// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј С‡Р»РµРЅ Рё РІСЃС‚Р°РІР»СЏРµРј РµРіРѕ РІ РєР»Р°СЃСЃ
 	targetDM = new DataMember( toc->name, &clsType, toc->finalType,
 		toc->constQual, toc->volatileQual, toc->dtl, toc->ssCode < 0 ? ::Object::SS_NONE : 
 		TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierObj(), curAccessSpec);
 
 
-	// проверяем, чтобы член не переопределялся
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‡Р»РµРЅ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»СЏР»СЃСЏ
 	NameManager nm(toc->name, (SymbolTable*)&GetCurrentSymbolTable(), false);
 
-	// проверяем на переопределение
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetDM, nm.GetRoleList(), toc->errPos, R_DATAMEMBER);
-	
-	// если член не переопределен, вставить его в таблицу
+
+	// РµСЃР»Рё С‡Р»РµРЅ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ, РІСЃС‚Р°РІРёС‚СЊ РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 	if( !rchk.IsRedeclared() )
 		GetCurrentSymbolTable().InsertSymbol(targetDM);
 	else
@@ -56,27 +56,27 @@ bool DataMemberMaker::Make()
 	return true;
 }
 
-// абстрактный метод для инициализации члена. Инициализировать можно только,
-// статические целые данные-члены
+// Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё С‡Р»РµРЅР°. РРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ,
+// СЃС‚Р°С‚РёС‡РµСЃРєРёРµ С†РµР»С‹Рµ РґР°РЅРЅС‹Рµ-С‡Р»РµРЅС‹
 void DataMemberMaker::Initialize( MemberInitializationType mit, const Operand &exp )
 {
 	INTERNAL_IF( mit != MIT_NONE && mit != MIT_DATA_MEMBER && mit != MIT_BITFIELD );
 
-	// проверяем, если инициализация члена
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ С‡Р»РµРЅР°
 	if( mit == MIT_DATA_MEMBER )
 		CheckDataInit( exp );
 
-	// проверяем, если задается битовое
-	else if( mit == MIT_BITFIELD )		
+	// РїСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё Р·Р°РґР°РµС‚СЃСЏ Р±РёС‚РѕРІРѕРµ
+	else if( mit == MIT_BITFIELD )
 		CheckBitField( exp );
-	
-	// иначе если не ничего, ошибка
+
+	// РёРЅР°С‡Рµ РµСЃР»Рё РЅРµ РЅРёС‡РµРіРѕ, РѕС€РёР±РєР°
 	else if( mit != MIT_NONE )
-		INTERNAL( "'DataMemberMaker::Initialize' - неверный тип инициализации" );		
+		INTERNAL( "'DataMemberMaker::Initialize' - РЅРµРІРµСЂРЅС‹Р№ С‚РёРї РёРЅРёС†РёР°Р»РёР·Р°С†РёРё" );
 }
 
 
-// функция создания метода переопределяет метод класса DeclarationMaker
+// С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РјРµС‚РѕРґР° РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РјРµС‚РѕРґ РєР»Р°СЃСЃР° DeclarationMaker
 bool MethodMaker::Make()
 {
 	MethodChecker mc(*toc);
@@ -89,14 +89,14 @@ bool MethodMaker::Make()
 		TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierFn(),
 		Function::CC_NON, curAccessSpec, false, toc->fnSpecCode == KWVIRTUAL, 
 		false, Method::DT_USERDEFINED );
-	
-	// проверяем, чтобы член не переопределялся
+
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‡Р»РµРЅ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»СЏР»СЃСЏ
 	NameManager nm(toc->name, (SymbolTable*)&GetCurrentSymbolTable(), false);
 
-	// проверяем на переопределение
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetMethod, nm.GetRoleList(), toc->errPos, R_METHOD);
-	
-	// если метод не переопределен, вставить его в таблицу
+
+	// РµСЃР»Рё РјРµС‚РѕРґ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ, РІСЃС‚Р°РІРёС‚СЊ РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 	if( !rchk.IsRedeclared() )
 	{
 		CheckerUtils::DefaultArgumentCheck( 
@@ -108,38 +108,38 @@ bool MethodMaker::Make()
 	else
 	{
 		const Method *meth = dynamic_cast<const Method *>(rchk.GetPrevDeclaration());
-		if( meth )		
-			theApp.Error(toc->errPos, "'%s' - метод уже объявлен", toc->name.c_str());
-			
+		if( meth )
+			theApp.Error(toc->errPos, "'%s' - РјРµС‚РѕРґ СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅ", toc->name.c_str());
+
 		delete targetMethod;
 		targetMethod = const_cast<Method *>(meth);
 		return false;
 	}
-	
+
 	return true;
 }
 
 
-// абстрактный метод для инициализации члена. Инициализация может быть
-// только MIT_PURE_VIRTUAL, exp должен быть равен NULL
+// Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё С‡Р»РµРЅР°. РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ
+// С‚РѕР»СЊРєРѕ MIT_PURE_VIRTUAL, exp РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°РІРµРЅ NULL
 void MethodMaker::Initialize( MemberInitializationType mit, const Operand &exp )
-{		
-	if( mit == MIT_PURE_VIRTUAL )	
-		targetMethod->SetAbstract();	// задаем абстракность методу
-	
+{
+	if( mit == MIT_PURE_VIRTUAL )
+		targetMethod->SetAbstract(); // Р·Р°РґР°РµРј Р°Р±СЃС‚СЂР°РєРЅРѕСЃС‚СЊ РјРµС‚РѕРґСѓ
+
 	else if( mit == MIT_BITFIELD )
-		theApp.Error( toc->errPos, "битовое поле не может быть методом" );
+		theApp.Error( toc->errPos, "Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµС‚РѕРґРѕРј" );
 
 	else if( mit != MIT_NONE )
-		INTERNAL( "'MethodMaker::Initialize' - неверный тип инициализации" );
+		INTERNAL( "'MethodMaker::Initialize' - РЅРµРІРµСЂРЅС‹Р№ С‚РёРї РёРЅРёС†РёР°Р»РёР·Р°С†РёРё" );
 
-	// проверить семантику виртуальной функции
+	// РїСЂРѕРІРµСЂРёС‚СЊ СЃРµРјР°РЅС‚РёРєСѓ РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ С„СѓРЅРєС†РёРё
 	VirtualMethodChecker( *targetMethod, toc->errPos );
 }
 
 
-// функция создания перегруженного оператора,
-// переопределяет метод класса DeclarationMaker
+// С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РїРµСЂРµРіСЂСѓР¶РµРЅРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°,
+// РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РјРµС‚РѕРґ РєР»Р°СЃСЃР° DeclarationMaker
 bool OperatorMemberMaker::Make()
 {
 	ClassOperatorChecker coc(*toc, tooc);
@@ -151,18 +151,18 @@ bool OperatorMemberMaker::Make()
 		Function::CC_NON, curAccessSpec, false, toc->fnSpecCode == KWVIRTUAL, 
 		tooc.opCode, tooc.opString, Method::DT_USERDEFINED
 		);
-	
-	// проверяем, чтобы оператор не переопределялся
+
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РѕРїРµСЂР°С‚РѕСЂ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»СЏР»СЃСЏ
 	NameManager nm(toc->name, (SymbolTable*)&GetCurrentSymbolTable(), false);
 
-	// проверяем на переопределение
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetOO, nm.GetRoleList(), toc->errPos, R_CLASS_OVERLOAD_OPERATOR);
-	
-	// если метод не переопределен, вставить его в таблицу
+
+	// РµСЃР»Рё РјРµС‚РѕРґ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ, РІСЃС‚Р°РІРёС‚СЊ РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 	if( !rchk.IsRedeclared() )
 	{
-		// если оператор не функция, что могло получиться в следствии синтаксической
-		// ошибки, удалим его
+		// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅРµ С„СѓРЅРєС†РёСЏ, С‡С‚Рѕ РјРѕРіР»Рѕ РїРѕР»СѓС‡РёС‚СЊСЃСЏ РІ СЃР»РµРґСЃС‚РІРёРё СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕР№
+		// РѕС€РёР±РєРё, СѓРґР°Р»РёРј РµРіРѕ
 		if( !toc->dtl.IsFunction() )
 		{
 			delete targetOO;
@@ -170,12 +170,12 @@ bool OperatorMemberMaker::Make()
 			return false;
 		}
 
-		// иначе проверяем параметры по умолчанию и вставляем символ
+		// РёРЅР°С‡Рµ РїСЂРѕРІРµСЂСЏРµРј РїР°СЂР°РјРµС‚СЂС‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ Рё РІСЃС‚Р°РІР»СЏРµРј СЃРёРјРІРѕР»
 		else
 		{
 			CheckerUtils::DefaultArgumentCheck( 
 				targetOO->GetFunctionPrototype(), NULL, toc->errPos);
-			GetCurrentSymbolTable().InsertSymbol(targetOO);		
+			GetCurrentSymbolTable().InsertSymbol(targetOO);
 		}
 	}
 
@@ -184,7 +184,7 @@ bool OperatorMemberMaker::Make()
 		const ClassOverloadOperator *coo = 
 				dynamic_cast<const ClassOverloadOperator *>(rchk.GetPrevDeclaration());
 		if( coo )
-			theApp.Error(toc->errPos, "'%s' - перегруженный оператор уже объявлен", 
+			theApp.Error(toc->errPos, "'%s' - РїРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅ", 
 				toc->name.c_str());
 
 		delete targetOO;
@@ -196,32 +196,32 @@ bool OperatorMemberMaker::Make()
 }
 
 
-// абстрактный метод для инициализации метода. Инициализация может быть
-// только MIT_PURE_VIRTUAL, exp должен быть равен NULL
+// Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РјРµС‚РѕРґР°. РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ
+// С‚РѕР»СЊРєРѕ MIT_PURE_VIRTUAL, exp РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°РІРµРЅ NULL
 void OperatorMemberMaker::Initialize( MemberInitializationType mit, const Operand &exp )
-{	
+{
 	if( mit == MIT_PURE_VIRTUAL )
-		targetOO->SetAbstract();	// задаем абстракность методу
-	
+		targetOO->SetAbstract(); // Р·Р°РґР°РµРј Р°Р±СЃС‚СЂР°РєРЅРѕСЃС‚СЊ РјРµС‚РѕРґСѓ
+
 	else if( mit == MIT_BITFIELD )
-		theApp.Error( toc->errPos, "битовое поле не может быть методом" );
+		theApp.Error( toc->errPos, "Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµС‚РѕРґРѕРј" );
 
 	else if( mit != MIT_NONE )
-		INTERNAL( "'OperatorMemberMaker::Initialize' - неверный тип инициализации" );
+		INTERNAL( "'OperatorMemberMaker::Initialize' - РЅРµРІРµСЂРЅС‹Р№ С‚РёРї РёРЅРёС†РёР°Р»РёР·Р°С†РёРё" );
 
-	// проверить семантику виртуального оператора
+	// РїСЂРѕРІРµСЂРёС‚СЊ СЃРµРјР°РЅС‚РёРєСѓ РІРёСЂС‚СѓР°Р»СЊРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
 	VirtualMethodChecker( *targetOO, toc->errPos );
 }
 
 
-// функция создания оператора приведения,
-// переопределяет метод класса DeclarationMaker
+// С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РѕРїРµСЂР°С‚РѕСЂР° РїСЂРёРІРµРґРµРЅРёСЏ,
+// РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РјРµС‚РѕРґ РєР»Р°СЃСЃР° DeclarationMaker
 bool CastOperatorMaker::Make()
 {
-	// выполняем проверку
+	// РІС‹РїРѕР»РЅСЏРµРј РїСЂРѕРІРµСЂРєСѓ
 	CastOperatorChecker coc(*toc, tcoc);
 
-	// если оператор не подлежит созданию выйти
+	// РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РЅРµ РїРѕРґР»РµР¶РёС‚ СЃРѕР·РґР°РЅРёСЋ РІС‹Р№С‚Рё
 	if( coc.IsIncorrect() )
 		return false;
 
@@ -232,50 +232,50 @@ bool CastOperatorMaker::Make()
 		Function::CC_NON, curAccessSpec, false, toc->fnSpecCode == KWVIRTUAL, 
 		tcoc.opCode, tcoc.opString, *tcoc.castType, Method::DT_USERDEFINED);
 
-	// проверяем, чтобы член не переопределялся
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‡Р»РµРЅ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»СЏР»СЃСЏ
 	NameManager nm(toc->name, (SymbolTable*)&GetCurrentSymbolTable(), false);
 
-	// проверяем на переопределение
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetCCOO, nm.GetRoleList(), toc->errPos, R_CLASS_OVERLOAD_OPERATOR);
-	
-	// если член не переопределен, вставить его в таблицу
+
+	// РµСЃР»Рё С‡Р»РµРЅ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ, РІСЃС‚Р°РІРёС‚СЊ РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 	if( !rchk.IsRedeclared() )
 		GetCurrentSymbolTable().InsertSymbol(targetCCOO);
 	else
 	{
-		delete targetCCOO;	
-		theApp.Error(toc->errPos, "'%s' - оператор приведения уже объявлен", 
+		delete targetCCOO;
+		theApp.Error(toc->errPos, "'%s' - РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅ", 
 				toc->name.c_str());
 
 		targetCCOO = const_cast<ClassCastOverloadOperator *>(
 			dynamic_cast<const ClassCastOverloadOperator *>(rchk.GetPrevDeclaration()) );
-	
+
 		return false;
-	}
+}
 
 	return true;
 }
 
 
-// абстрактный метод для инициализации метода. Инициализация может быть
-// только MIT_PURE_VIRTUAL, exp должен быть равен NULL
+// Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РјРµС‚РѕРґР°. РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ
+// С‚РѕР»СЊРєРѕ MIT_PURE_VIRTUAL, exp РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°РІРµРЅ NULL
 void CastOperatorMaker::Initialize( MemberInitializationType mit, const Operand &exp )
-{	
+{
 	if( mit == MIT_PURE_VIRTUAL )
-		targetCCOO->SetAbstract();	// задаем абстракность методу
+		targetCCOO->SetAbstract(); // Р·Р°РґР°РµРј Р°Р±СЃС‚СЂР°РєРЅРѕСЃС‚СЊ РјРµС‚РѕРґСѓ
 
 	else if( mit == MIT_BITFIELD )
-		theApp.Error( toc->errPos, "битовое поле не может быть методом" );
+		theApp.Error( toc->errPos, "Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµС‚РѕРґРѕРј" );
 
 	else if( mit != MIT_NONE )
-		INTERNAL( "'CastOperatorMaker::Initialize' - неверный тип инициализации" );
+		INTERNAL( "'CastOperatorMaker::Initialize' - РЅРµРІРµСЂРЅС‹Р№ С‚РёРї РёРЅРёС†РёР°Р»РёР·Р°С†РёРё" );
 
-	// проверить семантику виртуального оператора
-	VirtualMethodChecker( *targetCCOO, toc->errPos );	
+	// РїСЂРѕРІРµСЂРёС‚СЊ СЃРµРјР°РЅС‚РёРєСѓ РІРёСЂС‚СѓР°Р»СЊРЅРѕРіРѕ РѕРїРµСЂР°С‚РѕСЂР°
+	VirtualMethodChecker( *targetCCOO, toc->errPos );
 }
 
 
-// функция создания конструктора, переопределяет метод класса DeclarationMaker
+// С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°, РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РјРµС‚РѕРґ РєР»Р°СЃСЃР° DeclarationMaker
 bool ConstructorMaker::Make()
 {
 	ConstructorChecker cm(*toc, clsType);
@@ -283,7 +283,7 @@ bool ConstructorMaker::Make()
 	if( cm.IsIncorrect() )
 		return false;
 
-	// если у конструткора не задана ссылка, задать
+	// РµСЃР»Рё Сѓ РєРѕРЅСЃС‚СЂСѓС‚РєРѕСЂР° РЅРµ Р·Р°РґР°РЅР° СЃСЃС‹Р»РєР°, Р·Р°РґР°С‚СЊ
 	if( toc->dtl.IsFunction() && toc->dtl.GetDerivedTypeCount() != 2 )
 		toc->dtl.AddDerivedType(new Reference);
 
@@ -293,25 +293,24 @@ bool ConstructorMaker::Make()
 		TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierFn(),
 		Function::CC_NON, curAccessSpec, toc->fnSpecCode == KWEXPLICIT, Method::DT_USERDEFINED );
 
-	// проверяем, чтобы член не переопределялся
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‡Р»РµРЅ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»СЏР»СЃСЏ
 	NameManager nm(toc->name, (SymbolTable*)&GetCurrentSymbolTable(), false);
 
-	// проверяем на переопределение
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetCtor, nm.GetRoleList(), toc->errPos, R_CONSTRUCTOR);
-	
-	// если член не переопределен, вставить его в таблицу
+
+	// РµСЃР»Рё С‡Р»РµРЅ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ, РІСЃС‚Р°РІРёС‚СЊ РµРіРѕ РІ С‚Р°Р±Р»РёС†Сѓ
 	if( !rchk.IsRedeclared() )
 	{
 		CheckerUtils::DefaultArgumentCheck( 
 			targetCtor->GetFunctionPrototype(), NULL, toc->errPos);
-		GetCurrentSymbolTable().InsertSymbol(targetCtor);		
+		GetCurrentSymbolTable().InsertSymbol(targetCtor);
 	}
 
 	else
 	{
-		delete targetCtor;	
-		theApp.Error(toc->errPos, "'%s' - конструктор уже объявлен", 
-				toc->name.c_str());
+		delete targetCtor;
+		theApp.Error(toc->errPos, "'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅ", toc->name.c_str());
 
 		targetCtor = const_cast<ConstructorMethod *>(
 			dynamic_cast<const ConstructorMethod *>(rchk.GetPrevDeclaration()) );
@@ -321,41 +320,41 @@ bool ConstructorMaker::Make()
 }
 
 
-// абстрактный метод для инициализации конструктора. Инициализация 
-// конструктора невозможна
+// Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°. РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ 
+// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РЅРµРІРѕР·РјРѕР¶РЅР°
 void ConstructorMaker::Initialize( MemberInitializationType mit, const Operand &exp )
-{		
+{
 	if( mit == MIT_PURE_VIRTUAL )
 		theApp.Error( toc->errPos, 
-			"'%s' - конструктор не может иметь спецификатора чисто-виртуальной функции",
+			"'%s' - РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ РёРјРµС‚СЊ СЃРїРµС†РёС„РёРєР°С‚РѕСЂР° С‡РёСЃС‚Рѕ-РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ С„СѓРЅРєС†РёРё",
 			toc->name.c_str());
 
 	else if( mit == MIT_BITFIELD )
-		theApp.Error( toc->errPos, "битовое поле не может быть методом" );
+		theApp.Error( toc->errPos, "Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµС‚РѕРґРѕРј" );
 
 	else if( mit != MIT_NONE )
-		INTERNAL( "'ConstructorMaker::Initialize' - неверный тип инициализации" );
+		INTERNAL( "'ConstructorMaker::Initialize' - РЅРµРІРµСЂРЅС‹Р№ С‚РёРї РёРЅРёС†РёР°Р»РёР·Р°С†РёРё" );
 }
 
 
-// функция создания деструкторов, переопределяет метод класса DeclarationMaker
+// С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РґРµСЃС‚СЂСѓРєС‚РѕСЂРѕРІ, РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РјРµС‚РѕРґ РєР»Р°СЃСЃР° DeclarationMaker
 bool DestructorMaker::Make()
 {
-	// Деструктор должен быть функцией, без спецификаторов типа и 
-	// дополнительных производных типов. Деструктор
-	// не возвращает значения. Деструктор должен объявляться без параметров.
+	// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№, Р±РµР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР° Рё 
+	// РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… РїСЂРѕРёР·РІРѕРґРЅС‹С… С‚РёРїРѕРІ. Р”РµСЃС‚СЂСѓРєС‚РѕСЂ
+	// РЅРµ РІРѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёСЏ. Р”РµСЃС‚СЂСѓРєС‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ.
 	if( !toc->dtl.IsFunction() || toc->dtl.GetDerivedTypeCount() != 1 )
-		theApp.Error(toc->errPos, "'%s' - деструктор должен быть функцией", 
+		theApp.Error(toc->errPos, "'%s' - РґРµСЃС‚СЂСѓРєС‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С„СѓРЅРєС†РёРµР№", 
 				toc->name.c_str());
 
-	// базовый тип, cv-квалификаторы, спецификаторы хранения, friend-специф.
-	// должны отсутствовать в деструкторе
+	// Р±Р°Р·РѕРІС‹Р№ С‚РёРї, cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹, СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С…СЂР°РЅРµРЅРёСЏ, friend-СЃРїРµС†РёС„.
+	// РґРѕР»Р¶РЅС‹ РѕС‚СЃСѓС‚СЃС‚РІРѕРІР°С‚СЊ РІ РґРµСЃС‚СЂСѓРєС‚РѕСЂРµ
 	if( toc->finalType != NULL || toc->constQual || toc->volatileQual ||
 		toc->friendSpec || toc->fnSpecCode == KWEXPLICIT )
-		theApp.Error(toc->errPos, "спецификаторы типа в объявлении деструктора", 
+		theApp.Error(toc->errPos, "СЃРїРµС†РёС„РёРєР°С‚РѕСЂС‹ С‚РёРїР° РІ РѕР±СЉСЏРІР»РµРЅРёРё РґРµСЃС‚СЂСѓРєС‚РѕСЂР°", 
 				toc->name.c_str());
 
-	// деструктор должен объявляться без параметров и без cv-квалификаторов
+	// РґРµСЃС‚СЂСѓРєС‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ Рё Р±РµР· cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂРѕРІ
 	if( toc->dtl.IsFunction() )
 	{
 		const FunctionPrototype &fp = static_cast<const FunctionPrototype&>(
@@ -363,37 +362,37 @@ bool DestructorMaker::Make()
 
 		if( fp.GetParametrList().GetFunctionParametrCount() != 0 ||
 			fp.IsHaveEllipse() )
-			theApp.Error(toc->errPos, "'%s' - деструктор должен объявляться без параметров", 
+			theApp.Error(toc->errPos, "'%s' - РґРµСЃС‚СЂСѓРєС‚РѕСЂ РґРѕР»Р¶РµРЅ РѕР±СЉСЏРІР»СЏС‚СЊСЃСЏ Р±РµР· РїР°СЂР°РјРµС‚СЂРѕРІ", 
 				toc->name.c_str());
 
 		if( fp.IsConst() || fp.IsVolatile() )
-			theApp.Error(toc->errPos, "'%s' - деструктор не может содержать cv-квалификаторы", 
+			theApp.Error(toc->errPos, "'%s' - РґРµСЃС‚СЂСѓРєС‚РѕСЂ РЅРµ РјРѕР¶РµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ cv-РєРІР°Р»РёС„РёРєР°С‚РѕСЂС‹", 
 				toc->name.c_str());
 	}
 
-	// имя деструктора должно совпадать с именем класса
+	// РёРјСЏ РґРµСЃС‚СЂСѓРєС‚РѕСЂР° РґРѕР»Р¶РЅРѕ СЃРѕРІРїР°РґР°С‚СЊ СЃ РёРјРµРЅРµРј РєР»Р°СЃСЃР°
 	INTERNAL_IF( toc->name.at(0) != '~' );
 	if( toc->name != ('~' + clsType.GetName()) )
 	{
-		theApp.Error(toc->errPos, "'%s' - имя деструктора не совпадает с именем класса", 
+		theApp.Error(toc->errPos, "'%s' - РёРјСЏ РґРµСЃС‚СЂСѓРєС‚РѕСЂР° РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ РёРјРµРЅРµРј РєР»Р°СЃСЃР°", 
 			toc->name.c_str());
 		return false;
 	}
 
-	// последнее, деструктор должен быть один во всем классе
+	// РїРѕСЃР»РµРґРЅРµРµ, РґРµСЃС‚СЂСѓРєС‚РѕСЂ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РѕРґРёРЅ РІРѕ РІСЃРµРј РєР»Р°СЃСЃРµ
 	NameManager nm(toc->name, (SymbolTable*)&GetCurrentSymbolTable(), false);
 	if( nm.GetRoleCount() != 0 )
 	{
-		theApp.Error(toc->errPos, "'%s' - деструктор уже объявлен", 
+		theApp.Error(toc->errPos, "'%s' - РґРµСЃС‚СЂСѓРєС‚РѕСЂ СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅ", 
 			toc->name.c_str());
 		return false;
 	}
 
-	// если базовый тип не задан - задаем void
+	// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅРµ Р·Р°РґР°РЅ - Р·Р°РґР°РµРј void
 	if( toc->finalType == NULL )
 		toc->finalType = (BaseType*)&ImplicitTypeManager(BaseType::BT_VOID).GetImplicitType();
 
-	// остается создать деструткор
+	// РѕСЃС‚Р°РµС‚СЃСЏ СЃРѕР·РґР°С‚СЊ РґРµСЃС‚СЂСѓС‚РєРѕСЂ
 	targetDtor = new Method(toc->name, &clsType, toc->finalType,
 		toc->constQual, toc->volatileQual, toc->dtl, toc->fnSpecCode == KWINLINE,
 		toc->ssCode < 0 ? Function::SS_NONE : 
@@ -406,30 +405,30 @@ bool DestructorMaker::Make()
 }
 
 
-// абстрактный метод для инициализации метода. Инициализация может быть
-// только MIT_PURE_VIRTUAL, exp должен быть равен NULL
+// Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РјРµС‚РѕРґР°. РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ
+// С‚РѕР»СЊРєРѕ MIT_PURE_VIRTUAL, exp РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°РІРµРЅ NULL
 void DestructorMaker::Initialize( MemberInitializationType mit, const Operand &exp )
 {
 	INTERNAL_IF( mit == MIT_DATA_MEMBER );
 	if( mit == MIT_PURE_VIRTUAL )
-		targetDtor->SetAbstract();	// задаем абстракность методу
+		targetDtor->SetAbstract(); // Р·Р°РґР°РµРј Р°Р±СЃС‚СЂР°РєРЅРѕСЃС‚СЊ РјРµС‚РѕРґСѓ
 
 	else if( mit == MIT_BITFIELD )
-		theApp.Error( toc->errPos, "битовое поле не может быть методом" );
+		theApp.Error( toc->errPos, "Р±РёС‚РѕРІРѕРµ РїРѕР»Рµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµС‚РѕРґРѕРј" );
 
 	else if( mit != MIT_NONE )
-		INTERNAL( "'DestructorMaker::Initialize' - неверный тип инициализации" );
+		INTERNAL( "'DestructorMaker::Initialize' - РЅРµРІРµСЂРЅС‹Р№ С‚РёРї РёРЅРёС†РёР°Р»РёР·Р°С†РёРё" );
 
-	// проверить семантику виртуального деструктора
+	// РїСЂРѕРІРµСЂРёС‚СЊ СЃРµРјР°РЅС‚РёРєСѓ РІРёСЂС‚СѓР°Р»СЊРЅРѕРіРѕ РґРµСЃС‚СЂСѓРєС‚РѕСЂР°
 	VirtualMethodChecker( *targetDtor, toc->errPos );
 }
 
 
-// функция создания дружеских функций, 
-// переопределяет метод класса DeclarationMaker
+// С„СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ РґСЂСѓР¶РµСЃРєРёС… С„СѓРЅРєС†РёР№, 
+// РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РјРµС‚РѕРґ РєР»Р°СЃСЃР° DeclarationMaker
 bool FriendFunctionMaker::Make()
 {
-	// убираем спецификатор дружбы для проверки
+	// СѓР±РёСЂР°РµРј СЃРїРµС†РёС„РёРєР°С‚РѕСЂ РґСЂСѓР¶Р±С‹ РґР»СЏ РїСЂРѕРІРµСЂРєРё
 	INTERNAL_IF( !toc->friendSpec );
 	toc->friendSpec = false;
 
@@ -439,17 +438,17 @@ bool FriendFunctionMaker::Make()
 		GlobalDeclarationChecker g(*toc); 
 
 	if( toc->ssCode != -1 )
-		theApp.Error(toc->errPos, "'%s' - использование %s во friend-объявлении",
+		theApp.Error(toc->errPos, "'%s' - РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ %s РІРѕ friend-РѕР±СЉСЏРІР»РµРЅРёРё",
 			toc->name.c_str(), GetKeywordName(toc->ssCode));
 
-	// проверяем, чтобы член не переопределялся
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ С‡Р»РµРЅ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»СЏР»СЃСЏ
 	SymbolTable *destST = const_cast<SymbolTable *>(&::GetScopeSystem().GetGlobalSymbolTable());
 	NameManager nm(toc->name, destST, true);
 
-	// создаем объекь для проверки на переопределяемость
+	// СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ РґР»СЏ РїСЂРѕРІРµСЂРєРё РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµРјРѕСЃС‚СЊ
 	if( isOperator )
 		targetFn = new OverloadOperator(toc->name, destST,
-			toc->finalType,	toc->constQual, toc->volatileQual, 
+			toc->finalType, toc->constQual, toc->volatileQual, 
 			toc->dtl, toc->fnSpecCode == KWINLINE,
 			toc->ssCode < 0 ? Function::SS_NONE : 
 			TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierFn(),
@@ -457,16 +456,16 @@ bool FriendFunctionMaker::Make()
 
 	else
 		targetFn = new Function(toc->name, destST,
-			toc->finalType,	toc->constQual, toc->volatileQual, 
+			toc->finalType, toc->constQual, toc->volatileQual, 
 			toc->dtl, toc->fnSpecCode == KWINLINE,
 			toc->ssCode < 0 ? Function::SS_NONE : 
 			TypeSpecifierManager(toc->ssCode).CodeToStorageSpecifierFn(), Function::CC_NON  );
-							
-	// проверяем на переопределение
+
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР° РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ
 	RedeclaredChecker rchk(*targetFn, nm.GetRoleList(), toc->errPos, 
 		isOperator ? R_OVERLOAD_OPERATOR : R_FUNCTION);
 
-	// если переопределен, сохраняем функцию как результат работы
+	// РµСЃР»Рё РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅ, СЃРѕС…СЂР°РЅСЏРµРј С„СѓРЅРєС†РёСЋ РєР°Рє СЂРµР·СѓР»СЊС‚Р°С‚ СЂР°Р±РѕС‚С‹
 	if( rchk.IsRedeclared() )
 	{
 		Function *prevFn = const_cast<Function *>(
@@ -475,18 +474,18 @@ bool FriendFunctionMaker::Make()
 			CheckerUtils::DefaultArgumentCheck( targetFn->GetFunctionPrototype(), 
 				&prevFn->GetFunctionPrototype(), toc->errPos);
 		delete targetFn;
-		targetFn = prevFn;	
+		targetFn = prevFn;
 	}
-	
-	// иначе вставляем ее в ближайшую глобальную область видимости
-	else	
+
+	// РёРЅР°С‡Рµ РІСЃС‚Р°РІР»СЏРµРј РµРµ РІ Р±Р»РёР¶Р°Р№С€СѓСЋ РіР»РѕР±Р°Р»СЊРЅСѓСЋ РѕР±Р»Р°СЃС‚СЊ РІРёРґРёРјРѕСЃС‚Рё
+	else
 	{
 		CheckerUtils::DefaultArgumentCheck( targetFn->GetFunctionPrototype(), NULL, toc->errPos);
-		INTERNAL_IF( !destST->InsertSymbol(targetFn));	
+		INTERNAL_IF( !destST->InsertSymbol(targetFn));
 	}
 
 
-	// в конечном итоге вставляем функцию в список друзей класса
+	// РІ РєРѕРЅРµС‡РЅРѕРј РёС‚РѕРіРµ РІСЃС‚Р°РІР»СЏРµРј С„СѓРЅРєС†РёСЋ РІ СЃРїРёСЃРѕРє РґСЂСѓР·РµР№ РєР»Р°СЃСЃР°
 	const_cast<ClassFriendList &>(clsType.GetFriendList()).
 		AddClassFriend( ClassFriend(targetFn) );
 
@@ -494,111 +493,111 @@ bool FriendFunctionMaker::Make()
 }
 
 
-// абстрактный метод для дружеской функции. Инициализация невозможна
+// Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РґСЂСѓР¶РµСЃРєРѕР№ С„СѓРЅРєС†РёРё. РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅРµРІРѕР·РјРѕР¶РЅР°
 void FriendFunctionMaker::Initialize( MemberInitializationType mit, const Operand &exp )
-{	
+{
 	if( mit != MIT_NONE )
 		theApp.Error( toc->errPos,
-			"'%s' - у дружественной функции не может быть инициализатора",
+			"'%s' - Сѓ РґСЂСѓР¶РµСЃС‚РІРµРЅРЅРѕР№ С„СѓРЅРєС†РёРё РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РёРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂР°",
 			toc->name.c_str());
 }
 
 
-// специальная функция уточняющая базовый тип в определение члена,
-// с учетом того, что в конструкторах, деструкторах, операторах приведения
-// базовый тип не задается явно а формируется автоматически
+// СЃРїРµС†РёР°Р»СЊРЅР°СЏ С„СѓРЅРєС†РёСЏ СѓС‚РѕС‡РЅСЏСЋС‰Р°СЏ Р±Р°Р·РѕРІС‹Р№ С‚РёРї РІ РѕРїСЂРµРґРµР»РµРЅРёРµ С‡Р»РµРЅР°,
+// СЃ СѓС‡РµС‚РѕРј С‚РѕРіРѕ, С‡С‚Рѕ РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°С…, РґРµСЃС‚СЂСѓРєС‚РѕСЂР°С…, РѕРїРµСЂР°С‚РѕСЂР°С… РїСЂРёРІРµРґРµРЅРёСЏ
+// Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅРµ Р·Р°РґР°РµС‚СЃСЏ СЏРІРЅРѕ Р° С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё
 void MemberDefinationMaker::SpecifyBaseType( const NodePackage *np, const SymbolTable &st )
 {
-	// получаем последнее имя
+	// РїРѕР»СѓС‡Р°РµРј РїРѕСЃР»РµРґРЅРµРµ РёРјСЏ
 	const NodePackage *last = static_cast<const NodePackage *>(np->GetLastChildPackage());
 
-	// должно быть имя, оператор, деструктор
+	// РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РёРјСЏ, РѕРїРµСЂР°С‚РѕСЂ, РґРµСЃС‚СЂСѓРєС‚РѕСЂ
 	register int pid = last->GetPackageID();
 	bool special = pid == PC_DESTRUCTOR || pid == PC_CAST_OPERATOR ||idRole == R_CONSTRUCTOR;
 	INTERNAL_IF( pid != NAME && pid != PC_OVERLOAD_OPERATOR && !special );
 
-	// если базовый тип задан, либо имеем не деструктор, конструктор или оператор приведения
-	if( toc->baseType != NULL || !special )		
+	// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї Р·Р°РґР°РЅ, Р»РёР±Рѕ РёРјРµРµРј РЅРµ РґРµСЃС‚СЂСѓРєС‚РѕСЂ, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РёР»Рё РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ
+	if( toc->baseType != NULL || !special )
 	{
-		if( special ) 		
+		if( special )
 			theApp.Error(toc->errPos, 
-				"'%s' - базовый тип не может задаваться при определении %s", 
-				toc->name.c_str(), pid == PC_DESTRUCTOR ? "деструктора" : 
-				(pid == PC_CAST_OPERATOR ? "оператора приведения" : "конструктора"));
-			
+				"'%s' - Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅРµ РјРѕР¶РµС‚ Р·Р°РґР°РІР°С‚СЊСЃСЏ РїСЂРё РѕРїСЂРµРґРµР»РµРЅРёРё %s", 
+				toc->name.c_str(), pid == PC_DESTRUCTOR ? "РґРµСЃС‚СЂСѓРєС‚РѕСЂР°" : 
+				(pid == PC_CAST_OPERATOR ? "РѕРїРµСЂР°С‚РѕСЂР° РїСЂРёРІРµРґРµРЅРёСЏ" : "РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°"));
+
 		MakerUtils::SpecifyBaseType( &*toc );
 		return;	
 	}
-		
 
-	// если базовый тип не задан, то уточнять его не будем, т.к.
-	// в деструкторах, конструкторах, операторах приведения тип формируется 
-	// автоматически и явно не задается. Соотв. (тип класс, void, тип приведения без ф-ции)
 
-	// если деструктор, базовый тип по умолчанию void
+	// РµСЃР»Рё Р±Р°Р·РѕРІС‹Р№ С‚РёРї РЅРµ Р·Р°РґР°РЅ, С‚Рѕ СѓС‚РѕС‡РЅСЏС‚СЊ РµРіРѕ РЅРµ Р±СѓРґРµРј, С‚.Рє.
+	// РІ РґРµСЃС‚СЂСѓРєС‚РѕСЂР°С…, РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°С…, РѕРїРµСЂР°С‚РѕСЂР°С… РїСЂРёРІРµРґРµРЅРёСЏ С‚РёРї С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ 
+	// Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё Рё СЏРІРЅРѕ РЅРµ Р·Р°РґР°РµС‚СЃСЏ. РЎРѕРѕС‚РІ. (С‚РёРї РєР»Р°СЃСЃ, void, С‚РёРї РїСЂРёРІРµРґРµРЅРёСЏ Р±РµР· С„-С†РёРё)
+
+	// РµСЃР»Рё РґРµСЃС‚СЂСѓРєС‚РѕСЂ, Р±Р°Р·РѕРІС‹Р№ С‚РёРї РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ void
 	if( pid == PC_DESTRUCTOR )
 		toc->finalType = 
-			const_cast<BaseType*>(&ImplicitTypeManager(BaseType::BT_VOID).GetImplicitType());	
+			const_cast<BaseType*>(&ImplicitTypeManager(BaseType::BT_VOID).GetImplicitType());
 
-	// если конструктор
+	// РµСЃР»Рё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	else if( idRole == R_CONSTRUCTOR )
 	{
-		// у конструктора по умолчанию тип класса к которому он принадлежит
+		// Сѓ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ С‚РёРї РєР»Р°СЃСЃР° Рє РєРѕС‚РѕСЂРѕРјСѓ РѕРЅ РїСЂРёРЅР°РґР»РµР¶РёС‚
 		INTERNAL_IF( !st.IsClassSymbolTable() );
 		const ClassType &cls = static_cast<const ClassType&>(st);
 		toc->finalType = const_cast<ClassType *>(&cls);
 	}
 
-	// иначе если оператор приведения
+	// РёРЅР°С‡Рµ РµСЃР»Рё РѕРїРµСЂР°С‚РѕСЂ РїСЂРёРІРµРґРµРЅРёСЏ
 	else if( pid == PC_CAST_OPERATOR )
 	{
-		// здесь ничего выполнять не требуется т.к. чекер все выполнит сам
+		// Р·РґРµСЃСЊ РЅРёС‡РµРіРѕ РІС‹РїРѕР»РЅСЏС‚СЊ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ С‚.Рє. С‡РµРєРµСЂ РІСЃРµ РІС‹РїРѕР»РЅРёС‚ СЃР°Рј
 		TempCastOperatorContainer tcoc;
-		AnalyzeCastOperatorPkg( *last, tcoc );									
+		AnalyzeCastOperatorPkg( *last, tcoc );
 		CastOperatorChecker(*toc, tcoc);
 	}
 
-	// иначе внутренняяя ошибка
-	else
-		INTERNAL( "неизвестный тип идентификатора" );
+	// РёРЅР°С‡Рµ РІРЅСѓС‚СЂРµРЅРЅСЏСЏСЏ РѕС€РёР±РєР°
+	else 
+		INTERNAL( "РЅРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°" );
 }
 
 
-// Определить роль объявляемого идентификатора. Классы, объединения
-// перечисления игнорируются, остальные роли должны совпадать.
-// Должна быть хотя-бы одна объектная роль. Возвращает false
-// если роль не определена
+// РћРїСЂРµРґРµР»РёС‚СЊ СЂРѕР»СЊ РѕР±СЉСЏРІР»СЏРµРјРѕРіРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°. РљР»Р°СЃСЃС‹, РѕР±СЉРµРґРёРЅРµРЅРёСЏ
+// РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ РёРіРЅРѕСЂРёСЂСѓСЋС‚СЃСЏ, РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЂРѕР»Рё РґРѕР»Р¶РЅС‹ СЃРѕРІРїР°РґР°С‚СЊ.
+// Р”РѕР»Р¶РЅР° Р±С‹С‚СЊ С…РѕС‚СЏ-Р±С‹ РѕРґРЅР° РѕР±СЉРµРєС‚РЅР°СЏ СЂРѕР»СЊ. Р’РѕР·РІСЂР°С‰Р°РµС‚ false
+// РµСЃР»Рё СЂРѕР»СЊ РЅРµ РѕРїСЂРµРґРµР»РµРЅР°
 bool MemberDefinationMaker::InspectIDRole( const RoleList &rl )
 {
 	if( rl.empty() )
 		return false;
-	
+
 	for( RoleList::const_iterator p = rl.begin(); p != rl.end(); p++ )
 	{
 		register Role r = (*p).second;
 		if( r == R_CLASS_TYPE || r == R_UNION_CLASS_TYPE || r == R_ENUM_TYPE )
 			continue;
 
-		// в противном случае проверяем правильность роли
+		// РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РїСЂРѕРІРµСЂСЏРµРј РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ СЂРѕР»Рё
 		INTERNAL_IF( idRole != R_UNCKNOWN && idRole != r );
 		if( r != R_OBJECT && r != R_DATAMEMBER &&
 			!(r >= R_FUNCTION && r <= R_CONSTRUCTOR ) )
 		{
-			theApp.Error( toc->errPos, "'%s' - член не может определяться в данном месте",
+			theApp.Error( toc->errPos, "'%s' - С‡Р»РµРЅ РЅРµ РјРѕР¶РµС‚ РѕРїСЂРµРґРµР»СЏС‚СЊСЃСЏ РІ РґР°РЅРЅРѕРј РјРµСЃС‚Рµ",
 				toc->name.c_str() );
 			return false;
 		}
 
-		// если роль не задана, задаем
+		// РµСЃР»Рё СЂРѕР»СЊ РЅРµ Р·Р°РґР°РЅР°, Р·Р°РґР°РµРј
 		if( idRole == R_UNCKNOWN )
 			idRole = r;
 	}
 
-	// если роль не задана, значит были только классы
+	// РµСЃР»Рё СЂРѕР»СЊ РЅРµ Р·Р°РґР°РЅР°, Р·РЅР°С‡РёС‚ Р±С‹Р»Рё С‚РѕР»СЊРєРѕ РєР»Р°СЃСЃС‹
 	if( idRole == R_UNCKNOWN )
 	{
 		theApp.Error( toc->errPos, 
-			"'%s' - член не является объектом или функцией", toc->name.c_str() );
+			"'%s' - С‡Р»РµРЅ РЅРµ СЏРІР»СЏРµС‚СЃСЏ РѕР±СЉРµРєС‚РѕРј РёР»Рё С„СѓРЅРєС†РёРµР№", toc->name.c_str() );
 		return false;
 	}
 
@@ -606,99 +605,99 @@ bool MemberDefinationMaker::InspectIDRole( const RoleList &rl )
 }
 
 
-// построить определение
+// РїРѕСЃС‚СЂРѕРёС‚СЊ РѕРїСЂРµРґРµР»РµРЅРёРµ
 bool MemberDefinationMaker::Make()
 {
-	// сначала нам необходимо найти идентификатор, который
-	// соотв. определению
+	// СЃРЅР°С‡Р°Р»Р° РЅР°Рј РЅРµРѕР±С…РѕРґРёРјРѕ РЅР°Р№С‚Рё РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ, РєРѕС‚РѕСЂС‹Р№
+	// СЃРѕРѕС‚РІ. РѕРїСЂРµРґРµР»РµРЅРёСЋ
 	int ix = decl->FindPackage(PC_QUALIFIED_NAME);
 	INTERNAL_IF( ix < 0 );
 
 	const NodePackage *np = static_cast<const NodePackage *>(decl->GetChildPackage(ix));
 	INTERNAL_IF( np->GetChildPackageCount() <= 1 );
 
-	// иначе создаем временную структуру и собираем в нее декларацию
+	// РёРЅР°С‡Рµ СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ Рё СЃРѕР±РёСЂР°РµРј РІ РЅРµРµ РґРµРєР»Р°СЂР°С†РёСЋ
 	toc = new TempObjectContainer(
 		ParserUtils::GetPackagePosition(np), ParserUtils::PrintPackageTree(np) );
 
-	// если соотв. не найдено, выйти
+	// РµСЃР»Рё СЃРѕРѕС‚РІ. РЅРµ РЅР°Р№РґРµРЅРѕ, РІС‹Р№С‚Рё
 	if( memberQnm.GetRoleCount() == 0 )
 	{
-		theApp.Error(toc->errPos, "'%s' - член не найден", toc->name.c_str() );
+		theApp.Error(toc->errPos, "'%s' - С‡Р»РµРЅ РЅРµ РЅР°Р№РґРµРЅ", toc->name.c_str() );
 		return false;
 	}
 
-	// выявляем роль идентификатора
+	// РІС‹СЏРІР»СЏРµРј СЂРѕР»СЊ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
 	if( !InspectIDRole( memberQnm.GetRoleList() ) )
 		return false;
 
-	// начинаем анализ спецификаторов типа
+	// РЅР°С‡РёРЅР°РµРј Р°РЅР°Р»РёР· СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ С‚РёРїР°
 	MakerUtils::AnalyzeTypeSpecifierPkg( tsl, &*toc );
 
-	// далее анализируем декларатор
+	// РґР°Р»РµРµ Р°РЅР°Р»РёР·РёСЂСѓРµРј РґРµРєР»Р°СЂР°С‚РѕСЂ
 	MakerUtils::AnalyzeDeclaratorPkg( decl, &*toc );
 
-	// уточняем базовый тип специальным методом
+	// СѓС‚РѕС‡РЅСЏРµРј Р±Р°Р·РѕРІС‹Р№ С‚РёРї СЃРїРµС†РёР°Р»СЊРЅС‹Рј РјРµС‚РѕРґРѕРј
 	const SymbolTable *st = 
 		memberQnm.GetQualifierList()[memberQnm.GetQualifierList().GetSymbolTableCount()-1];
 	SpecifyBaseType( np , *st );
 
-	// сейчас проверяем, чтобы не было ненужных спецификаторов в определении
+	// СЃРµР№С‡Р°СЃ РїСЂРѕРІРµСЂСЏРµРј, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ РЅРµРЅСѓР¶РЅС‹С… СЃРїРµС†РёС„РёРєР°С‚РѕСЂРѕРІ РІ РѕРїСЂРµРґРµР»РµРЅРёРё
 	if( toc->fnSpecCode != -1 || toc->ssCode != -1 || toc->friendSpec )
-		theApp.Error(toc->errPos, "'%s' - %s некорректно при определении члена", 
+		theApp.Error(toc->errPos, "'%s' - %s РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ РїСЂРё РѕРїСЂРµРґРµР»РµРЅРёРё С‡Р»РµРЅР°", 
 			toc->name.c_str(), toc->friendSpec ? "friend" : 
 			GetKeywordName(toc->ssCode != -1 ? toc->ssCode : toc->fnSpecCode));
-		
-	// теперь остается проверить, соотв. определения и объявления
+
+	// С‚РµРїРµСЂСЊ РѕСЃС‚Р°РµС‚СЃСЏ РїСЂРѕРІРµСЂРёС‚СЊ, СЃРѕРѕС‚РІ. РѕРїСЂРµРґРµР»РµРЅРёСЏ Рё РѕР±СЉСЏРІР»РµРЅРёСЏ
 	RedeclaredChecker rchk( 
 		TypyziedEntity(toc->finalType, toc->constQual, toc->volatileQual, toc->dtl),
 		memberQnm.GetRoleList(), toc->errPos, idRole);
 
 	if( !rchk.IsRedeclared() )
 	{
-		theApp.Error(toc->errPos, "'%s' - член не найден", toc->name.c_str() );
+		theApp.Error(toc->errPos, "'%s' - С‡Р»РµРЅ РЅРµ РЅР°Р№РґРµРЅ", toc->name.c_str() );
 		return false;
 	}
 
-	// иначе идентификатор найден, и если он функция, проверим параметры по умолчанию
-	else	
+	// РёРЅР°С‡Рµ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РЅР°Р№РґРµРЅ, Рё РµСЃР»Рё РѕРЅ С„СѓРЅРєС†РёСЏ, РїСЂРѕРІРµСЂРёРј РїР°СЂР°РјРµС‚СЂС‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+	else
 	{
-		targetID = const_cast<Identifier *>(rchk.GetPrevDeclaration());	
+		targetID = const_cast<Identifier *>(rchk.GetPrevDeclaration());
 		if( Function *prevFn = dynamic_cast<Function *>(targetID) )
 		{
 			INTERNAL_IF( !toc->dtl.IsFunction() );
 			CheckerUtils::DefaultArgumentCheck( static_cast<const FunctionPrototype&>(
 				*toc->dtl.GetDerivedType(0)), &prevFn->GetFunctionPrototype(), toc->errPos);
 
-			// также проверим, чтобы не объявлялся метод сгенерированный
-			// компилятором
+			// С‚Р°РєР¶Рµ РїСЂРѕРІРµСЂРёРј, С‡С‚РѕР±С‹ РЅРµ РѕР±СЉСЏРІР»СЏР»СЃСЏ РјРµС‚РѕРґ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅС‹Р№
+			// РєРѕРјРїРёР»СЏС‚РѕСЂРѕРј
 			if( prevFn->IsClassMember() && 
 				!static_cast<const Method *>(prevFn)->IsUserDefined() )
 				theApp.Error(toc->errPos, 
-					"'%s' - невозможно определить метод сгенерированный компилятором",
+					"'%s' - РЅРµРІРѕР·РјРѕР¶РЅРѕ РѕРїСЂРµРґРµР»РёС‚СЊ РјРµС‚РѕРґ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅС‹Р№ РєРѕРјРїРёР»СЏС‚РѕСЂРѕРј",
 					prevFn->GetQualifiedName().c_str() );
 		}
 	}
 
-	// проверяем, члены из каких областей можно определять
+	// РїСЂРѕРІРµСЂСЏРµРј, С‡Р»РµРЅС‹ РёР· РєР°РєРёС… РѕР±Р»Р°СЃС‚РµР№ РјРѕР¶РЅРѕ РѕРїСЂРµРґРµР»СЏС‚СЊ
 	if( st->IsClassSymbolTable() )
 	{
 		if( ::Object *ob = dynamic_cast<::Object *>(targetID) )
 		{
 			if( ob->GetStorageSpecifier() != ::Object::SS_STATIC )
 				theApp.Error(toc->errPos, 
-					"'%s' - не статический член не может определяться",
+					"'%s' - РЅРµ СЃС‚Р°С‚РёС‡РµСЃРєРёР№ С‡Р»РµРЅ РЅРµ РјРѕР¶РµС‚ РѕРїСЂРµРґРµР»СЏС‚СЊСЃСЏ",
 					toc->name.c_str() );
-			// проверить на инициализацию
+			// РїСЂРѕРІРµСЂРёС‚СЊ РЅР° РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ
 		}
 	}
-	
+
 	else if( st->IsNamespaceSymbolTable() )
 		;
-	// иначе ошибка
+	// РёРЅР°С‡Рµ РѕС€РёР±РєР°
 	else
 		theApp.Error(toc->errPos, 
-			"можно определять только члены класса и члены именованной области видимости",
+			"РјРѕР¶РЅРѕ РѕРїСЂРµРґРµР»СЏС‚СЊ С‚РѕР»СЊРєРѕ С‡Р»РµРЅС‹ РєР»Р°СЃСЃР° Рё С‡Р»РµРЅС‹ РёРјРµРЅРѕРІР°РЅРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё",
 			toc->name.c_str() );
 
 	INTERNAL_IF( targetID == NULL );

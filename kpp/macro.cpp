@@ -1,4 +1,4 @@
-// обработка значений макросов - macro.cpp
+// РѕР±СЂР°Р±РѕС‚РєР° Р·РЅР°С‡РµРЅРёР№ РјР°РєСЂРѕСЃРѕРІ - macro.cpp
 
 #include <algorithm>
 #include <string>
@@ -17,7 +17,7 @@ using namespace std;
 MacroTable mtab;
 
 
-// возвращает указатель на объект в табице, или NULL
+// РІРѕР·РІСЂР°С‰Р°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РѕР±СЉРµРєС‚ РІ С‚Р°Р±РёС†Рµ, РёР»Рё NULL
 Macro *MacroTable::Find( char *name )
 {
 	list<Macro>::iterator i;
@@ -25,7 +25,7 @@ Macro *MacroTable::Find( char *name )
 }
 
 
-// вставляет элемент в таблицу
+// РІСЃС‚Р°РІР»СЏРµС‚ СЌР»РµРјРµРЅС‚ РІ С‚Р°Р±Р»РёС†Сѓ
 void MacroTable::Insert( Macro ob )
 {
 	list<Macro> &p = HashFunc( (char *)ob.name.c_str() );
@@ -33,7 +33,7 @@ void MacroTable::Insert( Macro ob )
 }
 
 
-// удаляет элемент из таблицы
+// СѓРґР°Р»СЏРµС‚ СЌР»РµРјРµРЅС‚ РёР· С‚Р°Р±Р»РёС†С‹
 void MacroTable::Remove( char *name )
 {
 	list<Macro> &p = HashFunc( name );
@@ -42,7 +42,7 @@ void MacroTable::Remove( char *name )
 	if( _Find( name, i ) )
 	{
 		if( (*i).pred )
-			Error( "'%s': макрос предопределен", (*i).name.c_str() );
+			Error( "'%s': РјР°РєСЂРѕСЃ РїСЂРµРґРѕРїСЂРµРґРµР»РµРЅ", (*i).name.c_str() );
 		else
 			p.remove( *i );
 	}
@@ -55,7 +55,7 @@ static void InitPrms( Param &ob )
 }
 
 
-// считывает значение одного параметра
+// СЃС‡РёС‚С‹РІР°РµС‚ Р·РЅР°С‡РµРЅРёРµ РѕРґРЅРѕРіРѕ РїР°СЂР°РјРµС‚СЂР°
 static inline bool ReadOneParam( string &pval, BaseRead &buf )
 {
 	register int c; 
@@ -83,28 +83,28 @@ static inline bool ReadOneParam( string &pval, BaseRead &buf )
 
 		else if( c == EOF )
 		{
-			Error( "не хватает ')' в конце строки" );
+			Error( "РЅРµ С…РІР°С‚Р°РµС‚ ')' РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё" );
 			return false;
 		}
 
 		pval += lexbuf;
 		lexbuf = "";
 		IgnoreSpaces( buf, true );
-		pval += lexbuf;	// считываем пробелы
+		pval += lexbuf;	// СЃС‡РёС‚С‹РІР°РµРј РїСЂРѕР±РµР»С‹
 	}
 
 	return false;
 }
 
 
-// считывает значения параметров
+// СЃС‡РёС‚С‹РІР°РµС‚ Р·РЅР°С‡РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ
 static inline bool ReadMacroParams( Macro &r, BaseRead &buf )
 {
 	register int c = IgnoreSpaces( buf, false );
 	
 	if( c != '(' )
 		return false;
-	// еще раз считываем (
+	// РµС‰Рµ СЂР°Р· СЃС‡РёС‚С‹РІР°РµРј (
 	else
 		buf >> c;
 
@@ -116,7 +116,7 @@ static inline bool ReadMacroParams( Macro &r, BaseRead &buf )
 
 	for_each( r.params.begin(), r.params.end(), InitPrms );
 	
-	if( IgnoreSpaces( buf, false ) == ')' )	// пустые параметры
+	if( IgnoreSpaces( buf, false ) == ')' )	// РїСѓСЃС‚С‹Рµ РїР°СЂР°РјРµС‚СЂС‹
 		buf >> c;
 
 	else
@@ -124,16 +124,16 @@ static inline bool ReadMacroParams( Macro &r, BaseRead &buf )
 	{
 		notdone = ReadOneParam( pval, buf );
 
-		SplitSpaces( pval );	// удаляем пробелы сзади
+		SplitSpaces( pval );	// СѓРґР°Р»СЏРµРј РїСЂРѕР±РµР»С‹ СЃР·Р°РґРё
 		if( pval == "" )
 		{	
-			Error( "'%s': пустой параметр", r.name.c_str() );
+			Error( "'%s': РїСѓСЃС‚РѕР№ РїР°СЂР°РјРµС‚СЂ", r.name.c_str() );
 			pval = " ";
 		}
 		
 		if( i == r.params.end() && !err )
 		{
-			Error( "'%s': параметров больше чем ожидается", r.name.c_str() );
+			Error( "'%s': РїР°СЂР°РјРµС‚СЂРѕРІ Р±РѕР»СЊС€Рµ С‡РµРј РѕР¶РёРґР°РµС‚СЃСЏ", r.name.c_str() );
 			err = true;
 			continue;
 		}
@@ -144,14 +144,14 @@ static inline bool ReadMacroParams( Macro &r, BaseRead &buf )
 	}
 		
 	if( i != r.params.end() )
-		Error( "'%s': параметров меньше чем ожидается", r.name.c_str() );
+		Error( "'%s': РїР°СЂР°РјРµС‚СЂРѕРІ РјРµРЅСЊС€Рµ С‡РµРј РѕР¶РёРґР°РµС‚СЃСЏ", r.name.c_str() );
 
 	return true;
 }
 
 
-// делает первый проход по значению макроса и 
-// заменяет параметры их значениями
+// РґРµР»Р°РµС‚ РїРµСЂРІС‹Р№ РїСЂРѕС…РѕРґ РїРѕ Р·РЅР°С‡РµРЅРёСЋ РјР°РєСЂРѕСЃР° Рё 
+// Р·Р°РјРµРЅСЏРµС‚ РїР°СЂР°РјРµС‚СЂС‹ РёС… Р·РЅР°С‡РµРЅРёСЏРјРё
 inline static string &ProcessParams( Macro &r )
 {
 	static string s;
@@ -162,16 +162,16 @@ inline static string &ProcessParams( Macro &r )
 	s = "";
 	while( (c = Lex(buf)) != EOF )
 	{
-		// обрабатываем операторы # и ##
+		// РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РѕРїРµСЂР°С‚РѕСЂС‹ # Рё ##
 		if( c == '#' )
 		{
 			buf >> c;
 			if( c == '#' )	// ##
 			{
 				if( s == "" )
-					Error( "'%s': оператор '##' в начале строки", r.name.c_str() );
+					Error( "'%s': РѕРїРµСЂР°С‚РѕСЂ '##' РІ РЅР°С‡Р°Р»Рµ СЃС‚СЂРѕРєРё", r.name.c_str() );
 					
-				SplitSpaces(s);		// удаляем пробелы для конкатенации строкы
+				SplitSpaces(s);		// СѓРґР°Р»СЏРµРј РїСЂРѕР±РµР»С‹ РґР»СЏ РєРѕРЅРєР°С‚РµРЅР°С†РёРё СЃС‚СЂРѕРєРё
 				sharpop = true;
 				continue;
 			}
@@ -195,7 +195,7 @@ inline static string &ProcessParams( Macro &r )
 			else
 			{
 				if(strop)
-					Error( "'%s': оператор '#' применяется не к параметру", r.name.c_str() );
+					Error( "'%s': РѕРїРµСЂР°С‚РѕСЂ '#' РїСЂРёРјРµРЅСЏРµС‚СЃСЏ РЅРµ Рє РїР°СЂР°РјРµС‚СЂСѓ", r.name.c_str() );
 				s += lexbuf;
 			}
 		}
@@ -207,29 +207,29 @@ inline static string &ProcessParams( Macro &r )
 		sharpop = false;
 		lexbuf = "";
 		IgnoreSpaces( buf, true );
-		s += lexbuf;		// считываем пробелы
+		s += lexbuf;		// СЃС‡РёС‚С‹РІР°РµРј РїСЂРѕР±РµР»С‹
 	}
 
 	
 	if(sharpop)
-		Error( "'%s': оператор '##' в конце строки", r.name.c_str() );
+		Error( "'%s': РѕРїРµСЂР°С‚РѕСЂ '##' РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё", r.name.c_str() );
 
 	return s;
 }
 
 
-// предварительный просмотр значения макроса
+// РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅС‹Р№ РїСЂРѕСЃРјРѕС‚СЂ Р·РЅР°С‡РµРЅРёСЏ РјР°РєСЂРѕСЃР°
 static inline string &PredView( Macro &r )
 {
-	// если функция- то требутеся предварительный проход для 
-	// подстановки параметров и выполнения операторов # и ##
+	// РµСЃР»Рё С„СѓРЅРєС†РёСЏ- С‚Рѕ С‚СЂРµР±СѓС‚РµСЃСЏ РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅС‹Р№ РїСЂРѕС…РѕРґ РґР»СЏ 
+	// РїРѕРґСЃС‚Р°РЅРѕРІРєРё РїР°СЂР°РјРµС‚СЂРѕРІ Рё РІС‹РїРѕР»РЅРµРЅРёСЏ РѕРїРµСЂР°С‚РѕСЂРѕРІ # Рё ##
 	if( r.type == Macro::FUNCTION )
 		return ProcessParams(r); 
 	return r.val;
 }
 
 
-// обрабатывает оператор 'defined'
+// РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РѕРїРµСЂР°С‚РѕСЂ 'defined'
 static char inline DefinedOperator( BufferRead &buf )
 {
 	int c = Lex(buf);
@@ -241,24 +241,24 @@ static char inline DefinedOperator( BufferRead &buf )
 			char r = mtab.Find( (char *)lexbuf.c_str() ) ? '1' : '0';
 			c = Lex(buf);
 			if( c != ')' )
-				throw ("не хватает ')' в операторе 'defined'");
+				throw ("РЅРµ С…РІР°С‚Р°РµС‚ ')' РІ РѕРїРµСЂР°С‚РѕСЂРµ 'defined'");
 			return r;
 		}
 
 		else
-			throw ("пропущено имя макроса после 'defined'");
+			throw ("РїСЂРѕРїСѓС‰РµРЅРѕ РёРјСЏ РјР°РєСЂРѕСЃР° РїРѕСЃР»Рµ 'defined'");
 	}
 
 	else if( c == NAME )
 		return mtab.Find( (char *)lexbuf.c_str() ) != NULL;
 
 	else
-		throw ("пропущено имя макроса после 'defined'");
+		throw ("РїСЂРѕРїСѓС‰РµРЅРѕ РёРјСЏ РјР°РєСЂРѕСЃР° РїРѕСЃР»Рµ 'defined'");
 	return '1';	// kill warning
 }
 
 
-// проходит по строке s и выполняет макроподстановку
+// РїСЂРѕС…РѕРґРёС‚ РїРѕ СЃС‚СЂРѕРєРµ s Рё РІС‹РїРѕР»РЅСЏРµС‚ РјР°РєСЂРѕРїРѕРґСЃС‚Р°РЅРѕРІРєСѓ
 string Substitution( string b, bool dodef )
 {
 	string rval;
@@ -268,7 +268,7 @@ string Substitution( string b, bool dodef )
 	static list<string> stck;
 
 	if( deep++ == MAX_MACRO_DEEP )
-		Fatal( "стек переполнен: макроподстановка слишком глубока" );
+		Fatal( "СЃС‚РµРє РїРµСЂРµРїРѕР»РЅРµРЅ: РјР°РєСЂРѕРїРѕРґСЃС‚Р°РЅРѕРІРєР° СЃР»РёС€РєРѕРј РіР»СѓР±РѕРєР°" );
 
 	while( ( c = Lex(buf) ) != EOF )
 	{
@@ -276,10 +276,10 @@ string Substitution( string b, bool dodef )
 		{
 			Macro *r;
 
-			// ищем макрос в таблице
+			// РёС‰РµРј РјР°РєСЂРѕСЃ РІ С‚Р°Р±Р»РёС†Рµ
 			if( (r = mtab.Find( (char *)lexbuf.c_str() ) ) == NULL )
 			{
-				// возможно требуется обработать оператор defined
+				// РІРѕР·РјРѕР¶РЅРѕ С‚СЂРµР±СѓРµС‚СЃСЏ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ РѕРїРµСЂР°С‚РѕСЂ defined
 				if(dodef && lexbuf == "defined")	
 					rval += DefinedOperator( buf );
 
@@ -288,21 +288,21 @@ string Substitution( string b, bool dodef )
 			}
 
 			
-			// если рекурсивная подстановка (в стеке уже есть такой макрос),
-			// то не выполнять макроподстановку, а подставить просто имя
-			// если в параметре был этот же макрос M( M(10) ), то макро-параметр
-			// также не подставляется, ФИКСМИ
+			// РµСЃР»Рё СЂРµРєСѓСЂСЃРёРІРЅР°СЏ РїРѕРґСЃС‚Р°РЅРѕРІРєР° (РІ СЃС‚РµРєРµ СѓР¶Рµ РµСЃС‚СЊ С‚Р°РєРѕР№ РјР°РєСЂРѕСЃ),
+			// С‚Рѕ РЅРµ РІС‹РїРѕР»РЅСЏС‚СЊ РјР°РєСЂРѕРїРѕРґСЃС‚Р°РЅРѕРІРєСѓ, Р° РїРѕРґСЃС‚Р°РІРёС‚СЊ РїСЂРѕСЃС‚Рѕ РёРјСЏ
+			// РµСЃР»Рё РІ РїР°СЂР°РјРµС‚СЂРµ Р±С‹Р» СЌС‚РѕС‚ Р¶Рµ РјР°РєСЂРѕСЃ M( M(10) ), С‚Рѕ РјР°РєСЂРѕ-РїР°СЂР°РјРµС‚СЂ
+			// С‚Р°РєР¶Рµ РЅРµ РїРѕРґСЃС‚Р°РІР»СЏРµС‚СЃСЏ, Р¤РРљРЎРњР
 			else if( find(stck.begin(), stck.end(), r->name) != stck.end() )
 				rval += lexbuf; 
 				
 			else
 			{
-				// если макро-функция
+				// РµСЃР»Рё РјР°РєСЂРѕ-С„СѓРЅРєС†РёСЏ
 				if( r->type == Macro::FUNCTION )
 				{
 					string temp = lexbuf;
 
-					// загрузить значения параметров
+					// Р·Р°РіСЂСѓР·РёС‚СЊ Р·РЅР°С‡РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ
 					if( !ReadMacroParams( *r, buf ) )
 					{
 						rval += temp + " ";
@@ -310,7 +310,7 @@ string Substitution( string b, bool dodef )
 					}
 				}
 
-				// если макрос предопределен
+				// РµСЃР»Рё РјР°РєСЂРѕСЃ РїСЂРµРґРѕРїСЂРµРґРµР»РµРЅ
 				else if( r->pred )
 				{
 					if( r->name == "__LINE__" )
@@ -338,7 +338,7 @@ string Substitution( string b, bool dodef )
 	
 		lexbuf = "";
 		IgnoreSpaces( buf, true );
-		rval += lexbuf;	// считываем пробелы
+		rval += lexbuf;	// СЃС‡РёС‚С‹РІР°РµРј РїСЂРѕР±РµР»С‹
 	}
 
 	deep--;

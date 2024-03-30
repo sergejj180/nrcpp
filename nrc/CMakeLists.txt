@@ -1,4 +1,10 @@
 cmake_minimum_required (VERSION 3.8)
+
 project("nrc")
-add_library (nrc "nrc.cpp" "nrc.h")
+
+set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/bin/${PROJECT_NAME}")
+
+#add_library (${PROJECT_NAME} "nrc.cpp" "nrc.h")
+
+add_library (${PROJECT_NAME} "nrc.cpp" "nrc.h")
 
