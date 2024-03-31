@@ -167,15 +167,14 @@ bool ExpressionMakerUtils::CompareTypes(
 
 
 // создать вызов функции
-POperand ExpressionMakerUtils::MakeFunctionCall( POperand &fn, PExpressionList &params )
+POperand ExpressionMakerUtils::MakeFunctionCall( POperand &fn, const PExpressionList &params )
 {
 	// создаем результуриующий тип вызова функции
 	PTypyziedEntity rt = new TypyziedEntity(fn->GetType()); 
-	const_cast<DerivedTypeList &>(rt->GetDerivedTypeList()).PopHeadDerivedType();
+	const_cast<DerivedTypeList &> (rt->GetDerivedTypeList()).PopHeadDerivedType();
 	
 	// возвращаем вызов функции
-	return new FunctionCallExpression( rt->GetDerivedTypeList().IsReference(),
-		fn, params, rt);
+	return new FunctionCallExpression( rt->GetDerivedTypeList().IsReference(), fn, params, rt);
 }
 
 
@@ -573,7 +572,7 @@ void ScalarToScalarCaster::SetCastCategory( const BaseType &dbt, const BaseType 
 				 dbt.GetSignModifier() == sbt.GetSignModifier()) ?
 					CC_INCREASE : CC_STANDARD; 
 		}
-		    
+
 		else
 			castCategory = CC_STANDARD;
 	}
@@ -1204,7 +1203,7 @@ void OperatorCaster::ClassifyCast()
 // В srcOp будет приведенное к типу destOp выражение
 void OperatorCaster::DoCast( const POperand &destOp, POperand &srcOp, const Position &ep )
 {
-	INTERNAL_IF( castOperator == NULL || !isConverted || 
+	INTERNAL_IF( castOperator == NULL || !isConverted ||
 		!ExpressionMakerUtils::IsClassType(srcOp->GetType()) );
 
 	// проверяем оператор на доступность
@@ -1224,8 +1223,8 @@ void OperatorCaster::DoCast( const POperand &destOp, POperand &srcOp, const Posi
 	POperand call = ExpressionMakerUtils::MakeFunctionCall(select, PExpressionList(new ExpressionList));
 
 	// наконец преобразуем склярно
-	if( !scalarCaster.IsNull() )
-		scalarCaster->DoCast(destOp, call, ep);
+	if( !scalarCaster.IsNull() ) {
+		scalarCaster->DoCast(destOp, call, ep); }
 	srcOp = call;
 }
 

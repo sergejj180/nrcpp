@@ -16,6 +16,10 @@
 // необходимо использовать для полученного набора пакетов. Структура пакетов
 // для каждого случая должна быть четко оговорена и задокументирована
 
+#include "Object.h"
+#include "Parser.h"
+#include "Manager.h"
+#include "Body.h"
 
 // объявлен в Object.h
 class Identifier;
@@ -198,7 +202,7 @@ public:
 
 	public:
 		// на вход поступает пакет с именем, на выходе - список ролей
-		SynonymType( const ::Object &tname ) : typedefName(tname) {			
+		SynonymType( const ::Object &tname ) : typedefName(tname) {
 		}
 
 		// получить имя typedef

@@ -107,7 +107,7 @@ void nrc::CharString::DeleteInSet( const char *set )
 	{
 		const char *p;
 		if( (p = strchr(set, at(i))) == NULL )
-			out += at(i);			
+			out += at(i);
 	}
 
 	*this = out;

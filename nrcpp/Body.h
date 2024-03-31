@@ -163,13 +163,13 @@ public:
 
 	// 31.03.2024
 	// задать выражение как rvalue
-	void SetRValue() const {
+	bool SetRValue() const {
 		return lvalue == false;
 	}
 
 	//31.03.2024
 	// задать, что выражение в скобках
-	void SetCramps() const {
+	bool SetCramps() const {
 		return inCramps == true;
 	}
 };

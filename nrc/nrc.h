@@ -35,7 +35,7 @@ namespace nrc
 		virtual CharString Name();
 
 		// виртуальный деструктор для уничтожения объектов внизу иерархии
-		virtual ~SObject( ) {	
+		virtual ~SObject( ) {
 		}
 	};
 
@@ -142,7 +142,7 @@ namespace nrc
 
 		// удалить символы с конца до того как появится символ из набора
 		// вернуть удаленную строку
-		CharString DeleteRightWhileNot( const char *set );		
+		CharString DeleteRightWhileNot( const char *set );
 
 		// заменить символы из набора inset, символами из набора outset
 		// причем каждому символу из inset должен соответствовать символ
@@ -177,12 +177,12 @@ namespace nrc
 	class StringList : protected vector<CharString *>, public SObject
 	{
 		// функция сравнения для строк по умолчанию, для поиска
-		static bool EqualCmpF(const CharString &s1, const CharString &s2) {			
+		static bool EqualCmpF(const CharString &s1, const CharString &s2) {
 			return s1 == s2;
 		}
 
 		// функция сравнения для строк по умолчанию, для сортировки
-		static bool EqualCmpS(const CharString *s1, const CharString *s2) {			
+		static bool EqualCmpS(const CharString *s1, const CharString *s2) {
 			return strcmp(s1->c_str(), s2->c_str()) < 0;
 		}
 
@@ -246,7 +246,7 @@ namespace nrc
 		CharString &operator[]( int ix );
 
 		// const
-		const CharString &operator[]( int ix ) const;		
+		const CharString &operator[]( int ix ) const;
 
 		// скопировать список строк
 		const StringList &operator=(  const StringList &sl );  
@@ -292,7 +292,7 @@ namespace nrc
 			{
 				delete refCount;
 				delete ptr;
-			}			
+			}
 		}
 
 		// если указатель - нулевой
@@ -314,7 +314,7 @@ namespace nrc
 		}
 
 		// операция копирования, увеличивает счетчик указателей
-		SmartPtr &operator=( const SmartPtr &sptr ) {			
+		SmartPtr &operator=( const  SmartPtr &sptr ) {
 			if( &sptr == this )
 				return *this;
 
@@ -327,7 +327,7 @@ namespace nrc
 			if( *refCount < 0 )	
 			{
 				if( !++*refCount )
-					delete refCount ;				
+					delete refCount ;
 			}
 
 			// иначе указатель владеет объектом
@@ -362,12 +362,12 @@ namespace nrc
 		// доступ к членам указателя (если указатель нулевой, этот метод вызывать нельзя)
 		T *operator ->() {
 			return ptr;
-		}		
+		}
 
 		// доступ к членам указателя (константный метод)
 		const T *operator ->() const {
 			return ptr;
-		}				
+		}
 	};
 }
 

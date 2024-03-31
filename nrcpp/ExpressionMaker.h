@@ -534,7 +534,7 @@ public:
 	// содержимое дерева выражений. SrcOp - классовый тип, который,
 	// содержит оператор приведения, destOp - тип к которому приводим выражение.
 	// В srcOp будет приведенное к типу destOp выражение
-	void DoCast( const POperand &destOp, POperand &srcOp, const Position &errPos  ) ;
+	void DoCast( const POperand &destOp, /* const */ POperand &srcOp, const Position &errPos  ) ;
 
 	// классифицировать преобразование
 	// если преобразование невозможно

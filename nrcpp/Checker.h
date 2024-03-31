@@ -1,6 +1,12 @@
 // интерфейс к КЛАССАМ-ЧЕКЕРАМ  - Checker.h
 #ifndef CHECKER_H
 #define CHECKER_H
+
+#include "Maker.h"
+#include "Class.h"
+#include "Object.h"
+#include "Body.h"
+
 // объявлен в Maker.h
 struct TempObjectContainer ;
 
