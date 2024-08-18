@@ -15,4 +15,4 @@ add_subdirectory ("nrc")
 
 add_subdirectory ("nrcpp")
 
-add_subdirectory ("kpp")
+#add_subdirectory ("kpp")

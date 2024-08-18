@@ -760,19 +760,19 @@ ExpressionMakerUtils::InitAnswer ExpressionMakerUtils::CorrectObjectInitializati
 		copy(ctorLst.begin(), ctorLst.end(), ofl.begin());
 				
 		// проверяем наличие соотв. конструктора
-		OverloadResolutor or(ofl, *initList, NULL);
-		const Function *fn = or.GetCallableFunction();
+		OverloadResolutor OverloadResolutor(ofl, *initList, NULL);
+		const Function *fn = OverloadResolutor.GetCallableFunction();
 	
 		// если конструктор не найден, выведем ошибку
 		if( fn == NULL )
 		{
 			theApp.Error(errPos, "%s; инициализация невозможна",
-				or.GetErrorMessage().c_str());
+					OverloadResolutor.GetErrorMessage().c_str());
 			return false;
 		}
 		
 		// выполняем преобразование каждого параметр в целевой тип
-		or.DoParametrListCast(errPos); 
+		OverloadResolutor.DoParametrListCast(errPos);
 
 		// проверим возможность копирования параметров, 
 		FunctionCallBinaryMaker::CheckParametrInitialization( initList,
@@ -2539,20 +2539,19 @@ POperand TypeCastBinaryMaker::Make()
 // Если функция неоднозначна или не найдена, вернуть NULL
 const Function *FunctionCallBinaryMaker::CheckBestViableFunction( 
 	const OverloadFunctionList &ofl, const ExpressionList &pl, const TypyziedEntity *obj ) const
-{
-	OverloadResolutor or(ofl, pl, obj);
-	const Function *fn = or.GetCallableFunction();
+{	OverloadResolutor OverloadResolutor(ofl, pl, obj);
+	const Function *fn = OverloadResolutor.GetCallableFunction();
 
 	// если функция не найдена, выведем ошибку, если вызов неявный.
 	if( fn == NULL )
 	{
 		// если функция не неоднозначна, значит ее не существует
-		if( !or.IsAmbigous() )
+		if( !OverloadResolutor.IsAmbigous() )
 			noFunction = true;
 
 		// если вызов явный или неоднозначность, вывести ошибку
 		if( !implicit || !noFunction )
-			theApp.Error(errPos, or.GetErrorMessage().c_str());
+			theApp.Error(errPos, OverloadResolutor.GetErrorMessage().c_str());
 
 		// выходим
 		return NULL;
@@ -2574,7 +2573,7 @@ const Function *FunctionCallBinaryMaker::CheckBestViableFunction(
 	}
 
 	// в конце выполняем преобразование каждого параметр в целевой тип
-	or.DoParametrListCast(errPos); 
+	OverloadResolutor.DoParametrListCast(errPos);
 	return fn;
 }
 
@@ -2820,18 +2819,18 @@ POperand FunctionCallBinaryMaker::Make()
 				(opc == '.' || opc == ARROW || opc == DOT_POINT || opc == ARROW_POINT) )
 				obj = &((BinaryExpression&)*fn).GetOperand1()->GetType();
 			
-			OverloadResolutor or( ofl, *parametrList, obj );
-			if( or.GetCallableFunction() == NULL )
+			OverloadResolutor OverloadResolutor( ofl, *parametrList, obj );
+			if( OverloadResolutor.GetCallableFunction() == NULL )
 			{
 				if( implicit && noFunction )
 					return NULL;
 
-				theApp.Error(errPos, or.GetErrorMessage().c_str());
+				theApp.Error(errPos, OverloadResolutor.GetErrorMessage().c_str());
 				return ErrorOperand::GetInstance();
 			}
 
 			// приводим параметры физически
-			or.DoParametrListCast(errPos);
+			OverloadResolutor.DoParametrListCast(errPos);
 
 			// после того как типы параметров совпали, проверяем возможность их
 			// копирования 
