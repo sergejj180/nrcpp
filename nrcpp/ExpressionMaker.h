@@ -82,7 +82,7 @@ namespace ExpressionMakerUtils
 	bool IsConstant( const TypyziedEntity &op );
 
 	// создать вызов функции
-	POperand MakeFunctionCall( POperand &fn, PExpressionList &params );
+	POperand MakeFunctionCall( POperand &fn, const PExpressionList &params );
 
 	// проверяет доступность конструктора по умолчанию, конструктора копирования, 
 	// деструктора по требованию. Используется при сооздании или инициализации
