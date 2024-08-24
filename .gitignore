@@ -1,1 +1,3 @@
 /build/
+/nrcpp/cmake_install.cmake
+/out/build/x64-Debug
