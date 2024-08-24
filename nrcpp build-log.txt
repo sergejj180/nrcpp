@@ -556,5 +556,44 @@ mingw32-make[1]: *** [CMakeFiles\Makefile2:159: nrcpp/CMakeFiles/nrcpp.dir/all] 
 mingw32-make: *** [Makefile:90: all] Error 2
 Build complete (27 errors, 3 warnings): D:\nrcpp\build\default
 
-
+serge@DESKTOP-2B2UBO9 MINGW64 /c/Users/serge/source/repos/nrcpp
+# make
+[  9%] Built target nrc
+[ 14%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.obj
+[ 19%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.obj
+[ 23%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj
+[ 28%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Checker.cpp.obj
+[ 33%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Class.cpp.obj
+[ 38%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.obj
+[ 42%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj
+[ 47%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand LiteralMaker::Make()':
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:1685:81: error: call of overloaded 'CharString(long int)' is ambiguous
+ 1685 |                 CharString val( strtol(literalLxm.GetBuf().c_str(), NULL, base) );
+      |                                                                                 ^
+In file included from C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:4:
+C:/Users/serge/source/repos/nrcpp/nrc/nrc.h:101:17: note: candidate: 'nrc::CharString::CharString(double, nrc::SObject*)'
+  101 |                 CharString( double f, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrc/nrc.h:95:17: note: candidate: 'nrc::CharString::CharString(int, nrc::SObject*)'
+   95 |                 CharString( int d, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrc/nrc.h:80:15: note: candidate: 'nrc::CharString::CharString(const nrc::CharString&)'
+   80 |         class CharString : public SObject, public string
+      |               ^~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrc/nrc.h:80:15: note: candidate: 'nrc::CharString::CharString(nrc::CharString&&)'
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::MakeNewCall(bool, bool)':
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:3919:52: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3919 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:3935:44: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3935 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::Make()':
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:4015:41: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 4015 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:174: nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj] Error 1
+make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
 
