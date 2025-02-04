@@ -5,6 +5,8 @@
 #include <cstring>
 #include <string>
 
+//#include <stdarg.h>
+
 using namespace std;
 
 //#include <windows.h>

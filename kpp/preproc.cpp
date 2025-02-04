@@ -203,7 +203,7 @@ static inline void KppWork(FILE *in, FILE *out)
 
 			else
 				if( PutOut ) {
-					fprintf(out, "%s", Substitution(s).c_str() ); .
+					fprintf(out, "%s", Substitution(s).c_str() );
 				}
 
 			fputc('\n', out);
