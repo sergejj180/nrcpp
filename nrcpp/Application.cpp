@@ -1,8 +1,8 @@
 // главный модуль программы - Application.cpp
 
-#pragma warning(disable: 4786)
+//#pragma warning(disable: 4786)
 
-#include <windows.h>
+//#include <windows.h>
 
 #include <string>
 #include <cstring>

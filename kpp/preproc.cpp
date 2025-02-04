@@ -125,24 +125,23 @@ static void inline PushFileAttr( FileRead * &file, FILE *out )
 // восстановить атрибуты файла
 static inline bool PopFileAttr( FileRead * &file, FILE *out )
 {
-	if( IncFiles.empty() ) 	
-		return false;
+	if( IncFiles.empty() ) {
+		return false; }
 
 	FileAttributes &attr = IncFiles.back();
 
-	if( attr.state != IfResults.size() )
-		Fatal( "пропущен '#endif'" ); 
+	if( attr.state != IfResults.size() ) {
+		Fatal( "пропущен '#endif'" ); }
 
 	linecount = attr.line;
 	inname = attr.fname;
 
-	delete file;		// при удалении буфера, файл закрывается
-	file   = attr.buf;
+	delete file; // при удалении буфера, файл закрывается
+	file = attr.buf;
 
 	PutLine( out );
 	IncFiles.pop_back();
 
-	
 	return true;
 }
 
@@ -160,17 +159,16 @@ bool ReadString( BaseRead &ob, string &fstr )
 	{
 		ob >> c;
 		
-		if( c == '\n' )
-			break;
+		if( c == '\n' ) {
+			break; }
 
-		else if( c == EOF )
-		{
+		else if( c == EOF ) {
 			ob << c;
 			break;
 		}
 
-		else 
-			fstr += (char)c;
+		else {
+			fstr += (char)c; }
 	}
 	
 	SplitSpaces(fstr);	// удаляем пробелы сзади
@@ -192,8 +190,7 @@ static inline void KppWork(FILE *in, FILE *out)
 			if( s[0] == '#' )
 			{
 				int r;
-				if( (r = 
-					Directive(s, out)) == KPP_INCLUDE )		// была директива #include, подключаем файл
+				if( (r = Directive(s, out)) == KPP_INCLUDE ) // была директива #include, подключаем файл
 				{
 					PushFileAttr( file, out );
 					s = "";
@@ -201,13 +198,14 @@ static inline void KppWork(FILE *in, FILE *out)
 				}
 
 				else if( r == KPP_LINE  || r == KPP_PRAGMA )
-					fprintf(out, "%s", s.c_str());	// выводим информацию для компилятора				
+					fprintf(out, "%s", s.c_str());	// выводим информацию для компилятора
 			}
 
 			else
-				if( PutOut )
-					fprintf(out, "%s", Substitution(s).c_str() );
-		
+				if( PutOut ) {
+					fprintf(out, "%s", Substitution(s).c_str() ); .
+				}
+
 			fputc('\n', out);
 			s = "";
 			linecount++;

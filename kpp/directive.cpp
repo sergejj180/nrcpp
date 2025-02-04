@@ -72,7 +72,7 @@ static bool inline EvalExpression( BaseRead &buf )
 
 	catch( const char *msg )
 	{
-		Fatal("#if/#elif: %s", msg);					
+		Fatal("#if/#elif: %s", msg);
 	}
 	
 	return r != 0;
@@ -121,8 +121,8 @@ static string inline ViewIncludeString( BaseRead &buf )
 	string s;
 
 	ReadString(buf, s);
-	if( s[0] != '<' )
-		s = Substitution(s, false);
+	if( s[0] != '<' ) {
+		s = Substitution(s, false); }
 	return s;
 }
 
@@ -263,11 +263,11 @@ void do_define( BaseRead &buf )
 			params.push_back( prm );
 			c = Lex(buf);
 
-			if( c == ')' )
-				break;
+			if( c == ')' ) {
+				break; }
 
-			else if( c == ',' )
-				c = Lex(buf);
+			else if( c == ',' ) {
+				c = Lex(buf); }
 
 			else
 			{
@@ -279,8 +279,8 @@ void do_define( BaseRead &buf )
 		type = Macro::FUNCTION;
 
 		// проверка уникальности имени каждого параметра
-		if( CheckParams( params, name.c_str() ) == false )
-			return;
+		if( CheckParams( params, name.c_str() ) == false ) {
+			return; }
 	}
 
 	else

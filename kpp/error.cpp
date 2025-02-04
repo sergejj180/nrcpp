@@ -7,7 +7,7 @@
 
 using namespace std;
 
-#include <windows.h>
+//#include <windows.h>
 
 #include "cpplex.h"
 #include "kpp.h"
@@ -38,7 +38,7 @@ extern string inname;
 // вывод ошибки
 static inline void ErrorMessage( const char *pred, const char *fmt, va_list lst )
 {
-	char errbuf[ERRBUFSIZE];	// буфер для формирования сообщения об ошибке
+	char errbuf[ERRBUFSIZE]; // буфер для формирования сообщения об ошибке
 
 	_vsnprintf( errbuf, ERRBUFSIZE, fmt, lst );
 	
@@ -47,7 +47,7 @@ static inline void ErrorMessage( const char *pred, const char *fmt, va_list lst 
 		char temp[ERRBUFSIZE], temp2[ERRBUFSIZE];
 		
 		if( pred )
-		{			
+		{
 			CharToOem(pred, temp2);
 			fprintf(stderr, "%s: ", temp2);
 		}
@@ -91,19 +91,19 @@ void Fatal( const char *fmt, ... )
 // ошибка компиляции
 void Error( const char *fmt, ... )
 {
-	va_list vlst;	
+	va_list vlst;
 
 	errcount++;
 	va_start( vlst, fmt );
 	ErrorMessage( NULL, fmt, vlst );
-	va_end( vlst );	
+	va_end( vlst );
 }
 
 
 // предупреждение
 void Warning( const char *fmt, ... )
 {
-	va_list vlst;	
+	va_list vlst;
 
 	warncount++;
 	if( no_warnings )
@@ -113,5 +113,3 @@ void Warning( const char *fmt, ... )
 	ErrorMessage( "Предупреждение", fmt, vlst );
 	va_end( vlst );
 }
-
-

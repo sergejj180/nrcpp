@@ -58,7 +58,7 @@ find_library(NRC_LIBRARY
 #
 # target_link_libraries(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/nrc")
 # link_directories("${CMAKE_SOURCE_DIR/nrc")
-target_link_libraries(${PROJECT_NAME} PUBLIC "${NRC_LIBRARY}/" )
+target_link_libraries(${PROJECT_NAME} PRIVATE "${NRC_LIBRARY}/" )
 # target_link_libraries(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/nrc/nrc")
 
 ##########################################################################
