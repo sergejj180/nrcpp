@@ -8,7 +8,7 @@ cmake_minimum_required (VERSION 3.8)
 
 project(kpp)
 
-set (CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin/${PROJECT_NAME})
 

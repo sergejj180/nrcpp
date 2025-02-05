@@ -47,7 +47,7 @@ add_executable (${CMAKE_PROJECT_NAME}
 #
 # target_include_directories(${PROJECT_NAME} ${ALLEGRO_INCLUDES})
 # target_include_directories(${PROJECT_NAME} ${NRC_INCLUDES})
-target_include_directories(nrcpp PUBLIC "${CMAKE_SOURCE_DIR}/nrc")
+target_include_directories(nrcpp PRIVATE "${CMAKE_SOURCE_DIR}/nrc")
 # find_library(ALLEGRO_LIBRARY
 #    NAME alleg44 alleggl jpgalleg lodpng logg 
 #    HINTS ${ALLEGRO_LIBRARIES})
