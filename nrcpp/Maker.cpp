@@ -1485,7 +1485,7 @@ void FunctionPrototypeMaker::MakeThrowType( const NodePackage &tt )
 	ThrowTypeChecker ttc(toc);
 
 	// добавляем тип в список
-	throwTypeList.AddThrowType( PTypyziedEntity(
+	throwTypeList.AddThrowType(PTypyziedEntity(
 		new TypyziedEntity(toc.finalType, toc.constQual,toc.volatileQual, toc.dtl)) );
 }
 
