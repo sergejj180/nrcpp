@@ -3,7 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+#set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 
 project ("nrcpp")
 

@@ -1016,7 +1016,7 @@ void SMFManager::FoundSMF()
 
 			// проверяем, если оператор копирования, сохраняем его
 			if( IsCopyOperator(coo, pClass) )
-				copyOperator.first ? 
+				copyOperator.first ?
 					(void)(copyOperator.second = true) : (copyOperator.first = &coo);
 		}
 	}

@@ -7,7 +7,7 @@ project(nrcpp)
 
 # set (CMAKE_CXX_STANDARD 14)
 #
-set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/bin/${ROJECT_NAME}")
+#set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/bin")
 #
 # include_directories("${CMAKE_SOURCE_DIR}/nrc")
 # set(ALLEGRO_INCLUDES PUBLIC 

@@ -306,7 +306,7 @@ public:
 
 
 // ищет ключевые слова языка С++
-int LookupCPPKeywords( const char *keyname );
+static int LookupCPPKeywords( const char *keyname );
 
 
 // возвращает имя ключевого слова по коду
