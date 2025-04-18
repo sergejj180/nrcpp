@@ -332,7 +332,7 @@ int Application::Make()
 // стартовая точка
 int main( int argc, char *argv[] )
 {
-	SetConsoleCP(1251); 
+	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
 	try { 

@@ -1682,7 +1682,7 @@ POperand LiteralMaker::Make()
 		int unsign = lc == INTEGER16 || lc == UINTEGER8 ? KWUNSIGNED : -1;
 		int base = lc == INTEGER16 || lc == UINTEGER16 ? 16 : 8;
 
-		CharString val( strtol(literalLxm.GetBuf().c_str(), NULL, base) );
+		CharString val((int) strtol(literalLxm.GetBuf().c_str(), NULL, base) );
 		literal = new Literal( 
 			const_cast<BaseType*>(
 			&ImplicitTypeManager(KWINT, unsign).GetImplicitType()), true, false, dtl, val );
