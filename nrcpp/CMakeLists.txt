@@ -52,13 +52,13 @@ target_include_directories(nrcpp PRIVATE "${CMAKE_SOURCE_DIR}/nrc")
 #    NAME alleg44 alleggl jpgalleg lodpng logg 
 #    HINTS ${ALLEGRO_LIBRARIES})
 
-find_library(NRC_LIBRARY
+find_library(NRC
     NAME nrc
     PATH ${NRC_LIBRARIES})
 #
 # target_link_libraries(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/nrc")
 # link_directories("${CMAKE_SOURCE_DIR/nrc")
-target_link_libraries(${PROJECT_NAME} PRIVATE "${NRC_LIBRARY}/" )
+target_link_libraries(${PROJECT_NAME} PRIVATE nrc )
 # target_link_libraries(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/nrc/nrc")
 
 ##########################################################################

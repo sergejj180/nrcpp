@@ -597,3 +597,63 @@ make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:174: nrcpp/CMakeFiles/nrcpp.
 make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
 make: *** [Makefile:91: all] Error 2
 
+-- Configuring done (1.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/serge/git/nrcpp/build/cmake.run.win32.x86_64.Local
+Building in: C:\Users\serge\git\nrcpp\build\cmake.run.win32.x86_64.Local
+cmake --build . --target all
+[1/21] Building CXX object nrc/CMakeFiles/nrc.dir/nrc.cpp.obj
+[2/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/LexicalAnalyzer.cpp.obj
+[3/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Scope.cpp.obj
+[4/21] Linking CXX static library nrc\libnrc.a
+[5/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.obj
+[6/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Overload.cpp.obj
+[7/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Class.cpp.obj
+[8/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.obj
+[9/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.obj
+[10/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.obj
+[11/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/MemberMaker.cpp.obj
+[12/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj
+[13/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Checker.cpp.obj
+[14/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Object.cpp.obj
+C:/Users/serge/git/nrcpp/nrcpp/Object.cpp: In member function 'void TypyziedEntity::PrintPointer(std::string&, int&, bool&) const':
+C:/Users/serge/git/nrcpp/nrcpp/Object.cpp:149:66: warning: use of an operand of type 'bool' in 'operator++' is deprecated [-Wdeprecated]
+  149 |         for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                  ^~~~~~~
+[15/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Maker.cpp.obj
+[16/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Translator.cpp.obj
+C:/Users/serge/git/nrcpp/nrcpp/Translator.cpp: In member function 'void CTypePrinter::PrintPointer(std::string&, int&, bool&)':
+C:/Users/serge/git/nrcpp/nrcpp/Translator.cpp:567:76: warning: use of an operand of type 'bool' in 'operator++' is deprecated [-Wdeprecated]
+  567 |         for( ; ix < type.GetDerivedTypeList().GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                            ^~~~~~~
+[17/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Parser.cpp.obj
+[18/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.obj
+C:/Users/serge/git/nrcpp/nrcpp/Reader.cpp: In member function 'void DeclaratorReader::ReadDeclaratorTailPart()':
+C:/Users/serge/git/nrcpp/nrcpp/Reader.cpp:438:27: warning: use of an operand of type 'bool' in 'operator++' is deprecated [-Wdeprecated]
+  438 |         for( in = false; ;in++ )
+      |                           ^~
+C:/Users/serge/git/nrcpp/nrcpp/Reader.cpp: In member function 'void ExpressionReader::EvalExpr16(POperand&)':
+C:/Users/serge/git/nrcpp/nrcpp/Reader.cpp:2082:44: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 2082 |                         int opc = (arrayOp ? OC_DELETE_ARRAY : KWDELETE);
+      |                                    ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[19/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj
+[20/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::MakeNewCall(bool, bool)':
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp:3919:52: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3919 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp:3935:44: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3935 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::Make()':
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp:4015:41: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 4015 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+[21/21] Linking CXX executable nrcpp\nrcpp.exe
+FAILED: nrcpp/nrcpp.exe 
+C:\WINDOWS\system32\cmd.exe /C "cd . && C:\msys64\mingw64\bin\c++.exe -O3 -DNDEBUG  nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Checker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Class.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/LexicalAnalyzer.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Maker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/MemberMaker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Object.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Overload.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Parser.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Scope.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Translator.cpp.obj -o nrcpp\nrcpp.exe -Wl,--out-implib,nrcpp\libnrcpp.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lNRC_LIBRARY-NOTFOUND/  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/14.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot find -lNRC_LIBRARY-NOTFOUND/: No such file or directory
+
+collect2.exe: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+Build complete (2 errors, 7 warnings): C:\Users\serge\git\nrcpp\build\cmake.run.win32.x86_64.Local
