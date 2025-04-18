@@ -772,7 +772,7 @@ PNodePackage QualifiedConstructionReader::ReadQualifiedConstruction()
 		// если разрешено выражение и следующая лексема - new или delete,
 		// синтаксической ошибки не возникает
 		if( noErrorOnExp && (lxm == KWNEW || lxm == KWDELETE) )
-			return readExpression = true, NULL;
+			readExpression = true, NULL;
 
 		// если нет имени после '::' - это синтаксическая ошибка 
 		if( lxm != NAME && 
