@@ -50,7 +50,7 @@ static inline void ErrorMessage( const char *pred, const char *fmt, va_list lst 
 		
 		if( pred )
 		{
-			CharToOem(pred, temp2);
+			/* CharToOem(pred, temp2); */
 			fprintf(stderr, "%s: ", temp2);
 		}
 
@@ -59,7 +59,7 @@ static inline void ErrorMessage( const char *pred, const char *fmt, va_list lst 
 		else {
 			_snprintf(temp, ERRBUFSIZE, "%s: %d: %s\n", inname.c_str(), linecount, errbuf); }
 
-		CharToOem(temp, errbuf);
+		/* CharToOem(temp, errbuf); */
 		fprintf(stderr, "%s", errbuf);
 	}
 
