@@ -167,13 +167,13 @@ int CnstValue( char *s, int code )
 		r = ConvertCharToInt(s, true), tname = "wchar_t"; }
 
 	else if( code == INTEGER10 || code == UINTEGER10 )
-		r = ConvertInteger(s, 10), tname = (code == UINTEGER10 ? "unsigned int" : "int");
+		r = ConvertInteger(s, 10), tname = (code == UINTEGER10 ? tname = "unsigned int" : tname = "int");
 	
 	else if( code == INTEGER8 || code == UINTEGER8 ) {
-		r = ConvertInteger(s, 8), tname = (code == UINTEGER8 ? "unsigned int" : "int"); }
+		r = ConvertInteger(s, 8), tname = (code == UINTEGER8 ? tname = "unsigned int" : tname = "int"); }
 	
 	else if( code == INTEGER16 || code == UINTEGER16 ) {
-		r = ConvertInteger(s, 16), tname = (code == UINTEGER16 ? "unsigned int" : "int"); }
+		r = ConvertInteger(s, 16), tname = (code == UINTEGER16 ? tname = "unsigned int" : tname = "int"); }
 	
 	else {
 		return -1; }
