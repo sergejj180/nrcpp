@@ -1,0 +1,364 @@
+Configuring in: C:\Users\serge\git\nrcpp\kpp\build\cmake.run.win32.x86_64.Local
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -G Ninja C:\Users\serge\git\nrcpp\kpp
+CMake Deprecation Warning at CMakeLists.txt:7 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/serge/git/nrcpp/kpp/build/cmake.run.win32.x86_64.Local
+Building in: C:\Users\serge\git\nrcpp\kpp\build\cmake.run.win32.x86_64.Local
+cmake --build . --target all
+[1/8] Building CXX object CMakeFiles/kpp.dir/error.cpp.obj
+FAILED: CMakeFiles/kpp.dir/error.cpp.obj 
+C:\msys64\mingw64\bin\c++.exe   -O3 -DNDEBUG -MD -MT CMakeFiles/kpp.dir/error.cpp.obj -MF CMakeFiles\kpp.dir\error.cpp.obj.d -o CMakeFiles/kpp.dir/error.cpp.obj -c C:/Users/serge/git/nrcpp/kpp/error.cpp
+In file included from C:/Users/serge/git/nrcpp/kpp/error.cpp:14:
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:67:47: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   67 |         virtual int operator>>( register int &c ) = 0;
+      |                                               ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:70:48: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   70 |         virtual void operator<<( register int &c ) = 0;
+      |                                                ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:85:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   85 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:94:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   94 |         void operator<<( register int &c ) { if(c != EOF) i--; }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:108:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  108 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:114:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  114 |         void operator<<( register int &c ) { ungetc(c, in); }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/error.cpp: In function 'void ErrorMessage(const char*, const char*, va_list)':
+C:/Users/serge/git/nrcpp/kpp/error.cpp:53:25: error: 'CharToOem' was not declared in this scope
+   53 |                         CharToOem(pred, temp2);
+      |                         ^~~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/error.cpp:62:17: error: 'CharToOem' was not declared in this scope
+   62 |                 CharToOem(temp, errbuf);
+      |                 ^~~~~~~~~
+[2/8] Building CXX object CMakeFiles/kpp.dir/cnst-expr.cpp.obj
+FAILED: CMakeFiles/kpp.dir/cnst-expr.cpp.obj 
+C:\msys64\mingw64\bin\c++.exe   -O3 -DNDEBUG -MD -MT CMakeFiles/kpp.dir/cnst-expr.cpp.obj -MF CMakeFiles\kpp.dir\cnst-expr.cpp.obj.d -o CMakeFiles/kpp.dir/cnst-expr.cpp.obj -c C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp
+In file included from C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp:12:
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:67:47: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   67 |         virtual int operator>>( register int &c ) = 0;
+      |                                               ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:70:48: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   70 |         virtual void operator<<( register int &c ) = 0;
+      |                                                ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:85:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   85 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:94:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   94 |         void operator<<( register int &c ) { if(c != EOF) i--; }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:108:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  108 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:114:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  114 |         void operator<<( register int &c ) { ungetc(c, in); }
+      |                                        ^
+In file included from C:/Users/serge/git/nrcpp/kpp/macro.h:4,
+                 from C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp:15:
+C:/Users/serge/git/nrcpp/kpp/hash.h: In member function 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*)':
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp: In function 'int ConvertCharToInt(char*, bool)':
+C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp:70:24: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   70 |         register char *p;
+      |                        ^
+C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp: In function 'int CnstValue(char*, int)':
+C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp:164:57: warning: ISO C++ forbids converting a string constant to 'char*' [-Wwrite-strings]
+  164 |                 r = ConvertCharToInt(s, false), tname = "char"; }
+      |                                                         ^~~~~~
+C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp:167:56: warning: ISO C++ forbids converting a string constant to 'char*' [-Wwrite-strings]
+  167 |                 r = ConvertCharToInt(s, true), tname = "wchar_t"; }
+      |                                                        ^~~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp:170:72: error: invalid conversion from 'const char*' to 'char*' [-fpermissive]
+  170 |                 r = ConvertInteger(s, 10), tname = (code == UINTEGER10 ? "unsigned int" : "int");
+      |                                                    ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                        |
+      |                                                                        const char*
+C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp:173:70: error: invalid conversion from 'const char*' to 'char*' [-fpermissive]
+  173 |                 r = ConvertInteger(s, 8), tname = (code == UINTEGER8 ? "unsigned int" : "int"); }
+      |                                                   ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                      |
+      |                                                                      const char*
+C:/Users/serge/git/nrcpp/kpp/cnst-expr.cpp:176:72: error: invalid conversion from 'const char*' to 'char*' [-fpermissive]
+  176 |                 r = ConvertInteger(s, 16), tname = (code == UINTEGER16 ? "unsigned int" : "int"); }
+      |                                                    ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                        |
+      |                                                                        const char*
+C:/Users/serge/git/nrcpp/kpp/hash.h: In instantiation of 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*) [with T = Macro; int size = 531]':
+C:/Users/serge/git/nrcpp/kpp/macro.h:42:28:   required from here
+   42 |                 list<Macro> &p = HashFunc( name );
+      |                                  ~~~~~~~~^~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+[3/8] Building CXX object CMakeFiles/kpp.dir/directive.cpp.obj
+FAILED: CMakeFiles/kpp.dir/directive.cpp.obj 
+C:\msys64\mingw64\bin\c++.exe   -O3 -DNDEBUG -MD -MT CMakeFiles/kpp.dir/directive.cpp.obj -MF CMakeFiles\kpp.dir\directive.cpp.obj.d -o CMakeFiles/kpp.dir/directive.cpp.obj -c C:/Users/serge/git/nrcpp/kpp/directive.cpp
+In file included from C:/Users/serge/git/nrcpp/kpp/directive.cpp:14:
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:67:47: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   67 |         virtual int operator>>( register int &c ) = 0;
+      |                                               ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:70:48: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   70 |         virtual void operator<<( register int &c ) = 0;
+      |                                                ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:85:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   85 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:94:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   94 |         void operator<<( register int &c ) { if(c != EOF) i--; }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:108:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  108 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:114:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  114 |         void operator<<( register int &c ) { ungetc(c, in); }
+      |                                        ^
+In file included from C:/Users/serge/git/nrcpp/kpp/macro.h:4,
+                 from C:/Users/serge/git/nrcpp/kpp/directive.cpp:15:
+C:/Users/serge/git/nrcpp/kpp/hash.h: In member function 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*)':
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+C:/Users/serge/git/nrcpp/kpp/directive.cpp: In function 'bool EvalExpression(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:58:43: error: cannot bind non-const lvalue reference of type 'std::string&' {aka 'std::__cxx11::basic_string<char>&'} to an rvalue of type 'std::string' {aka 'std::__cxx11::basic_string<char>'}
+   58 |                 r = CnstExpr( Substitution(s, true) );
+      |                               ~~~~~~~~~~~~^~~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:32:23: note:   initializing argument 1 of 'int CnstExpr(std::string&)'
+   32 | int CnstExpr( string &s );
+      |               ~~~~~~~~^
+C:/Users/serge/git/nrcpp/kpp/directive.cpp: In function 'void do_define(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:233:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  233 |         register int c = Lex( buf );
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:293:34: error: cannot bind non-const lvalue reference of type 'Macro&' to an rvalue of type 'Macro'
+  293 |                 InsertWithCheck( Macro( name, val ) );
+      |                                  ^~~~~~~~~~~~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:186:44: note:   initializing argument 1 of 'void InsertWithCheck(Macro&)'
+  186 | static void inline InsertWithCheck( Macro &ob )
+      |                                     ~~~~~~~^~
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:296:34: error: cannot bind non-const lvalue reference of type 'Macro&' to an rvalue of type 'Macro'
+  296 |                 InsertWithCheck( Macro( name, val, params ) );
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:186:44: note:   initializing argument 1 of 'void InsertWithCheck(Macro&)'
+  186 | static void inline InsertWithCheck( Macro &ob )
+      |                                     ~~~~~~~^~
+C:/Users/serge/git/nrcpp/kpp/directive.cpp: In function 'void do_ifdef(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:470:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  470 |         register int c = Lex( buf );
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/directive.cpp: In function 'void do_line(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:509:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  509 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/directive.cpp: In function 'void do_ifndef(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:573:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  573 |         register int c = Lex( buf );
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/directive.cpp: In function 'void SplitSpaces(std::string&)':
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:621:24: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  621 |         register char *q, *p = (char *)s.c_str();
+      |                        ^
+C:/Users/serge/git/nrcpp/kpp/directive.cpp:621:28: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  621 |         register char *q, *p = (char *)s.c_str();
+      |                            ^
+C:/Users/serge/git/nrcpp/kpp/hash.h: In instantiation of 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*) [with T = Macro; int size = 531]':
+C:/Users/serge/git/nrcpp/kpp/macro.h:42:28:   required from here
+   42 |                 list<Macro> &p = HashFunc( name );
+      |                                  ~~~~~~~~^~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+[4/8] Building CXX object CMakeFiles/kpp.dir/cpplex.cpp.obj
+In file included from C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:11:
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:67:47: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   67 |         virtual int operator>>( register int &c ) = 0;
+      |                                               ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:70:48: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   70 |         virtual void operator<<( register int &c ) = 0;
+      |                                                ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:85:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   85 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:94:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   94 |         void operator<<( register int &c ) { if(c != EOF) i--; }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:108:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  108 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:114:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  114 |         void operator<<( register int &c ) { ungetc(c, in); }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'int IgnoreSpaces(BaseRead&, bool)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:108:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  108 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'int IgnoreNewlinesAndSpaces(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:128:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  128 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'int LexemName(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:151:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  151 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'int LexemOperator(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:168:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  168 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'int LexemString(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:319:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  319 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'void ReadDigit(BaseRead&, int (*)(int))':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:370:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  370 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'bool ReadDigitSuffix(BaseRead&, char)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:392:27: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  392 |         for( register int c;; )
+      |                           ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'int LexemDigit(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:428:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  428 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'int LexemCharacter(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:562:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  562 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp: In function 'int Lex(BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/cpplex.cpp:628:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  628 |         register int c;
+      |                      ^
+[5/8] Building CXX object CMakeFiles/kpp.dir/preproc.cpp.obj
+In file included from C:/Users/serge/git/nrcpp/kpp/preproc.cpp:19:
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:67:47: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   67 |         virtual int operator>>( register int &c ) = 0;
+      |                                               ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:70:48: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   70 |         virtual void operator<<( register int &c ) = 0;
+      |                                                ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:85:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   85 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:94:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   94 |         void operator<<( register int &c ) { if(c != EOF) i--; }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:108:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  108 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:114:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  114 |         void operator<<( register int &c ) { ungetc(c, in); }
+      |                                        ^
+In file included from C:/Users/serge/git/nrcpp/kpp/macro.h:4,
+                 from C:/Users/serge/git/nrcpp/kpp/preproc.cpp:21:
+C:/Users/serge/git/nrcpp/kpp/hash.h: In member function 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*)':
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+C:/Users/serge/git/nrcpp/kpp/preproc.cpp: In function 'bool ReadString(BaseRead&, std::string&)':
+C:/Users/serge/git/nrcpp/kpp/preproc.cpp:153:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  153 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/hash.h: In instantiation of 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*) [with T = Macro; int size = 531]':
+C:/Users/serge/git/nrcpp/kpp/macro.h:42:28:   required from here
+   42 |                 list<Macro> &p = HashFunc( name );
+      |                                  ~~~~~~~~^~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+[6/8] Building CXX object CMakeFiles/kpp.dir/kpp.cpp.obj
+In file included from C:/Users/serge/git/nrcpp/kpp/kpp.cpp:13:
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:67:47: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   67 |         virtual int operator>>( register int &c ) = 0;
+      |                                               ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:70:48: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   70 |         virtual void operator<<( register int &c ) = 0;
+      |                                                ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:85:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   85 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:94:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   94 |         void operator<<( register int &c ) { if(c != EOF) i--; }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:108:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  108 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:114:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  114 |         void operator<<( register int &c ) { ungetc(c, in); }
+      |                                        ^
+In file included from C:/Users/serge/git/nrcpp/kpp/macro.h:4,
+                 from C:/Users/serge/git/nrcpp/kpp/kpp.cpp:14:
+C:/Users/serge/git/nrcpp/kpp/hash.h: In member function 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*)':
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+C:/Users/serge/git/nrcpp/kpp/hash.h: In instantiation of 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*) [with T = Macro; int size = 531]':
+C:/Users/serge/git/nrcpp/kpp/macro.h:42:28:   required from here
+   42 |                 list<Macro> &p = HashFunc( name );
+      |                                  ~~~~~~~~^~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+[7/8] Building CXX object CMakeFiles/kpp.dir/macro.cpp.obj
+In file included from C:/Users/serge/git/nrcpp/kpp/macro.cpp:12:
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:67:47: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   67 |         virtual int operator>>( register int &c ) = 0;
+      |                                               ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:70:48: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   70 |         virtual void operator<<( register int &c ) = 0;
+      |                                                ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:85:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   85 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:94:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   94 |         void operator<<( register int &c ) { if(c != EOF) i--; }
+      |                                        ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:108:39: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  108 |         int operator>>( register int &c ) {
+      |                                       ^
+C:/Users/serge/git/nrcpp/kpp/cpplex.h:114:40: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  114 |         void operator<<( register int &c ) { ungetc(c, in); }
+      |                                        ^
+In file included from C:/Users/serge/git/nrcpp/kpp/macro.h:4,
+                 from C:/Users/serge/git/nrcpp/kpp/macro.cpp:13:
+C:/Users/serge/git/nrcpp/kpp/hash.h: In member function 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*)':
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+C:/Users/serge/git/nrcpp/kpp/macro.cpp: In function 'bool ReadOneParam(std::string&, BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/macro.cpp:61:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   61 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/macro.cpp: In function 'bool ReadMacroParams(Macro&, BaseRead&)':
+C:/Users/serge/git/nrcpp/kpp/macro.cpp:103:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  103 |         register int c = IgnoreSpaces( buf, false );
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/macro.cpp: In function 'std::string& ProcessParams(Macro&)':
+C:/Users/serge/git/nrcpp/kpp/macro.cpp:158:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  158 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/macro.cpp: In function 'std::string Substitution(std::string, bool)':
+C:/Users/serge/git/nrcpp/kpp/macro.cpp:265:22: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+  265 |         register int c;
+      |                      ^
+C:/Users/serge/git/nrcpp/kpp/hash.h: In instantiation of 'std::__cxx11::list<T>& HashTab<T, size>::HashFunc(char*) [with T = Macro; int size = 531]':
+C:/Users/serge/git/nrcpp/kpp/macro.h:42:28:   required from here
+   42 |                 list<Macro> &p = HashFunc( name );
+      |                                  ~~~~~~~~^~~~~~~~
+C:/Users/serge/git/nrcpp/kpp/hash.h:19:32: warning: ISO C++17 does not allow 'register' storage class specifier [-Wregister]
+   19 |                 register char *p;
+      |                                ^
+ninja: build stopped: subcommand failed.
+Build complete (8 errors, 76 warnings): C:\Users\serge\git\nrcpp\kpp\build\cmake.run.win32.x86_64.Local
