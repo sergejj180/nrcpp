@@ -189,7 +189,7 @@ int CnstValue( char *s, int code )
 
 
 // возвращает результат константного выражения в строке s
-int CnstExpr( string &s )
+int CnstExpr(const string &s )
 {
 	pBuf = new BufferRead(s);
 

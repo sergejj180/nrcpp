@@ -29,7 +29,7 @@ stack<int> IfResults;
 
 
 // возвращает результат константного выражения в строке s
-int CnstExpr( string &s );
+int CnstExpr(const string &s );
 
 
 // здесь хранятся пути к директориям с заголовочными файлами
