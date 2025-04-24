@@ -46,12 +46,12 @@ void PutLine( FILE *out );
 
 
 // вычисляет выражение в директивах #if/#elif
-static bool inline EvalExpression( BaseRead &buf )
+static bool inline EvalExpression(const BaseRead &buf )
 {
 	string s;
 	int r;
 
-	ReadString( buf, s );
+	ReadString(buf, s );
 
 	try
 	{

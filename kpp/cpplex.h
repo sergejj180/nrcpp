@@ -133,7 +133,7 @@ string &MakeStringLiteral( string &s );
 
 // функция считывает строку из файла,
 // возвращает fasle, если достигнут конец файла
-bool ReadString( BaseRead &ob, string &fstr );
+bool ReadString(const BaseRead &ob, const string &fstr );
 
 
 // считывает число из входного потока, пока
