@@ -183,7 +183,7 @@ static inline bool EqualParams( Macro &mac, Macro &ob )
 
 
 // вставить макрос в таблицу с проверкой
-static void inline InsertWithCheck( Macro &ob )
+static void inline InsertWithCheck(Macro &ob )
 {
 	Macro *mac = mtab.Find( (char *)ob.name.c_str() );
 	if( mac )
@@ -195,7 +195,7 @@ static void inline InsertWithCheck( Macro &ob )
 		{
 			// если функции сначала проверяем соотв. параметров
 			if( (mac->type == Macro::FUNCTION) && (ob.type == Macro::FUNCTION) )
-				if( !EqualParams( *mac, ob ) )
+				if( !EqualParams( *mac, &ob ) )
 				{
 					Warning( "'%s': макрос переопределен", mac->name.c_str());
 					mtab.Remove( (char *)mac->name.c_str() );
@@ -228,7 +228,7 @@ static void inline InsertWithCheck( Macro &ob )
 }
 
 
-void do_define( BaseRead &buf )
+void do_define(BaseRead &buf )
 {
 	register int c = Lex( buf );
 
