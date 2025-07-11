@@ -290,10 +290,10 @@ void do_define(BaseRead &buf )
 	ReadString( buf, val );		// считываем значение макроса
 
 	if( type == Macro::MACROS )
-		InsertWithCheck( Macro( name, val ) );
+		InsertWithCheck( Macro( &name, val ) );
 		
 	else
-		InsertWithCheck( Macro( name, val, params ) );
+		InsertWithCheck( Macro( &name, val, params ) );
 }
 
 
