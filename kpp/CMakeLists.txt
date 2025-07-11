@@ -18,6 +18,8 @@ add_executable (kpp "cpplex.cpp" "cpplex.h"
 			"kpp.cpp"    "kpp.h"
 			"macro.cpp"  "macro.h"
 			"read.cpp"   "read.h"
+			
+			"baseRead.h"
 
 			"cnst-expr.cpp"
 			"comment.cpp"

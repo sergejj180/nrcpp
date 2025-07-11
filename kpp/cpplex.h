@@ -1,6 +1,6 @@
 // заголовчный файл для лексического анализатора C++ - cpplex.h
 
-
+#include "BaseRead.h"
 
 #define IS_NAME_START(c)  (isalpha( (c) ) || (c) == '_')
 #define IS_NAME( c )	  ( IS_NAME_START( c ) || isdigit(c) )
@@ -56,63 +56,16 @@ enum KPP_TOKENS {
 };
 
 
-// класс считывания из файла
-class BaseRead
-{
-public:
-	BaseRead() { }
-	virtual ~BaseRead() { }
- 
-	// считывание из потока в символ
-	virtual int operator>>( register int &c ) = 0;
+// класс считывания из файла move to BaseRead.h
+/* class BaseRead
 
-	// возврат символа в поток
-	virtual void operator<<( register int &c ) = 0;
-};
+// класс считывания из буфера move to BaseRead.h
+/*class BufferRead : public BaseRead
 
+// класс считывания из файла move to BaseRead.h
+/*class FileRead : public BaseRead
 
-// класс считывания из буфера
-class BufferRead : public BaseRead
-{
-	string buf;
-
-	// текущий указатель на место в строке
-	int i;	
-public:
-	BufferRead( string b ) : buf(b) { i = 0; }
-
-	// считывание из буфера в символ
-	int operator>>( register int &c ) {
-		if( i == buf.length() ) 
-			return (c = EOF);
-
-		c = (unsigned char)buf[i++];
-		return c;
-	}
-
-	// возврат символа в поток
-	void operator<<( register int &c ) { if(c != EOF) i--; }
-};
-
-
-// класс считывания из файла
-class FileRead : public BaseRead
-{
-	FILE *in;
-
-public:
-	FileRead( FILE *i ) : in(i) { }
-	~FileRead( ) { fclose(in); }
-
-	// считывание из буфера в символ
-	int operator>>( register int &c ) {
-		c = fgetc(in);
-		return c;
-	}
-
-	// возврат символа в поток
-	void operator<<( register int &c ) { ungetc(c, in); }
-};
+}; */
 
 
 // счетчик строк
