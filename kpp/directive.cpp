@@ -195,7 +195,7 @@ static void inline InsertWithCheck(Macro &ob )
 		{
 			// если функции сначала проверяем соотв. параметров
 			if( (mac->type == Macro::FUNCTION) && (ob.type == Macro::FUNCTION) )
-				if( !EqualParams( *mac, &ob ) )
+				if( !EqualParams( *mac, ob ) )
 				{
 					Warning( "'%s': макрос переопределен", mac->name.c_str());
 					mtab.Remove( (char *)mac->name.c_str() );

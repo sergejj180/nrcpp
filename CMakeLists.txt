@@ -11,8 +11,8 @@ set (CMAKE_CXX_STANDARD 14)
 
 # Включите подпроекты.
 
-add_subdirectory ("nrc")
+#add_subdirectory ("nrc")
 
-add_subdirectory ("nrcpp")
+#add_subdirectory ("nrcpp")
 
-#add_subdirectory ("kpp")
+add_subdirectory ("kpp")
