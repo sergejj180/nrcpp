@@ -564,8 +564,15 @@ void CTypePrinter::Generate( )
 void CTypePrinter::PrintPointer( string &buf, int &ix, bool &namePrint )
 {
 	bool isPrint = false;
-	for( ; ix < type.GetDerivedTypeList().GetDerivedTypeCount(); ix++, isPrint++ )
+	for( ; ix < type.GetDerivedTypeList().GetDerivedTypeCount(); ix++ /*, isPrint++ */ )
 	{
+
+		if (isPrint == false) {
+			isPrint = true;
+		} else {
+			isPrint = false;
+		}
+
 		const DerivedType &dt = *type.GetDerivedTypeList().GetDerivedType(ix);
 		DerivedType::DT dtc = dt.GetDerivedTypeCode();
 
