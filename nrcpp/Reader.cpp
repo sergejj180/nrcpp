@@ -434,9 +434,15 @@ void DeclaratorReader::ReadDeclaratorTailPart()
 	Lexem lxm = lastLxm;
 
 	// считываем постфиксные производные типы
-	bool in;
-	for( in = false; ;in++ )
+	bool in = false;
+	for( /*in = false*/; ;/*in++*/ )
 	{
+		if(in == false) {
+			in = true;
+		} else {
+			in = false;
+		}
+
 		// требуется считать прототип функции
 		if( lxm == '(' )
 		{
