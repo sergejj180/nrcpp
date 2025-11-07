@@ -146,8 +146,14 @@ skip_base_type_print:
 void TypyziedEntity::PrintPointer( string &buf, int &ix, bool &namePrint ) const
 {
 	bool isPrint = false;
-	for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++, isPrint++ )
+	for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++ /*, isPrint++*/ )
 	{
+		if (isPrint == false) {
+			isPrint = true;
+		} else {
+			isPrint = false;
+		}
+
 		const DerivedType &dt = *derivedTypeList.GetDerivedType(ix);
 		DerivedType::DT dtc = dt.GetDerivedTypeCode();
 
