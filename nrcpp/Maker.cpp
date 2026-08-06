@@ -24,7 +24,7 @@ using namespace MakerUtils;
 
 // функция создающая указатель на член по пакету,
 // является дружественной для класса NodePackage 
-inline static PointerToMember *MakePointerToMember( NodePackage &ptm )
+inline /* static */ PointerToMember *MakePointerToMember( NodePackage &ptm )
 {
 	INTERNAL_IF( ptm.GetPackageID() != PC_POINTER_TO_MEMBER );
 	INTERNAL_IF( ptm.GetChildPackageCount() < 3 );
@@ -1485,7 +1485,7 @@ void FunctionPrototypeMaker::MakeThrowType( const NodePackage &tt )
 	ThrowTypeChecker ttc(toc);
 
 	// добавляем тип в список
-	throwTypeList.AddThrowType( PTypyziedEntity(
+	throwTypeList.AddThrowType(PTypyziedEntity(
 		new TypyziedEntity(toc.finalType, toc.constQual,toc.volatileQual, toc.dtl)) );
 }
 

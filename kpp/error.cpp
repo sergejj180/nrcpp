@@ -5,9 +5,11 @@
 #include <cstring>
 #include <string>
 
+#include <stdarg.h>
+
 using namespace std;
 
-#include <windows.h>
+//#include <windows.h>
 
 #include "cpplex.h"
 #include "kpp.h"
@@ -38,40 +40,39 @@ extern string inname;
 // вывод ошибки
 static inline void ErrorMessage( const char *pred, const char *fmt, va_list lst )
 {
-	char errbuf[ERRBUFSIZE];	// буфер для формирования сообщения об ошибке
+	char errbuf[ERRBUFSIZE]; // буфер для формирования сообщения об ошибке
 
 	_vsnprintf( errbuf, ERRBUFSIZE, fmt, lst );
 	
 	if(code_page == 866)
 	{	
-		char temp[ERRBUFSIZE], temp2[ERRBUFSIZE];		
+		char temp[ERRBUFSIZE], temp2[ERRBUFSIZE];
 		
 		if( pred )
-		{			
-			CharToOem(pred, temp2);
+		{
+			/* CharToOem(pred, temp2); */
 			fprintf(stderr, "%s: ", temp2);
 		}
 
-		if(linecount == -1)	// фатальная ошибка может быть на стадии проверки опций
-			_snprintf(temp, ERRBUFSIZE, "%s\n", errbuf);
-		else
-			_snprintf(temp, ERRBUFSIZE, "%s: %d: %s\n", inname.c_str(), 
-				linecount, errbuf);
+		if(linecount == -1) {	// фатальная ошибка может быть на стадии проверки опций
+			_snprintf(temp, ERRBUFSIZE, "%s\n", errbuf); }
+		else {
+			_snprintf(temp, ERRBUFSIZE, "%s: %d: %s\n", inname.c_str(), linecount, errbuf); }
 
-		CharToOem(temp, errbuf);
+		/* CharToOem(temp, errbuf); */
 		fprintf(stderr, "%s", errbuf);
 	}
 
 	else
 	{
-		if( pred )
-			fprintf( stderr, "%s: ", pred );
+		if( pred ) {
+			fprintf( stderr, "%s: ", pred ); }
 
-		if( linecount == -1 )
-			fprintf( stderr, "Фатальная ошибка: %s\n", errbuf );
+		if( linecount == -1 ) {
+			fprintf( stderr, "Фатальная ошибка: %s\n", errbuf ); }
 
-		else
-			fprintf( stderr, "Фатальная ошибка: %s: %d: %s\n", inname, linecount, errbuf );
+		else {
+			fprintf( stderr, "Фатальная ошибка: %s: %d: %s\n", inname, linecount, errbuf ); }
 	}	
 }
 
@@ -92,19 +93,19 @@ void Fatal( const char *fmt, ... )
 // ошибка компиляции
 void Error( const char *fmt, ... )
 {
-	va_list vlst;	
+	va_list vlst;
 
 	errcount++;
 	va_start( vlst, fmt );
 	ErrorMessage( NULL, fmt, vlst );
-	va_end( vlst );	
+	va_end( vlst );
 }
 
 
 // предупреждение
 void Warning( const char *fmt, ... )
 {
-	va_list vlst;	
+	va_list vlst;
 
 	warncount++;
 	if( no_warnings )
@@ -112,7 +113,5 @@ void Warning( const char *fmt, ... )
 
 	va_start( vlst, fmt );
 	ErrorMessage( "Предупреждение", fmt, vlst );
-	va_end( vlst );	
+	va_end( vlst );
 }
-
-

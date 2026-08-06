@@ -758,7 +758,7 @@ public:
 	// добавить тип в список
 	// метод не константный, поэтому может вызываться только при
 	// построении списка
-	void AddThrowType( PTypyziedEntity &dt ) {
+	void AddThrowType(const PTypyziedEntity &dt ) {
 		throwTypeList.push_back(dt);
 	}
 

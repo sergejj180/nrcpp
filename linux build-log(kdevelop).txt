@@ -1,0 +1,521 @@
+/home/sdsd/git/nrcpp/build> make -j32
+[ 90%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Overload.cpp.o
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘void nrc::CharString::Format(const char*, ...)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:60:9: error: ‘_vsnprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+   60 |         _vsnprintf(buf, 1024, s, ls);
+      |         ^~~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘void nrc::CharString::Reverse()’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:88:9: error: ‘strrev’ was not declared in this scope; did you mean ‘strsep’?
+   88 |         strrev((char*)s.c_str());
+      |         ^~~~~~
+      |         strsep
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘bool nrc::CharString::CompareNoCase(const char*)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:96:17: error: ‘_stricoll’ was not declared in this scope; did you mean ‘strcoll’?
+   96 |         return !_stricoll(c_str(), s);
+      |                 ^~~~~~~~~
+      |                 strcoll
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘nrc::CharString& nrc::CharString::operator=(int)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:216:9: error: ‘_snprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  216 |         _snprintf(buf, 25, "%d", d);
+      |         ^~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘nrc::CharString& nrc::CharString::operator=(double)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:226:9: error: ‘_snprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  226 |         _snprintf(buf, 100, "%lf", f);
+      |         ^~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrcpp/LexicalAnalyzer.cpp:131:12: error: ‘int LookupCPPKeywords(const char*)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+  131 | static int LookupCPPKeywords( const char *keyname )
+      |            ^~~~~~~~~~~~~~~~~
+In file included from /home/sdsd/git/nrcpp/nrcpp/LexicalAnalyzer.cpp:9:
+/home/sdsd/git/nrcpp/nrcpp/LexicalAnalyzer.h:309:5: note: previous declaration of ‘int LookupCPPKeywords(const char*)’
+  309 | int LookupCPPKeywords( const char *keyname );
+      |     ^~~~~~~~~~~~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:188: nrcpp/CMakeFiles/nrcpp.dir/LexicalAnalyzer.cpp.o] Error 1
+make[2]: *** [nrc/CMakeFiles/nrc.dir/build.make:76: nrc/CMakeFiles/nrc.dir/nrc.cpp.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [CMakeFiles/Makefile2:116: nrc/CMakeFiles/nrc.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+/home/sdsd/git/nrcpp/nrcpp/Object.cpp: In member function ‘void TypyziedEntity::PrintPointer(std::string&, int&, bool&) const’:
+/home/sdsd/git/nrcpp/nrcpp/Object.cpp:149:66: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  149 |         for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                  ^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp: In member function ‘void Application::PutMessage(PCSTR, PCSTR, const Position&, PCSTR, __va_list_tag*)’:
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:171:9: error: ‘_vsnprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  171 |         _vsnprintf( errbuf, 512, fmt, lst );
+      |         ^~~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp: In function ‘int main(int, char**)’:
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:335:9: error: ‘SetConsoleCP’ was not declared in this scope
+  335 |         SetConsoleCP(1251);
+      |         ^~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:336:9: error: ‘SetConsoleOutputCP’ was not declared in this scope
+  336 |         SetConsoleOutputCP(1251);
+      |         ^~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp: In member function ‘void SMFManager::FoundSMF()’:
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:997:57: error: third operand to the conditional operator is of type ‘void’, but the second operand is neither a throw-expression nor of type ‘void’
+  997 |                         ctorDef.first ? (ctorDef.second = true) : (void)(ctorDef.first = *p);
+      |                                         ~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:1000:59: error: third operand to the conditional operator is of type ‘void’, but the second operand is neither a throw-expression nor of type ‘void’
+ 1000 |                         ctorCopy.first ? (ctorCopy.second = true) : (void)(ctorCopy.first = *p);
+      |                                          ~~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:1020:98: error: second operand to the conditional operator is of type ‘void’, but the third operand is neither a throw-expression nor of type ‘void’
+ 1020 |                                         (void)(copyOperator.second = true) : (copyOperator.first = &coo);
+      |                                                                              ~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Maker.cpp:27:32: error: ‘PointerToMember* MakePointerToMember(NodePackage&)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+   27 | inline static PointerToMember *MakePointerToMember( NodePackage &ptm )
+      |                                ^~~~~~~~~~~~~~~~~~~
+In file included from /home/sdsd/git/nrcpp/nrcpp/Maker.cpp:15:
+/home/sdsd/git/nrcpp/nrcpp/Parser.h:158:40: note: previous declaration of ‘PointerToMember* MakePointerToMember(NodePackage&)’
+  158 |         friend inline PointerToMember *MakePointerToMember( NodePackage & );
+      |                                        ^~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Maker.cpp: In member function ‘void FunctionPrototypeMaker::MakeThrowType(const NodePackage&)’:
+/home/sdsd/git/nrcpp/nrcpp/Maker.cpp:1488:37: error: cannot bind non-const lvalue reference of type ‘PTypyziedEntity&’ {aka ‘nrc::SmartPtr<TypyziedEntity>&’} to an rvalue of type ‘PTypyziedEntity’ {aka ‘nrc::SmartPtr<TypyziedEntity>’}
+ 1488 |         throwTypeList.AddThrowType( PTypyziedEntity(
+      |                                     ^~~~~~~~~~~~~~~~
+ 1489 |                 new TypyziedEntity(toc.finalType, toc.constQual,toc.volatileQual, toc.dtl)) );
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/sdsd/git/nrcpp/nrcpp/Maker.cpp:11:
+/home/sdsd/git/nrcpp/nrcpp/Object.h:761:45: note:   initializing argument 1 of ‘void FunctionThrowTypeList::AddThrowType(PTypyziedEntity&)’
+  761 |         void AddThrowType( PTypyziedEntity &dt ) {
+      |                            ~~~~~~~~~~~~~~~~~^~
+/home/sdsd/git/nrcpp/nrcpp/Translator.cpp: In member function ‘void CTypePrinter::PrintPointer(std::string&, int&, bool&)’:
+/home/sdsd/git/nrcpp/nrcpp/Translator.cpp:567:76: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  567 |         for( ; ix < type.GetDerivedTypeList().GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                            ^~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:76: nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.o] Error 1
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand LiteralMaker::Make()’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:1685:81: error: call of overloaded ‘CharString(long int)’ is ambiguous
+ 1685 |                 CharString val( strtol(literalLxm.GetBuf().c_str(), NULL, base) );
+      |                                                                                 ^
+In file included from /home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:4:
+/home/sdsd/git/nrcpp/nrc/nrc.h:101:17: note: candidate: ‘nrc::CharString::CharString(double, nrc::SObject*)’
+  101 |                 CharString( double f, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:95:17: note: candidate: ‘nrc::CharString::CharString(int, nrc::SObject*)’
+   95 |                 CharString( int d, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:80:15: note: candidate: ‘nrc::CharString::CharString(const nrc::CharString&)’
+   80 |         class CharString : public SObject, public string
+      |               ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:80:15: note: candidate: ‘nrc::CharString::CharString(nrc::CharString&&)’
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand NewTernaryMaker::MakeNewCall(bool, bool)’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:3919:52: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 3919 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:3935:44: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 3935 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand NewTernaryMaker::Make()’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:4015:41: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 4015 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:216: nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.o] Error 1
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘void DeclaratorReader::ReadDeclaratorTailPart()’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:438:27: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  438 |         for( in = false; ;in++ )
+      |                           ^~
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘PNodePackage QualifiedConstructionReader::ReadQualifiedConstruction()’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:775:53: error: invalid conversion from ‘long int’ to ‘NodePackage*’ [-fpermissive]
+  775 |                         return readExpression = true, NULL;
+      |                                                     ^
+      |                                                     |
+      |                                                     long int
+In file included from /home/sdsd/git/nrcpp/nrcpp/Reader.cpp:5:
+/home/sdsd/git/nrcpp/nrc/nrc.h:268:30: note:   initializing argument 1 of ‘nrc::SmartPtr<T>::SmartPtr(T*) [with T = NodePackage]’
+  268 |                 SmartPtr( T *p ) : ptr(p) {
+      |                           ~~~^
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘void ExpressionReader::EvalExpr16(POperand&)’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:2082:44: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 2082 |                         int opc = (arrayOp ? OC_DELETE_ARRAY : KWDELETE);
+      |                                    ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:202: nrcpp/CMakeFiles/nrcpp.dir/Maker.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:174: nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:286: nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
+*** Failure: Exit code 2 ***
+
+/home/sdsd/git/nrcpp/build> make -j32
+[  4%] Building CXX object nrc/CMakeFiles/nrc.dir/nrc.cpp.o
+[ 14%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.o
+[ 14%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.o
+[ 19%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Checker.cpp.o
+[ 28%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.o
+[ 28%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.o
+[ 33%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.o
+[ 38%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/LexicalAnalyzer.cpp.o
+[ 42%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Maker.cpp.o
+[ 47%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Class.cpp.o
+[ 52%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.o
+[ 57%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.o
+[ 61%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Scope.cpp.o
+[ 66%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Parser.cpp.o
+[ 71%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.o
+[ 80%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Object.cpp.o
+[ 80%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/MemberMaker.cpp.o
+[ 85%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Translator.cpp.o
+[ 90%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Overload.cpp.o
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘void nrc::CharString::Format(const char*, ...)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:60:9: error: ‘_vsnprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+   60 |         _vsnprintf(buf, 1024, s, ls);
+      |         ^~~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘void nrc::CharString::Reverse()’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:88:9: error: ‘strrev’ was not declared in this scope; did you mean ‘strsep’?
+   88 |         strrev((char*)s.c_str());
+      |         ^~~~~~
+      |         strsep
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘bool nrc::CharString::CompareNoCase(const char*)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:96:17: error: ‘_stricoll’ was not declared in this scope; did you mean ‘strcoll’?
+   96 |         return !_stricoll(c_str(), s);
+      |                 ^~~~~~~~~
+      |                 strcoll
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘nrc::CharString& nrc::CharString::operator=(int)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:216:9: error: ‘_snprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  216 |         _snprintf(buf, 25, "%d", d);
+      |         ^~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘nrc::CharString& nrc::CharString::operator=(double)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:226:9: error: ‘_snprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  226 |         _snprintf(buf, 100, "%lf", f);
+      |         ^~~~~~~~~
+      |         vsnprintf
+make[2]: *** [nrc/CMakeFiles/nrc.dir/build.make:76: nrc/CMakeFiles/nrc.dir/nrc.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:116: nrc/CMakeFiles/nrc.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+/home/sdsd/git/nrcpp/nrcpp/Object.cpp: In member function ‘void TypyziedEntity::PrintPointer(std::string&, int&, bool&) const’:
+/home/sdsd/git/nrcpp/nrcpp/Object.cpp:149:66: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  149 |         for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                  ^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp: In member function ‘void Application::PutMessage(PCSTR, PCSTR, const Position&, PCSTR, __va_list_tag*)’:
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:171:9: error: ‘_vsnprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  171 |         _vsnprintf( errbuf, 512, fmt, lst );
+      |         ^~~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp: In function ‘int main(int, char**)’:
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:335:9: error: ‘SetConsoleCP’ was not declared in this scope
+  335 |         SetConsoleCP(1251);
+      |         ^~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:336:9: error: ‘SetConsoleOutputCP’ was not declared in this scope
+  336 |         SetConsoleOutputCP(1251);
+      |         ^~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp: In member function ‘void SMFManager::FoundSMF()’:
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:997:57: error: third operand to the conditional operator is of type ‘void’, but the second operand is neither a throw-expression nor of type ‘void’
+  997 |                         ctorDef.first ? (ctorDef.second = true) : (void)(ctorDef.first = *p);
+      |                                         ~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:1000:59: error: third operand to the conditional operator is of type ‘void’, but the second operand is neither a throw-expression nor of type ‘void’
+ 1000 |                         ctorCopy.first ? (ctorCopy.second = true) : (void)(ctorCopy.first = *p);
+      |                                          ~~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:1020:98: error: second operand to the conditional operator is of type ‘void’, but the third operand is neither a throw-expression nor of type ‘void’
+ 1020 |                                         (void)(copyOperator.second = true) : (copyOperator.first = &coo);
+      |                                                                              ~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘void DeclaratorReader::ReadDeclaratorTailPart()’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:438:27: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  438 |         for( in = false; ;in++ )
+      |                           ^~
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘PNodePackage QualifiedConstructionReader::ReadQualifiedConstruction()’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:775:53: error: invalid conversion from ‘long int’ to ‘NodePackage*’ [-fpermissive]
+  775 |                         return readExpression = true, NULL;
+      |                                                     ^
+      |                                                     |
+      |                                                     long int
+In file included from /home/sdsd/git/nrcpp/nrcpp/Reader.cpp:5:
+/home/sdsd/git/nrcpp/nrc/nrc.h:268:30: note:   initializing argument 1 of ‘nrc::SmartPtr<T>::SmartPtr(T*) [with T = NodePackage]’
+  268 |                 SmartPtr( T *p ) : ptr(p) {
+      |                           ~~~^
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘void ExpressionReader::EvalExpr16(POperand&)’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:2082:44: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 2082 |                         int opc = (arrayOp ? OC_DELETE_ARRAY : KWDELETE);
+      |                                    ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:76: nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand LiteralMaker::Make()’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:1685:81: error: call of overloaded ‘CharString(long int)’ is ambiguous
+ 1685 |                 CharString val( strtol(literalLxm.GetBuf().c_str(), NULL, base) );
+      |                                                                                 ^
+In file included from /home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:4:
+/home/sdsd/git/nrcpp/nrc/nrc.h:101:17: note: candidate: ‘nrc::CharString::CharString(double, nrc::SObject*)’
+  101 |                 CharString( double f, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:95:17: note: candidate: ‘nrc::CharString::CharString(int, nrc::SObject*)’
+   95 |                 CharString( int d, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:80:15: note: candidate: ‘nrc::CharString::CharString(const nrc::CharString&)’
+   80 |         class CharString : public SObject, public string
+      |               ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:80:15: note: candidate: ‘nrc::CharString::CharString(nrc::CharString&&)’
+/home/sdsd/git/nrcpp/nrcpp/Maker.cpp:27:32: error: ‘PointerToMember* MakePointerToMember(NodePackage&)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+   27 | inline static PointerToMember *MakePointerToMember( NodePackage &ptm )
+      |                                ^~~~~~~~~~~~~~~~~~~
+In file included from /home/sdsd/git/nrcpp/nrcpp/Maker.cpp:15:
+/home/sdsd/git/nrcpp/nrcpp/Parser.h:158:40: note: previous declaration of ‘PointerToMember* MakePointerToMember(NodePackage&)’
+  158 |         friend inline PointerToMember *MakePointerToMember( NodePackage & );
+      |                                        ^~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Maker.cpp: In member function ‘void FunctionPrototypeMaker::MakeThrowType(const NodePackage&)’:
+/home/sdsd/git/nrcpp/nrcpp/Maker.cpp:1488:37: error: cannot bind non-const lvalue reference of type ‘PTypyziedEntity&’ {aka ‘nrc::SmartPtr<TypyziedEntity>&’} to an rvalue of type ‘PTypyziedEntity’ {aka ‘nrc::SmartPtr<TypyziedEntity>’}
+ 1488 |         throwTypeList.AddThrowType( PTypyziedEntity(
+      |                                     ^~~~~~~~~~~~~~~~
+ 1489 |                 new TypyziedEntity(toc.finalType, toc.constQual,toc.volatileQual, toc.dtl)) );
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/sdsd/git/nrcpp/nrcpp/Maker.cpp:11:
+/home/sdsd/git/nrcpp/nrcpp/Object.h:761:45: note:   initializing argument 1 of ‘void FunctionThrowTypeList::AddThrowType(PTypyziedEntity&)’
+  761 |         void AddThrowType( PTypyziedEntity &dt ) {
+      |                            ~~~~~~~~~~~~~~~~~^~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand NewTernaryMaker::MakeNewCall(bool, bool)’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:3919:52: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 3919 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:3935:44: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 3935 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand NewTernaryMaker::Make()’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:4015:41: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 4015 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Translator.cpp: In member function ‘void CTypePrinter::PrintPointer(std::string&, int&, bool&)’:
+/home/sdsd/git/nrcpp/nrcpp/Translator.cpp:567:76: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  567 |         for( ; ix < type.GetDerivedTypeList().GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                            ^~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:216: nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:286: nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:202: nrcpp/CMakeFiles/nrcpp.dir/Maker.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:174: nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
+*** Failure: Exit code 2 ***
+
+/home/sdsd/git/nrcpp/build> make -j32
+[ 90%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Translator.cpp.o
+/home/sdsd/git/nrcpp/nrcpp/Object.cpp: In member function ‘void TypyziedEntity::PrintPointer(std::string&, int&, bool&) const’:
+/home/sdsd/git/nrcpp/nrcpp/Object.cpp:149:66: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  149 |         for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                  ^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp: In member function ‘void Application::PutMessage(PCSTR, PCSTR, const Position&, PCSTR, __va_list_tag*)’:
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:171:9: error: ‘_vsnprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  171 |         _vsnprintf( errbuf, 512, fmt, lst );
+      |         ^~~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp: In function ‘int main(int, char**)’:
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:335:9: error: ‘SetConsoleCP’ was not declared in this scope
+  335 |         SetConsoleCP(1251);
+      |         ^~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:336:9: error: ‘SetConsoleOutputCP’ was not declared in this scope
+  336 |         SetConsoleOutputCP(1251);
+      |         ^~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘void nrc::CharString::Format(const char*, ...)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:60:9: error: ‘_vsnprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+   60 |         _vsnprintf(buf, 1024, s, ls);
+      |         ^~~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘void nrc::CharString::Reverse()’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:88:9: error: ‘strrev’ was not declared in this scope; did you mean ‘strsep’?
+   88 |         strrev((char*)s.c_str());
+      |         ^~~~~~
+      |         strsep
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘bool nrc::CharString::CompareNoCase(const char*)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:96:17: error: ‘_stricoll’ was not declared in this scope; did you mean ‘strcoll’?
+   96 |         return !_stricoll(c_str(), s);
+      |                 ^~~~~~~~~
+      |                 strcoll
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘nrc::CharString& nrc::CharString::operator=(int)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:216:9: error: ‘_snprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  216 |         _snprintf(buf, 25, "%d", d);
+      |         ^~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘nrc::CharString& nrc::CharString::operator=(double)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:226:9: error: ‘_snprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  226 |         _snprintf(buf, 100, "%lf", f);
+      |         ^~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp: In member function ‘void SMFManager::FoundSMF()’:
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:997:57: error: third operand to the conditional operator is of type ‘void’, but the second operand is neither a throw-expression nor of type ‘void’
+  997 |                         ctorDef.first ? (ctorDef.second = true) : (void)(ctorDef.first = *p);
+      |                                         ~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:1000:59: error: third operand to the conditional operator is of type ‘void’, but the second operand is neither a throw-expression nor of type ‘void’
+ 1000 |                         ctorCopy.first ? (ctorCopy.second = true) : (void)(ctorCopy.first = *p);
+      |                                          ~~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:1020:98: error: second operand to the conditional operator is of type ‘void’, but the third operand is neither a throw-expression nor of type ‘void’
+ 1020 |                                         (void)(copyOperator.second = true) : (copyOperator.first = &coo);
+      |                                                                              ~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘void DeclaratorReader::ReadDeclaratorTailPart()’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:438:27: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  438 |         for( in = false; ;in++ )
+      |                           ^~
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘PNodePackage QualifiedConstructionReader::ReadQualifiedConstruction()’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:775:53: error: invalid conversion from ‘long int’ to ‘NodePackage*’ [-fpermissive]
+  775 |                         return readExpression = true, NULL;
+      |                                                     ^
+      |                                                     |
+      |                                                     long int
+In file included from /home/sdsd/git/nrcpp/nrcpp/Reader.cpp:5:
+/home/sdsd/git/nrcpp/nrc/nrc.h:268:30: note:   initializing argument 1 of ‘nrc::SmartPtr<T>::SmartPtr(T*) [with T = NodePackage]’
+  268 |                 SmartPtr( T *p ) : ptr(p) {
+      |                           ~~~^
+/home/sdsd/git/nrcpp/nrcpp/Maker.cpp:27:32: error: ‘PointerToMember* MakePointerToMember(NodePackage&)’ was declared ‘extern’ and later ‘static’ [-fpermissive]
+   27 | inline static PointerToMember *MakePointerToMember( NodePackage &ptm )
+      |                                ^~~~~~~~~~~~~~~~~~~
+In file included from /home/sdsd/git/nrcpp/nrcpp/Maker.cpp:15:
+/home/sdsd/git/nrcpp/nrcpp/Parser.h:158:40: note: previous declaration of ‘PointerToMember* MakePointerToMember(NodePackage&)’
+  158 |         friend inline PointerToMember *MakePointerToMember( NodePackage & );
+      |                                        ^~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘void ExpressionReader::EvalExpr16(POperand&)’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:2082:44: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 2082 |                         int opc = (arrayOp ? OC_DELETE_ARRAY : KWDELETE);
+      |                                    ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+make[2]: *** [nrc/CMakeFiles/nrc.dir/build.make:76: nrc/CMakeFiles/nrc.dir/nrc.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:116: nrc/CMakeFiles/nrc.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:76: nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:216: nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.o] Error 1
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand LiteralMaker::Make()’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:1685:81: error: call of overloaded ‘CharString(long int)’ is ambiguous
+ 1685 |                 CharString val( strtol(literalLxm.GetBuf().c_str(), NULL, base) );
+      |                                                                                 ^
+In file included from /home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:4:
+/home/sdsd/git/nrcpp/nrc/nrc.h:101:17: note: candidate: ‘nrc::CharString::CharString(double, nrc::SObject*)’
+  101 |                 CharString( double f, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:95:17: note: candidate: ‘nrc::CharString::CharString(int, nrc::SObject*)’
+   95 |                 CharString( int d, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:80:15: note: candidate: ‘nrc::CharString::CharString(const nrc::CharString&)’
+   80 |         class CharString : public SObject, public string
+      |               ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:80:15: note: candidate: ‘nrc::CharString::CharString(nrc::CharString&&)’
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand NewTernaryMaker::MakeNewCall(bool, bool)’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:3919:52: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 3919 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:3935:44: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 3935 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand NewTernaryMaker::Make()’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:4015:41: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 4015 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Translator.cpp: In member function ‘void CTypePrinter::PrintPointer(std::string&, int&, bool&)’:
+/home/sdsd/git/nrcpp/nrcpp/Translator.cpp:567:76: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  567 |         for( ; ix < type.GetDerivedTypeList().GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                            ^~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:202: nrcpp/CMakeFiles/nrcpp.dir/Maker.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:286: nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:174: nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
+*** Failure: Exit code 2 ***
+
+/home/sdsd/git/nrcpp/build> make -j32
+[ 90%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Translator.cpp.o
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘void nrc::CharString::Format(const char*, ...)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:60:9: error: ‘_vsnprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+   60 |         _vsnprintf(buf, 1024, s, ls);
+      |         ^~~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘void nrc::CharString::Reverse()’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:88:9: error: ‘strrev’ was not declared in this scope; did you mean ‘strsep’?
+   88 |         strrev((char*)s.c_str());
+      |         ^~~~~~
+      |         strsep
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘bool nrc::CharString::CompareNoCase(const char*)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:96:17: error: ‘_stricoll’ was not declared in this scope; did you mean ‘strcoll’?
+   96 |         return !_stricoll(c_str(), s);
+      |                 ^~~~~~~~~
+      |                 strcoll
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘nrc::CharString& nrc::CharString::operator=(int)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:216:9: error: ‘_snprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  216 |         _snprintf(buf, 25, "%d", d);
+      |         ^~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrc/nrc.cpp: In member function ‘nrc::CharString& nrc::CharString::operator=(double)’:
+/home/sdsd/git/nrcpp/nrc/nrc.cpp:226:9: error: ‘_snprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  226 |         _snprintf(buf, 100, "%lf", f);
+      |         ^~~~~~~~~
+      |         vsnprintf
+make[2]: *** [nrc/CMakeFiles/nrc.dir/build.make:76: nrc/CMakeFiles/nrc.dir/nrc.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:116: nrc/CMakeFiles/nrc.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp: In member function ‘void Application::PutMessage(PCSTR, PCSTR, const Position&, PCSTR, __va_list_tag*)’:
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:171:9: error: ‘_vsnprintf’ was not declared in this scope; did you mean ‘vsnprintf’?
+  171 |         _vsnprintf( errbuf, 512, fmt, lst );
+      |         ^~~~~~~~~~
+      |         vsnprintf
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp: In function ‘int main(int, char**)’:
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:335:9: error: ‘SetConsoleCP’ was not declared in this scope
+  335 |         SetConsoleCP(1251);
+      |         ^~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Application.cpp:336:9: error: ‘SetConsoleOutputCP’ was not declared in this scope
+  336 |         SetConsoleOutputCP(1251);
+      |         ^~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp: In member function ‘void SMFManager::FoundSMF()’:
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:997:57: error: third operand to the conditional operator is of type ‘void’, but the second operand is neither a throw-expression nor of type ‘void’
+  997 |                         ctorDef.first ? (ctorDef.second = true) : (void)(ctorDef.first = *p);
+      |                                         ~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:1000:59: error: third operand to the conditional operator is of type ‘void’, but the second operand is neither a throw-expression nor of type ‘void’
+ 1000 |                         ctorCopy.first ? (ctorCopy.second = true) : (void)(ctorCopy.first = *p);
+      |                                          ~~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Manager.cpp:1020:98: error: second operand to the conditional operator is of type ‘void’, but the third operand is neither a throw-expression nor of type ‘void’
+ 1020 |                                         (void)(copyOperator.second = true) : (copyOperator.first = &coo);
+      |                                                                              ~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘void DeclaratorReader::ReadDeclaratorTailPart()’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:438:27: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  438 |         for( in = false; ;in++ )
+      |                           ^~
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘PNodePackage QualifiedConstructionReader::ReadQualifiedConstruction()’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:775:53: error: invalid conversion from ‘long int’ to ‘NodePackage*’ [-fpermissive]
+  775 |                         return readExpression = true, NULL;
+      |                                                     ^
+      |                                                     |
+      |                                                     long int
+In file included from /home/sdsd/git/nrcpp/nrcpp/Reader.cpp:5:
+/home/sdsd/git/nrcpp/nrc/nrc.h:268:30: note:   initializing argument 1 of ‘nrc::SmartPtr<T>::SmartPtr(T*) [with T = NodePackage]’
+  268 |                 SmartPtr( T *p ) : ptr(p) {
+      |                           ~~~^
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp: In member function ‘void ExpressionReader::EvalExpr16(POperand&)’:
+/home/sdsd/git/nrcpp/nrcpp/Reader.cpp:2082:44: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 2082 |                         int opc = (arrayOp ? OC_DELETE_ARRAY : KWDELETE);
+      |                                    ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Object.cpp: In member function ‘void TypyziedEntity::PrintPointer(std::string&, int&, bool&) const’:
+/home/sdsd/git/nrcpp/nrcpp/Object.cpp:149:66: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  149 |         for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                  ^~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:76: nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand LiteralMaker::Make()’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:1685:81: error: call of overloaded ‘CharString(long int)’ is ambiguous
+ 1685 |                 CharString val( strtol(literalLxm.GetBuf().c_str(), NULL, base) );
+      |                                                                                 ^
+In file included from /home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:4:
+/home/sdsd/git/nrcpp/nrc/nrc.h:101:17: note: candidate: ‘nrc::CharString::CharString(double, nrc::SObject*)’
+  101 |                 CharString( double f, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:95:17: note: candidate: ‘nrc::CharString::CharString(int, nrc::SObject*)’
+   95 |                 CharString( int d, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:80:15: note: candidate: ‘nrc::CharString::CharString(const nrc::CharString&)’
+   80 |         class CharString : public SObject, public string
+      |               ^~~~~~~~~~
+/home/sdsd/git/nrcpp/nrc/nrc.h:80:15: note: candidate: ‘nrc::CharString::CharString(nrc::CharString&&)’
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand NewTernaryMaker::MakeNewCall(bool, bool)’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:3919:52: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 3919 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:3935:44: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 3935 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function ‘POperand NewTernaryMaker::Make()’:
+/home/sdsd/git/nrcpp/nrcpp/ExpressionMaker.cpp:4015:41: warning: enumerated mismatch in conditional expression: ‘OverloadOperatorCode’ vs ‘CPP_TOKENS’ [-Wenum-compare]
+ 4015 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/sdsd/git/nrcpp/nrcpp/Translator.cpp: In member function ‘void CTypePrinter::PrintPointer(std::string&, int&, bool&)’:
+/home/sdsd/git/nrcpp/nrcpp/Translator.cpp:567:76: warning: use of an operand of type ‘bool’ in ‘operator++’ is deprecated [-Wdeprecated]
+  567 |         for( ; ix < type.GetDerivedTypeList().GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                            ^~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:216: nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:286: nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.o] Error 1
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:174: nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
+*** Failure: Exit code 2 ***

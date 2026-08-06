@@ -82,7 +82,7 @@ namespace ExpressionMakerUtils
 	bool IsConstant( const TypyziedEntity &op );
 
 	// создать вызов функции
-	POperand MakeFunctionCall( POperand &fn, PExpressionList &params );
+	POperand MakeFunctionCall( POperand &fn, const PExpressionList &params );
 
 	// проверяет доступность конструктора по умолчанию, конструктора копирования, 
 	// деструктора по требованию. Используется при сооздании или инициализации
@@ -534,7 +534,7 @@ public:
 	// содержимое дерева выражений. SrcOp - классовый тип, который,
 	// содержит оператор приведения, destOp - тип к которому приводим выражение.
 	// В srcOp будет приведенное к типу destOp выражение
-	void DoCast( const POperand &destOp, POperand &srcOp, const Position &errPos  ) ;
+	void DoCast( const POperand &destOp, /* const */ POperand &srcOp, const Position &errPos  ) ;
 
 	// классифицировать преобразование
 	// если преобразование невозможно

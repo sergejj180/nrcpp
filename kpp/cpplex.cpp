@@ -87,9 +87,10 @@ string lexbuf;
 int LookupKeywordCode( const char *keyname, keywords *kmas, int szmas )
 {
 	for( int i = 0; i< szmas / sizeof(keywords); i++ )
-		if( !strcmp( kmas[i].name, keyname ) )
+		if( !strcmp( kmas[i].name, keyname ) ) {
 			return kmas[i].code;
-	return -1;
+		}
+		return -1;
 }
 
 
@@ -109,11 +110,12 @@ int IgnoreSpaces( BaseRead &ob, bool putspaces )
 	while( (ob >> c) != EOF )
 		if( (c == ' ' || c == '\t') )
 		{ 
-			if(putspaces) 
+			if(putspaces) {
 				lexbuf += c;
-		}
-		else
+			}
+		} else {
 			break;
+		}
 
 	ob << c; 
 	return c;
@@ -126,14 +128,17 @@ int IgnoreNewlinesAndSpaces( BaseRead &ob )
 	register int c;
 
 	while( (ob >> c) != EOF )
-		if( c == ' ' || c == '\t' )
+		if( c == ' ' || c == '\t' ) {
 			continue;
+		}
 
-		else if( c == '\n' )
+		else if( c == '\n' ) {
 			linecount++;
+		}
 
-		else
+		else {
 			break;
+		}
 
 	ob << c; // возвращаем один символ в поток
 	return c;
@@ -146,10 +151,11 @@ inline int LexemName( BaseRead &ob )
 	register int c;
 
 	while( (ob >> c) != EOF )
-		if( !IS_NAME(c) )
+		if( !IS_NAME(c) ) {
 			break;
-		else
+		} else {
 			lexbuf += (char)c;
+		}
 
 	ob << c;
 	return NAME;
@@ -173,8 +179,7 @@ inline int LexemOperator( BaseRead &ob )
 			ob >> c;
 			if(c == '*') { lexbuf = "->*"; return ARROW_POINT; }
 			else { ob << c; lexbuf = "->"; return ARROW; }
-		}
-		else { ob << c; lexbuf = '-'; return '-'; }
+		} else { ob << c; lexbuf = '-'; return '-'; }
 	}
 
 	else if( c == '+' )
@@ -206,8 +211,8 @@ inline int LexemOperator( BaseRead &ob )
 	{
 		ob >> c;
 		
-		if(c == '=') { lexbuf = "%="; return PERCENT_ASSIGN; }
-		else { ob << c; lexbuf = '%'; return '%'; }
+		if(c == '=') { lexbuf = "%="; return PERCENT_ASSIGN;
+		} else { ob << c; lexbuf = '%'; return '%'; }
 	}
 
 	else if( c == '<' )
@@ -274,7 +279,7 @@ inline int LexemOperator( BaseRead &ob )
 		else if( c == '|' ) { lexbuf = "||"; return LOGIC_OR; }
 		else { ob << c; lexbuf = '|'; return '|'; }
 	}
-    
+
 	else if( c == ':' )
 	{
 		ob >> c;
@@ -286,24 +291,22 @@ inline int LexemOperator( BaseRead &ob )
 	{
 		ob >> c;
 		if( c == '*' ) { lexbuf = ".*"; return DOT_POINT; }
-		else if( c == '.' ) 
+
+	else if( c == '.' )
+	{
+		ob >> c;
+		if(c == '.')
 		{
-			ob >> c;
-			if(c == '.') { lexbuf = "..."; return ELLIPSES; }
-			else 
-			{
+				lexbuf = "...";
+			return ELLIPSES;
+		} else {
 				ob << c;
 				Error( "пропущена '.' в операторе '...'");
 				lexbuf = "...";
 				return ELLIPSES;
-			}
 		}
-
-		else { ob << c; lexbuf = '.'; return '.'; }
-	}
-
-	else
-	{
+	} else { ob << c; lexbuf = '.'; return '.'; }
+	} else {
 		lexbuf = c;
 		return c;
 	}
@@ -327,16 +330,14 @@ inline int LexemString( BaseRead &ob )
 		else if( c == '\\' )
 		{
 			int pc;
-				
+
 			ob >> pc;
 			if(pc == '\"')
 			{
 				lexbuf += '\\'; lexbuf += '\"';
 				continue;
-			}
-
-			else
-				ob << pc;
+			} else {
+				ob << pc; }
 		}
 
 		else if( c == '\n' || c == EOF )
@@ -346,7 +347,7 @@ inline int LexemString( BaseRead &ob )
 			Error( "не хватает `\"' в конце строки" );
 			lexbuf += '\"';
 			return STRING;
-		}		
+		}
 
 		lexbuf += c;
 	}
@@ -369,10 +370,11 @@ void ReadDigit( BaseRead &ob, int (*isfunc)(int) )
 	register int c;
 
 	while( (ob >> c) != EOF )
-		if( !isfunc(c) )
+		if( !isfunc(c) ) {
 			break;
-		else
+		} else {
 			lexbuf += c;
+		}
 
 	ob << c;
 }
@@ -392,19 +394,21 @@ static inline bool ReadDigitSuffix( BaseRead &ob, char suf )
 		ob >> c;
 		if( toupper(c) == 'L' )
 		{
-			if( sl ) 
+			if( sl ) {
 				Warning("суффикс 'L' у числа уже задан");
-			else
+			} else {
 				sl = true, lexbuf += c;
+			}
 		}
 
 		// или 'U' или 'F'
 		else if( toupper(c) == toupper(suf) )
 		{
-			if( ss )
+			if( ss ) {
 				Warning("суффикс '%c' у числа уже задан", suf);
-			else 			
-				ss = true, lexbuf += c;				
+			} else {
+				ss = true, lexbuf += c;
+			}
 		}
 
 		else
@@ -440,8 +444,8 @@ inline int LexemDigit( BaseRead &ob )
 			if( !isdigit(p) )	// просто оператор точка
 			{ ob << c;	return -1; }
 
-			else
-				state = 2;
+			else {
+				state = 2; }
 		}
 
 		// десятичное число 1-9
@@ -453,8 +457,8 @@ inline int LexemDigit( BaseRead &ob )
 			ob >> c;
 			if( c == '.' )
 				state = 2;
-			else if( c == 'e' || c == 'E' )
-				state = 3;
+			else if( c == 'e' || c == 'E' ) {
+				state = 3; }
 			else
 			{
 				ob << c;
@@ -468,23 +472,24 @@ inline int LexemDigit( BaseRead &ob )
 		lexbuf += c;
 		ob >> c;
 
-		if( c == '.' ) state = 2;
-		else if( c == 'e' || c == 'E' ) state = 3;
+		if( c == '.' ) { state = 2; }
+		else if( c == 'e' || c == 'E' ) { state = 3; }
 		else if( c == 'x' || c == 'X' ) 
 		{
 			lexbuf += c;
 			ReadDigit( ob, isxdigit );
 
-			if( toupper( *(lexbuf.end() - 1) ) == 'X' )
+			if( toupper( *(lexbuf.end() - 1) ) == 'X' ) {
 				Error("отсутствует 16-ричная последовательность после '%c'",c);
-			return ReadDigitSuffix(ob, 'U') ? UINTEGER16 : INTEGER16;
+				return ReadDigitSuffix(ob, 'U') ? UINTEGER16 : INTEGER16;
+			}
 		}
 
 		else if( isdigit8(c) ) 
 		{
 			lexbuf += c;
 			ReadDigit( ob, isdigit8 );
-			return ReadDigitSuffix(ob, 'U') ? UINTEGER8 : INTEGER8;			
+			return ReadDigitSuffix(ob, 'U') ? UINTEGER8 : INTEGER8;
 		}
 
 		else 
@@ -500,8 +505,9 @@ inline int LexemDigit( BaseRead &ob )
 		lexbuf += c;
 		ob >> c;
 	
-		if( c == 'e' || c == 'E' ) 
+		if( c == 'e' || c == 'E' ) {
 			state = 3;
+		}
 
 		else if( isdigit(c) )
 		{
@@ -509,19 +515,20 @@ inline int LexemDigit( BaseRead &ob )
 			ReadDigit(ob, isdigit);
 
 			ob >> c;
-			if( c == 'e' || c == 'E' ) 
+			if( c == 'e' || c == 'E' ) {
 				state = 3;
-			else 
-			{
-			read_suffix:
+			} else {
+
+				read_suffix:
 				ob << c;
 				return ReadDigitSuffix(ob, 'F') ? LFLOAT : LDOUBLE;
 			}
 		}
 
 		// иначе было считано число и осталась просто точка
-		else
+		else {
 			goto read_suffix;
+		}
 
 		break;
 
@@ -530,20 +537,18 @@ inline int LexemDigit( BaseRead &ob )
 		lexbuf += c;
 		ob >> c;
 
-		if( c == '+' || c == '-' )
+		if( c == '+' || c == '-' ) {
 			lexbuf += c, (ob >> c);
+		}
 
 		if( !isdigit(c) )
 		{
 			ob << c;
 			Error( "пропущено значение экспоненты" );
 			return LDOUBLE;
-		}
-
-		else
-		{	
+		} else {
 			lexbuf += c;
-			ReadDigit(ob, isdigit);	
+			ReadDigit(ob, isdigit);
 			return ReadDigitSuffix(ob, 'F') ? LFLOAT : LDOUBLE;
 		}
 	}
@@ -561,10 +566,10 @@ inline int LexemCharacter( BaseRead &ob )
 	// значения, корректность значения символа проверяется после
 	
 	ob >> c;
-	if( c == '\'' )	// пустой символ
+	if( c == '\'' ) // пустой символ
 	{
 		lexbuf += '\\',
-		lexbuf += '0', lexbuf += '\'';	// автоматически добавляем \0
+		lexbuf += '0', lexbuf += '\''; // автоматически добавляем \0
 		Error( "пустой символ" );
 		return CHARACTER;
 	}
@@ -596,8 +601,8 @@ inline int LexemCharacter( BaseRead &ob )
 				continue;
 			}
 
-			else
-				ob << pc;
+			else {
+				ob << pc; }
 		}
 
 		else if( c == '\n' || c == EOF )
@@ -607,7 +612,7 @@ inline int LexemCharacter( BaseRead &ob )
 			Error( "не хватает `\'' в конце строки" );
 			lexbuf += '\'';
 			return CHARACTER;
-		}		
+		}
 
 		lexbuf += c;
 	}
@@ -650,8 +655,8 @@ int Lex( BaseRead &ob )
 				return WSTRING;
 			}
 
-			else
-				ob << p;
+			else {
+				ob << p; }
 		}
 
 		LexemName(ob);
@@ -661,10 +666,11 @@ int Lex( BaseRead &ob )
 	else if( isdigit(c) || c == '.' )
 	{
 		int r;
-		if( (r = LexemDigit(ob)) == -1 )
+		if( (r = LexemDigit(ob)) == -1 ) {
 			return LexemOperator(ob);	// иначе считываем точку (.*)
-		else
+		} else {
 			return r;
+		}
 	}
 
 	else if( c == '\"' )
@@ -681,6 +687,6 @@ int Lex( BaseRead &ob )
 		return LexemCharacter(ob);
 	}
 
-	else
-		return LexemOperator(ob);
+	else {
+		return LexemOperator(ob); }
 }

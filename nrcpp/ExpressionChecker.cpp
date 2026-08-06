@@ -49,8 +49,7 @@ bool ExpressionMakerUtils::IsScalarType( const TypyziedEntity &type )
 		return false;
 
 	// тип void
-	if( type.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID &&
-		type.GetDerivedTypeList().IsEmpty() )
+	if( type.GetBaseType().GetBaseTypeCode() == BaseType::BT_VOID && type.GetDerivedTypeList().IsEmpty() )
 		return false;
 
 	// иначе тип склярный
@@ -168,15 +167,14 @@ bool ExpressionMakerUtils::CompareTypes(
 
 
 // создать вызов функции
-POperand ExpressionMakerUtils::MakeFunctionCall( POperand &fn, PExpressionList &params )
+POperand ExpressionMakerUtils::MakeFunctionCall( POperand &fn, const PExpressionList &params )
 {
 	// создаем результуриующий тип вызова функции
 	PTypyziedEntity rt = new TypyziedEntity(fn->GetType()); 
-	const_cast<DerivedTypeList &>(rt->GetDerivedTypeList()).PopHeadDerivedType();
+	const_cast<DerivedTypeList &> (rt->GetDerivedTypeList()).PopHeadDerivedType();
 	
 	// возвращаем вызов функции
-	return new FunctionCallExpression( rt->GetDerivedTypeList().IsReference(),
-		fn, params, rt);
+	return new FunctionCallExpression( rt->GetDerivedTypeList().IsReference(), fn, params, rt);
 }
 
 
@@ -574,7 +572,7 @@ void ScalarToScalarCaster::SetCastCategory( const BaseType &dbt, const BaseType 
 				 dbt.GetSignModifier() == sbt.GetSignModifier()) ?
 					CC_INCREASE : CC_STANDARD; 
 		}
-		    
+
 		else
 			castCategory = CC_STANDARD;
 	}
@@ -1205,7 +1203,7 @@ void OperatorCaster::ClassifyCast()
 // В srcOp будет приведенное к типу destOp выражение
 void OperatorCaster::DoCast( const POperand &destOp, POperand &srcOp, const Position &ep )
 {
-	INTERNAL_IF( castOperator == NULL || !isConverted || 
+	INTERNAL_IF( castOperator == NULL || !isConverted ||
 		!ExpressionMakerUtils::IsClassType(srcOp->GetType()) );
 
 	// проверяем оператор на доступность
@@ -1219,16 +1217,14 @@ void OperatorCaster::DoCast( const POperand &destOp, POperand &srcOp, const Posi
 
 	// создаем сначала обращение к члену оператору
 	POperand cop = new PrimaryOperand(false, *castOperator);
-	POperand select = new BinaryExpression( '.', false, srcOp, cop, 
-		new TypyziedEntity(*castOperator));
+	POperand select = new BinaryExpression( '.', false, srcOp, cop, new TypyziedEntity(*castOperator));
 	
 	// далее создаем вызов функции
-	POperand call = ExpressionMakerUtils::MakeFunctionCall(select, 
-		PExpressionList(new ExpressionList));
+	POperand call = ExpressionMakerUtils::MakeFunctionCall(select, PExpressionList(new ExpressionList));
 
 	// наконец преобразуем склярно
-	if( !scalarCaster.IsNull() )
-		scalarCaster->DoCast(destOp, call, ep);
+	if( !scalarCaster.IsNull() ) {
+		scalarCaster->DoCast(destOp, call, ep); }
 	srcOp = call;
 }
 
@@ -2881,16 +2877,14 @@ void MemberDefinationMaker::Initialize( const ExpressionList &initList )
 		 dm->GetStorageSpecifier() != ::Object::SS_STATIC) )
 	{
 		if( &initList != NULL )
-			theApp.Error(toc->errPos, 
-				"инициализация не статического члена класса невозможна");	
+			theApp.Error(toc->errPos, "инициализация не статического члена класса невозможна");
 		return;
 	}
 
 	// если у объекта уже есть инициализатор
 	if( dm->IsHaveInitialValue() )
 	{
-		theApp.Error(toc->errPos, 
-			"'%s' - уже инициализирован", dm->GetQualifiedName().c_str());
+		theApp.Error(toc->errPos, "'%s' - уже инициализирован", dm->GetQualifiedName().c_str());
 		return;
 	}
 

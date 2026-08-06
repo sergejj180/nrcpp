@@ -30,21 +30,23 @@ static void inline IgnoreMultiComment(FILE *in, FILE *out)
 
 	while( (c = fgetc(in)) != EOF )
 	{
-		if(c == '\n')
+		if(c == '\n') {
 			fputc(c, out);
-			
-		else if( c == '*' )
-		{
+		}
+		else if( c == '*' ) {
 			c = fgetc(in);
-			if( c == '/' )
-			{ fputc(' ', out);	break; }	// комментарий заменяется пробелом
+			if( c == '/' ) {
+				fputc(' ', out);
+				break;
+			} // комментарий заменяется пробелом
 			else
 				ungetc(c, in);
 		}
 	}
 
-	if( c == EOF )
+	if( c == EOF ) {
 		Fatal( "неожиданный конец файла: не закрытый комментарий" );
+	}
 }
 
 
@@ -60,13 +62,18 @@ static void inline IgnoreAllComments( FILE *in, FILE *out )
 			int pc = fgetc(in);
 
 			if( pc == '/' )
-			{	IgnoreSimpleComment(in, out); continue; }
+			{
+				IgnoreSimpleComment(in, out);
+				continue;
+			}
 
-			else if( pc == '*' )
-			{	IgnoreMultiComment(in, out); continue; }
+			else if( pc == '*' ) {
 
-			else
+				IgnoreMultiComment(in, out);
+				continue;
+			} else {
 				ungetc(pc, in);
+			}
 		}
 
 		// игнорируем строку, чтобы не закомментировать символы в ней
@@ -117,8 +124,9 @@ void IgnoreStringLiteral( FILE *in, FILE *out )
 		fputc(c, out);
 	}
 
-	if( c == EOF )
+	if( c == EOF ) {
 		Fatal( "неожиданный конец файла: строковый литерал не закрыт" );
+	}
 }
 
 

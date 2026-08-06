@@ -994,10 +994,10 @@ void SMFManager::FoundSMF()
 		 p != pClass.GetConstructorList().end(); p++ )
 	{
 		if( IsDefaultConstructor(**p, pClass) )
-			ctorDef.first ? (ctorDef.second = true) : (void)(ctorDef.first = *p);
+			ctorDef.first ? (void)(ctorDef.second = true) : (void)(ctorDef.first = *p);
 		
 		else if( IsCopyConstructor(**p, pClass) )
-			ctorCopy.first ? (ctorCopy.second = true) : (void)(ctorCopy.first = *p);
+			ctorCopy.first ? (void)(ctorCopy.second = true) : (void)(ctorCopy.first = *p);
 	}
 
 	// сохраняем деструктор
@@ -1016,8 +1016,8 @@ void SMFManager::FoundSMF()
 
 			// проверяем, если оператор копирования, сохраняем его
 			if( IsCopyOperator(coo, pClass) )
-				copyOperator.first ? 
-					(void)(copyOperator.second = true) : (copyOperator.first = &coo);
+				copyOperator.first ?
+					(void)(copyOperator.second = true) : (void)(copyOperator.first = &coo);
 		}
 	}
 }

@@ -29,7 +29,7 @@ stack<int> IfResults;
 
 
 // возвращает результат константного выражения в строке s
-int CnstExpr( string &s );
+int CnstExpr(const string &s );
 
 
 // здесь хранятся пути к директориям с заголовочными файлами
@@ -46,12 +46,12 @@ void PutLine( FILE *out );
 
 
 // вычисляет выражение в директивах #if/#elif
-static bool inline EvalExpression( BaseRead &buf )
+static bool inline EvalExpression(const BaseRead &buf )
 {
 	string s;
 	int r;
 
-	ReadString( buf, s );
+	ReadString(buf, s );
 
 	try
 	{
@@ -72,7 +72,7 @@ static bool inline EvalExpression( BaseRead &buf )
 
 	catch( const char *msg )
 	{
-		Fatal("#if/#elif: %s", msg);					
+		Fatal("#if/#elif: %s", msg);
 	}
 	
 	return r != 0;
@@ -121,8 +121,8 @@ static string inline ViewIncludeString( BaseRead &buf )
 	string s;
 
 	ReadString(buf, s);
-	if( s[0] != '<' )
-		s = Substitution(s, false);
+	if( s[0] != '<' ) {
+		s = Substitution(s, false); }
 	return s;
 }
 
@@ -183,7 +183,7 @@ static inline bool EqualParams( Macro &mac, Macro &ob )
 
 
 // вставить макрос в таблицу с проверкой
-static void inline InsertWithCheck( Macro &ob )
+static void inline InsertWithCheck(Macro &ob )
 {
 	Macro *mac = mtab.Find( (char *)ob.name.c_str() );
 	if( mac )
@@ -228,7 +228,7 @@ static void inline InsertWithCheck( Macro &ob )
 }
 
 
-void do_define( BaseRead &buf )
+void do_define(BaseRead &buf )
 {
 	register int c = Lex( buf );
 
@@ -263,11 +263,11 @@ void do_define( BaseRead &buf )
 			params.push_back( prm );
 			c = Lex(buf);
 
-			if( c == ')' )
-				break;
+			if( c == ')' ) {
+				break; }
 
-			else if( c == ',' )
-				c = Lex(buf);
+			else if( c == ',' ) {
+				c = Lex(buf); }
 
 			else
 			{
@@ -279,8 +279,8 @@ void do_define( BaseRead &buf )
 		type = Macro::FUNCTION;
 
 		// проверка уникальности имени каждого параметра
-		if( CheckParams( params, name.c_str() ) == false )
-			return;
+		if( CheckParams( params, name.c_str() ) == false ) {
+			return; }
 	}
 
 	else
@@ -290,10 +290,10 @@ void do_define( BaseRead &buf )
 	ReadString( buf, val );		// считываем значение макроса
 
 	if( type == Macro::MACROS )
-		InsertWithCheck( Macro( name, val ) );
+		InsertWithCheck( Macro( &name, val ) );
 		
 	else
-		InsertWithCheck( Macro( name, val, params ) );
+		InsertWithCheck( Macro( &name, val, params ) );
 }
 
 

@@ -161,14 +161,16 @@ public:
 		return operatorCode;
 	}
 
+	// 31.03.2024
 	// задать выражение как rvalue
-	void SetRValue() {
-		lvalue = false;
+	bool SetRValue() const {
+		return lvalue == false;
 	}
 
+	//31.03.2024
 	// задать, что выражение в скобках
-	void SetCramps() {
-		inCramps = true;
+	bool SetCramps() const {
+		return inCramps == true;
 	}
 };
 
@@ -352,8 +354,7 @@ class NewExpression : public Expression
 public:
 
 	// в конструкторе задаем необх. информацию для хранения
-	NewExpression( int opc, const POperand &call, const PExpressionList &il,
-				const PTypyziedEntity &pt ) 
+	NewExpression( int opc, const POperand &call, const PExpressionList &il, const PTypyziedEntity &pt )
 		: Expression(-1, opc, false), newOperatorCall(call), initializatorList(il), pType(pt) {
 
 		INTERNAL_IF( !(opc == KWNEW || opc == OC_NEW_ARRAY) );

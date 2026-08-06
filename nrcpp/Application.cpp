@@ -1,8 +1,8 @@
 // главный модуль программы - Application.cpp
 
-#pragma warning(disable: 4786)
+//#pragma warning(disable: 4786)
 
-#include <windows.h>
+//#include <windows.h>
 
 #include <string>
 #include <cstring>
@@ -332,8 +332,8 @@ int Application::Make()
 // стартовая точка
 int main( int argc, char *argv[] )
 {
-	SetConsoleCP(1251); 
-	SetConsoleOutputCP(1251);
+	/*SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);*/
 
 	try { 
 		theApp.LoadOptions(argc, argv);

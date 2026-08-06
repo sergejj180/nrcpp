@@ -6,11 +6,11 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-#project(kpp)
+project(kpp)
 
-#set (CMAKE_CXX_STANDARD 14)
+#set(CMAKE_CXX_STANDARD 14)
 
-#set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin/kpp)
+#set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin${PROJECT_NAME})
 
 # Добавьте источник в исполняемый файл этого проекта.
 add_executable (kpp "cpplex.cpp" "cpplex.h"
@@ -18,6 +18,8 @@ add_executable (kpp "cpplex.cpp" "cpplex.h"
 			"kpp.cpp"    "kpp.h"
 			"macro.cpp"  "macro.h"
 			"read.cpp"   "read.h"
+			
+			"baseRead.h"
 
 			"cnst-expr.cpp"
 			"comment.cpp"

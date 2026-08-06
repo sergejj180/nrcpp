@@ -23,15 +23,14 @@ static BufferRead *pBuf;
 
 
 // класс контролирует переполнение стека в парсере
-class ParserStack
-{
+class ParserStack {
 public:
 	static int curdeep;
 
 	ParserStack( ) { 
 		curdeep++; 
-		if( curdeep == MAX_PARSER_DEEP )
-			Fatal( "стек переполнен: слишком сложное выражение" );
+		if( curdeep == MAX_PARSER_DEEP ) {
+			Fatal( "стек переполнен: слишком сложное выражение" ); }
 	}
 
 	~ParserStack( ) { curdeep--; }
@@ -161,26 +160,23 @@ int CnstValue( char *s, int code )
 	int r;
 	char *tname;
 
-	if( code == CHARACTER ) 
-		r = ConvertCharToInt(s, false), tname = "char";
+	if( code == CHARACTER ) {
+		r = ConvertCharToInt(s, false), tname = (char*) "char"; }
 
-	else if( code == WCHARACTER ) 
-		r = ConvertCharToInt(s, true), tname = "wchar_t";
+	else if( code == WCHARACTER ) {
+		r = ConvertCharToInt(s, true), tname = (char*) "wchar_t"; }
 
 	else if( code == INTEGER10 || code == UINTEGER10 )
-		r = ConvertInteger(s, 10), 
-			tname = (code == UINTEGER10 ? "unsigned int" : "int");
+		r = ConvertInteger(s, 10), tname = (code == UINTEGER10 ? tname = (char*) "unsigned int" : tname = (char*) "int");
 	
-	else if( code == INTEGER8 || code == UINTEGER8 )
-		r = ConvertInteger(s, 8),
-			tname = (code == UINTEGER8 ? "unsigned int" : "int");
+	else if( code == INTEGER8 || code == UINTEGER8 ) {
+		r = ConvertInteger(s, 8), tname = (code == UINTEGER8 ? tname = (char*) "unsigned int" : tname = (char*) "int"); }
 	
-	else if( code == INTEGER16 || code == UINTEGER16 )
-		r = ConvertInteger(s, 16),
-			tname = (code == UINTEGER16 ? "unsigned int" : "int");
+	else if( code == INTEGER16 || code == UINTEGER16 ) {
+		r = ConvertInteger(s, 16), tname = (code == UINTEGER16 ? tname = (char*) "unsigned int" : tname = (char*) "int"); }
 	
-	else 
-		return -1;
+	else {
+		return -1; }
 
 	if( r == -1 )
 	{
@@ -193,7 +189,7 @@ int CnstValue( char *s, int code )
 
 
 // возвращает результат константного выражения в строке s
-int CnstExpr( string &s )
+int CnstExpr(const string &s )
 {
 	pBuf = new BufferRead(s);
 
@@ -383,11 +379,11 @@ static void EvalExpr10( int &result )
 		TokLex();
 		EvalExpr11( temp );
 
-		if( op == LEFT_SHIFT )
-			result = result << temp;
+		if( op == LEFT_SHIFT ) {
+			result = result << temp; }
 
-		else
-			result = result >> temp;
+		else {
+			result = result >> temp; }
 	}
 }
 
@@ -404,12 +400,12 @@ static void EvalExpr11( int &result )
 		TokLex();
 		EvalExpr12( temp );
 
-		if( op == '+' )
-			result = result + temp;
+		if( op == '+' ) {
+			result = result + temp; }
 
-		else
-			result = result - temp;
-	}	
+		else {
+			result = result - temp; }
+	}
 }
 
 
@@ -425,19 +421,19 @@ static void EvalExpr12( int &result )
 		TokLex();
 		EvalExpr13( temp );
 
-		if( op == '*' )
-			result = result + temp;
+		if( op == '*' ) {
+			result = result + temp; }
 
 		else 
 		{
-			if( temp == 0 )			
-				throw "деление на 0";			
+			if( temp == 0 ) {
+				throw "деление на 0"; }
 
-			if( op == '/' )
-				result = result / temp;
+			if( op == '/' ) {
+				result = result / temp; }
 
-			else 
-				result = result % temp;
+			else {
+				result = result % temp; }
 		}
 	}	
 }
@@ -455,14 +451,14 @@ static void EvalExpr13( int &result )
 		TokLex();
 		EvalExpr13( result );
 
-		if( op == '!' )
-			result = !result;
+		if( op == '!' ) {
+			result = !result; }
 
-		else if( op == '~' )
-			result = ~result;
+		else if( op == '~' ) {
+			result = ~result; }
 
-		else if( op == '-' )
-			result = -result;
+		else if( op == '-' ) {
+			result = -result; }
 	}
 
 	else
@@ -478,8 +474,8 @@ static void EvalExpr14( int &result )
 	{
 		TokLex();
 		EvalExpr2(result);
-		if( token != ')' )		
-			throw ("синтаксическая ошибка: пропущена ')'");				
+		if( token != ')' ){
+			throw ("синтаксическая ошибка: пропущена ')'"); }
 
 		TokLex();
 	}
@@ -490,6 +486,6 @@ static void EvalExpr14( int &result )
 		TokLex();
 	}
 
-	else
-		throw ("синтаксическая ошибка");		
+	else {
+		throw ("синтаксическая ошибка"); }
 }

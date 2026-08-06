@@ -7,7 +7,7 @@ using namespace nrc;
 
 #include <string>
 #include <cstring>
-//using namespace std;
+using namespace std;
 
 // подключаем модуль времени для режима проверки времени
 #include <ctime>

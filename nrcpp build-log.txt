@@ -445,5 +445,215 @@ make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:160: nrcpp/CMakeFiles/nrcpp.
 make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
 make: *** [Makefile:91: all] Error 2
 
+Building in: D:\nrcpp\build\default
+cmake --build . --target all
+[  6%] Built target nrc
+[  9%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.obj
+[ 12%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj
+[ 15%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.obj
+[ 18%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj
+[ 21%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj
+D:\nrcpp\nrcpp\ExpressionMaker.cpp: In function 'ExpressionMakerUtils::InitAnswer ExpressionMakerUtils::CorrectObjectInitialization(const TypyziedEntity&, const PExpressionList&, bool, const Position&)':
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:763:35: error: expected unqualified-id before 'or' token
+  763 |                 OverloadResolutor or(ofl, *initList, NULL);
+      |                                   ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:764:38: error: expected primary-expression before 'or' token
+  764 |                 const Function *fn = or.GetCallableFunction();
+      |                                      ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:764:40: error: expected primary-expression before '.' token
+  764 |                 const Function *fn = or.GetCallableFunction();
+      |                                        ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:770:33: error: expected primary-expression before 'or' token
+  770 |                                 or.GetErrorMessage().c_str());
+      |                                 ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:770:35: error: expected primary-expression before '.' token
+  770 |                                 or.GetErrorMessage().c_str());
+      |                                   ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:775:17: error: expected primary-expression before 'or' token
+  775 |                 or.DoParametrListCast(errPos);
+      |                 ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:775:19: error: expected primary-expression before '.' token
+  775 |                 or.DoParametrListCast(errPos);
+      |                   ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp: In member function 'POperand LiteralMaker::Make()':
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:1685:81: error: call of overloaded 'CharString(long int)' is ambiguous
+ 1685 |                 CharString val( strtol(literalLxm.GetBuf().c_str(), NULL, base) );
+      |                                                                                 ^
+In file included from D:\nrcpp\nrcpp\ExpressionMaker.cpp:4:
+D:/nrcpp/nrc/nrc.h:101:17: note: candidate: 'nrc::CharString::CharString(double, nrc::SObject*)'
+  101 |                 CharString( double f, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+D:/nrcpp/nrc/nrc.h:95:17: note: candidate: 'nrc::CharString::CharString(int, nrc::SObject*)'
+   95 |                 CharString( int d, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+D:/nrcpp/nrc/nrc.h:80:15: note: candidate: 'nrc::CharString::CharString(const nrc::CharString&)'
+   80 |         class CharString : public SObject, public string
+      |               ^~~~~~~~~~
+D:/nrcpp/nrc/nrc.h:80:15: note: candidate: 'nrc::CharString::CharString(nrc::CharString&&)'
+D:\nrcpp\nrcpp\ExpressionMaker.cpp: In member function 'const Function* FunctionCallBinaryMaker::CheckBestViableFunction(const OverloadFunctionList&, const ExpressionList&, const TypyziedEntity*) const':
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2543:27: error: expected unqualified-id before 'or' token
+ 2543 |         OverloadResolutor or(ofl, pl, obj);
+      |                           ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2544:30: error: expected primary-expression before 'or' token
+ 2544 |         const Function *fn = or.GetCallableFunction();
+      |                              ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2544:32: error: expected primary-expression before '.' token
+ 2544 |         const Function *fn = or.GetCallableFunction();
+      |                                ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2550:22: error: expected primary-expression before 'or' token
+ 2550 |                 if( !or.IsAmbigous() )
+      |                      ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2550:24: error: expected primary-expression before '.' token
+ 2550 |                 if( !or.IsAmbigous() )
+      |                        ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2555:46: error: expected primary-expression before 'or' token
+ 2555 |                         theApp.Error(errPos, or.GetErrorMessage().c_str());
+      |                                              ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2555:48: error: expected primary-expression before '.' token
+ 2555 |                         theApp.Error(errPos, or.GetErrorMessage().c_str());
+      |                                                ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2577:9: error: expected primary-expression before 'or' token
+ 2577 |         or.DoParametrListCast(errPos);
+      |         ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2577:11: error: expected primary-expression before '.' token
+ 2577 |         or.DoParametrListCast(errPos);
+      |           ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp: In member function 'POperand FunctionCallBinaryMaker::Make()':
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2823:43: error: expected unqualified-id before 'or' token
+ 2823 |                         OverloadResolutor or( ofl, *parametrList, obj );
+      |                                           ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2824:29: error: expected primary-expression before 'or' token
+ 2824 |                         if( or.GetCallableFunction() == NULL )
+      |                             ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2824:31: error: expected primary-expression before '.' token
+ 2824 |                         if( or.GetCallableFunction() == NULL )
+      |                               ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2829:54: error: expected primary-expression before 'or' token
+ 2829 |                                 theApp.Error(errPos, or.GetErrorMessage().c_str());
+      |                                                      ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2829:56: error: expected primary-expression before '.' token
+ 2829 |                                 theApp.Error(errPos, or.GetErrorMessage().c_str());
+      |                                                        ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2834:25: error: expected primary-expression before 'or' token
+ 2834 |                         or.DoParametrListCast(errPos);
+      |                         ^~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:2834:27: error: expected primary-expression before '.' token
+ 2834 |                         or.DoParametrListCast(errPos);
+      |                           ^
+D:\nrcpp\nrcpp\ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::MakeNewCall(bool, bool)':
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:3920:52: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3920 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:3936:44: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3936 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+D:\nrcpp\nrcpp\ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::Make()':
+D:\nrcpp\nrcpp\ExpressionMaker.cpp:4016:41: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 4016 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+mingw32-make[2]: *** [nrcpp\CMakeFiles\nrcpp.dir\build.make:181: nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj] Error 1
+mingw32-make[1]: *** [CMakeFiles\Makefile2:159: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+mingw32-make: *** [Makefile:90: all] Error 2
+Build complete (27 errors, 3 warnings): D:\nrcpp\build\default
 
+serge@DESKTOP-2B2UBO9 MINGW64 /c/Users/serge/source/repos/nrcpp
+# make
+[  9%] Built target nrc
+[ 14%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.obj
+[ 19%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.obj
+[ 23%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj
+[ 28%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Checker.cpp.obj
+[ 33%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Class.cpp.obj
+[ 38%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.obj
+[ 42%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj
+[ 47%] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand LiteralMaker::Make()':
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:1685:81: error: call of overloaded 'CharString(long int)' is ambiguous
+ 1685 |                 CharString val( strtol(literalLxm.GetBuf().c_str(), NULL, base) );
+      |                                                                                 ^
+In file included from C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:4:
+C:/Users/serge/source/repos/nrcpp/nrc/nrc.h:101:17: note: candidate: 'nrc::CharString::CharString(double, nrc::SObject*)'
+  101 |                 CharString( double f, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrc/nrc.h:95:17: note: candidate: 'nrc::CharString::CharString(int, nrc::SObject*)'
+   95 |                 CharString( int d, SObject *aobj = NULL ) {
+      |                 ^~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrc/nrc.h:80:15: note: candidate: 'nrc::CharString::CharString(const nrc::CharString&)'
+   80 |         class CharString : public SObject, public string
+      |               ^~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrc/nrc.h:80:15: note: candidate: 'nrc::CharString::CharString(nrc::CharString&&)'
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::MakeNewCall(bool, bool)':
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:3919:52: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3919 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:3935:44: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3935 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::Make()':
+C:/Users/serge/source/repos/nrcpp/nrcpp/ExpressionMaker.cpp:4015:41: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 4015 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+make[2]: *** [nrcpp/CMakeFiles/nrcpp.dir/build.make:174: nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj] Error 1
+make[1]: *** [CMakeFiles/Makefile2:142: nrcpp/CMakeFiles/nrcpp.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
 
+-- Configuring done (1.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/serge/git/nrcpp/build/cmake.run.win32.x86_64.Local
+Building in: C:\Users\serge\git\nrcpp\build\cmake.run.win32.x86_64.Local
+cmake --build . --target all
+[1/21] Building CXX object nrc/CMakeFiles/nrc.dir/nrc.cpp.obj
+[2/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/LexicalAnalyzer.cpp.obj
+[3/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Scope.cpp.obj
+[4/21] Linking CXX static library nrc\libnrc.a
+[5/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.obj
+[6/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Overload.cpp.obj
+[7/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Class.cpp.obj
+[8/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.obj
+[9/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.obj
+[10/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.obj
+[11/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/MemberMaker.cpp.obj
+[12/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj
+[13/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Checker.cpp.obj
+[14/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Object.cpp.obj
+C:/Users/serge/git/nrcpp/nrcpp/Object.cpp: In member function 'void TypyziedEntity::PrintPointer(std::string&, int&, bool&) const':
+C:/Users/serge/git/nrcpp/nrcpp/Object.cpp:149:66: warning: use of an operand of type 'bool' in 'operator++' is deprecated [-Wdeprecated]
+  149 |         for( ; ix < derivedTypeList.GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                  ^~~~~~~
+[15/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Maker.cpp.obj
+[16/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Translator.cpp.obj
+C:/Users/serge/git/nrcpp/nrcpp/Translator.cpp: In member function 'void CTypePrinter::PrintPointer(std::string&, int&, bool&)':
+C:/Users/serge/git/nrcpp/nrcpp/Translator.cpp:567:76: warning: use of an operand of type 'bool' in 'operator++' is deprecated [-Wdeprecated]
+  567 |         for( ; ix < type.GetDerivedTypeList().GetDerivedTypeCount(); ix++, isPrint++ )
+      |                                                                            ^~~~~~~
+[17/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Parser.cpp.obj
+[18/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.obj
+C:/Users/serge/git/nrcpp/nrcpp/Reader.cpp: In member function 'void DeclaratorReader::ReadDeclaratorTailPart()':
+C:/Users/serge/git/nrcpp/nrcpp/Reader.cpp:438:27: warning: use of an operand of type 'bool' in 'operator++' is deprecated [-Wdeprecated]
+  438 |         for( in = false; ;in++ )
+      |                           ^~
+C:/Users/serge/git/nrcpp/nrcpp/Reader.cpp: In member function 'void ExpressionReader::EvalExpr16(POperand&)':
+C:/Users/serge/git/nrcpp/nrcpp/Reader.cpp:2082:44: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 2082 |                         int opc = (arrayOp ? OC_DELETE_ARRAY : KWDELETE);
+      |                                    ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[19/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj
+[20/21] Building CXX object nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::MakeNewCall(bool, bool)':
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp:3919:52: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3919 |                 OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, false, &cls, errPos);
+      |                                              ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp:3935:44: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 3935 |         OverloadOperatorFounder oof( array ? OC_NEW_ARRAY : KWNEW, true, NULL, errPos);
+      |                                      ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp: In member function 'POperand NewTernaryMaker::Make()':
+C:/Users/serge/git/nrcpp/nrcpp/ExpressionMaker.cpp:4015:41: warning: enumerated mismatch in conditional expression: 'OverloadOperatorCode' vs 'CPP_TOKENS' [-Wenum-compare]
+ 4015 |         return new NewExpression( array ? OC_NEW_ARRAY : KWNEW, call, initializatorList, rtype );
+      |                                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+[21/21] Linking CXX executable nrcpp\nrcpp.exe
+FAILED: nrcpp/nrcpp.exe 
+C:\WINDOWS\system32\cmd.exe /C "cd . && C:\msys64\mingw64\bin\c++.exe -O3 -DNDEBUG  nrcpp/CMakeFiles/nrcpp.dir/Application.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Body.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/BodyMaker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Checker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Class.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Coordinator.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/ExpressionChecker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/ExpressionMaker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/LexicalAnalyzer.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Maker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Manager.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/MemberMaker.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Object.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Overload.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Parser.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Reader.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Scope.cpp.obj nrcpp/CMakeFiles/nrcpp.dir/Translator.cpp.obj -o nrcpp\nrcpp.exe -Wl,--out-implib,nrcpp\libnrcpp.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lNRC_LIBRARY-NOTFOUND/  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/14.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot find -lNRC_LIBRARY-NOTFOUND/: No such file or directory
+
+collect2.exe: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+Build complete (2 errors, 7 warnings): C:\Users\serge\git\nrcpp\build\cmake.run.win32.x86_64.Local

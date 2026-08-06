@@ -434,9 +434,15 @@ void DeclaratorReader::ReadDeclaratorTailPart()
 	Lexem lxm = lastLxm;
 
 	// считываем постфиксные производные типы
-	bool in;
-	for( in = false; ;in++ )
+	bool in = false;
+	for( /*in = false*/; ;/*in++*/ )
 	{
+		if(in == false) {
+			in = true;
+		} else {
+			in = false;
+		}
+
 		// требуется считать прототип функции
 		if( lxm == '(' )
 		{
@@ -772,7 +778,7 @@ PNodePackage QualifiedConstructionReader::ReadQualifiedConstruction()
 		// если разрешено выражение и следующая лексема - new или delete,
 		// синтаксической ошибки не возникает
 		if( noErrorOnExp && (lxm == KWNEW || lxm == KWDELETE) )
-			return readExpression = true, NULL;
+			readExpression = true, NULL;
 
 		// если нет имени после '::' - это синтаксическая ошибка 
 		if( lxm != NAME && 
